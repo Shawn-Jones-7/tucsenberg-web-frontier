@@ -126,6 +126,24 @@ export const TEST_APP_CONSTANTS = {
   // 比例
   /** 比例值 - 6.25 */
   RATIO_VALUE: 6.25,
+
+  // 时间相关常量
+  /** 时间单位 - 60 */
+  TIME_UNIT: TEST_BASE_NUMBERS.SECONDS_PER_MINUTE,
+
+  /** 毫秒基数 - 1000 */
+  MILLISECOND_BASE: TEST_BASE_NUMBERS.MILLISECONDS_PER_SECOND,
+
+  /** 每天小时数 - 24 */
+  HOURS_PER_DAY: TEST_BASE_NUMBERS.HOURS_PER_DAY,
+
+  // 百分比常量
+  /** 一半百分比 - 50 */
+  PERCENTAGE_HALF: TEST_BASE_NUMBERS.HALF_PERCENTAGE,
+
+  // 超时相关
+  /** 超时基数 - 1000ms */
+  TIMEOUT_BASE: TEST_BASE_NUMBERS.MILLISECONDS_PER_SECOND,
 } as const;
 
 // ==================== 导出所有常量 ====================

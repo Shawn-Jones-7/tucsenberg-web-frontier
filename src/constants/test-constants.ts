@@ -95,6 +95,24 @@ export const TEST_APP_CONSTANTS = {
   // 比例
   /** 比例值 - 6.25 */
   RATIO_VALUE: 6.25,
+
+  // 时间相关常量
+  /** 时间单位 - 60 */
+  TIME_UNIT: 60,
+
+  /** 毫秒基数 - 1000 */
+  MILLISECOND_BASE: 1000,
+
+  /** 每天小时数 - 24 */
+  HOURS_PER_DAY: 24,
+
+  // 百分比常量
+  /** 一半百分比 - 50 */
+  PERCENTAGE_HALF: 50,
+
+  // 超时相关
+  /** 超时基数 - 1000ms */
+  TIMEOUT_BASE: 1000,
 } as const;
 
 // ==================== 基础测试常量 ====================
@@ -142,6 +160,15 @@ export const TEST_TIMEOUT_CONSTANTS = {
 
   /** 网络测试超时 - 3000ms */
   NETWORK: 3000,
+
+  /** 短延迟 - 100ms */
+  SHORT_DELAY: 100,
+
+  /** 中等延迟 - 250ms */
+  MEDIUM_DELAY: 250,
+
+  /** 长延迟 - 500ms */
+  LONG_DELAY: 500,
 } as const;
 
 /** 测试迭代和计数常量 */
@@ -166,6 +193,24 @@ export const TEST_COUNT_CONSTANTS = {
 
   /** 完整百分比 - 100 */
   PERCENTAGE_FULL: TEST_BASE_NUMBERS.PERCENTAGE_FULL,
+} as const;
+
+/** 测试计数常量 (简化版本，向后兼容) */
+export const TEST_COUNTS = {
+  /** 小计数 - 3 */
+  SMALL: 3,
+
+  /** 中等计数 - 5 */
+  MEDIUM: 5,
+
+  /** 大计数 - 10 */
+  LARGE: 10,
+
+  /** 批处理大小 - 20 */
+  BATCH_SIZE: 20,
+
+  /** 小循环计数 - 1 */
+  SMALL_LOOP: 1,
 } as const;
 
 /** 测试百分比常量 */
@@ -246,6 +291,9 @@ export const TEST_CONTRAST_CONSTANTS = {
 
   /** 高对比度阈值 - 10 */
   HIGH_THRESHOLD: TEST_BASE_NUMBERS.LARGE_COUNT,
+
+  /** 精度位数 - 2 */
+  PRECISION_DIGITS: 2,
 } as const;
 
 /** 测试屏幕尺寸常量 */
@@ -258,6 +306,9 @@ export const TEST_SCREEN_CONSTANTS = {
 
   /** 桌面宽度 - 1920px */
   DESKTOP_WIDTH: 1920,
+
+  /** 标准高度 - 768px */
+  STANDARD_HEIGHT: 768,
 } as const;
 
 /** 测试内容限制常量 */
@@ -479,6 +530,48 @@ export const WEB_VITALS_CONSTANTS = {
   // 测试用百分比和计数常量
   TEST_PERCENTAGE_FIFTY: 50,
   TEST_COUNT_TWO: 2,
+
+  // 测试时间常量
+  TEST_FETCH_START: 100,
+  TEST_DOMAIN_LOOKUP_END: 150,
+  TEST_CONNECT_START: 200,
+  TEST_CONNECT_END: 250,
+  TEST_REQUEST_START: 300,
+  TEST_RESPONSE_START: 400,
+  TEST_RESPONSE_END: 500,
+  TEST_DOM_INTERACTIVE: 600,
+  TEST_DOM_CONTENT_LOADED_START: 700,
+  TEST_DOM_CONTENT_LOADED_END: 750,
+  TEST_DOM_COMPLETE: 800,
+  TEST_LOAD_EVENT_END: 900,
+
+  // 网络测试常量
+  TEST_DOWNLINK_SPEED: 10,
+  TEST_RTT_LATENCY: 50,
+
+  // 评分阈值常量
+  GRADE_A_THRESHOLD: 90,
+  GRADE_B_THRESHOLD: 80,
+  GRADE_C_THRESHOLD: 70,
+  GRADE_D_THRESHOLD: 60,
+
+  // 性能监控常量
+  PERFORMANCE_SAMPLE_SIZE: 50,
+  BASELINE_REFRESH_HOURS: 24,
+  SCORE_EXCELLENT_THRESHOLD: 90,
+  SCORE_AVERAGE_THRESHOLD: 70,
+  REPORT_HISTORY_LIMIT: 10,
+
+  // 小数位数常量
+  DECIMAL_PLACES_ONE: 1,
+  DECIMAL_PLACES_TWO: 2,
+  DECIMAL_PLACES_THREE: 3,
+
+  // 字节转换常量
+  BYTES_TO_KB_DIVISOR: 1024,
+
+  // 时间单位常量
+  MINUTES_PER_HOUR: 60,
 } as const;
 
 /** Web Vitals 诊断测试常量 */
@@ -501,6 +594,13 @@ export const TEST_WEB_VITALS_DIAGNOSTICS = {
 
   // 历史数据时间偏移
   HISTORICAL_TIME_OFFSET: 3600000, // 1小时
+
+  // 网络相关常量
+  NETWORK_DOWNLINK: 4,
+  NETWORK_RTT: 50,
+
+  // 设备相关常量
+  DEVICE_MEMORY: 8,
 } as const;
 
 // ==================== 统一导出对象 ====================
