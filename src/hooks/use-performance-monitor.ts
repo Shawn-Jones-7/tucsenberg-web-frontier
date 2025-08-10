@@ -135,7 +135,7 @@ interface PerformanceMonitorReturnParams {
   getMetrics: () => PerformanceMetrics | null;
   resetMetrics: () => void;
   measureLoadTime: () => number;
-  measureRenderTime: () => number;
+  measureRenderTime: (renderStart: number) => number;
   measureMemoryUsage: () => number | undefined;
   startMonitoring: () => void;
   stopMonitoring: () => void;

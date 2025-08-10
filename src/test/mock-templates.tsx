@@ -360,7 +360,7 @@ export const createTestUtils = () => {
      */
     createTrackedMock: (name: string) => {
       const mock = vi.fn();
-      mock.mockName = name;
+      mock.mockName(name);
       return mock;
     },
 
