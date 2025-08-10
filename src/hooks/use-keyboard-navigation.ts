@@ -111,7 +111,7 @@ function handleTabKey(
  * 创建焦点管理函数
  */
 function useFocusManagement(
-  containerRef: React.RefObject<HTMLElement>,
+  containerRef: React.RefObject<HTMLElement | null>,
   config: KeyboardNavigationConfig,
 ) {
   const getFocusableElements = useCallback((): HTMLElement[] => {
@@ -263,7 +263,7 @@ export function useKeyboardNavigation(
   options: KeyboardNavigationOptions = {},
 ): UseKeyboardNavigationReturn {
   const config = useMemo(() => ({ ...defaultOptions, ...options }), [options]);
-  const containerRef = useRef<HTMLElement>(null);
+  const containerRef = useRef<HTMLElement | null>(null);
 
   const { getFocusableElements, getCurrentFocusIndex, setFocusIndex } =
     useFocusManagement(containerRef, config);

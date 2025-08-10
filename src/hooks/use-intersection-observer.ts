@@ -1,14 +1,13 @@
 'use client';
 
-import {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-  type RefObject,
-} from 'react';
 import { AccessibilityManager } from '@/lib/accessibility';
 import { logger } from '@/lib/logger';
+import {
+    useCallback,
+    useEffect,
+    useRef,
+    useState
+} from 'react';
 
 /**
  * Intersection Observer Hook 配置选项
@@ -30,8 +29,8 @@ export interface IntersectionObserverOptions {
 export interface IntersectionObserverHookReturn<
   T extends HTMLElement = HTMLElement,
 > {
-  /** 要观察的元素引用 */
-  ref: RefObject<T | null>;
+  /** 要观察的元素引用 - 回调函数形式 */
+  ref: (node: T | null) => void;
   /** 当前是否可见 */
   isVisible: boolean;
   /** 是否曾经可见过 */
