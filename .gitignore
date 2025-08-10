@@ -43,3 +43,9 @@ next-env.d.ts
 # TinaCMS
 .tina/__generated__
 .env.local
+
+# Auto-generated reports and task status
+docs/data/tasks.json
+reports/quick-quality-report.json
+reports/test-results.json
+reports/html.meta.json.gz
