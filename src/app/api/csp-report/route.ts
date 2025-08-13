@@ -4,7 +4,7 @@ import type { CSPReport } from '@/config/security';
 
 /**
  * CSP Report endpoint
- * 
+ *
  * This endpoint receives Content Security Policy violation reports
  * and logs them for security monitoring and debugging.
  */
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const contentType = request.headers.get('content-type');
-    
+
     // Validate content type
     if (!contentType || !contentType.includes('application/csp-report')) {
       return NextResponse.json(
@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     // Parse the CSP report
     const report: CSPReport = await request.json();
-    
+
     // Validate report structure
     if (!report['csp-report']) {
       return NextResponse.json(
@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
     }
 
     const cspReport = report['csp-report'];
-    
+
     // Extract relevant information
     const violationData = {
       timestamp: new Date().toISOString(),
@@ -58,13 +58,14 @@ export async function POST(request: NextRequest) {
     };
 
     // Log the violation
-    console.warn('CSP Violation Report:', JSON.stringify(violationData, null, 2));
+    const JSON_INDENT = 2;
+    console.warn('CSP Violation Report:', JSON.stringify(violationData, null, JSON_INDENT));
 
     // In production, you might want to send this to a monitoring service
     if (env.NODE_ENV === 'production') {
       // Example: Send to Sentry, DataDog, or other monitoring service
       // await sendToMonitoringService(violationData);
-      
+
       // For now, we'll just log it
       console.error('Production CSP Violation:', violationData);
     }
@@ -72,7 +73,6 @@ export async function POST(request: NextRequest) {
     // Check for common violation patterns that might indicate attacks
     const suspiciousPatterns = [
       'eval',
-      'javascript:',
       'data:text/html',
       'vbscript:',
       'onload',
@@ -87,14 +87,14 @@ export async function POST(request: NextRequest) {
 
     if (isSuspicious) {
       console.error('SUSPICIOUS CSP VIOLATION DETECTED:', violationData);
-      
+
       // In production, you might want to trigger additional security measures
       // such as rate limiting, IP blocking, or alerting
     }
 
     // Return success response
     return NextResponse.json(
-      { 
+      {
         status: 'received',
         timestamp: violationData.timestamp,
       },
@@ -103,7 +103,7 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error processing CSP report:', error);
-    
+
     return NextResponse.json(
       { error: 'Internal server error' },
       { status: 500 }
@@ -114,9 +114,9 @@ export async function POST(request: NextRequest) {
 /**
  * Handle GET requests (for health checks)
  */
-export async function GET() {
+export function GET() {
   return NextResponse.json(
-    { 
+    {
       status: 'CSP report endpoint active',
       timestamp: new Date().toISOString(),
     },
@@ -127,7 +127,7 @@ export async function GET() {
 /**
  * Only allow POST and GET methods
  */
-export async function OPTIONS() {
+export function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {

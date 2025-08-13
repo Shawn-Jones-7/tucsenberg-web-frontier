@@ -5,8 +5,8 @@ import { Turnstile } from '@marsidev/react-turnstile';
 import { env } from '../../../env.mjs';
 
 interface TurnstileProps {
-  onVerify?: (token: string) => void;
-  onError?: (error: string) => void;
+  onVerify?: (_token: string) => void;
+  onError?: (_error: string) => void;
   onExpire?: () => void;
   onLoad?: () => void;
   className?: string;

@@ -17,7 +17,7 @@ interface TurnstileVerificationResponse {
 
 /**
  * Verify Cloudflare Turnstile token
- * 
+ *
  * This endpoint verifies the Turnstile token on the server side
  * to ensure the user has passed the bot protection challenge.
  */
@@ -27,8 +27,8 @@ export async function POST(request: NextRequest) {
     const secretKey = env.TURNSTILE_SECRET_KEY;
     if (!secretKey) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Turnstile not configured',
           message: 'Bot protection is not properly configured on the server'
         },
@@ -38,11 +38,11 @@ export async function POST(request: NextRequest) {
 
     // Parse request body
     const body: TurnstileVerificationRequest = await request.json();
-    
+
     if (!body.token) {
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Missing token',
           message: 'Turnstile token is required'
         },
@@ -51,9 +51,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Get client IP
-    const clientIP = request.ip || 
-                    request.headers.get('x-forwarded-for') || 
-                    request.headers.get('x-real-ip') || 
+    const clientIP = request.ip ||
+                    request.headers.get('x-forwarded-for') ||
+                    request.headers.get('x-real-ip') ||
                     'unknown';
 
     // Prepare verification request
@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     if (!verificationResponse.ok) {
       console.error('Turnstile verification request failed:', verificationResponse.status);
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Verification request failed',
           message: 'Failed to verify with Turnstile service'
         },
@@ -90,7 +90,7 @@ export async function POST(request: NextRequest) {
     const result: TurnstileVerificationResponse = await verificationResponse.json();
 
     // Log verification attempt (for monitoring)
-    console.log('Turnstile verification:', {
+    console.warn('Turnstile verification:', {
       success: result.success,
       hostname: result.hostname,
       challenge_ts: result.challenge_ts,
@@ -107,8 +107,8 @@ export async function POST(request: NextRequest) {
       });
 
       return NextResponse.json(
-        { 
-          success: false, 
+        {
+          success: false,
           error: 'Verification failed',
           message: 'Bot protection challenge failed',
           errorCodes: result['error-codes']
@@ -119,7 +119,7 @@ export async function POST(request: NextRequest) {
 
     // Verification successful
     return NextResponse.json(
-      { 
+      {
         success: true,
         message: 'Verification successful',
         challenge_ts: result.challenge_ts,
@@ -130,10 +130,10 @@ export async function POST(request: NextRequest) {
 
   } catch (error) {
     console.error('Error verifying Turnstile token:', error);
-    
+
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Internal server error',
         message: 'An error occurred while verifying the token'
       },
@@ -145,11 +145,11 @@ export async function POST(request: NextRequest) {
 /**
  * Handle GET requests (for health checks)
  */
-export async function GET() {
-  const isConfigured = !!env.TURNSTILE_SECRET_KEY;
-  
+export function GET() {
+  const isConfigured = Boolean(env.TURNSTILE_SECRET_KEY);
+
   return NextResponse.json(
-    { 
+    {
       status: 'Turnstile verification endpoint active',
       configured: isConfigured,
       timestamp: new Date().toISOString(),
@@ -161,7 +161,7 @@ export async function GET() {
 /**
  * Only allow POST and GET methods
  */
-export async function OPTIONS() {
+export function OPTIONS() {
   return new NextResponse(null, {
     status: 200,
     headers: {

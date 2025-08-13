@@ -181,12 +181,13 @@ export const AnimatedCounter = forwardRef<
       };
 
       // Check for requestAnimationFrame availability
-      const scheduleFrame = (callback: FrameRequestCallback) => {
+      const scheduleFrame = (callback: (time: number) => void) => {
         if (typeof requestAnimationFrame !== 'undefined') {
           return requestAnimationFrame(callback);
         }
         // Fallback to setTimeout for environments without requestAnimationFrame
-        return setTimeout(() => callback(getTime()), 16) as unknown as number;
+        const FRAME_DURATION = 16; // 16ms for 60fps
+        return setTimeout(() => callback(getTime()), FRAME_DURATION) as unknown as number;
       };
 
       const startTime = getTime();
