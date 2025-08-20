@@ -1,4 +1,3 @@
-import React from 'react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { ThemeProvider } from 'next-themes';
 import { beforeEach, describe, expect, it } from 'vitest';
@@ -72,7 +71,7 @@ const mockSetTheme = vi.fn();
 const mockTheme = vi.fn(() => 'light');
 
 vi.mock('next-themes', () => ({
-  ThemeProvider: ({ children }: { children: React.ReactNode }) => (
+  ThemeProvider: ({ children }: any) => (
     <div>{children}</div>
   ),
   useTheme: () => ({
@@ -97,7 +96,7 @@ describe('ThemeToggle Browser Tests', () => {
       );
 
       const toggleButton = screen.getByRole('button', {
-        name: /toggle theme/i,
+        name: /主题切换按钮，当前主题：/i,
       });
 
       // 记录动画开始时间
@@ -143,7 +142,7 @@ describe('ThemeToggle Browser Tests', () => {
       );
 
       const toggleButton = screen.getByRole('button', {
-        name: /toggle theme/i,
+        name: /主题切换按钮，当前主题：/i,
       });
 
       // 记录性能指标
@@ -205,7 +204,7 @@ describe('ThemeToggle Browser Tests', () => {
       );
 
       const toggleButton = screen.getByRole('button', {
-        name: /toggle theme/i,
+        name: /主题切换按钮，当前主题：/i,
       });
 
       // 模拟触摸事件
@@ -229,7 +228,7 @@ describe('ThemeToggle Browser Tests', () => {
       );
 
       const toggleButton = screen.getByRole('button', {
-        name: /toggle theme/i,
+        name: /主题切换按钮，当前主题：/i,
       });
 
       // 执行多次主题切换
@@ -253,7 +252,7 @@ describe('ThemeToggle Browser Tests', () => {
       );
 
       const toggleButton = screen.getByRole('button', {
-        name: /toggle theme/i,
+        name: /主题切换按钮，当前主题：/i,
       });
 
       // 验证初始可访问性
@@ -292,7 +291,7 @@ describe('ThemeToggle Browser Tests', () => {
         );
 
         const toggleButton = screen.getByRole('button', {
-          name: /toggle theme/i,
+          name: /主题切换按钮，当前主题：/i,
         });
         fireEvent.click(toggleButton);
 

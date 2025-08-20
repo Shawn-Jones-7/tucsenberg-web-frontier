@@ -1,0 +1,20 @@
+[
+  {
+    "testType": "unit",
+    "command": "pnpm test --run --reporter=basic",
+    "actualTime": 16.593,
+    "totalTime": 15.99,
+    "totalTests": 1926,
+    "passedTests": 1926,
+    "failedTests": 0,
+    "averageTime": 0.008302180685358256,
+    "timestamp": "2025-08-20T14:37:56.616Z",
+    "success": true,
+    "performanceCheck": {
+      "passed": true,
+      "issues": [],
+      "warnings": [],
+      "score": 69
+    }
+  }
+]

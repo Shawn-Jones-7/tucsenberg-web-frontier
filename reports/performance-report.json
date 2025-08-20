@@ -1,55 +1,30 @@
 {
-  "timestamp": "2025-08-11T14:39:00.265Z",
-  "performance": {
-    "bundleSize": {
-      "shared": 1275906,
-      "framework": 183176,
-      "main": 5194
-    },
-    "loadTime": {
-      "estimated": 14642.76,
-      "threshold": 3000
-    },
-    "memoryUsage": {
-      "heapUsed": 4021664,
-      "heapTotal": 4505600,
-      "external": 1497948,
-      "rss": 31326208
-    },
-    "score": 70,
-    "webVitals": {}
+  "timestamp": "2025-08-20T14:37:56.618Z",
+  "summary": {
+    "totalTests": 1,
+    "passedTests": 1,
+    "failedTests": 0,
+    "totalTime": 15.99
   },
-  "limits": {
-    "mainBundle": 51200,
-    "totalBundle": 266240,
-    "loadTime": 3000,
-    "memoryUsage": 52428800,
-    "regressionThreshold": 10
-  },
-  "baseline": null,
-  "regression": {
-    "detected": false,
-    "details": []
-  },
-  "passed": false,
-  "issues": [
+  "results": [
     {
-      "type": "bundle-size",
-      "severity": "medium",
-      "message": "总包大小 1.4 MB 超出限制 260 KB"
-    },
-    {
-      "type": "load-time",
-      "severity": "medium",
-      "message": "预估加载时间 14642.76ms 超出限制 3000ms"
+      "testType": "unit",
+      "command": "pnpm test --run --reporter=basic",
+      "actualTime": 16.593,
+      "totalTime": 15.99,
+      "totalTests": 1926,
+      "passedTests": 1926,
+      "failedTests": 0,
+      "averageTime": 0.008302180685358256,
+      "timestamp": "2025-08-20T14:37:56.616Z",
+      "success": true,
+      "performanceCheck": {
+        "passed": true,
+        "issues": [],
+        "warnings": [],
+        "score": 69
+      }
     }
   ],
-  "environment": {
-    "nodeVersion": "v20.19.2",
-    "platform": "darwin",
-    "arch": "arm64",
-    "ci": false,
-    "branch": "main",
-    "commit": "fc11c2ae"
-  }
+  "recommendations": []
 }

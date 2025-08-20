@@ -22,11 +22,14 @@ export default defineConfig({
     // 设置文件
     setupFiles: ['./src/test/setup.ts'],
 
-    // 浏览器测试文件匹配模式
+    // 浏览器测试文件匹配模式 - 严格限制范围
     include: [
       'src/**/*.browser.test.{js,jsx,ts,tsx}',
       'src/**/__tests__/**/*.browser.{js,jsx,ts,tsx}',
       'tests/browser/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      // 包含需要真实浏览器环境的测试
+      'src/**/visual-regression/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'src/**/performance/**/*.{test,spec}.{js,jsx,ts,tsx}',
     ],
 
     // 排除文件 - 简化配置
@@ -108,17 +111,19 @@ export default defineConfig({
       },
     },
 
-    // 测试超时设置 - 浏览器测试需要更长时间
-    testTimeout: 30000, // 30秒，浏览器操作需要更多时间
-    hookTimeout: 10000, // 10秒hook超时
+    // 测试超时设置 - 优化浏览器测试性能
+    testTimeout: 20000, // 从30秒降低到20秒，提高测试执行效率
+    hookTimeout: 8000, // 从10秒降低到8秒，减少等待时间
 
-    // 并发设置 - 浏览器测试资源消耗大，减少并发
+    // 并发设置 - 浏览器测试资源消耗大，进一步优化
     pool: 'threads',
     poolOptions: {
       threads: {
         singleThread: false,
-        maxThreads: 2, // 减少并发数，避免资源竞争
+        maxThreads: 2, // 保持2个线程，浏览器测试资源消耗大
         minThreads: 1,
+        useAtomics: true, // 启用原子操作，提高线程安全性
+        isolate: true, // 确保测试隔离，避免状态污染
       },
     },
 
@@ -134,9 +139,30 @@ export default defineConfig({
       BROWSER_TEST: 'true',
     },
 
-    // 性能配置 - 浏览器环境不支持memoryUsage
+    // 性能配置 - 浏览器环境优化
     logHeapUsage: false,
     isolate: true,
+
+    // 缓存配置 - 浏览器测试专用缓存
+    cache: {
+      dir: 'node_modules/.vitest-browser', // 独立的浏览器测试缓存目录
+    },
+
+    // 依赖优化 - 浏览器环境特定优化
+    deps: {
+      optimizer: {
+        web: {
+          enabled: true,
+        },
+      },
+      // 浏览器测试内联依赖
+      inline: [
+        'next-intl',
+        '@radix-ui/react-*',
+        'lucide-react',
+        '@testing-library/*',
+      ],
+    },
 
     // 重试配置 - 浏览器测试可能不稳定
     retry: 2,
@@ -159,8 +185,8 @@ export default defineConfig({
     'process.env.BROWSER_TEST': '"true"',
   },
 
-  // JSX配置 - 浏览器环境不需要注入React
-  // esbuild: {
-  //   jsxInject: `import React from 'react'`,
-  // },
+  // JSX配置 - 浏览器环境需要注入React
+  esbuild: {
+    jsxInject: `import React from 'react'`,
+  },
 });

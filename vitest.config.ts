@@ -13,14 +13,15 @@ export default defineConfig({
     // 设置文件
     setupFiles: ['./src/test/setup.ts'],
 
-    // 测试文件匹配模式
+    // 测试文件匹配模式 - 优化分离策略
     include: [
       'src/**/*.{test,spec}.{js,jsx,ts,tsx}',
       'src/**/__tests__/**/*.{js,jsx,ts,tsx}',
-      'tests/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'tests/unit/**/*.{test,spec}.{js,jsx,ts,tsx}',
+      'tests/integration/**/*.{test,spec}.{js,jsx,ts,tsx}',
     ],
 
-    // 排除文件
+    // 排除文件 - 严格分离浏览器测试
     exclude: [
       'node_modules',
       '.next',
@@ -34,8 +35,12 @@ export default defineConfig({
       '**/test-utils.{js,jsx,ts,tsx}',
       '**/__tests__/**/setup.{js,jsx,ts,tsx}',
       '**/__tests__/**/test-utils.{js,jsx,ts,tsx}',
-      // 排除E2E测试文件（应该由Playwright运行）
+      // 严格排除浏览器测试文件
+      '**/*.browser.{test,spec}.{js,jsx,ts,tsx}',
+      'tests/browser/**/*',
       'tests/e2e/**/*',
+      // 排除性能测试文件
+      '**/*.performance.{test,spec}.{js,jsx,ts,tsx}',
     ],
 
     // 覆盖率配置 - 最简配置
@@ -192,17 +197,18 @@ export default defineConfig({
       },
     },
 
-    // 测试超时设置 - 优化超时时间
-    testTimeout: 10000, // 减少到10秒，避免长时间等待
-    hookTimeout: 5000, // 减少hook超时时间
+    // 测试超时设置 - 进一步优化性能
+    testTimeout: 8000, // 从10秒降低到8秒，提高执行效率
+    hookTimeout: 4000, // 从5秒降低到4秒，减少等待时间
 
-    // 并发设置 - 符合规则文件要求
+    // 并发设置 - 优化性能配置
     pool: 'threads',
     poolOptions: {
       threads: {
         singleThread: false,
-        maxThreads: 4,
+        maxThreads: 3, // 从4降低到3，减少资源竞争，提高稳定性
         minThreads: 1,
+        useAtomics: true, // 启用原子操作，提高线程安全性
       },
     },
 
@@ -218,9 +224,33 @@ export default defineConfig({
       NODE_ENV: 'test',
     },
 
-    // 性能配置
+    // 性能配置 - 增强缓存和性能监控
     logHeapUsage: true,
     isolate: true,
+
+    // 缓存配置 - 智能缓存策略
+    cache: {
+      dir: 'node_modules/.vitest', // 缓存目录
+    },
+
+    // 依赖优化 - 提高模块解析性能
+    deps: {
+      optimizer: {
+        web: {
+          enabled: true, // 启用Web依赖优化
+        },
+        ssr: {
+          enabled: true, // 启用SSR依赖优化
+        },
+      },
+      // 内联依赖，避免转换开销
+      inline: [
+        // 常见的ESM-only包
+        'next-intl',
+        '@radix-ui/react-*',
+        'lucide-react',
+      ],
+    },
 
     // UI配置
     ui: true,

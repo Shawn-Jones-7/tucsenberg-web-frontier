@@ -1,0 +1,368 @@
+name: Test Quality Monitoring
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'vitest.config.ts'
+      - 'vitest.config.browser.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'vitest.config.ts'
+      - 'vitest.config.browser.ts'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+  schedule:
+    # 每天凌晨2点运行完整的质量检查
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+    inputs:
+      test_type:
+        description: 'Test type to run'
+        required: false
+        default: 'all'
+        type: choice
+        options:
+          - all
+          - unit
+          - browser
+          - regression
+          - performance
+      save_baseline:
+        description: 'Save new performance baseline'
+        required: false
+        default: false
+        type: boolean
+
+env:
+  NODE_ENV: test
+  CI: true
+
+jobs:
+  test-quality-check:
+    name: Test Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    
+    strategy:
+      matrix:
+        test-type: [unit, performance, regression]
+        include:
+          - test-type: unit
+            description: "单元测试"
+            command: "test --run"
+          - test-type: performance
+            description: "性能监控"
+            command: "test:performance"
+          - test-type: regression
+            description: "回归测试"
+            command: "test:regression"
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Cache test reports
+        uses: actions/cache@v3
+        with:
+          path: |
+            reports/
+            node_modules/.vitest/
+            node_modules/.vitest-browser/
+          key: test-cache-${{ matrix.test-type }}-${{ github.sha }}
+          restore-keys: |
+            test-cache-${{ matrix.test-type }}-
+            test-cache-
+
+      - name: Load performance baseline
+        if: matrix.test-type == 'performance' || matrix.test-type == 'regression'
+        uses: actions/cache@v3
+        with:
+          path: reports/performance-baseline.json
+          key: performance-baseline-${{ github.ref_name }}
+          restore-keys: |
+            performance-baseline-main
+            performance-baseline-
+
+      - name: Run ${{ matrix.description }}
+        id: test-run
+        run: |
+          echo "Running ${{ matrix.description }}..."
+          pnpm ${{ matrix.command }}
+        continue-on-error: true
+
+      - name: Analyze test results
+        id: analyze
+        run: |
+          # 分析测试结果并设置输出变量
+          if [ -f "reports/performance-report.json" ]; then
+            PERFORMANCE_SCORE=$(node -e "
+              const report = require('./reports/performance-report.json');
+              console.log(report.results[0]?.performanceCheck?.score || 0);
+            ")
+            echo "performance_score=$PERFORMANCE_SCORE" >> $GITHUB_OUTPUT
+          fi
+          
+          if [ -f "reports/regression-report.json" ]; then
+            REGRESSION_SUCCESS=$(node -e "
+              const report = require('./reports/regression-report.json');
+              console.log(report.summary.overallSuccess ? 'true' : 'false');
+            ")
+            echo "regression_success=$REGRESSION_SUCCESS" >> $GITHUB_OUTPUT
+          fi
+          
+          # 检查测试是否成功
+          if [ "${{ steps.test-run.outcome }}" == "success" ]; then
+            echo "test_success=true" >> $GITHUB_OUTPUT
+          else
+            echo "test_success=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Upload test reports
+        uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: test-reports-${{ matrix.test-type }}
+          path: |
+            reports/
+            coverage/
+          retention-days: 30
+
+      - name: Performance regression alert
+        if: matrix.test-type == 'performance' && steps.analyze.outputs.performance_score < 60
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const score = ${{ steps.analyze.outputs.performance_score }};
+            const title = '🚨 性能回归警告';
+            const body = `
+            ## 性能回归检测
+            
+            **性能评分:** ${score}/100 (低于60分阈值)
+            **分支:** ${{ github.ref_name }}
+            **提交:** ${{ github.sha }}
+            
+            ### 建议措施
+            1. 检查最近的代码变更
+            2. 分析性能瓶颈
+            3. 优化测试配置
+            4. 考虑调整性能阈值
+            
+            详细报告请查看 [Actions 运行结果](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+            `;
+            
+            // 创建Issue或发送通知
+            if (context.eventName === 'push' && context.ref === 'refs/heads/main') {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['performance', 'regression', 'urgent']
+              });
+            }
+
+      - name: Test failure alert
+        if: steps.analyze.outputs.test_success == 'false'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const testType = '${{ matrix.test-type }}';
+            const description = '${{ matrix.description }}';
+            
+            console.log(`❌ ${description}失败`);
+            
+            // 如果是主分支推送，创建Issue
+            if (context.eventName === 'push' && context.ref === 'refs/heads/main') {
+              const title = `🚨 ${description}失败 - ${context.sha.substring(0, 8)}`;
+              const body = `
+              ## ${description}失败报告
+              
+              **测试类型:** ${testType}
+              **分支:** ${{ github.ref_name }}
+              **提交:** ${{ github.sha }}
+              **时间:** ${new Date().toISOString()}
+              
+              ### 失败详情
+              请查看 [Actions 运行日志](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) 获取详细信息。
+              
+              ### 建议措施
+              1. 检查测试日志中的错误信息
+              2. 本地重现问题
+              3. 修复相关代码
+              4. 重新运行测试验证
+              `;
+              
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['test-failure', testType, 'urgent']
+              });
+            }
+
+  coverage-regression-check:
+    name: Coverage Regression Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'pnpm'
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Load coverage baseline
+        uses: actions/cache@v3
+        with:
+          path: reports/coverage-baseline.json
+          key: coverage-baseline-${{ github.ref_name }}
+          restore-keys: |
+            coverage-baseline-main
+            coverage-baseline-
+
+      - name: Run coverage test
+        run: pnpm test:coverage
+
+      - name: Analyze coverage regression
+        id: coverage-analysis
+        run: |
+          # 简化的覆盖率分析
+          if [ -f "coverage/coverage-summary.json" ]; then
+            COVERAGE_LINES=$(node -e "
+              const summary = require('./coverage/coverage-summary.json');
+              console.log(summary.total.lines.pct);
+            ")
+            echo "coverage_lines=$COVERAGE_LINES" >> $GITHUB_OUTPUT
+            
+            # 检查是否低于阈值
+            if (( $(echo "$COVERAGE_LINES < 50" | bc -l) )); then
+              echo "coverage_regression=true" >> $GITHUB_OUTPUT
+            else
+              echo "coverage_regression=false" >> $GITHUB_OUTPUT
+            fi
+          fi
+
+      - name: Coverage regression alert
+        if: steps.coverage-analysis.outputs.coverage_regression == 'true'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const coverage = ${{ steps.coverage-analysis.outputs.coverage_lines }};
+            
+            if (context.eventName === 'push' && context.ref === 'refs/heads/main') {
+              const title = '📉 测试覆盖率回归警告';
+              const body = `
+              ## 测试覆盖率回归检测
+              
+              **当前覆盖率:** ${coverage}% (低于50%阈值)
+              **分支:** ${{ github.ref_name }}
+              **提交:** ${{ github.sha }}
+              
+              ### 建议措施
+              1. 添加缺失的测试用例
+              2. 提高现有测试质量
+              3. 检查代码变更影响
+              4. 考虑调整覆盖率目标
+              
+              详细报告请查看覆盖率报告。
+              `;
+              
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: body,
+                labels: ['coverage', 'regression', 'quality']
+              });
+            }
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-reports
+          path: coverage/
+          retention-days: 30
+
+  quality-summary:
+    name: Quality Summary
+    runs-on: ubuntu-latest
+    needs: [test-quality-check, coverage-regression-check]
+    if: always()
+
+    steps:
+      - name: Download all reports
+        uses: actions/download-artifact@v3
+        with:
+          path: artifacts/
+
+      - name: Generate quality summary
+        run: |
+          echo "## 🎯 测试质量监控总结" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**运行时间:** $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "**分支:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+          echo "**提交:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          
+          # 检查各项测试结果
+          echo "### 📋 测试结果" >> $GITHUB_STEP_SUMMARY
+          echo "| 测试类型 | 状态 | 说明 |" >> $GITHUB_STEP_SUMMARY
+          echo "|---------|------|------|" >> $GITHUB_STEP_SUMMARY
+          
+          # 这里需要根据实际的job结果来生成表格
+          echo "| 单元测试 | ${{ needs.test-quality-check.result == 'success' && '✅ 通过' || '❌ 失败' }} | 基础功能测试 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 性能监控 | ${{ needs.test-quality-check.result == 'success' && '✅ 通过' || '❌ 失败' }} | 性能回归检测 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 回归测试 | ${{ needs.test-quality-check.result == 'success' && '✅ 通过' || '❌ 失败' }} | 关键功能验证 |" >> $GITHUB_STEP_SUMMARY
+          echo "| 覆盖率检查 | ${{ needs.coverage-regression-check.result == 'success' && '✅ 通过' || '❌ 失败' }} | 代码覆盖率监控 |" >> $GITHUB_STEP_SUMMARY
+          
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "📊 详细报告请查看各个作业的输出和上传的构件。" >> $GITHUB_STEP_SUMMARY
+
+      - name: Set overall status
+        run: |
+          if [ "${{ needs.test-quality-check.result }}" == "success" ] && [ "${{ needs.coverage-regression-check.result }}" == "success" ]; then
+            echo "✅ 所有质量检查通过"
+            exit 0
+          else
+            echo "❌ 质量检查失败"
+            exit 1
+          fi
