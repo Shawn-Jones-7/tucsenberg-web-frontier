@@ -1,5 +1,5 @@
 // Re-export all locale detection functionality from modular files
 export { SUPPORTED_LOCALES, DEFAULT_LOCALE, GEO_LOCALE_MAP, BROWSER_LOCALE_MAP } from './locale-constants';export { useClientLocaleDetection } from
 './locale-detection-hooks';export { LocaleDetectionResult } from
-'./locale-detection-types';export { CHINESE_LANGUAGE_CODES, ENGLISH_LANGUAGE_CODES, LANGUAGE_CODE_TO_LOCALE_MAP, CHINESE_COUNTRY_CODES, ENGLISH_COUNTRY_CODES, COUNTRY_CODE_TO_LOCALE_MAP, CHINESE_TIME_ZONES, ENGLISH_TIME_ZONES, TIMEZONE_TO_LOCALE_MAP, DETECTION_TIMEOUTS, CONFIDENCE_WEIGHTS, DETECTION_SOURCES, DetectionSource, GEO_API_CONFIG, QUALITY_THRESHOLDS, BaseLocaleDetector, SmartLocaleDetector, SmartLocaleDetector, createSmartLocaleDetector, createBaseLocaleDetector, detectCurrentLocale, detectCurrentLocaleSync, default } from
+'./locale-detection-types';export { CHINESE_LANGUAGE_CODES, ENGLISH_LANGUAGE_CODES, LANGUAGE_CODE_TO_LOCALE_MAP, CHINESE_COUNTRY_CODES, ENGLISH_COUNTRY_CODES, COUNTRY_CODE_TO_LOCALE_MAP, CHINESE_TIME_ZONES, ENGLISH_TIME_ZONES, TIMEZONE_TO_LOCALE_MAP, DETECTION_TIMEOUTS, CONFIDENCE_WEIGHTS, DETECTION_SOURCES, DetectionSource, GEO_API_CONFIG, QUALITY_THRESHOLDS, BaseLocaleDetector, SmartLocaleDetector, createSmartLocaleDetector, createBaseLocaleDetector, detectCurrentLocale, detectCurrentLocaleSync, default } from
 './locale-detector';
