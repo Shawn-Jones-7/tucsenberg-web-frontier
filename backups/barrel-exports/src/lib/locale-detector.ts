@@ -1,8 +1,8 @@
 // 导入主要功能类
 import type { Locale } from '@/types/i18n';
-import type { LocaleDetectionResult } from './locale-detection-types';
-import { BaseLocaleDetector } from './locale-detector-base';
-import { SmartLocaleDetector as SmartDetector } from './locale-detector-smart';
+import type { LocaleDetectionResult } from '@/../backups/barrel-exports/src/lib/locale-detection-types';
+import { BaseLocaleDetector } from '@/../backups/barrel-exports/src/lib/locale-detector-base';
+import { SmartLocaleDetector as SmartDetector } from '@/../backups/barrel-exports/src/lib/locale-detector-smart';
 
 /**
  * 语言检测器 - 主入口文件
@@ -12,9 +12,9 @@ import { SmartLocaleDetector as SmartDetector } from './locale-detector-smart';
  */
 
 // 重新导出所有模块的类型和功能
-export * from './locale-detector-constants';
-export * from './locale-detector-base';
-export * from './locale-detector-smart';
+export * from '@/../backups/barrel-exports/src/lib/locale-detector-constants';
+export * from '@/../backups/barrel-exports/src/lib/locale-detector-base';
+export * from '@/../backups/barrel-exports/src/lib/locale-detector-smart';
 
 /**
  * 智能语言检测器 - 向后兼容的主类

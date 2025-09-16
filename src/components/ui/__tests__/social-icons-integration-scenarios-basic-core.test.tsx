@@ -14,7 +14,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SocialIconLink, SocialIconMapper } from '../social-icons';
+import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Integration Scenarios - Core Basic Tests', () => {
   describe('核心导航菜单集成', () => {

@@ -12,10 +12,10 @@
 // Re-export all storage module functions
 
 // Cookie 管理
-export { CookieManager, COOKIE_CONFIG } from './locale-storage-cookie';
+export { CookieManager, COOKIE_CONFIG } from '@/lib/locale-storage-cookie';
 
 // LocalStorage 管理
-export { LocalStorageManager } from './locale-storage-local';
+export { LocalStorageManager } from '@/lib/locale-storage-local';
 
 // 用户偏好存储管理
 export {

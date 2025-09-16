@@ -3,7 +3,7 @@
  */
 
 // 重新导出验证相关类型
-export type { AirtableRecord, ContactFormData } from '../validations';
+export type { AirtableRecord, ContactFormData } from '@/lib/validations';
 
 // Airtable 查询选项类型
 export interface AirtableQueryOptions {

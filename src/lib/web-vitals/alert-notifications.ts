@@ -1,5 +1,5 @@
 import { logger } from '@/lib/logger';
-import { formatMetricValue } from './alert-helpers';
+import { formatMetricValue } from '@/lib/web-vitals/alert-helpers';
 
 // 常量定义
 const ALERT_ID_CONSTANTS = {

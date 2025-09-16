@@ -6,7 +6,9 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { getPreferenceHistory } from './history-manager';
+import { HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
+import { getPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
 
 /**
  * 获取偏好变化统计
@@ -58,7 +60,7 @@ export function getPreferenceChangeStats(): {
     const timeSpan =
       (history[0]?.timestamp || 0) -
       (history[history.length - 1]?.timestamp || 0);
-    const days = timeSpan / (24 * 60 * 60 * 1000);
+    const days = timeSpan / (HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000);
     stats.changeFrequency = days > 0 ? history.length / days : 0;
   }
 

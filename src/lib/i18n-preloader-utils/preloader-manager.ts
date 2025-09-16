@@ -3,7 +3,7 @@
  * Preloader Manager
  */
 
-import type { IPreloader, PreloadState } from '../i18n-preloader-types';
+import type { IPreloader, PreloadState } from '@/lib/i18n-preloader-types';
 
 /**
  * 预加载器管理器

@@ -5,10 +5,10 @@ import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { ActionCards } from './cta/action-cards';
-import { CommunitySection } from './cta/community-section';
-import { getCallToActionData } from './cta/data';
-import { StatsDisplay } from './cta/stats-display';
+import { ActionCards } from '@/components/home/cta/action-cards';
+import { CommunitySection } from '@/components/home/cta/community-section';
+import { getCallToActionData } from '@/components/home/cta/data';
+import { StatsDisplay } from '@/components/home/cta/stats-display';
 
 // UI常量
 const UI_CONSTANTS = {

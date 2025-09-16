@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import { useTranslations } from 'next-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MobileNavigation } from '../mobile-navigation';
+import { MobileNavigation } from '@/components/layout/mobile-navigation';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

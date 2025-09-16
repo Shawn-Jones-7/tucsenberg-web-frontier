@@ -7,13 +7,13 @@
 
 'use client';
 
-import { calculateStorageStats } from './locale-storage-analytics-core';
+import { calculateStorageStats } from '@/lib/locale-storage-analytics-core';
 import {
   AccessLogger,
   ErrorLogger,
   type AccessLogEntry,
 } from './locale-storage-analytics-events';
-import type { StorageStats } from './locale-storage-types';
+import type { StorageStats } from '@/lib/locale-storage-types';
 
 // ==================== 使用模式分析 ====================
 

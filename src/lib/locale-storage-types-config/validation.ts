@@ -1,3 +1,5 @@
+import { BYTES_PER_KB, COUNT_TEN, DAYS_PER_YEAR, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * 语言存储系统配置验证规则
  * Locale Storage System Configuration Validation Rules
@@ -45,11 +47,11 @@ export const CONFIG_VALIDATION_RULES: ConfigValidationRules = {
   },
 
   ranges: {
-    'retention.preferences': { min: 0, max: 365 * 24 * 60 * 60 * 1000 },
+    'retention.preferences': { min: 0, max: DAYS_PER_YEAR * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000 },
     'performance.maxEntries': { min: 1, max: 10000 },
-    'performance.maxSize': { min: 1024, max: 100 * 1024 * 1024 },
+    'performance.maxSize': { min: BYTES_PER_KB, max: 100 * BYTES_PER_KB * BYTES_PER_KB },
     'encryption.keyLength': { min: 16, max: 64 },
-    'compression.threshold': { min: 0, max: 10 * 1024 * 1024 },
+    'compression.threshold': { min: 0, max: COUNT_TEN * BYTES_PER_KB * BYTES_PER_KB },
   },
 
   enums: {

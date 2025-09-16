@@ -47,7 +47,7 @@ function fixUnusedVariableInFile(filePath, errors) {
     return false;
   }
 
-  let content = fs.readFileSync(filePath, 'utf8');
+  const content = fs.readFileSync(filePath, 'utf8');
   const lines = content.split('\n');
   let modified = false;
 
@@ -58,7 +58,7 @@ function fixUnusedVariableInFile(filePath, errors) {
     const lineIndex = error.line - 1;
     if (lineIndex >= 0 && lineIndex < lines.length) {
       const line = lines[lineIndex];
-      const variable = error.variable;
+      const {variable} = error;
 
       // 处理不同类型的未使用变量
       if (error.errorCode === 'TS6133') {

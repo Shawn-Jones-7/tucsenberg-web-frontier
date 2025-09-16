@@ -6,7 +6,7 @@
  */
 
 import type { Locale, Messages } from '@/types/i18n';
-import type { CacheOperationResult } from './i18n-cache-types';
+import type { CacheOperationResult } from '@/lib/i18n-cache-types';
 
 /**
  * 预加载状态
@@ -476,7 +476,7 @@ export enum PreloadPriority {
  */
 export function isPreloadResult(obj: unknown): obj is PreloadResult {
   return (
-    !!obj &&
+    Boolean(obj) &&
     typeof obj === 'object' &&
     typeof (obj as Record<string, unknown>).success === 'boolean' &&
     typeof (obj as Record<string, unknown>).locale === 'string' &&

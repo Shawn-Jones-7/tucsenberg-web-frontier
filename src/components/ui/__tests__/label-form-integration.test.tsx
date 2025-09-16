@@ -15,7 +15,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Label } from '../label';
+import { Label } from '@/components/ui/label';
 
 describe('Label Form Integration Tests - Index', () => {
   let user: ReturnType<typeof userEvent.setup>;

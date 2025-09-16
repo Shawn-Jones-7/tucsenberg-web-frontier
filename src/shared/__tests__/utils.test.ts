@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { formatDate, validateEmail } from '../utils';
+import { formatDate, validateEmail } from '@/shared/utils';
 
 describe('shared utils', () => {
   describe('formatDate', () => {

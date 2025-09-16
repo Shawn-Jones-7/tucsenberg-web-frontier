@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { GlobalWithDeletableProperties } from '@/types/test-types';
-import { WebVitalsMonitor } from '../web-vitals-monitor';
+import { WebVitalsMonitor } from '@/lib/web-vitals-monitor';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockLogger, mockPerformanceObserver, mockPerformance } = vi.hoisted(

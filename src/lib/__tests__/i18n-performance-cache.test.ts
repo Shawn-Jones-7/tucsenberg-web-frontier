@@ -10,7 +10,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { TranslationCache } from '../i18n-performance';
+import { TranslationCache } from '@/lib/i18n-performance';
 
 describe('I18n Performance - Cache Tests', () => {
   beforeEach(() => {

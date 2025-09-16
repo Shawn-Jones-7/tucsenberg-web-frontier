@@ -4,7 +4,9 @@
  */
 
 import type { DetailedWebVitals } from '@/lib/enhanced-web-vitals';
-import { calculatePercentageChange } from './web-vitals-diagnostics-calculator';
+import { COUNT_TRIPLE, COUNT_PAIR, OFFSET_NEGATIVE_MEDIUM, OFFSET_NEGATIVE_LARGE } from '@/constants/magic-numbers';
+
+import { calculatePercentageChange } from '@/hooks/web-vitals-diagnostics-calculator';
 import {
   WEB_VITALS_CONSTANTS,
   type DiagnosticReport,
@@ -82,7 +84,7 @@ export const identifyPerformanceIssues = (
     const severity =
       vitals.cls > WEB_VITALS_CONSTANTS.CLS_POOR ? '严重' : '中等';
     issues.push(
-      `CLS ${severity}问题: ${vitals.cls.toFixed(3)} (建议 < ${WEB_VITALS_CONSTANTS.CLS_GOOD})`,
+      `CLS ${severity}问题: ${vitals.cls.toFixed(COUNT_TRIPLE)} (建议 < ${WEB_VITALS_CONSTANTS.CLS_GOOD})`,
     );
   }
 
@@ -173,8 +175,8 @@ export const calculatePageComparison = (
     // 安全地处理URL，避免过长的路径
     const safeUrl =
       report.pageUrl.length > WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH
-        ? report.pageUrl.substring(0, WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH) +
-          '...'
+        ? `${report.pageUrl.substring(0, WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH) 
+          }...`
         : report.pageUrl;
 
     const existing = pageGroups.get(safeUrl);
@@ -276,10 +278,10 @@ export const generateCSVData = (reports: DiagnosticReport[]): string => {
 export const analyzeOverallTrend = (
   reports: DiagnosticReport[],
 ): 'improving' | 'declining' | 'stable' => {
-  if (reports.length < 2) return 'stable';
+  if (reports.length < COUNT_PAIR) return 'stable';
 
-  const recentScores = reports.slice(-5).map((r) => r.score);
-  const previousScores = reports.slice(-10, -5).map((r) => r.score);
+  const recentScores = reports.slice(OFFSET_NEGATIVE_MEDIUM).map((r) => r.score);
+  const previousScores = reports.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM).map((r) => r.score);
 
   if (previousScores.length === 0) return 'stable';
 

@@ -7,17 +7,17 @@
 
 'use client';
 
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
-import { LocaleCleanupManager } from './locale-storage-maintenance-cleanup';
-import { LocaleValidationManager } from './locale-storage-maintenance-validation';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { LocaleCleanupManager } from '@/lib/locale-storage-maintenance-cleanup';
+import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
 import type {
   LocaleDetectionHistory,
   MaintenanceOptions,
   StorageOperationResult,
   UserLocalePreference,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from './locale-storage-types';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 语言存储维护操作管理器

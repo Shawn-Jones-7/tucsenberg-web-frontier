@@ -5,7 +5,7 @@ import {
   TEST_COUNT_CONSTANTS,
   TEST_WEB_VITALS_DIAGNOSTICS,
 } from '@/constants/test-constants';
-import { useWebVitalsDiagnostics } from '../use-web-vitals-diagnostics';
+import { useWebVitalsDiagnostics } from '@/hooks/use-web-vitals-diagnostics';
 
 // 1. 直接Mock模块 - 移到文件顶部确保在所有导入前执行
 vi.mock('@/lib/enhanced-web-vitals', () => ({

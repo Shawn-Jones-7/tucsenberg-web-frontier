@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { validateMonitoringData } from '../types';
+import { validateMonitoringData } from '@/app/api/monitoring/dashboard/types';
 
 /**
  * POST /api/monitoring/dashboard

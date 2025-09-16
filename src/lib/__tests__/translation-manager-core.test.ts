@@ -5,7 +5,7 @@ import type {
   UnsafeLocaleCode,
 } from '@/types/test-types';
 import type { TranslationManagerConfig } from '@/types/translation-manager';
-import { TranslationManagerCore } from '../translation-manager-core';
+import { TranslationManagerCore } from '@/lib/translation-manager-core';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockTranslationQualityChecker, mockTranslationUtils } = vi.hoisted(

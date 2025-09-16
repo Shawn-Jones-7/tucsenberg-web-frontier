@@ -4,8 +4,8 @@ import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { Link } from '@/i18n/routing';
-import { AnimatedIcon } from './animated-icon';
-import { ProgressIndicator } from './progress-indicator';
+import { AnimatedIcon } from '@/components/shared/animated-icon';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 interface UnderConstructionProps {
   pageType: 'products' | 'blog' | 'about' | 'contact';

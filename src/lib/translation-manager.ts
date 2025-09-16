@@ -6,7 +6,7 @@ import type {
   TranslationManagerConfig,
   TranslationQualityCheck,
 } from '@/types/translation-manager';
-import { TranslationManagerCore } from './translation-manager-core';
+import { TranslationManagerCore } from '@/lib/translation-manager-core';
 
 /**
  * 翻译管理器主类 - 继承核心功能
@@ -46,5 +46,5 @@ export {
   normalizeTranslationText,
 } from './translation-utils';
 
-export { TranslationQualityChecker } from './translation-quality-checker';
-export { TranslationManagerCore } from './translation-manager-core';
+export { TranslationQualityChecker } from '@/lib/translation-quality-checker';
+export { TranslationManagerCore } from '@/lib/translation-manager-core';

@@ -6,12 +6,14 @@
 'use client';
 
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
+import { DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import {
   createDefaultHistory,
   getDetectionHistory,
   HistoryCacheManager,
 } from '../locale-storage-history-core';
-import { LocalStorageManager } from '../locale-storage-local';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionRecord,
   StorageOperationResult,
@@ -22,7 +24,7 @@ import type {
  * Cleanup expired detection records
  */
 export function cleanupExpiredDetections(
-  maxAgeMs: number = 30 * 24 * 60 * 60 * 1000,
+  maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000,
 ): StorageOperationResult<number> {
   const startTime = Date.now();
 

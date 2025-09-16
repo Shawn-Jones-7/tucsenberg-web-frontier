@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import type { Locale } from '@/types/i18n';
 import { VALIDATION_THRESHOLDS } from '@/constants/i18n-constants';
-import { TranslationValidators } from '../translation-validators';
+import { TranslationValidators } from '@/lib/translation-validators';
 
 describe('TranslationValidators', () => {
   describe('performBasicValidation', () => {

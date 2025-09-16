@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { generatePageMetadata } from '../metadata';
-import type { Locale, PageType } from '../seo-metadata';
+import { generatePageMetadata } from '@/lib/metadata';
+import type { Locale, PageType } from '@/lib/seo-metadata';
 
 // Mock seo-metadata module using vi.hoisted
 const { mockCreatePageSEOConfig, mockGenerateLocalizedMetadata } = vi.hoisted(

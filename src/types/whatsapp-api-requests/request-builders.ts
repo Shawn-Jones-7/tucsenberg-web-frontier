@@ -3,9 +3,9 @@
  * WhatsApp API Request Builders
  */
 
-import type { ContactData, LocationData } from '../whatsapp-base-types';
-import type { TemplateMessage } from '../whatsapp-template-types';
-import type { SendMessageRequest } from './message-requests';
+import type { ContactData, LocationData } from '@/types/whatsapp-base-types';
+import type { TemplateMessage } from '@/types/whatsapp-template-types';
+import type { SendMessageRequest } from '@/types/whatsapp-api-requests/message-requests';
 
 /**
  * 请求构建器辅助函数

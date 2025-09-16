@@ -1,3 +1,5 @@
+import { COUNT_FIVE, COUNT_TEN, MAGIC_0_1, MAGIC_2000, MAGIC_95, MAGIC_99 } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp Service Monitoring and Health Types
  *
@@ -320,12 +322,12 @@ export function determineHealthStatus(
   uptime: number,
 ): 'healthy' | 'degraded' | 'unhealthy' {
   // Unhealthy thresholds
-  if (errorRate > 10 || responseTime > 5000 || uptime < 95) {
+  if (errorRate > COUNT_TEN || responseTime > 5000 || uptime < MAGIC_95) {
     return 'unhealthy';
   }
 
   // Degraded thresholds
-  if (errorRate > 5 || responseTime > 2000 || uptime < 99) {
+  if (errorRate > COUNT_FIVE || responseTime > MAGIC_2000 || uptime < MAGIC_99) {
     return 'degraded';
   }
 
@@ -394,8 +396,8 @@ export function needsAttention(
 ): boolean {
   return (
     health.status !== 'healthy' ||
-    (health.errorRate && health.errorRate > 5) ||
-    (health.responseTime && health.responseTime > 2000) ||
-    metrics.messagesFailed > metrics.messagesSent * 0.1
+    (health.errorRate && health.errorRate > COUNT_FIVE) ||
+    (health.responseTime && health.responseTime > MAGIC_2000) ||
+    metrics.messagesFailed > metrics.messagesSent * MAGIC_0_1
   );
 }

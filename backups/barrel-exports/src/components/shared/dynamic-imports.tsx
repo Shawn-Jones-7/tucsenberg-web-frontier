@@ -15,10 +15,10 @@
 // export * from './dynamic-imports-showcase'; // 暂时禁用，组件不存在
 
 // 导入主要组件集合
-import { CoreDynamicComponents } from './dynamic-imports-core';
+import { CoreDynamicComponents } from '@/../backups/barrel-exports/src/components/shared/dynamic-imports-core';
 
-export * from './dynamic-imports-base';
-export * from './dynamic-imports-core';
+export * from '@/../backups/barrel-exports/src/components/shared/dynamic-imports-base';
+export * from '@/../backups/barrel-exports/src/components/shared/dynamic-imports-core';
 
 // import { DevToolsDynamicComponents, DevelopmentOnlyComponents } from './dynamic-imports-devtools'; // 暂时禁用
 // import { I18nDynamicComponents } from './dynamic-imports-i18n'; // 暂时禁用

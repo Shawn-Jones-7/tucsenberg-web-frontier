@@ -3,8 +3,8 @@
  * Resend email template generator
  */
 
-import { ResendUtils } from './resend-utils';
-import type { EmailTemplateData } from './validations';
+import { ResendUtils } from '@/lib/resend-utils';
+import type { EmailTemplateData } from '@/lib/validations';
 
 /**
  * 邮件模板生成器类

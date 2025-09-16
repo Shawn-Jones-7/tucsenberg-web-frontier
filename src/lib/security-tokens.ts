@@ -1,3 +1,5 @@
+import { COUNT_PAIR, HEX_MASK_6_BITS, HEX_MASK_BIT_6, HEX_MASK_HIGH_BIT, HEX_MASK_LOW_NIBBLE, MAGIC_12, MAGIC_16, MAGIC_20, MAGIC_32, MAGIC_48, MAGIC_64, MAGIC_8, MAGIC_HEX_3, MAGIC_HEX_8, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * 安全令牌生成工具
  * Security token generation utilities
@@ -8,10 +10,10 @@
  */
 const TOKEN_CONSTANTS = {
   // Token generation
-  DEFAULT_TOKEN_LENGTH: 32,
-  HEX_RADIX: 2,
-  HEX_PAD_LENGTH: 2,
-  HEX_BASE: 16,
+  DEFAULT_TOKEN_LENGTH: MAGIC_32,
+  HEX_RADIX: COUNT_PAIR,
+  HEX_PAD_LENGTH: COUNT_PAIR,
+  HEX_BASE: MAGIC_16,
 } as const;
 
 /**
@@ -21,7 +23,7 @@ export function generateSecureToken(
   length: number = TOKEN_CONSTANTS.DEFAULT_TOKEN_LENGTH,
 ): string {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    // Generate half the length in bytes since each byte becomes 2 hex characters
+    // Generate half the length in bytes since each byte becomes COUNT_PAIR hex characters
     const byteLength = Math.ceil(length / TOKEN_CONSTANTS.HEX_RADIX);
     const array = new Uint8Array(byteLength);
     crypto.getRandomValues(array);
@@ -48,31 +50,31 @@ export function generateSecureToken(
  */
 export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(16);
+    const array = new Uint8Array(MAGIC_16);
     crypto.getRandomValues(array);
 
     // Set version (4) and variant bits
-    array[6] = (array[6]! & 0x0f) | 0x40;
-    array[8] = (array[8]! & 0x3f) | 0x80;
+    array[6] = (array[6]! & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6;
+    array[MAGIC_8] = (array[MAGIC_8]! & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT;
 
     const hex = Array.from(array, (byte) =>
-      byte.toString(16).padStart(2, '0'),
+      byte.toString(MAGIC_16).padStart(COUNT_PAIR, '0'),
     ).join('');
 
     return [
-      hex.substring(0, 8),
-      hex.substring(8, 12),
-      hex.substring(12, 16),
-      hex.substring(16, 20),
-      hex.substring(20, 32),
+      hex.substring(0, MAGIC_8),
+      hex.substring(MAGIC_8, MAGIC_12),
+      hex.substring(MAGIC_12, MAGIC_16),
+      hex.substring(MAGIC_16, MAGIC_20),
+      hex.substring(MAGIC_20, MAGIC_32),
     ].join('-');
   }
 
   // Fallback UUID generation
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0;
-    const v = c === 'x' ? r : (r & 0x3) | 0x8;
-    return v.toString(16);
+    const r = (Math.random() * MAGIC_16) | 0;
+    const v = c === 'x' ? r : (r & MAGIC_HEX_3) | MAGIC_HEX_8;
+    return v.toString(MAGIC_16);
   });
 }
 
@@ -80,7 +82,7 @@ export function generateUUID(): string {
  * Generate a secure random API key
  */
 export function generateApiKey(prefix: string = 'sk'): string {
-  const randomPart = generateSecureToken(48);
+  const randomPart = generateSecureToken(MAGIC_48);
   return `${prefix}_${randomPart}`;
 }
 
@@ -88,21 +90,21 @@ export function generateApiKey(prefix: string = 'sk'): string {
  * Generate a secure session token
  */
 export function generateSessionToken(): string {
-  return generateSecureToken(64);
+  return generateSecureToken(MAGIC_64);
 }
 
 /**
  * Generate a secure CSRF token
  */
 export function generateCsrfToken(): string {
-  return generateSecureToken(32);
+  return generateSecureToken(MAGIC_32);
 }
 
 /**
  * Generate a secure nonce for CSP
  */
 export function generateNonce(): string {
-  return generateSecureToken(16);
+  return generateSecureToken(MAGIC_16);
 }
 
 /**
@@ -132,7 +134,7 @@ export function generateOTP(length: number = 6): string {
 /**
  * Generate a secure verification code (alphanumeric)
  */
-export function generateVerificationCode(length: number = 8): string {
+export function generateVerificationCode(length: number = MAGIC_8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
 
@@ -180,15 +182,15 @@ export function isValidToken(token: string, expectedLength?: number): boolean {
  */
 export function isValidUUID(uuid: string): boolean {
   const uuidRegex =
-    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+    /^[0-9a-f]{MAGIC_8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{MAGIC_12}$/i;
   return uuidRegex.test(uuid);
 }
 
 /**
  * Generate a secure random salt for password hashing
  */
-export function generateSalt(length: number = 16): string {
-  return generateSecureToken(length * 2); // Double length for hex representation
+export function generateSalt(length: number = MAGIC_16): string {
+  return generateSecureToken(length * COUNT_PAIR); // Double length for hex representation
 }
 
 /**
@@ -203,12 +205,12 @@ export interface TokenWithExpiry {
  * Create a token with expiration
  */
 export function createTokenWithExpiry(
-  tokenLength: number = 32,
-  expiryMinutes: number = 60,
+  tokenLength: number = MAGIC_32,
+  expiryMinutes: number = SECONDS_PER_MINUTE,
 ): TokenWithExpiry {
   return {
     token: generateSecureToken(tokenLength),
-    expiresAt: Date.now() + expiryMinutes * 60 * 1000,
+    expiresAt: Date.now() + expiryMinutes * SECONDS_PER_MINUTE * 1000,
   };
 }
 

@@ -3,7 +3,9 @@
  * Locale Storage System Validation Functions
  */
 
-import { BaseValidators } from '../locale-storage-types-base';
+import { BaseValidators } from '@/lib/locale-storage-types-base';
+import { MAGIC_0_9, MAGIC_0_3 } from '@/constants/magic-numbers';
+
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,
@@ -82,11 +84,11 @@ export function validatePreference(
   }
 
   // 验证置信度与来源的一致性
-  if (preference.source === 'user' && preference.confidence < 0.9) {
+  if (preference.source === 'user' && preference.confidence < MAGIC_0_9) {
     warnings.push('User-selected preferences should have high confidence');
   }
 
-  if (preference.source === 'fallback' && preference.confidence > 0.3) {
+  if (preference.source === 'fallback' && preference.confidence > MAGIC_0_3) {
     warnings.push('Fallback preferences should have low confidence');
   }
 

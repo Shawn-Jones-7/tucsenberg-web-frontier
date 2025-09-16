@@ -3,8 +3,8 @@
  * WhatsApp API Message Request Types
  */
 
-import type { ContactData, LocationData } from '../whatsapp-base-types';
-import type { TemplateMessage } from '../whatsapp-template-types';
+import type { ContactData, LocationData } from '@/types/whatsapp-base-types';
+import type { TemplateMessage } from '@/types/whatsapp-template-types';
 
 /**
  * 发送消息请求

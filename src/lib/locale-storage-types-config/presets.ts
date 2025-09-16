@@ -3,7 +3,9 @@
  * Locale Storage System Environment Configuration Presets
  */
 
-import type { StorageConfig } from './interfaces';
+import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
+import { DAYS_PER_MONTH, COUNT_FIVE, SECONDS_PER_MINUTE, COUNT_TEN, BYTES_PER_KB, DAYS_PER_WEEK, HOURS_PER_DAY, COUNT_TRIPLE, MAGIC_6 } from '@/constants/magic-numbers';
+
 
 /**
  * 配置预设
@@ -20,8 +22,8 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
     },
     healthCheck: {
       enabled: true,
-      interval: 30 * 1000, // 30秒
-      timeout: 5 * 1000,
+      interval: DAYS_PER_MONTH * 1000, // DAYS_PER_MONTH秒
+      timeout: COUNT_FIVE * 1000,
       retryAttempts: 1,
     },
     errorHandling: {
@@ -55,9 +57,9 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
     },
     healthCheck: {
       enabled: true,
-      interval: 5 * 60 * 1000, // 5分钟
-      timeout: 10 * 1000,
-      retryAttempts: 3,
+      interval: COUNT_FIVE * SECONDS_PER_MINUTE * 1000, // COUNT_FIVE分钟
+      timeout: COUNT_TEN * 1000,
+      retryAttempts: COUNT_TRIPLE,
     },
   },
 
@@ -86,7 +88,7 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
   performance: {
     performance: {
       maxEntries: 50,
-      maxSize: 1024 * 1024, // 1MB
+      maxSize: BYTES_PER_KB * BYTES_PER_KB, // 1MB
       batchSize: 20,
       throttleDelay: 50,
     },
@@ -96,10 +98,10 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
       threshold: 256,
     },
     retention: {
-      preferences: 7 * 24 * 60 * 60 * 1000, // 7天
-      history: 3 * 24 * 60 * 60 * 1000, // 3天
-      analytics: 30 * 24 * 60 * 60 * 1000, // 30天
-      cache: 6 * 60 * 60 * 1000, // 6小时
+      preferences: DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // DAYS_PER_WEEK天
+      history: COUNT_TRIPLE * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // COUNT_TRIPLE天
+      analytics: DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // DAYS_PER_MONTH天
+      cache: MAGIC_6 * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // MAGIC_6小时
     },
   },
 
@@ -116,9 +118,9 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
     sync: {
       enabled: true,
       conflictResolution: 'server',
-      interval: 300000, // 5 minutes
-      retryAttempts: 3,
-      timeout: 30000, // 30 seconds
+      interval: 300000, // COUNT_FIVE minutes
+      retryAttempts: COUNT_TRIPLE,
+      timeout: 30000, // DAYS_PER_MONTH seconds
       authentication: {
         type: 'oauth',
         credentials: {},

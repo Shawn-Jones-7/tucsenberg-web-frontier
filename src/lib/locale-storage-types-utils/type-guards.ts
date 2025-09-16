@@ -3,7 +3,7 @@
  * Locale Storage System Type Guard Functions
  */
 
-import { BaseValidators } from '../locale-storage-types-base';
+import { BaseValidators } from '@/lib/locale-storage-types-base';
 import type {
   LocaleDetectionHistory,
   StorageSyncConfig,

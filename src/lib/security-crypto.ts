@@ -1,3 +1,5 @@
+import { COUNT_PAIR, MAGIC_12, MAGIC_16 } from '@/constants/magic-numbers';
+
 /**
  * 加密和密码哈希工具
  * Cryptography and password hashing utilities
@@ -7,10 +9,10 @@
  * Crypto constants
  */
 const CRYPTO_CONSTANTS = {
-  SALT_BYTE_LENGTH: 16,
-  HEX_CHARS_PER_BYTE: 2,
-  HEX_BASE: 16,
-  HEX_PAD_LENGTH: 2,
+  SALT_BYTE_LENGTH: MAGIC_16,
+  HEX_CHARS_PER_BYTE: COUNT_PAIR,
+  HEX_BASE: MAGIC_16,
+  HEX_PAD_LENGTH: COUNT_PAIR,
 } as const;
 
 /**
@@ -64,7 +66,7 @@ export async function verifyPassword(
       return false;
     }
 
-    const salt = saltHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16));
+    const salt = saltHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16));
     if (!salt) {
       return false;
     }
@@ -193,8 +195,8 @@ export async function encryptData(
   const dataBytes = encoder.encode(data);
 
   // Generate salt and IV
-  const salt = crypto.getRandomValues(new Uint8Array(16));
-  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const salt = crypto.getRandomValues(new Uint8Array(MAGIC_16));
+  const iv = crypto.getRandomValues(new Uint8Array(MAGIC_12));
 
   // Derive key from password
   const passwordKey = await crypto.subtle.importKey(
@@ -227,13 +229,13 @@ export async function encryptData(
 
   return {
     encrypted: Array.from(new Uint8Array(encrypted))
-      .map((b) => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(MAGIC_16).padStart(COUNT_PAIR, '0'))
       .join(''),
     iv: Array.from(iv)
-      .map((b) => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(MAGIC_16).padStart(COUNT_PAIR, '0'))
       .join(''),
     salt: Array.from(salt)
-      .map((b) => b.toString(16).padStart(2, '0'))
+      .map((b) => b.toString(MAGIC_16).padStart(COUNT_PAIR, '0'))
       .join(''),
   };
 }
@@ -251,13 +253,13 @@ export async function decryptData(
 
   // Convert hex strings back to bytes
   const encrypted = new Uint8Array(
-    encryptedHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) || [],
+    encryptedHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
   );
   const iv = new Uint8Array(
-    ivHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) || [],
+    ivHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
   );
   const salt = new Uint8Array(
-    saltHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) || [],
+    saltHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
   );
 
   // Derive key from password
@@ -309,7 +311,7 @@ export async function generateEncryptionKey(): Promise<CryptoKey> {
 export async function exportKey(key: CryptoKey): Promise<string> {
   const exported = await crypto.subtle.exportKey('raw', key);
   return Array.from(new Uint8Array(exported))
-    .map((b) => b.toString(16).padStart(2, '0'))
+    .map((b) => b.toString(MAGIC_16).padStart(COUNT_PAIR, '0'))
     .join('');
 }
 
@@ -318,7 +320,7 @@ export async function exportKey(key: CryptoKey): Promise<string> {
  */
 export async function importKey(keyHex: string): Promise<CryptoKey> {
   const keyBytes = new Uint8Array(
-    keyHex.match(/.{2}/g)?.map((byte) => parseInt(byte, 16)) || [],
+    keyHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
   );
 
   return await crypto.subtle.importKey(

@@ -18,7 +18,7 @@ export type {
 } from './whatsapp-webhook-utils/interfaces';
 
 // 重新导出工具类
-export { WebhookUtils } from './whatsapp-webhook-utils/webhook-utils';
+export { WebhookUtils } from '@/types/whatsapp-webhook-utils/webhook-utils';
 
 // 重新导出工具函数
 export {

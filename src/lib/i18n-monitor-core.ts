@@ -10,14 +10,14 @@ import {
   REPORTING_THRESHOLDS,
   TIME_UNITS,
 } from '@/constants/i18n-constants';
-import { EventCollector } from './i18n-event-collector';
+import { EventCollector } from '@/lib/i18n-event-collector';
 import type {
   ErrorLevel,
   MonitoringConfig,
   MonitoringEvent,
   MonitoringEventType,
 } from './i18n-monitoring-types';
-import { PerformanceMonitor } from './i18n-performance-monitor';
+import { PerformanceMonitor } from '@/lib/i18n-performance-monitor';
 
 // 主监控管理器
 export class I18nMonitor {

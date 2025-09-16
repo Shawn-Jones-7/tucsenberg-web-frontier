@@ -1,3 +1,5 @@
+import { BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_0_3, MAGIC_0_6, MAGIC_20, MAGIC_40, MAGIC_80, PERCENTAGE_HALF, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * 性能监控核心报告生成
  * Performance Monitoring Core Report Generation
@@ -83,7 +85,7 @@ export class PerformanceReportGenerator {
    */
   generateReport(
     metrics: PerformanceMetrics[],
-    timeWindow = 60 * 1000,
+    timeWindow = SECONDS_PER_MINUTE * 1000,
   ): PerformanceReport {
     const now = Date.now();
     const windowStart = now - timeWindow;
@@ -122,13 +124,13 @@ export class PerformanceReportGenerator {
     const sources = [...new Set(metrics.map((m) => m.source))];
     const types = [...new Set(metrics.map((m) => m.type))];
 
-    const timeSpanMinutes = (windowEnd - windowStart) / (60 * 1000);
+    const timeSpanMinutes = (windowEnd - windowStart) / (SECONDS_PER_MINUTE * 1000);
     const averageMetricsPerMinute =
       timeSpanMinutes > 0 ? metrics.length / timeSpanMinutes : 0;
 
     return {
       totalMetrics: metrics.length,
-      recentMetrics: metrics.filter((m) => windowEnd - m.timestamp < 60 * 1000)
+      recentMetrics: metrics.filter((m) => windowEnd - m.timestamp < SECONDS_PER_MINUTE * 1000)
         .length, // 最近1分钟
       sources,
       types,
@@ -173,7 +175,7 @@ export class PerformanceReportGenerator {
           }
           return sum;
         }, 0) / componentMetrics.length;
-      if (avgRenderTime > 50) {
+      if (avgRenderTime > PERCENTAGE_HALF) {
         recommendations.push(
           '组件平均渲染时间较高，考虑使用 React.memo 或 useMemo 优化',
         );
@@ -218,7 +220,7 @@ export class PerformanceReportGenerator {
         if (this.isBundleData(m.data)) {
           return (
             (Number(m.data.size) || 0) >
-            (this.config.bundle?.thresholds?.size || 1024 * 1024)
+            (this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB)
           );
         }
         return false;
@@ -236,7 +238,7 @@ export class PerformanceReportGenerator {
         }
         return sum;
       }, 0);
-      if (totalBundleSize > 5 * 1024 * 1024) {
+      if (totalBundleSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
         // 5MB
         recommendations.push('总打包大小较大，建议使用动态导入和懒加载优化');
       }
@@ -299,10 +301,10 @@ export class PerformanceReportGenerator {
 
     // 评分算法：基于平均渲染时间与阈值的比较
     if (avgRenderTime <= threshold * 0.5) return 100;
-    if (avgRenderTime <= threshold) return 80;
-    if (avgRenderTime <= threshold * 1.5) return 60;
-    if (avgRenderTime <= threshold * 2) return 40;
-    return 20;
+    if (avgRenderTime <= threshold) return MAGIC_80;
+    if (avgRenderTime <= threshold * 1.5) return SECONDS_PER_MINUTE;
+    if (avgRenderTime <= threshold * COUNT_PAIR) return MAGIC_40;
+    return MAGIC_20;
   }
 
   /**
@@ -323,11 +325,11 @@ export class PerformanceReportGenerator {
       }, 0) / networkMetrics.length;
 
     // 评分算法：基于平均响应时间与阈值的比较
-    if (avgResponseTime <= threshold * 0.3) return 100;
-    if (avgResponseTime <= threshold * 0.6) return 80;
-    if (avgResponseTime <= threshold) return 60;
-    if (avgResponseTime <= threshold * 1.5) return 40;
-    return 20;
+    if (avgResponseTime <= threshold * MAGIC_0_3) return 100;
+    if (avgResponseTime <= threshold * MAGIC_0_6) return MAGIC_80;
+    if (avgResponseTime <= threshold) return SECONDS_PER_MINUTE;
+    if (avgResponseTime <= threshold * 1.5) return MAGIC_40;
+    return MAGIC_20;
   }
 
   /**
@@ -338,7 +340,7 @@ export class PerformanceReportGenerator {
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
     if (bundleMetrics.length === 0) return 100;
 
-    const threshold = this.config.bundle?.thresholds?.size || 1024 * 1024; // 1MB
+    const threshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB; // 1MB
     const totalSize = bundleMetrics.reduce((sum, m) => {
       if (this.isBundleData(m.data)) {
         return sum + (Number(m.data.size) || 0);
@@ -348,10 +350,10 @@ export class PerformanceReportGenerator {
 
     // 评分算法：基于总打包大小与阈值的比较
     if (totalSize <= threshold * 0.5) return 100;
-    if (totalSize <= threshold) return 80;
-    if (totalSize <= threshold * 2) return 60;
-    if (totalSize <= threshold * 3) return 40;
-    return 20;
+    if (totalSize <= threshold) return MAGIC_80;
+    if (totalSize <= threshold * COUNT_PAIR) return SECONDS_PER_MINUTE;
+    if (totalSize <= threshold * COUNT_TRIPLE) return MAGIC_40;
+    return MAGIC_20;
   }
 
   /**
@@ -423,7 +425,7 @@ export class PerformanceReportGenerator {
         };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, COUNT_FIVE);
 
     // 网络分析
     const networkMetrics = metrics.filter((m) => m.type === 'network');
@@ -447,11 +449,11 @@ export class PerformanceReportGenerator {
         return { name: m.id || m.type, value: 0, threshold: networkThreshold };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, COUNT_FIVE);
 
     // 打包分析
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
-    const bundleThreshold = this.config.bundle?.thresholds?.size || 1024 * 1024;
+    const bundleThreshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB;
     const largestBundles = bundleMetrics
       .filter((m) => {
         if (this.isBundleData(m.data)) {
@@ -470,7 +472,7 @@ export class PerformanceReportGenerator {
         return { name: m.id || m.type, value: 0, threshold: bundleThreshold };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, 5);
+      .slice(0, COUNT_FIVE);
 
     return {
       overview,
@@ -540,11 +542,11 @@ export class PerformanceReportGenerator {
   private calculateTrend(
     metrics: PerformanceMetrics[],
   ): 'improving' | 'stable' | 'degrading' {
-    if (metrics.length < 2) return 'stable';
+    if (metrics.length < COUNT_PAIR) return 'stable';
 
     // 按时间排序
     const sortedMetrics = metrics.sort((a, b) => a.timestamp - b.timestamp);
-    const midPoint = Math.floor(sortedMetrics.length / 2);
+    const midPoint = Math.floor(sortedMetrics.length / COUNT_PAIR);
 
     const firstHalf = sortedMetrics.slice(0, midPoint);
     const secondHalf = sortedMetrics.slice(midPoint);
@@ -575,8 +577,8 @@ export class PerformanceReportGenerator {
 
     const changePercent = ((secondAvg - firstAvg) / firstAvg) * 100;
 
-    if (changePercent < -5) return 'improving'; // 性能提升
-    if (changePercent > 5) return 'degrading'; // 性能下降
+    if (changePercent < -COUNT_FIVE) return 'improving'; // 性能提升
+    if (changePercent > COUNT_FIVE) return 'degrading'; // 性能下降
     return 'stable'; // 性能稳定
   }
 

@@ -1,8 +1,8 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { AnimationVariants } from './theme-toggle-demo/animation-variants';
-import { FeatureVariants } from './theme-toggle-demo/feature-variants';
-import { SizeVariants } from './theme-toggle-demo/size-variants';
-import { TechnicalComparison } from './theme-toggle-demo/technical-comparison';
+import { AnimationVariants } from '@/components/examples/ui-showcase/theme-toggle-demo/animation-variants';
+import { FeatureVariants } from '@/components/examples/ui-showcase/theme-toggle-demo/feature-variants';
+import { SizeVariants } from '@/components/examples/ui-showcase/theme-toggle-demo/size-variants';
+import { TechnicalComparison } from '@/components/examples/ui-showcase/theme-toggle-demo/technical-comparison';
 
 /**
  * 主题切换演示组件

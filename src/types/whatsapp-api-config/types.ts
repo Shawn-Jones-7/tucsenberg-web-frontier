@@ -1,3 +1,5 @@
+import { MAGIC_131, MAGIC_131000, MAGIC_131005, MAGIC_131008, MAGIC_131009, MAGIC_131014, MAGIC_131016, MAGIC_131021, MAGIC_131026, MAGIC_131047, MAGIC_131051, MAGIC_131052, MAGIC_131053, MAGIC_132, MAGIC_133, MAGIC_136, MAGIC_190, MAGIC_368 } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp API 类型定义
  * WhatsApp API Type Definitions
@@ -121,4 +123,4 @@ export type ErrorCode =
   | 131047 // Re-engagement message
   | 131051 // Unsupported message type
   | 131052 // Media download error
-  | 131053; // Media upload error;
+  | 131053; // Media upload error

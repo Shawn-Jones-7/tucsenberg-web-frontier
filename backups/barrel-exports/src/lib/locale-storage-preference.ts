@@ -62,10 +62,10 @@ import type {
   UserLocalePreference,
 } from './locale-storage-types';
 
-export * from './locale-storage-preference-core';
-export * from './locale-storage-preference-override';
-export * from './locale-storage-preference-cache';
-export * from './locale-storage-preference-events';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-preference-core';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-preference-override';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-preference-cache';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-preference-events';
 
 /**
  * 用户偏好管理器 - 向后兼容类

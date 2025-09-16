@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import type { SimpleWebVitals } from './components';
+import type { SimpleWebVitals } from '@/app/[locale]/diagnostics/components';
 import {
   collectCurrentMetrics,
   DATA_COLLECTION_DELAY,

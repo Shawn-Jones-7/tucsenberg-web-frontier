@@ -4,10 +4,10 @@
  */
 
 // 重新导出图标和标题动画
-export { AnimatedHeroIcon, AnimatedTitle } from './animations/icon-title';
+export { AnimatedHeroIcon, AnimatedTitle } from '@/components/shared/animations/icon-title';
 
 // 重新导出卡片和按钮动画
-export { AnimatedButton, AnimatedCard } from './animations/card-button';
+export { AnimatedButton, AnimatedCard } from '@/components/shared/animations/card-button';
 
 // 重新导出表单和状态动画
 export {

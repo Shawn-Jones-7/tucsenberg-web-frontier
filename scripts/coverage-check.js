@@ -208,14 +208,14 @@ function generateReport(coverageData) {
   if (allPassed) {
     console.log('\n🎉 所有覆盖率检查通过！');
     return 0;
-  } else {
+  } 
     console.log('\n❌ 覆盖率检查失败，请提高测试覆盖率');
     console.log('\n💡 建议:');
     console.log('  1. 运行 pnpm test:coverage 查看详细报告');
     console.log('  2. 重点关注未达标的关键文件');
     console.log('  3. 补充边缘情况和错误处理测试');
     return 1;
-  }
+  
 }
 
 /**

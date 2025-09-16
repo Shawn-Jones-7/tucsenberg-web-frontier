@@ -5,6 +5,8 @@
  */
 
 import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
+import { MAGIC_0_1, PERCENTAGE_HALF, BYTES_PER_KB, COUNT_FIVE, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 
 // ==================== 基础类型定义 ====================
 
@@ -390,7 +392,7 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       captureScreenshots: isTest,
       capturePerformance: true,
       timeout: 30000,
-      maxInteractionsPerSession: 50,
+      maxInteractionsPerSession: PERCENTAGE_HALF,
     },
     bundleAnalyzer: {
       enabled: process.env.ANALYZE === 'true',
@@ -419,11 +421,11 @@ export function generateEnvironmentConfig(): PerformanceConfig {
     webVitals: {
       enabled: true,
       reportToAnalytics: isProduction,
-      sampleRate: isProduction ? 0.1 : 1.0, // 生产环境10%采样
+      sampleRate: isProduction ? MAGIC_0_1 : 1.0, // 生产环境10%采样
       debug: isDevelopment,
       reportAllChanges: isDevelopment,
       thresholds: {
-        cls: 0.1,
+        cls: MAGIC_0_1,
         fid: 100,
         lcp: 2500,
       },
@@ -432,7 +434,7 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       enabled: isDevelopment,
       thresholds: {
         renderTime: 100, // 100ms
-        memoryUsage: 50 * 1024 * 1024, // 50MB
+        memoryUsage: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
       },
       trackRerenders: isDevelopment,
       maxTrackedComponents: 100,
@@ -444,12 +446,12 @@ export function generateEnvironmentConfig(): PerformanceConfig {
         timeout: 10000, // 10s
       },
       monitorAllRequests: isDevelopment,
-      sampleRate: isProduction ? 0.1 : 1.0,
+      sampleRate: isProduction ? MAGIC_0_1 : 1.0,
     },
     bundle: {
       enabled: true,
       thresholds: {
-        size: 1024 * 1024, // 1MB
+        size: BYTES_PER_KB * BYTES_PER_KB, // 1MB
         loadTime: 3000, // 3s
       },
       analyzeDependencies: isDevelopment,
@@ -458,7 +460,7 @@ export function generateEnvironmentConfig(): PerformanceConfig {
     debug: isDevelopment,
     global: {
       enabled: true,
-      dataRetentionTime: 5 * 60 * 1000, // 5分钟
+      dataRetentionTime: COUNT_FIVE * SECONDS_PER_MINUTE * 1000, // COUNT_FIVE分钟
       maxMetrics: 1000,
       enableInProduction: false,
     },

@@ -1,7 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { usePerformanceMeasurements } from './performance-monitor-measurements';
+import { COUNT_PAIR } from '@/constants/magic-numbers';
+
+import { usePerformanceMeasurements } from '@/hooks/performance-monitor-measurements';
 import type {
   PerformanceAlert,
   PerformanceMetrics,
@@ -72,8 +74,8 @@ export function usePerformanceMonitor(
 
       // 添加到历史记录
       alertHistory.current.push(newAlert);
-      if (alertHistory.current.length > maxAlerts * 2) {
-        alertHistory.current = alertHistory.current.slice(-maxAlerts * 2);
+      if (alertHistory.current.length > maxAlerts * COUNT_PAIR) {
+        alertHistory.current = alertHistory.current.slice(-maxAlerts * COUNT_PAIR);
       }
     },
     [maxAlerts],

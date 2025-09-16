@@ -9,8 +9,8 @@ import type {
   ValidationReport,
 } from '@/types/translation-manager';
 import { QUALITY_SCORING } from '@/constants/i18n-constants';
-import { TranslationManagerSecurity } from './translation-manager-security';
-import { TranslationQualityChecker } from './translation-quality-checker';
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
+import { TranslationQualityChecker } from '@/lib/translation-quality-checker';
 import {
   calculateConfidence,
   flattenTranslations,

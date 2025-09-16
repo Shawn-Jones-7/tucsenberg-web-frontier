@@ -4,8 +4,8 @@
  */
 
 import type { Messages } from '@/types/i18n';
-import type { CacheStorage, MetricsCollector } from '../i18n-cache-types';
-import { TranslationPreloader } from '../i18n-preloader-core';
+import type { CacheStorage, MetricsCollector } from '@/lib/i18n-cache-types';
+import { TranslationPreloader } from '@/lib/i18n-preloader-core';
 import type {
   IPreloader,
   PreloaderConfig,

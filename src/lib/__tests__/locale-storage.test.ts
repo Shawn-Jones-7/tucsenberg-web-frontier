@@ -5,7 +5,7 @@ import type {
   LocaleDetectionHistory,
   UserLocalePreference,
 } from '../locale-storage';
-import { LocaleStorageManager } from '../locale-storage';
+import { LocaleStorageManager } from '@/lib/locale-storage';
 
 // Mock constants
 vi.mock('@/constants/i18n-constants', () => ({

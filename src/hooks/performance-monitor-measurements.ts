@@ -1,4 +1,6 @@
 import React from 'react';
+import { MAGIC_10000 } from '@/constants/magic-numbers';
+
 import { logger } from '@/lib/logger';
 import type {
   PerformanceAlert,
@@ -6,7 +8,7 @@ import type {
   PerformanceMeasurements,
   PerformanceMetrics,
 } from './performance-monitor-types';
-import { checkMemoryUsageAlert } from './performance-monitor-utils';
+import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
 
 /**
  * 创建性能测量函数的辅助函数
@@ -236,7 +238,7 @@ export const measureCumulativeLayoutShift = (): Promise<number | null> => {
             handleVisibilityChange,
           );
           resolve(clsValue);
-        }, 10000);
+        }, MAGIC_10000);
       } else {
         resolve(null);
       }
@@ -276,7 +278,7 @@ export const measureFirstInputDelay = (): Promise<number | null> => {
         setTimeout(() => {
           observer.disconnect();
           resolve(null);
-        }, 10000);
+        }, MAGIC_10000);
       } else {
         resolve(null);
       }

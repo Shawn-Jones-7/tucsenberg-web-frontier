@@ -14,7 +14,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Label } from '../label';
+import { Label } from '@/components/ui/label';
 
 describe('Label Responsive - Advanced Tests', () => {
   describe('高级视觉效果', () => {

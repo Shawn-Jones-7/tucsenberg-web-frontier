@@ -54,7 +54,7 @@ import '@testing-library/jest-dom/vitest';
 import { TEST_CONSTANTS } from '@/constants/test-constants';
 import { fireEvent, render } from '@testing-library/react';
 import { beforeEach, afterEach, describe, it, expect, vi } from 'vitest';
-import { ${this.template.componentName} } from '../${this.template.componentName.toLowerCase()}';
+import { ${this.template.componentName} } from '@/testing/${this.template.componentName.toLowerCase()}';
 
 // Mock设置区域
 ${this.generateMockSection()}

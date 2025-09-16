@@ -1,6 +1,6 @@
 // 延迟初始化的单例实例
 import type { SendMessageRequest } from '@/types/whatsapp';
-import { WhatsAppService } from './whatsapp-core';
+import { WhatsAppService } from '@/lib/whatsapp-core';
 
 /**
  * WhatsApp Business API 服务 - 统一导出入口
@@ -8,12 +8,12 @@ import { WhatsAppService } from './whatsapp-core';
  */
 
 // 导出核心服务类
-export { WhatsAppService } from './whatsapp-core';
+export { WhatsAppService } from '@/lib/whatsapp-core';
 
 // 导出子服务类
-export { WhatsAppMessageService } from './whatsapp-messages';
-export { WhatsAppMediaService } from './whatsapp-media';
-export { WhatsAppUtils } from './whatsapp-utils';
+export { WhatsAppMessageService } from '@/lib/whatsapp-messages';
+export { WhatsAppMediaService } from '@/lib/whatsapp-media';
+export { WhatsAppUtils } from '@/lib/whatsapp-utils';
 
 // 导出类型
 export type {

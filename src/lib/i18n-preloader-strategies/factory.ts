@@ -3,7 +3,7 @@
  * Translation Preloader Strategy Factory and Collections
  */
 
-import type { PreloaderMetrics } from '../i18n-preloader-types';
+import type { PreloaderMetrics } from '@/lib/i18n-preloader-types';
 import {
   adaptiveStrategy,
   batchStrategy,
@@ -19,8 +19,8 @@ import {
   progressiveStrategy,
   smartStrategy,
 } from './basic-strategies';
-import { strategyConfigs } from './configs';
-import { PreloadStrategyManager } from './manager';
+import { strategyConfigs } from '@/lib/i18n-preloader-strategies/configs';
+import { PreloadStrategyManager } from '@/lib/i18n-preloader-strategies/manager';
 
 /**
  * 预加载策略集合

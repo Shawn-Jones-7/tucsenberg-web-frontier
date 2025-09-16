@@ -4,9 +4,9 @@ import React, { useState } from 'react';
 import { useTranslations } from 'next-intl';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
-import { PageHeader } from './under-construction-v3/page-header';
-import { SocialLinks } from './under-construction-v3/social-links';
-import { SubscriptionForm } from './under-construction-v3/subscription-form';
+import { PageHeader } from '@/components/shared/under-construction-v3/page-header';
+import { SocialLinks } from '@/components/shared/under-construction-v3/social-links';
+import { SubscriptionForm } from '@/components/shared/under-construction-v3/subscription-form';
 
 interface UnderConstructionV3Props {
   pageType: 'products' | 'blog' | 'about' | 'contact';

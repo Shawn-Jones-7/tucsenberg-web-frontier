@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { TranslationManagerConfig } from '@/types/translation-manager';
 import { TEST_CONTENT_LIMITS } from '@/constants/test-constants';
-import { TranslationManager } from '../translation-manager';
+import { TranslationManager } from '@/lib/translation-manager';
 
 // 测试常量定义
 const TEST_PERIODS = {

@@ -9,7 +9,7 @@ import {
   TEST_APP_CONSTANTS,
   TEST_DELAY_VALUES,
 } from '@/constants/test-constants';
-import { NetworkErrorSimulator } from './setup';
+import { NetworkErrorSimulator } from '@/../tests/error-scenarios/setup';
 
 // 综合错误处理系统
 class ComprehensiveErrorHandler {

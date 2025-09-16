@@ -90,11 +90,11 @@ function fixImportInFile(filePath, usedConstants) {
       if (firstImportMatch) {
         content = content.replace(
           firstImportMatch[0],
-          firstImportMatch[0] + '\n' + newImport,
+          `${firstImportMatch[0]  }\n${  newImport}`,
         );
       } else {
         // 如果没有其他import，在文件开头插入
-        content = newImport + '\n' + content;
+        content = `${newImport  }\n${  content}`;
       }
 
       modified = true;

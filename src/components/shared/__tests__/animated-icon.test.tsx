@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { AnimatedIcon } from '../animated-icon';
+import { AnimatedIcon } from '@/components/shared/animated-icon';
 
 // Mock the useReducedMotion hook
 const mockUseReducedMotion = vi.fn();

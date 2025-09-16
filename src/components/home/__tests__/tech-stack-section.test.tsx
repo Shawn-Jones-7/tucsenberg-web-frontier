@@ -2,7 +2,7 @@ import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // 导入要测试的组件
-import { TechStackSection } from '../tech-stack-section';
+import { TechStackSection } from '@/components/home/tech-stack-section';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const {

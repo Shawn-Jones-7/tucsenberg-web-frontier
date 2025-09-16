@@ -1,4 +1,4 @@
-import { env } from '../../env.mjs';
+import { env } from '@/../env.mjs';
 
 /**
  * Security configuration for the application

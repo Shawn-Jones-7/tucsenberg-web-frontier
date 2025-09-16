@@ -9,9 +9,9 @@
 
 import type { Locale } from '@/types/i18n';
 import { logger } from '@/lib/logger';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
-import { LocaleValidationManager } from './locale-storage-maintenance-validation';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
 import type {
   DataExport,
   DataImportResult,
@@ -19,7 +19,7 @@ import type {
   StorageOperationResult,
   UserLocalePreference,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from './locale-storage-types';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 导出数据接口
@@ -479,9 +479,9 @@ export class LocaleImportExportManager {
 
     return {
       totalItems: [preference, override, history].filter(Boolean).length,
-      hasPreference: !!preference,
-      hasOverride: !!override,
-      hasHistory: !!history,
+      hasPreference: Boolean(preference),
+      hasOverride: Boolean(override),
+      hasHistory: Boolean(history),
       historyRecords: history?.detections?.length || 0,
       dataSize,
       lastModified,

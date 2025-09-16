@@ -423,13 +423,13 @@ export function isWhatsAppApiError(error: unknown): error is WhatsAppApiError {
 export function isSuccessResponse<T>(
   response: ApiResponse<T>,
 ): response is ApiResponse<T> & { success: true; data: T } {
-  return response.success && !!response.data;
+  return response.success && Boolean(response.data);
 }
 
 export function isErrorResponse<T>(
   response: ApiResponse<T>,
 ): response is ApiResponse<T> & { success: false; error: WhatsAppApiError } {
-  return !response.success && !!response.error;
+  return !response.success && Boolean(response.error);
 }
 
 /**
@@ -487,7 +487,7 @@ export const ResponseUtils = {
    * Check if has next page
    */
   hasNextPage<T>(response: PaginatedResponse<T>): boolean {
-    return !!(response.paging?.next || response.paging?.cursors?.after);
+    return Boolean(response.paging?.next || response.paging?.cursors?.after);
   },
 
   /**
@@ -495,6 +495,6 @@ export const ResponseUtils = {
    * Check if has previous page
    */
   hasPreviousPage<T>(response: PaginatedResponse<T>): boolean {
-    return !!(response.paging?.previous || response.paging?.cursors?.before);
+    return Boolean(response.paging?.previous || response.paging?.cursors?.before);
   },
 };

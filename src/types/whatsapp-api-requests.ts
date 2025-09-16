@@ -4,7 +4,7 @@
  */
 
 // 重新导出消息相关请求
-export type { SendMessageRequest } from './whatsapp-api-requests/message-requests';
+export type { SendMessageRequest } from '@/types/whatsapp-api-requests/message-requests';
 
 // 重新导出媒体和分析请求
 export type {
@@ -67,4 +67,4 @@ export {
 } from './whatsapp-api-requests/api-types';
 
 // 重新导出请求构建器
-export { RequestBuilders } from './whatsapp-api-requests/request-builders';
+export { RequestBuilders } from '@/types/whatsapp-api-requests/request-builders';

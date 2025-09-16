@@ -1,5 +1,5 @@
 import type { FullConfig } from '@playwright/test';
-import { cleanupTestEnvironment } from './test-environment-setup';
+import { cleanupTestEnvironment } from '@/../tests/e2e/test-environment-setup';
 
 async function globalTeardown(_config: FullConfig) {
   console.log('🧹 Starting global teardown for Playwright tests...');

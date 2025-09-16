@@ -10,7 +10,7 @@ import {
 
 // Mock react-hook-form
 const mockRegister = vi.fn();
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+ 
 const mockSetValue = vi.fn();
 
 // Mock translation function

@@ -114,7 +114,7 @@ import type {
   LocationData,
   WhatsAppContact,
 } from './whatsapp-base-types';
-import type { TemplateMessage } from './whatsapp-template-types';
+import type { TemplateMessage } from '@/../backups/barrel-exports/src/types/whatsapp-template-types';
 
 /**
  * WhatsApp API 类型定义 - 主入口
@@ -124,10 +124,10 @@ import type { TemplateMessage } from './whatsapp-template-types';
  */
 
 // 重新导出所有模块的功能
-export * from './whatsapp-api-requests';
-export * from './whatsapp-api-responses';
-export * from './whatsapp-api-config';
-export * from './whatsapp-api-errors';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-api-requests';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-api-responses';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-api-config';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-api-errors';
 
 // ==================== 向后兼容的类型别名 ====================
 

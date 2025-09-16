@@ -6,6 +6,8 @@
  */
 
 import { logger } from '@/lib/logger';
+import { ANIMATION_DURATION_NORMAL, OFFSET_NEGATIVE_MASSIVE, OFFSET_NEGATIVE_EXTRA_LARGE, COUNT_TEN, MAGIC_0_9 } from '@/constants/magic-numbers';
+
 import type {
   PerformanceConfig,
   PerformanceMetrics,
@@ -87,7 +89,7 @@ export function useWebEvalAgentIntegration(
           status,
           timing,
           size,
-          isSuccess: status >= 200 && status < 300,
+          isSuccess: status >= 200 && status < ANIMATION_DURATION_NORMAL,
           timestamp: Date.now(),
         },
         tags: ['web-eval-agent', 'network-request'],
@@ -288,7 +290,7 @@ export class WebEvalAgentAnalyzer {
 
     // 保持数组大小在合理范围内
     if (this.networkRequests.length > 1000) {
-      this.networkRequests = this.networkRequests.slice(-500);
+      this.networkRequests = this.networkRequests.slice(OFFSET_NEGATIVE_MASSIVE);
     }
   }
 
@@ -307,7 +309,7 @@ export class WebEvalAgentAnalyzer {
 
     // 保持数组大小在合理范围内
     if (this.pageLoads.length > 100) {
-      this.pageLoads = this.pageLoads.slice(-50);
+      this.pageLoads = this.pageLoads.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
 
@@ -330,7 +332,7 @@ export class WebEvalAgentAnalyzer {
 
     // 保持数组大小在合理范围内
     if (this.errors.length > 100) {
-      this.errors = this.errors.slice(-50);
+      this.errors = this.errors.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
 
@@ -373,7 +375,7 @@ export class WebEvalAgentAnalyzer {
         successRate: metrics.successCount / metrics.count,
       }))
       .sort((a, b) => b.averageTime - a.averageTime)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     const recommendations: string[] = [];
 
@@ -387,7 +389,7 @@ export class WebEvalAgentAnalyzer {
       }
     }
 
-    const lowSuccessActions = topSlowActions.filter((a) => a.successRate < 0.9);
+    const lowSuccessActions = topSlowActions.filter((a) => a.successRate < MAGIC_0_9);
     if (lowSuccessActions.length > 0) {
       recommendations.push(
         `${lowSuccessActions.length} actions have low success rates. Consider improving error handling.`,
@@ -432,7 +434,7 @@ export class WebEvalAgentAnalyzer {
       0,
     );
     const successfulRequests = this.networkRequests.filter(
-      (req) => req.status >= 200 && req.status < 300,
+      (req) => req.status >= 200 && req.status < ANIMATION_DURATION_NORMAL,
     );
     const totalDataTransferred = this.networkRequests.reduce(
       (sum, req) => sum + req.size,
@@ -441,7 +443,7 @@ export class WebEvalAgentAnalyzer {
 
     const slowestRequests = [...this.networkRequests]
       .sort((a, b) => b.timing - a.timing)
-      .slice(0, 10)
+      .slice(0, COUNT_TEN)
       .map((req) => ({
         url: req.url,
         method: req.method,
@@ -495,7 +497,7 @@ export class WebEvalAgentAnalyzer {
         timestamp: page.timestamp,
       }))
       .sort((a, b) => b.loadTime - a.loadTime)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     return {
       totalPageLoads,

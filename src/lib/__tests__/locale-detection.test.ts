@@ -1,7 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale } from '@/types/i18n';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { SmartLocaleDetector } from '../locale-detector';
+import { SmartLocaleDetector } from '@/lib/locale-detector';
 
 // Use vi.hoisted to ensure proper mock setup
 const { mockLocaleStorageManager } = vi.hoisted(() => ({

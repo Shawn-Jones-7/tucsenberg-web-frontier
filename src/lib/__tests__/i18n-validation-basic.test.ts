@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { validateTranslations } from '../i18n-validation';
+import { validateTranslations } from '@/lib/i18n-validation';
 import {
   mockEnTranslations,
   mockJaIncomplete,

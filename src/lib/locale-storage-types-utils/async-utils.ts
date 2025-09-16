@@ -3,7 +3,7 @@
  * Locale Storage System Async Utility Functions
  */
 
-import { STORAGE_CONSTANTS } from '../locale-storage-types-base';
+import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
 
 /**
  * 节流函数

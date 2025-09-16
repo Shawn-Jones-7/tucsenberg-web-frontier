@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Import the component after mocks
-import { ProjectOverview } from '../project-overview';
+import { ProjectOverview } from '@/components/home/project-overview';
 
 // Mock next-intl
 const mockUseTranslations = vi.hoisted(() => vi.fn());

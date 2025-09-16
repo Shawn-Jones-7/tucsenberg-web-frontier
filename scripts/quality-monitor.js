@@ -73,10 +73,10 @@ class QualityMonitor {
             const jsonOutput = cleanOutput.substring(jsonStart, jsonEnd);
             const lintResults = JSON.parse(jsonOutput);
             return this.analyzeLintResults(lintResults);
-          } else {
+          } 
             console.error('❌ 未找到有效的JSON输出');
             throw new Error('ESLint输出格式无效');
-          }
+          
         } catch (parseError) {
           console.error('❌ 解析ESLint输出失败:', parseError.message);
           console.error('原始输出:', error.stdout.substring(0, 500));

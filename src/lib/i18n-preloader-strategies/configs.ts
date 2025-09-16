@@ -3,7 +3,7 @@
  * Translation Preloader Strategy Configurations
  */
 
-import type { PreloadStrategyConfig } from '../i18n-preloader-types';
+import type { PreloadStrategyConfig } from '@/lib/i18n-preloader-types';
 
 /**
  * 预加载策略配置

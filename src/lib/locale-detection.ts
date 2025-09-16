@@ -5,8 +5,8 @@ export {
   GEO_LOCALE_MAP,
   BROWSER_LOCALE_MAP,
 } from './locale-constants';
-export { useClientLocaleDetection } from './locale-detection-hooks';
-export type { LocaleDetectionResult } from './locale-detection-types';
+export { useClientLocaleDetection } from '@/lib/locale-detection-hooks';
+export type { LocaleDetectionResult } from '@/lib/locale-detection-types';
 export {
   CHINESE_LANGUAGE_CODES,
   ENGLISH_LANGUAGE_CODES,
@@ -30,4 +30,4 @@ export {
   detectCurrentLocaleSync,
   default,
 } from './locale-detector';
-export type { DetectionSource } from './locale-detector';
+export type { DetectionSource } from '@/lib/locale-detector';

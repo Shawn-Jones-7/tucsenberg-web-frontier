@@ -91,8 +91,8 @@ function fixImportTypeInFile(filePath) {
       pattern:
         /import type \{([^}]*),\s*STORAGE_KEYS,([^}]*)\} from '([^']+)';/g,
       replacement: (match, before, after, from) => {
-        const beforeClean = before.trim() ? before.trim() + ',' : '';
-        const afterClean = after.trim() ? ',' + after.trim() : '';
+        const beforeClean = before.trim() ? `${before.trim()  },` : '';
+        const afterClean = after.trim() ? `,${  after.trim()}` : '';
         return `import type {${beforeClean}${afterClean}} from '${from}';\nimport { STORAGE_KEYS } from '${from}';`;
       },
     },
@@ -102,9 +102,9 @@ function fixImportTypeInFile(filePath) {
         const afterClean = after.trim() ? after.trim() : '';
         if (afterClean) {
           return `import type {${afterClean}} from '${from}';\nimport { STORAGE_KEYS } from '${from}';`;
-        } else {
+        } 
           return `import { STORAGE_KEYS } from '${from}';`;
-        }
+        
       },
     },
     {
@@ -113,9 +113,9 @@ function fixImportTypeInFile(filePath) {
         const beforeClean = before.trim() ? before.trim() : '';
         if (beforeClean) {
           return `import type {${beforeClean}} from '${from}';\nimport { STORAGE_KEYS } from '${from}';`;
-        } else {
+        } 
           return `import { STORAGE_KEYS } from '${from}';`;
-        }
+        
       },
     },
     // 其他常见的值导入错误
@@ -123,8 +123,8 @@ function fixImportTypeInFile(filePath) {
       pattern:
         /import type \{([^}]*),\s*(QUALITY_BENCHMARKS|TRANSLATION_LIMITS|VALIDATION_RULES|STORAGE_CONSTANTS),([^}]*)\} from '([^']+)';/g,
       replacement: (match, before, constant, after, from) => {
-        const beforeClean = before.trim() ? before.trim() + ',' : '';
-        const afterClean = after.trim() ? ',' + after.trim() : '';
+        const beforeClean = before.trim() ? `${before.trim()  },` : '';
+        const afterClean = after.trim() ? `,${  after.trim()}` : '';
         return `import type {${beforeClean}${afterClean}} from '${from}';\nimport { ${constant} } from '${from}';`;
       },
     },
@@ -143,9 +143,9 @@ function fixImportTypeInFile(filePath) {
         const beforeClean = before.trim() ? before.trim() : '';
         if (beforeClean) {
           return `import type {${beforeClean}} from '${from}';\nimport { ${constant} } from '${from}';`;
-        } else {
+        } 
           return `import { ${constant} } from '${from}';`;
-        }
+        
       },
     },
   ];

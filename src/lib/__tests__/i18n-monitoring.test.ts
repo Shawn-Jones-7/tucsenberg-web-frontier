@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ErrorLevel, MonitoringEventType } from '../i18n-monitoring';
+import { ErrorLevel, MonitoringEventType } from '@/lib/i18n-monitoring';
 
 // Mock constants
 vi.mock('@/constants/i18n-constants', () => ({

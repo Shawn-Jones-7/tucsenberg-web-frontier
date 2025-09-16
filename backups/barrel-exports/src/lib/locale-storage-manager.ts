@@ -10,21 +10,21 @@
 // 重新导出所有模块的类型和功能
 // 导入主要功能类
 import type { Locale } from '@/types/i18n';
-import { LocaleAnalyticsManager } from './locale-storage-analytics';
-import { LocaleHistoryManager } from './locale-storage-history';
-import { LocaleMaintenanceManager } from './locale-storage-maintenance';
-import { LocalePreferenceManager } from './locale-storage-preference';
+import { LocaleAnalyticsManager } from '@/../backups/barrel-exports/src/lib/locale-storage-analytics';
+import { LocaleHistoryManager } from '@/../backups/barrel-exports/src/lib/locale-storage-history';
+import { LocaleMaintenanceManager } from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance';
+import { LocalePreferenceManager } from '@/../backups/barrel-exports/src/lib/locale-storage-preference';
 import type {
   LocaleDetectionHistory,
   MaintenanceOptions,
   UserLocalePreference,
 } from './locale-storage-types';
 
-export * from './locale-storage-types';
-export * from './locale-storage-preference';
-export * from './locale-storage-history';
-export * from './locale-storage-analytics';
-export * from './locale-storage-maintenance';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-types';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-preference';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-analytics';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance';
 
 /**
  * 统一的语言存储管理器

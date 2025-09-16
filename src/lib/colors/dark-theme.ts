@@ -2,7 +2,7 @@
  * 暗黑主题颜色定义
  */
 
-import type { ThemeColors } from './types';
+import type { ThemeColors } from '@/lib/colors/types';
 
 /**
  * 暗黑主题颜色定义

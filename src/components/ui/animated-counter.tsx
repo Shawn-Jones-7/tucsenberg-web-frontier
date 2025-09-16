@@ -8,7 +8,7 @@ import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
 import { ANIMATION_DURATIONS } from '@/constants/performance-constants';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { animationUtils } from './animated-counter-helpers';
+import { animationUtils } from '@/components/ui/animated-counter-helpers';
 
 /**
  * 缓动函数类型

@@ -3,8 +3,8 @@
  * Locale Storage System Default Configuration Constants
  */
 
-import { STORAGE_CONSTANTS } from '../locale-storage-types-base';
-import type { StorageConfig } from './interfaces';
+import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
+import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
 
 /**
  * 默认存储配置

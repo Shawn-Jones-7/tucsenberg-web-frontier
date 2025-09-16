@@ -1,3 +1,5 @@
+import { BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * 语言存储系统格式化工具函数
  * Locale Storage System Format Utility Functions
@@ -12,12 +14,12 @@ export function formatByteSize(bytes: number): string {
   let size = bytes;
   let unitIndex = 0;
 
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
+  while (size >= BYTES_PER_KB && unitIndex < units.length - 1) {
+    size /= BYTES_PER_KB;
     unitIndex += 1;
   }
 
-  return `${size.toFixed(2)} ${units[unitIndex]}`;
+  return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
 }
 
 /**
@@ -26,18 +28,18 @@ export function formatByteSize(bytes: number): string {
  */
 export function formatDuration(milliseconds: number): string {
   const seconds = Math.floor(milliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+  const hours = Math.floor(minutes / SECONDS_PER_MINUTE);
+  const days = Math.floor(hours / HOURS_PER_DAY);
 
   if (days > 0) {
-    return `${days}d ${hours % 24}h`;
+    return `${days}d ${hours % HOURS_PER_DAY}h`;
   }
   if (hours > 0) {
-    return `${hours}h ${minutes % 60}m`;
+    return `${hours}h ${minutes % SECONDS_PER_MINUTE}m`;
   }
   if (minutes > 0) {
-    return `${minutes}m ${seconds % 60}s`;
+    return `${minutes}m ${seconds % SECONDS_PER_MINUTE}s`;
   }
   return `${seconds}s`;
 }
@@ -47,5 +49,5 @@ export function formatDuration(milliseconds: number): string {
  * Generate unique ID
  */
 export function generateUniqueId(): string {
-  return `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
 }

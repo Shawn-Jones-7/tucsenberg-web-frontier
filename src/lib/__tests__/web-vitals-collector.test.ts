@@ -4,7 +4,7 @@ import {
   EnhancedWebVitalsCollector,
   enhancedWebVitalsCollector,
 } from '../enhanced-web-vitals';
-import { DEVICE_DEFAULTS } from '../web-vitals/constants';
+import { DEVICE_DEFAULTS } from '@/lib/web-vitals/constants';
 
 // Mock logger
 vi.mock('@/lib/logger', () => ({

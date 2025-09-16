@@ -1,3 +1,5 @@
+import { COUNT_PAIR, MAGIC_0_9, MAGIC_1_1, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+
 /**
  * Web Vitals 和环境检查性能监控集成
  * Web Vitals and Environment Check Performance Monitoring Integration
@@ -254,7 +256,7 @@ export function validateWebVitalsConfig(config: PerformanceConfig): {
       }
 
       if (config.webVitals.thresholds) {
-        const thresholds = config.webVitals.thresholds;
+        const {thresholds} = config.webVitals;
 
         if (
           thresholds.lcp &&
@@ -341,8 +343,8 @@ export class WebVitalsAnalyzer {
 
     // 保持数组大小在合理范围内
     if (current.values.length > 100) {
-      current.values = current.values.slice(-50);
-      current.ratings = current.ratings.slice(-50);
+      current.values = current.values.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
+      current.ratings = current.ratings.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
 
@@ -366,7 +368,7 @@ export class WebVitalsAnalyzer {
 
     // 保持数组大小在合理范围内
     if (current.values.length > 100) {
-      current.values = current.values.slice(-50);
+      current.values = current.values.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
 
@@ -409,17 +411,17 @@ export class WebVitalsAnalyzer {
 
       // 计算趋势
       let trend: 'improving' | 'stable' | 'degrading' = 'stable';
-      if (data.values.length >= 2) {
-        const recent = data.values.slice(-5);
-        const older = data.values.slice(-10, -5);
+      if (data.values.length >= COUNT_PAIR) {
+        const recent = data.values.slice(OFFSET_NEGATIVE_MEDIUM);
+        const older = data.values.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM);
         if (recent.length > 0 && older.length > 0) {
           const recentAvg =
             recent.reduce((sum, val) => sum + val, 0) / recent.length;
           const olderAvg =
             older.reduce((sum, val) => sum + val, 0) / older.length;
 
-          if (recentAvg < olderAvg * 0.9) trend = 'improving';
-          else if (recentAvg > olderAvg * 1.1) trend = 'degrading';
+          if (recentAvg < olderAvg * MAGIC_0_9) trend = 'improving';
+          else if (recentAvg > olderAvg * MAGIC_1_1) trend = 'degrading';
         }
       }
 
@@ -435,7 +437,7 @@ export class WebVitalsAnalyzer {
         latestRating === 'good'
           ? 100
           : latestRating === 'needs-improvement'
-            ? 50
+            ? PERCENTAGE_HALF
             : 0;
       totalScore += ratingScore;
       vitalCount += 1;
@@ -448,7 +450,7 @@ export class WebVitalsAnalyzer {
     for (const [name, data] of Object.entries(vitals)) {
       if (data.rating === 'poor') {
         recommendations.push(
-          `${name} needs improvement (current: ${data.latest.toFixed(2)})`,
+          `${name} needs improvement (current: ${data.latest.toFixed(COUNT_PAIR)})`,
         );
       }
       if (data.trend === 'degrading') {

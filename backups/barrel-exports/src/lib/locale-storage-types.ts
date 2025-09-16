@@ -88,10 +88,10 @@ import {
  */
 
 // 重新导出所有模块的功能
-export * from './locale-storage-types-base';
-export * from './locale-storage-types-data';
-export * from './locale-storage-types-config';
-export * from './locale-storage-types-utils';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-types-base';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-types-data';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-types-config';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-types-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 

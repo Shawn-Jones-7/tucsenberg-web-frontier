@@ -10,7 +10,9 @@ import type {
   LocationData,
   WhatsAppContact,
 } from './whatsapp-base-types';
-import type { TemplateMessage } from './whatsapp-template-types';
+import type { TemplateMessage } from '@/types/whatsapp-template-types';
+import { MAGIC_4096, COUNT_TRIPLE, MAGIC_20, COUNT_TEN } from '@/constants/magic-numbers';
+
 
 // Base Message Structure
 interface BaseMessage {
@@ -335,8 +337,8 @@ export function validateTextMessage(
     errors.push('Text message body cannot be empty');
   }
 
-  if (message.text.body && message.text.body.length > 4096) {
-    errors.push('Text message body cannot exceed 4096 characters');
+  if (message.text.body && message.text.body.length > MAGIC_4096) {
+    errors.push('Text message body cannot exceed MAGIC_4096 characters');
   }
 
   return { isValid: errors.length === 0, errors, warnings };
@@ -359,17 +361,17 @@ export function validateInteractiveMessage(
     const action = message.interactive.action as InteractiveButtonAction;
     if (!action.buttons || action.buttons.length === 0) {
       errors.push('Button interactive message must have at least one button');
-    } else if (action.buttons.length > 3) {
-      errors.push('Button interactive message cannot have more than 3 buttons');
+    } else if (action.buttons.length > COUNT_TRIPLE) {
+      errors.push('Button interactive message cannot have more than COUNT_TRIPLE buttons');
     }
 
     action.buttons?.forEach((button, index) => {
       if (!button.reply.id || !button.reply.title) {
         errors.push(`Button ${index + 1} must have both id and title`);
       }
-      if (button.reply.title.length > 20) {
+      if (button.reply.title.length > MAGIC_20) {
         warnings.push(
-          `Button ${index + 1} title should not exceed 20 characters`,
+          `Button ${index + 1} title should not exceed MAGIC_20 characters`,
         );
       }
     });
@@ -379,8 +381,8 @@ export function validateInteractiveMessage(
     const action = message.interactive.action as InteractiveListAction;
     if (!action.sections || action.sections.length === 0) {
       errors.push('List interactive message must have at least one section');
-    } else if (action.sections.length > 10) {
-      errors.push('List interactive message cannot have more than 10 sections');
+    } else if (action.sections.length > COUNT_TEN) {
+      errors.push('List interactive message cannot have more than COUNT_TEN sections');
     }
 
     if (!action.button) {
@@ -390,9 +392,9 @@ export function validateInteractiveMessage(
     action.sections?.forEach((section, sectionIndex) => {
       if (!section.rows || section.rows.length === 0) {
         errors.push(`Section ${sectionIndex + 1} must have at least one row`);
-      } else if (section.rows.length > 10) {
+      } else if (section.rows.length > COUNT_TEN) {
         errors.push(
-          `Section ${sectionIndex + 1} cannot have more than 10 rows`,
+          `Section ${sectionIndex + 1} cannot have more than COUNT_TEN rows`,
         );
       }
 

@@ -5,7 +5,7 @@
 
 import { getRequestConfig } from 'next-intl/server';
 import { logger } from '@/lib/logger';
-import { routing } from './routing';
+import { routing } from '@/i18n/routing';
 
 // 测试环境的简化翻译加载器
 async function loadTestMessages(locale: string) {

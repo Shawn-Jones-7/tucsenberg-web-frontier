@@ -19,7 +19,7 @@ import type {
   WhatsAppConfig,
   WhatsAppServiceOptions,
 } from './whatsapp-service-config';
-import { DEFAULT_SERVICE_OPTIONS } from './whatsapp-service-config';
+import { DEFAULT_SERVICE_OPTIONS } from '@/types/whatsapp-service-config';
 import type {
   WhatsAppError,
   WhatsAppValidationError,
@@ -104,7 +104,7 @@ export type {
   ServiceInterface,
   ServiceError,
 } from './whatsapp-service-interface';
-export { isWhatsAppService } from './whatsapp-service-interface';
+export { isWhatsAppService } from '@/types/whatsapp-service-interface';
 
 // ==================== 向后兼容的常量导出 ====================
 

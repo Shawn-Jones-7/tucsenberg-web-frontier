@@ -9,7 +9,7 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BoundaryConditionTester } from './setup';
+import { BoundaryConditionTester } from '@/../tests/error-scenarios/setup';
 
 // 文件大小常量
 const FILE_SIZE_LIMITS = {

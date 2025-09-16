@@ -9,14 +9,14 @@
 
 import type { Locale } from '@/types/i18n';
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { LocalStorageManager } from './locale-storage-local';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionHistory,
   LocaleDetectionRecord,
   LocaleSource,
   StorageOperationResult,
 } from './locale-storage-types';
-import { isLocaleDetectionHistory } from './locale-storage-types';
+import { isLocaleDetectionHistory } from '@/lib/locale-storage-types';
 
 // ==================== 缓存管理 ====================
 

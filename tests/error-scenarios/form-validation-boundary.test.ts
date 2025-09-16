@@ -10,7 +10,7 @@
  */
 
 import { beforeEach, describe, expect, it } from 'vitest';
-import { BoundaryConditionTester } from './setup';
+import { BoundaryConditionTester } from '@/../tests/error-scenarios/setup';
 
 // 验证常量
 const VALIDATION_LIMITS = {

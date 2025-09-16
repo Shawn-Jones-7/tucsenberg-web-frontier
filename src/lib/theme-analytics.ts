@@ -1,5 +1,5 @@
 // 创建默认实例
-import { ThemeAnalytics } from './theme-analytics-core';
+import { ThemeAnalytics } from '@/lib/theme-analytics-core';
 
 /**
  * 主题分析服务 - 统一导出入口
@@ -7,10 +7,10 @@ import { ThemeAnalytics } from './theme-analytics-core';
  */
 
 // 导出核心类
-export { ThemeAnalytics } from './theme-analytics-core';
+export { ThemeAnalytics } from '@/lib/theme-analytics-core';
 
 // 导出工具类
-export { ThemeAnalyticsUtils } from './theme-analytics-utils';
+export { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
 
 // 导出所有类型
 export type {

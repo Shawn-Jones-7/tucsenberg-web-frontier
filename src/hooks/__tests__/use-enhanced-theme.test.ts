@@ -1,6 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useEnhancedTheme } from '../use-enhanced-theme';
+import { useEnhancedTheme } from '@/hooks/use-enhanced-theme';
 
 // Use vi.hoisted to ensure proper mock setup
 const {

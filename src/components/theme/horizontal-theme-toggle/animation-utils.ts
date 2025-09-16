@@ -1,3 +1,5 @@
+import { COUNT_PAIR } from '@/constants/magic-numbers';
+
 /**
  * 主题切换动画工具函数
  */
@@ -7,8 +9,8 @@ export const createCircleBlurAnimation = (
   if (!buttonElement) return '';
 
   const rect = buttonElement.getBoundingClientRect();
-  const centerX = ((rect.left + rect.width / 2) / window.innerWidth) * 100;
-  const centerY = ((rect.top + rect.height / 2) / window.innerHeight) * 100;
+  const centerX = ((rect.left + rect.width / COUNT_PAIR) / window.innerWidth) * 100;
+  const centerY = ((rect.top + rect.height / COUNT_PAIR) / window.innerHeight) * 100;
 
   return `
     @supports (view-transition-name: root) {
@@ -16,7 +18,7 @@ export const createCircleBlurAnimation = (
         animation: none;
       }
       ::view-transition-new(root) {
-        animation: circle-blur-expand 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+        animation: circle-blur-expand 0.6s cubic-bezier(0.4, 0, 0.COUNT_PAIR, 1);
         transform-origin: ${centerX}% ${centerY}%;
       }
       @keyframes circle-blur-expand {

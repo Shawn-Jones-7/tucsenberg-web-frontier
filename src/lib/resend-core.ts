@@ -5,10 +5,10 @@
 
 import { Resend } from 'resend';
 import { env } from '@/../env.mjs';
-import { logger } from './logger';
-import { ResendTemplates } from './resend-templates';
-import { EMAIL_CONFIG, ResendUtils } from './resend-utils';
-import type { EmailTemplateData } from './validations';
+import { logger } from '@/lib/logger';
+import { ResendTemplates } from '@/lib/resend-templates';
+import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
+import type { EmailTemplateData } from '@/lib/validations';
 
 /**
  * Resend邮件服务配置

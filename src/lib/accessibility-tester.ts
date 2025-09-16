@@ -1,3 +1,5 @@
+import { COUNT_TRIPLE, MAGIC_0_8, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+
 /**
  * 无障碍性测试工具
  * 用于测试导航组件的键盘导航和无障碍性功能
@@ -69,7 +71,7 @@ export class AccessibilityTester {
         document.dispatchEvent(tabEvent);
 
         // 等待焦点变化
-        await new Promise((resolve) => setTimeout(resolve, 50));
+        await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_HALF));
       }
 
       const isValidTabOrder = this.validateTabOrder(
@@ -137,7 +139,7 @@ export class AccessibilityTester {
       }
 
       // 测试导航链接
-      for (const link of Array.from(links).slice(0, 3)) {
+      for (const link of Array.from(links).slice(0, COUNT_TRIPLE)) {
         // 限制测试数量
         const element = link as HTMLElement;
         element.focus();
@@ -155,9 +157,9 @@ export class AccessibilityTester {
 
       return {
         testName,
-        passed: successRate >= 0.8, // 80%通过率
+        passed: successRate >= MAGIC_0_8, // 80%通过率
         details: `测试了${activationTests}个激活操作，成功率: ${(successRate * 100).toFixed(1)}%`,
-        ...(successRate < 0.8
+        ...(successRate < MAGIC_0_8
           ? {
               suggestions: [
                 '确保所有交互元素支持Enter键激活',
@@ -229,9 +231,9 @@ export class AccessibilityTester {
 
       return {
         testName,
-        passed: successRate >= 0.8,
+        passed: successRate >= MAGIC_0_8,
         details: `测试了${escapeTests}个Escape关闭操作，成功率: ${(successRate * 100).toFixed(1)}%`,
-        ...(successRate < 0.8
+        ...(successRate < MAGIC_0_8
           ? {
               suggestions: [
                 '确保Escape键事件处理器正确实现',
@@ -384,7 +386,7 @@ export class AccessibilityTester {
     focusableElements: HTMLElement[],
   ): boolean {
     // 简单验证：检查是否能遍历所有可聚焦元素
-    return tabOrder.length >= focusableElements.length * 0.8; // 允许80%的覆盖率
+    return tabOrder.length >= focusableElements.length * MAGIC_0_8; // 允许80%的覆盖率
   }
 
   private async testElementKeyActivation(

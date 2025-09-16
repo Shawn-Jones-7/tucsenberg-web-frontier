@@ -4,8 +4,8 @@ import {
   DEFAULT_LOCALE,
   SUPPORTED_LOCALES,
 } from './locale-constants';
-import type { LocaleDetectionResult } from './locale-detection-types';
-import { LocaleStorageManager } from './locale-storage';
+import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
+import { LocaleStorageManager } from '@/lib/locale-storage';
 
 /**
  * 客户端语言检测 Hook

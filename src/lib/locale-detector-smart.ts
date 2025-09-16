@@ -6,16 +6,16 @@
 
 import type { Locale } from '@/types/i18n';
 import { logger } from '@/lib/logger';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from './locale-constants';
-import type { LocaleDetectionResult } from './locale-detection-types';
-import { BaseLocaleDetector } from './locale-detector-base';
-import type { DetectionSource } from './locale-detector-constants';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
+import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
+import { BaseLocaleDetector } from '@/lib/locale-detector-base';
+import type { DetectionSource } from '@/lib/locale-detector-constants';
 import {
   CONFIDENCE_WEIGHTS,
   DETECTION_SOURCES,
   QUALITY_THRESHOLDS,
 } from './locale-detector-constants';
-import { LocaleStorageManager } from './locale-storage';
+import { LocaleStorageManager } from '@/lib/locale-storage';
 
 /**
  * 检测结果接口

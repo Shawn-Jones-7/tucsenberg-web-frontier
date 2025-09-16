@@ -15,9 +15,9 @@ import type {
   CacheStats,
   PreloadConfig,
 } from './i18n-cache-types';
-import { LRUCache } from './i18n-lru-cache';
-import { I18nMetricsCollector } from './i18n-metrics-collector';
-import { TranslationPreloader } from './i18n-preloader';
+import { LRUCache } from '@/lib/i18n-lru-cache';
+import { I18nMetricsCollector } from '@/lib/i18n-metrics-collector';
+import { TranslationPreloader } from '@/lib/i18n-preloader';
 
 // 主缓存管理器实现
 export class I18nCacheManager implements CacheManager {

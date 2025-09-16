@@ -1,5 +1,5 @@
 import type { WebVitalsMonitor } from '@/lib/web-vitals-monitor';
-import type { SimpleWebVitals } from './components';
+import type { SimpleWebVitals } from '@/app/[locale]/diagnostics/components';
 
 // 常量定义 - 避免魔法数字
 export const HISTORY_DISPLAY_LIMIT = 10;

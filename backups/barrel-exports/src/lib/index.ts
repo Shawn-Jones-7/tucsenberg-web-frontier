@@ -4,7 +4,7 @@
  */
 
 // 重新导出共享工具函数
-export * from '../shared/utils';
+export * from '@/../backups/barrel-exports/src/shared/utils';
 
 // 未来可以添加更多工具模块的导出
 // export * from './validations';

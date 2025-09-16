@@ -6,7 +6,7 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import type { AdvancedCacheConfig } from './i18n-cache-types-advanced';
+import type { AdvancedCacheConfig } from '@/lib/i18n-cache-types-advanced';
 import type {
   CacheConfig,
   CacheConfigValidation,

@@ -1,5 +1,5 @@
 import { memo } from 'react';
-import { EnhancedLocaleSwitcherComponent } from './locale-switcher/enhanced-locale-switcher-component';
+import { EnhancedLocaleSwitcherComponent } from '@/components/i18n/locale-switcher/enhanced-locale-switcher-component';
 
 export const EnhancedLocaleSwitcher = memo(EnhancedLocaleSwitcherComponent);
 EnhancedLocaleSwitcher.displayName = 'EnhancedLocaleSwitcher';

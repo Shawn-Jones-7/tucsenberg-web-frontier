@@ -11,13 +11,13 @@ import {
   getStorageStats,
   performHealthCheck,
 } from './locale-storage-analytics-core';
-import { AccessLogger, ErrorLogger } from './locale-storage-analytics-events';
+import { AccessLogger, ErrorLogger } from '@/lib/locale-storage-analytics-events';
 import {
   getPerformanceMetrics,
   getUsagePatterns,
   getUsageTrends,
 } from './locale-storage-analytics-performance';
-import type { StorageHealthCheck, StorageStats } from './locale-storage-types';
+import type { StorageHealthCheck, StorageStats } from '@/lib/locale-storage-types';
 
 // ==================== 缓存管理 ====================
 

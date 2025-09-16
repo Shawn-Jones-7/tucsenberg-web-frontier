@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { METRIC_CONFIGS, MetricCard, ScoreCard } from './diagnostics-constants';
-import { formatMetric, getMetricStatus, type SimpleWebVitals } from './utils';
+import { METRIC_CONFIGS, MetricCard, ScoreCard } from '@/app/[locale]/diagnostics/diagnostics-constants';
+import { formatMetric, getMetricStatus, type SimpleWebVitals } from '@/app/[locale]/diagnostics/utils';
 
 // 当前指标显示组件属性接口
 interface CurrentMetricsProps {

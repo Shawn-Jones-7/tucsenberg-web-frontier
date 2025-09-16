@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { FormShowcase } from '../form-showcase';
+import { FormShowcase } from '@/components/home/showcase/form-showcase';
 
 // Mock翻译函数
 const mockT = vi.fn((key: string) => {

@@ -13,7 +13,7 @@ import type {
   CacheWarmingConfig,
   DEFAULT_ADVANCED_CACHE_CONFIG,
 } from './i18n-cache-types-advanced';
-import { CacheConfigFactory } from './i18n-cache-types-advanced';
+import { CacheConfigFactory } from '@/../backups/barrel-exports/src/lib/i18n-cache-types-advanced';
 import type {
   CACHE_CONSTANTS,
   CacheConfig,
@@ -81,10 +81,10 @@ import {
  */
 
 // 重新导出所有模块的功能
-export * from './i18n-cache-types-base';
-export * from './i18n-cache-types-interfaces';
-export * from './i18n-cache-types-advanced';
-export * from './i18n-cache-types-utils';
+export * from '@/../backups/barrel-exports/src/lib/i18n-cache-types-base';
+export * from '@/../backups/barrel-exports/src/lib/i18n-cache-types-interfaces';
+export * from '@/../backups/barrel-exports/src/lib/i18n-cache-types-advanced';
+export * from '@/../backups/barrel-exports/src/lib/i18n-cache-types-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 

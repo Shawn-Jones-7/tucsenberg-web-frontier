@@ -14,7 +14,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { SocialIconLink, SocialIconMapper } from '../social-icons';
+import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Mapper & Links Tests - Index', () => {
   let user: ReturnType<typeof userEvent.setup>;

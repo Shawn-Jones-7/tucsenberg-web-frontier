@@ -13,7 +13,7 @@ import type {
   WhatsAppConfig,
   WhatsAppServiceOptions,
 } from './whatsapp-service-config';
-import type { WhatsAppError } from './whatsapp-service-errors';
+import type { WhatsAppError } from '@/types/whatsapp-service-errors';
 import type {
   ServiceHealth,
   ServiceMetrics,
@@ -383,14 +383,12 @@ export function isWhatsAppService(
 
   const service = obj as Partial<WhatsAppServiceInterface>;
 
-  return !!(
-    typeof service.initialize === 'function' &&
+  return Boolean(typeof service.initialize === 'function' &&
     typeof service.getStatus === 'function' &&
     typeof service.getHealth === 'function' &&
     typeof service.sendMessage === 'function' &&
     typeof service.on === 'function' &&
-    typeof service.off === 'function'
-  );
+    typeof service.off === 'function');
 }
 
 /**

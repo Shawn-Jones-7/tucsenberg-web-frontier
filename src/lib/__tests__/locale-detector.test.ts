@@ -4,7 +4,7 @@ import type {
   MockStorageManager,
   UnsafeLocaleCode,
 } from '@/types';
-import { SmartLocaleDetector } from '../locale-detector';
+import { SmartLocaleDetector } from '@/lib/locale-detector';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockLocaleStorageManager, mockGeolocationAPI, mockNavigator } =

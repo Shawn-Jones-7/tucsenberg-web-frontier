@@ -9,10 +9,10 @@
 
 // 重新导出所有模块的功能
 // 导入各个功能模块
-import { LocaleCleanupManager } from './locale-storage-maintenance-cleanup';
-import { LocaleImportExportManager } from './locale-storage-maintenance-import-export';
-import { LocaleMaintenanceOperationsManager } from './locale-storage-maintenance-operations';
-import { LocaleValidationManager } from './locale-storage-maintenance-validation';
+import { LocaleCleanupManager } from '@/lib/locale-storage-maintenance-cleanup';
+import { LocaleImportExportManager } from '@/lib/locale-storage-maintenance-import-export';
+import { LocaleMaintenanceOperationsManager } from '@/lib/locale-storage-maintenance-operations';
+import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
 import type {
   ExportData,
   ImportData,
@@ -20,10 +20,10 @@ import type {
   StorageOperationResult,
 } from './locale-storage-types';
 
-export { LocaleCleanupManager } from './locale-storage-maintenance-cleanup';
-export { LocaleValidationManager } from './locale-storage-maintenance-validation';
-export { LocaleMaintenanceOperationsManager } from './locale-storage-maintenance-operations';
-export { LocaleImportExportManager } from './locale-storage-maintenance-import-export';
+export { LocaleCleanupManager } from '@/lib/locale-storage-maintenance-cleanup';
+export { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
+export { LocaleMaintenanceOperationsManager } from '@/lib/locale-storage-maintenance-operations';
+export { LocaleImportExportManager } from '@/lib/locale-storage-maintenance-import-export';
 
 /**
  * 语言存储维护管理器 - 统一接口

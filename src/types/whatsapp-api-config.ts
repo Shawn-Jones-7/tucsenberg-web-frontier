@@ -59,4 +59,4 @@ export {
 } from './whatsapp-api-config/errors';
 
 // 重新导出工具函数
-export { ConfigUtils } from './whatsapp-api-config/utils';
+export { ConfigUtils } from '@/types/whatsapp-api-config/utils';

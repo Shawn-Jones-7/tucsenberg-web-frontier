@@ -16,7 +16,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Badge } from '../badge';
+import { Badge } from '@/components/ui/badge';
 
 describe('Badge Content - Special Characters Tests', () => {
   describe('特殊字符渲染', () => {

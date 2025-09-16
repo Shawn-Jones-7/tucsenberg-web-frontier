@@ -1,3 +1,5 @@
+import { COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+
 /**
  * 性能监控核心工具冲突检查
  * Performance Monitoring Core Tool Conflict Detection
@@ -179,7 +181,7 @@ export class PerformanceToolConflictChecker {
 
     // 检查PerformanceObserver是否被多次使用
     const performanceObserverCount = this.countPerformanceObservers();
-    if (performanceObserverCount > 3) {
+    if (performanceObserverCount > COUNT_TRIPLE) {
       warnings.push(
         `检测到 ${performanceObserverCount} 个 PerformanceObserver 实例，可能影响性能`,
       );
@@ -193,7 +195,7 @@ export class PerformanceToolConflictChecker {
       warnings.push(`检测到 ${userTimingMarks} 个性能标记，建议定期清理`);
     }
 
-    if (userTimingMeasures > 50) {
+    if (userTimingMeasures > PERCENTAGE_HALF) {
       warnings.push(`检测到 ${userTimingMeasures} 个性能测量，建议定期清理`);
     }
 
@@ -235,7 +237,7 @@ export class PerformanceToolConflictChecker {
       )
         devToolsCount += 1;
 
-      if (devToolsCount > 2) {
+      if (devToolsCount > COUNT_PAIR) {
         warnings.push(
           `开发环境中检测到 ${devToolsCount} 个开发者工具，可能影响性能测试准确性`,
         );
@@ -278,7 +280,7 @@ export class PerformanceToolConflictChecker {
       ),
     );
 
-    if (monitoringTools.length > 2) {
+    if (monitoringTools.length > COUNT_PAIR) {
       warnings.push(
         `检测到多个监控工具: ${monitoringTools.join(', ')}，可能导致性能开销`,
       );
@@ -290,7 +292,7 @@ export class PerformanceToolConflictChecker {
       ),
     );
 
-    if (analyticsTools.length > 2) {
+    if (analyticsTools.length > COUNT_PAIR) {
       warnings.push(
         `检测到多个分析工具: ${analyticsTools.join(', ')}，建议整合数据收集`,
       );
@@ -340,7 +342,7 @@ export class PerformanceToolConflictChecker {
       recommendations.push('考虑使用统一的监控平台来减少工具冲突');
     }
 
-    if (detectedTools.length > 5) {
+    if (detectedTools.length > COUNT_FIVE) {
       recommendations.push('检测到较多监控工具，建议评估每个工具的必要性');
       recommendations.push('考虑使用条件加载来减少生产环境的工具数量');
     }
@@ -395,7 +397,7 @@ export class PerformanceToolConflictChecker {
     const loadListeners = this.getEventListenerCount('load');
     const performanceListeners = this.getEventListenerCount('DOMContentLoaded');
 
-    return loadListeners > 2 || performanceListeners > 2;
+    return loadListeners > COUNT_PAIR || performanceListeners > COUNT_PAIR;
   }
 
   /**
@@ -434,26 +436,26 @@ export class PerformanceToolConflictChecker {
 
     const toolDetails = {
       'React DevTools': {
-        detected: !!(window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-          .__REACT_DEVTOOLS_GLOBAL_HOOK__,
+        detected: Boolean((window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
+          .__REACT_DEVTOOLS_GLOBAL_HOOK__),
         impact: 'low' as const,
         description: 'React 开发者工具，用于调试 React 组件',
       },
       'Redux DevTools': {
-        detected: !!(window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
-          .__REDUX_DEVTOOLS_EXTENSION__,
+        detected: Boolean((window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
+          .__REDUX_DEVTOOLS_EXTENSION__),
         impact: 'low' as const,
         description: 'Redux 开发者工具，用于调试状态管理',
       },
       'Sentry': {
-        detected: !!(window as { Sentry?: unknown }).Sentry,
+        detected: Boolean((window as { Sentry?: unknown }).Sentry),
         impact: 'medium' as const,
         description: '错误监控和性能监控平台',
       },
       'Google Analytics': {
         detected:
-          !!(window as { gtag?: unknown; ga?: unknown }).gtag ||
-          !!(window as { gtag?: unknown; ga?: unknown }).ga,
+          Boolean((window as { gtag?: unknown; ga?: unknown }).gtag) ||
+          Boolean((window as { gtag?: unknown; ga?: unknown }).ga),
         impact: 'medium' as const,
         description: '网站分析和用户行为跟踪工具',
       },
@@ -486,7 +488,7 @@ export class PerformanceToolConflictChecker {
             '移除不必要的开发工具',
             '整合监控工具功能',
           ],
-          timeline: '1-2 天内完成',
+          timeline: '1-COUNT_PAIR 天内完成',
         };
       }
 
@@ -501,7 +503,7 @@ export class PerformanceToolConflictChecker {
       return {
         priority: 'low' as const,
         actions: ['监控工具使用情况', '定期检查工具冲突', '优化工具配置'],
-        timeline: '2 周内完成',
+        timeline: 'COUNT_PAIR 周内完成',
       };
     });
   }

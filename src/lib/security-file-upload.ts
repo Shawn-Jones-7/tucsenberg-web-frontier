@@ -1,3 +1,5 @@
+import { COUNT_PAIR, HEX_BYTE_MAX, HEX_JPEG_MARKER_1, HEX_PDF_MARKER, HEX_PDF_SIGNATURE_1, HEX_PNG_SIGNATURE_1, HEX_PNG_SIGNATURE_2, HEX_PNG_SIGNATURE_3, HEX_PNG_SIGNATURE_4, HEX_PNG_SIGNATURE_5, HEX_PNG_SIGNATURE_6, HEX_ZIP_SIGNATURE, MAGIC_255, MAGIC_HEX_03, MAGIC_HEX_04 } from '@/constants/magic-numbers';
+
 /**
  * 文件上传安全验证工具
  * File upload security validation utilities
@@ -141,7 +143,7 @@ export function validateFileUpload(
 
   // Check for double extensions (e.g., file.pdf.exe)
   const parts = fileName.split('.');
-  if (parts.length > 2) {
+  if (parts.length > COUNT_PAIR) {
     for (let i = 1; i < parts.length - 1; i++) {
       const ext = `.${parts[i]}`;
       if (DANGEROUS_EXTENSIONS.includes(ext as any)) {
@@ -171,10 +173,10 @@ export function validateFileUpload(
   }
 
   // Check file name length
-  if (fileName.length > 255) {
+  if (fileName.length > MAGIC_255) {
     return {
       valid: false,
-      error: 'File name is too long (maximum 255 characters)',
+      error: 'File name is too long (maximum MAGIC_255 characters)',
     };
   }
 
@@ -204,11 +206,11 @@ export async function validateFileSignature(
 
     // Check for common file signatures
     const signatures = {
-      'image/jpeg': [0xff, 0xd8, 0xff],
-      'image/png': [0x89, 0x50, 0x4e, 0x47],
-      'image/gif': [0x47, 0x49, 0x46],
-      'application/pdf': [0x25, 0x50, 0x44, 0x46],
-      'application/zip': [0x50, 0x4b, 0x03, 0x04],
+      'image/jpeg': [HEX_BYTE_MAX, HEX_JPEG_MARKER_1, HEX_BYTE_MAX],
+      'image/png': [HEX_PNG_SIGNATURE_1, HEX_PNG_SIGNATURE_2, HEX_PNG_SIGNATURE_3, HEX_PNG_SIGNATURE_4],
+      'image/gif': [HEX_PNG_SIGNATURE_4, HEX_PNG_SIGNATURE_5, HEX_PNG_SIGNATURE_6],
+      'application/pdf': [HEX_PDF_MARKER, HEX_PNG_SIGNATURE_2, HEX_PDF_SIGNATURE_1, HEX_PNG_SIGNATURE_6],
+      'application/zip': [HEX_PNG_SIGNATURE_2, HEX_ZIP_SIGNATURE, MAGIC_HEX_03, MAGIC_HEX_04],
     };
 
     // Get the declared MIME type
@@ -247,9 +249,9 @@ export async function validateFileSignature(
 export function sanitizeFileName(fileName: string): string {
   return fileName
     .replace(/[^a-zA-Z0-9._-]/g, '_') // Replace special chars with underscore
-    .replace(/_{2,}/g, '_') // Replace multiple underscores with single
+    .replace(/_{COUNT_PAIR,}/g, '_') // Replace multiple underscores with single
     .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
-    .substring(0, 255); // Limit length
+    .substring(0, MAGIC_255); // Limit length
 }
 
 /**

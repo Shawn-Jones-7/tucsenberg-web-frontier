@@ -78,7 +78,7 @@ function fixImportStatements(filePath) {
           console.log(`✅ 修复import: ${newImport.substring(0, 100)}...`);
         } else {
           // 如果没有使用任何常量，删除import语句
-          content = content.replace(fullImport + '\n', '');
+          content = content.replace(`${fullImport  }\n`, '');
           console.log(`🗑️  删除未使用的import语句`);
         }
 

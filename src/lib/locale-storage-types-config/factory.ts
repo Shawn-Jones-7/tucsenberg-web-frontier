@@ -3,12 +3,12 @@
  * Locale Storage System Configuration Factory
  */
 
-import type { EnvironmentType } from '../locale-storage-types-base';
-import type { ValidationResult } from '../locale-storage-types-data';
-import { DEFAULT_STORAGE_CONFIG } from './defaults';
-import type { StorageConfig } from './interfaces';
-import { CONFIG_PRESETS } from './presets';
-import { CONFIG_VALIDATION_RULES } from './validation';
+import type { EnvironmentType } from '@/lib/locale-storage-types-base';
+import type { ValidationResult } from '@/lib/locale-storage-types-data';
+import { DEFAULT_STORAGE_CONFIG } from '@/lib/locale-storage-types-config/defaults';
+import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
+import { CONFIG_PRESETS } from '@/lib/locale-storage-types-config/presets';
+import { CONFIG_VALIDATION_RULES } from '@/lib/locale-storage-types-config/validation';
 
 /**
  * 配置工厂函数

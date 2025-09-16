@@ -1,7 +1,7 @@
 // 导入核心功能
-import { PerformanceMonitoringCore } from './performance-monitoring-core';
-import type { PerformanceConfig } from './performance-monitoring-types';
-import { generateEnvironmentConfig } from './performance-monitoring-types';
+import { PerformanceMonitoringCore } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core';
+import type { PerformanceConfig } from '@/../backups/barrel-exports/src/lib/performance-monitoring-types';
+import { generateEnvironmentConfig } from '@/../backups/barrel-exports/src/lib/performance-monitoring-types';
 
 /**
  * 性能监控协调器 - 主入口文件
@@ -16,9 +16,9 @@ import { generateEnvironmentConfig } from './performance-monitoring-types';
  */
 
 // 重新导出所有模块的类型和功能
-export * from './performance-monitoring-types';
-export * from './performance-monitoring-core';
-export * from './performance-monitoring-integrations';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-types';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-core';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations';
 
 /**
  * 性能监控协调器 - 向后兼容的主类

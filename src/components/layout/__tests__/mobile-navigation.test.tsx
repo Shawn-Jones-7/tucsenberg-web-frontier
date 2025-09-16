@@ -2,8 +2,8 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MobileMenuButton, MobileNavigation } from '../mobile-navigation';
-import { renderWithProviders } from './test-utils';
+import { MobileMenuButton, MobileNavigation } from '@/components/layout/mobile-navigation';
+import { renderWithProviders } from '@/components/layout/__tests__/test-utils';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

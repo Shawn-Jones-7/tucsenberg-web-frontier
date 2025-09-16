@@ -4,6 +4,8 @@
  */
 
 import type { Locale } from '@/types/i18n';
+import { MAGIC_999, COUNT_PAIR } from '@/constants/magic-numbers';
+
 import type {
   IPreloader,
   PreloadOptions,
@@ -64,13 +66,13 @@ export const priorityStrategy: PreloadStrategy = async (
   // 定义语言优先级
   const priorityMap: Record<Locale, number> = {
     en: 1,
-    zh: 2,
+    zh: COUNT_PAIR,
   };
 
   // 按优先级排序
   const sortedLocales = locales.sort((a, b) => {
-    const priorityA = priorityMap[a] || 999;
-    const priorityB = priorityMap[b] || 999;
+    const priorityA = priorityMap[a] || MAGIC_999;
+    const priorityB = priorityMap[b] || MAGIC_999;
     return priorityA - priorityB;
   });
 
@@ -78,7 +80,7 @@ export const priorityStrategy: PreloadStrategy = async (
   for (const locale of sortedLocales) {
     await preloader.preloadLocale(locale, {
       ...options,
-      priority: priorityMap[locale] <= 2 ? 'high' : 'normal',
+      priority: priorityMap[locale] <= COUNT_PAIR ? 'high' : 'normal',
     });
   }
 };

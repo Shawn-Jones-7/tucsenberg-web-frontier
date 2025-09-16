@@ -15,10 +15,10 @@ import type {
   PageMetadata,
   ParsedContent,
 } from '@/types/content';
-import { getContentFiles, parseContentFile } from '../content-parser';
-import { getContentConfig, PAGES_DIR, POSTS_DIR } from '../content-utils';
-import { filterPosts } from './filters';
-import { paginatePosts, sortPosts } from './sorting';
+import { getContentFiles, parseContentFile } from '@/lib/content-parser';
+import { getContentConfig, PAGES_DIR, POSTS_DIR } from '@/lib/content-utils';
+import { filterPosts } from '@/lib/content-query/filters';
+import { paginatePosts, sortPosts } from '@/lib/content-query/sorting';
 
 /**
  * Get all blog posts

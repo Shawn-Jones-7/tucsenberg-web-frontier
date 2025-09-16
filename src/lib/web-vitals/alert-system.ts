@@ -4,15 +4,15 @@
  */
 
 // 导出核心类
-export { PerformanceAlertSystem } from './alert-system-core';
+export { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system-core';
 
 // 导出子模块
-export { AlertSystemChecker } from './alert-system-checker';
-export { AlertSystemSender } from './alert-system-sender';
+export { AlertSystemChecker } from '@/lib/web-vitals/alert-system-checker';
+export { AlertSystemSender } from '@/lib/web-vitals/alert-system-sender';
 
 // 导出类型
-export type { AlertInfo } from './alert-system-checker';
-export type { AlertHistoryEntry } from './alert-system-sender';
+export type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
+export type { AlertHistoryEntry } from '@/lib/web-vitals/alert-system-sender';
 
 // 导出原有类型
 export type {

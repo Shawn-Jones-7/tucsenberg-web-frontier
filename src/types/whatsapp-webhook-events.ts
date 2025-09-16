@@ -5,12 +5,14 @@
  * 提供WhatsApp webhook事件的类型定义和处理接口
  */
 
-import type { WhatsAppContact } from './whatsapp-base-types';
+import type { WhatsAppContact } from '@/types/whatsapp-base-types';
+import { COUNT_PAIR, COUNT_TRIPLE, COUNT_QUAD, COUNT_FIVE, MAGIC_6, DAYS_PER_WEEK, MAGIC_8, MAGIC_9, COUNT_TEN, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import type {
   MessageStatusUpdate,
   WebhookError,
 } from './whatsapp-webhook-base';
-import type { IncomingWhatsAppMessage } from './whatsapp-webhook-messages';
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 
 /**
  * 消息接收事件
@@ -385,24 +387,24 @@ export function getEventPriority(event: WebhookEvent): number {
     case 'security_event':
       return 1; // Highest priority
     case 'webhook_error':
-      return 2;
+      return COUNT_PAIR;
     case 'message_received':
-      return 3;
+      return COUNT_TRIPLE;
     case 'message_status':
-      return 4;
+      return COUNT_QUAD;
     case 'template_status':
-      return 5;
+      return COUNT_FIVE;
     case 'phone_number_quality':
-      return 6;
+      return MAGIC_6;
     case 'account_update':
-      return 7;
+      return DAYS_PER_WEEK;
     case 'message_read':
     case 'message_delivery':
-      return 8;
+      return MAGIC_8;
     case 'user_status_change':
-      return 9; // Lowest priority
+      return MAGIC_9; // Lowest priority
     default:
-      return 10;
+      return COUNT_TEN;
   }
 }
 
@@ -413,7 +415,7 @@ export function shouldRetryEvent(event: WebhookEvent, error: Error): boolean {
   }
 
   // Don't retry on client errors (4xx)
-  if (error.message.includes('4')) {
+  if (error.message.includes('COUNT_QUAD')) {
     return false;
   }
 
@@ -426,7 +428,7 @@ export function getEventTimestamp(event: WebhookEvent): Date {
 
 export function isEventExpired(
   event: WebhookEvent,
-  maxAgeMs: number = 24 * 60 * 60 * 1000,
+  maxAgeMs: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000,
 ): boolean {
   const eventTime = getEventTimestamp(event);
   const now = new Date();

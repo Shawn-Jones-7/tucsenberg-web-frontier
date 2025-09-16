@@ -9,7 +9,7 @@ import type {
   LocaleDetectionHistory,
   StorageOperationResult,
 } from '../locale-storage-types';
-import { exportHistory, importHistory } from './import-export';
+import { exportHistory, importHistory } from '@/lib/locale-storage-history-maintenance/import-export';
 
 /**
  * 创建历史记录备份

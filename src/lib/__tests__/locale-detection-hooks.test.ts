@@ -1,8 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { UnsafeLocaleCode } from '@/types';
-import { DEFAULT_LOCALE } from '../locale-constants';
-import { useClientLocaleDetection } from '../locale-detection-hooks';
-import type { LocaleDetectionResult } from '../locale-detection-types';
+import { DEFAULT_LOCALE } from '@/lib/locale-constants';
+import { useClientLocaleDetection } from '@/lib/locale-detection-hooks';
+import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockLocaleStorageManager, mockNavigator } = vi.hoisted(() => ({

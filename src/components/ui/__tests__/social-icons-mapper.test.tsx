@@ -16,7 +16,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SocialIconMapper } from '../social-icons';
+import { SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Mapper Tests', () => {
   describe('SocialIconMapper', () => {

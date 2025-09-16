@@ -8,15 +8,15 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
   UserLocalePreference,
   ValidationResult,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from './locale-storage-types';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 存储验证数据结构
@@ -68,14 +68,14 @@ export class LocaleValidationManager {
           timestamp: Date.now(),
           data: { issues },
         };
-      } else {
+      } 
         return {
           success: false,
           error: `发现 ${issues.length} 个问题`,
           timestamp: Date.now(),
           data: { issues },
         };
-      }
+      
     } catch (error) {
       return {
         success: false,
@@ -324,14 +324,14 @@ export class LocaleValidationManager {
           timestamp: Date.now(),
           data: { issues, warnings },
         };
-      } else {
+      } 
         return {
           success: false,
           error: `发现 ${issues.length} 个一致性问题`,
           timestamp: Date.now(),
           data: { issues, warnings },
         };
-      }
+      
     } catch (error) {
       return {
         success: false,

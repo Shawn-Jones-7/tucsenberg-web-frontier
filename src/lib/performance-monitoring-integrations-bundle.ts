@@ -6,6 +6,8 @@
  */
 
 import { logger } from '@/lib/logger';
+import { COUNT_TEN, MAGIC_512, COUNT_FIVE, BYTES_PER_KB, MAGIC_0_8, COUNT_PAIR, PERCENTAGE_HALF, MAGIC_8, PERCENTAGE_QUARTER } from '@/constants/magic-numbers';
+
 import { KB, MB } from '@/constants/units';
 import type {
   PerformanceConfig,
@@ -72,7 +74,7 @@ export function useBundleAnalyzerIntegration(
           chunkName,
           size,
           moduleCount: modules.length,
-          modules: modules.slice(0, 10), // 只记录前10个模块
+          modules: modules.slice(0, COUNT_TEN), // 只记录前COUNT_TEN个模块
           timestamp: Date.now(),
         },
         tags: ['bundle-analyzer', 'chunk-info'],
@@ -197,7 +199,7 @@ export class BundleAnalyzerAnalyzer {
     });
 
     // 检查是否超过大小限制 (使用bundle配置的阈值)
-    const maxSize = this.config.bundle?.thresholds?.size || 512 * KB; // 512KB
+    const maxSize = this.config.bundle?.thresholds?.size || MAGIC_512 * KB; // 512KB
     if (size > maxSize) {
       logger.warn(`Chunk ${chunkName} exceeds size limit`, {
         size: this.formatSize(size),
@@ -239,19 +241,19 @@ export class BundleAnalyzerAnalyzer {
         }),
       }))
       .sort((a, b) => b.size - a.size)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     const recommendations: string[] = [];
 
     // 生成优化建议
-    if (totalSize > 5 * 1024 * 1024) {
+    if (totalSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
       // 5MB
       recommendations.push(
         'Total bundle size is large. Consider code splitting and lazy loading.',
       );
     }
 
-    const largeBundles = largestBundles.filter((b) => b.size > 1024 * 1024); // 1MB
+    const largeBundles = largestBundles.filter((b) => b.size > BYTES_PER_KB * BYTES_PER_KB); // 1MB
     if (largeBundles.length > 0) {
       recommendations.push(
         `${largeBundles.length} bundles are larger than 1MB. Consider splitting them.`,
@@ -259,7 +261,7 @@ export class BundleAnalyzerAnalyzer {
     }
 
     const poorCompressionBundles = largestBundles.filter(
-      (b) => b.compressionRatio && b.compressionRatio > 0.8,
+      (b) => b.compressionRatio && b.compressionRatio > MAGIC_0_8,
     );
     if (poorCompressionBundles.length > 0) {
       recommendations.push(
@@ -303,10 +305,10 @@ export class BundleAnalyzerAnalyzer {
         name,
         size: chunk.size,
         moduleCount: chunk.modules.length,
-        topModules: chunk.modules.slice(0, 5),
+        topModules: chunk.modules.slice(0, COUNT_FIVE),
       }))
       .sort((a, b) => b.size - a.size)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     // 查找重复模块
     const moduleChunkMap = new Map<string, string[]>();
@@ -327,7 +329,7 @@ export class BundleAnalyzerAnalyzer {
         totalSize: chunks.length * 1000, // 估算大小
       }))
       .sort((a, b) => b.totalSize - a.totalSize)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     return {
       totalChunks: chunks.length,
@@ -346,12 +348,12 @@ export class BundleAnalyzerAnalyzer {
     let size = bytes;
     let unitIndex = 0;
 
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
+    while (size >= BYTES_PER_KB && unitIndex < units.length - 1) {
+      size /= BYTES_PER_KB;
       unitIndex += 1;
     }
 
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
+    return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
   }
 
   /**
@@ -364,7 +366,7 @@ export class BundleAnalyzerAnalyzer {
     const chunkReport = this.generateChunkReport();
 
     // Bundle优化建议
-    if (bundleReport.totalSize > 5 * 1024 * 1024) {
+    if (bundleReport.totalSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
       suggestions.push(
         'Consider implementing code splitting to reduce initial bundle size',
       );
@@ -372,7 +374,7 @@ export class BundleAnalyzerAnalyzer {
 
     if (bundleReport.largestBundles.length > 0) {
       const largest = bundleReport.largestBundles[0];
-      if (largest && largest.size > 2 * 1024 * 1024) {
+      if (largest && largest.size > COUNT_PAIR * BYTES_PER_KB * BYTES_PER_KB) {
         suggestions.push(
           `Bundle "${largest.name}" is very large (${this.formatSize(largest.size)}). Consider splitting it.`,
         );
@@ -386,7 +388,7 @@ export class BundleAnalyzerAnalyzer {
       );
     }
 
-    if (chunkReport.totalChunks > 50) {
+    if (chunkReport.totalChunks > PERCENTAGE_HALF) {
       suggestions.push(
         'Large number of chunks detected. Consider consolidating smaller chunks.',
       );
@@ -426,9 +428,9 @@ export const BundleAnalyzerUtils = {
    * Get size rating
    */
   getSizeRating(size: number): 'small' | 'medium' | 'large' | 'huge' {
-    if (size < 100 * 1024) return 'small'; // < 100KB
-    if (size < 500 * 1024) return 'medium'; // < 500KB
-    if (size < 1024 * 1024) return 'large'; // < 1MB
+    if (size < 100 * BYTES_PER_KB) return 'small'; // < 100KB
+    if (size < 500 * BYTES_PER_KB) return 'medium'; // < 500KB
+    if (size < BYTES_PER_KB * BYTES_PER_KB) return 'large'; // < 1MB
     return 'huge'; // >= 1MB
   },
 
@@ -441,9 +443,9 @@ export const BundleAnalyzerUtils = {
     connectionSpeed: 'slow' | 'fast' | 'average' = 'average',
   ): number {
     const speeds = {
-      slow: (1024 * 1024) / 8, // 1 Mbps in bytes per second
-      average: (5 * 1024 * 1024) / 8, // 5 Mbps
-      fast: (25 * 1024 * 1024) / 8, // 25 Mbps
+      slow: (BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // 1 Mbps in bytes per second
+      average: (COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // COUNT_FIVE Mbps
+      fast: (PERCENTAGE_QUARTER * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // PERCENTAGE_QUARTER Mbps
     };
 
     return (size / speeds[connectionSpeed]) * 1000; // Return in milliseconds

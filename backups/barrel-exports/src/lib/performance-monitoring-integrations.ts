@@ -1,12 +1,12 @@
 // 向后兼容的重新导出
-import type { BundleAnalyzerIntegration } from './performance-monitoring-integrations-bundle';
+import type { BundleAnalyzerIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-bundle';
 import {
   BundleAnalyzerAnalyzer,
   BundleAnalyzerUtils,
   useBundleAnalyzerIntegration,
   validateBundleAnalyzerConfig,
 } from './performance-monitoring-integrations-bundle';
-import type { ReactScanIntegration } from './performance-monitoring-integrations-react-scan';
+import type { ReactScanIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-react-scan';
 import {
   ReactScanAnalyzer,
   ReactScanUtils,
@@ -24,7 +24,7 @@ import {
   validateWebVitalsConfig,
   WebVitalsAnalyzer,
 } from './performance-monitoring-integrations-vitals';
-import type { WebEvalAgentIntegration } from './performance-monitoring-integrations-web-eval';
+import type { WebEvalAgentIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-web-eval';
 import {
   useWebEvalAgentIntegration,
   validateWebEvalAgentConfig,
@@ -43,10 +43,10 @@ import type {
  */
 
 // 重新导出所有模块的功能
-export * from './performance-monitoring-integrations-react-scan';
-export * from './performance-monitoring-integrations-web-eval';
-export * from './performance-monitoring-integrations-bundle';
-export * from './performance-monitoring-integrations-vitals';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-react-scan';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-web-eval';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-bundle';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-vitals';
 
 // ==================== 向后兼容的类型别名 ====================
 

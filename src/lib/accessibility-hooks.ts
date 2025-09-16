@@ -4,8 +4,8 @@
  * 无障碍性支持库 - React Hooks
  * 提供React Hook和便捷函数
  */
-import { AccessibilityManager } from './accessibility-manager';
-import { AccessibilityUtils } from './accessibility-utils';
+import { AccessibilityManager } from '@/lib/accessibility-manager';
+import { AccessibilityUtils } from '@/lib/accessibility-utils';
 
 // 全局实例
 export const accessibilityManager = new AccessibilityManager();

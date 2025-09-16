@@ -9,8 +9,8 @@ import {
   type ColorSchemePreference,
   type WCAGLevel,
 } from './accessibility-types';
-import { checkContrastCompliance, type OKLCHColor } from './colors';
-import { logger } from './logger';
+import { checkContrastCompliance, type OKLCHColor } from '@/lib/colors';
+import { logger } from '@/lib/logger';
 
 /**
  * 无障碍性工具类

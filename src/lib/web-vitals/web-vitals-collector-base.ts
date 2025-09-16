@@ -5,9 +5,11 @@
 
 'use client';
 
-import { DEVICE_DEFAULTS } from './constants';
-import { WebVitalsObservers } from './observers';
-import type { DetailedWebVitals } from './types';
+import { DEVICE_DEFAULTS } from '@/lib/web-vitals/constants';
+import { COUNT_TEN } from '@/constants/magic-numbers';
+
+import { WebVitalsObservers } from '@/lib/web-vitals/observers';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
 /**
  * Web Vitals 收集器基础类
@@ -110,7 +112,7 @@ export class WebVitalsCollectorBase {
         type: this.getResourceType(resource.name),
       }))
       .sort((a, b) => b.duration - a.duration)
-      .slice(0, 10); // 只保留前10个最慢的资源
+      .slice(0, COUNT_TEN); // 只保留前COUNT_TEN个最慢的资源
 
     this.metrics.resourceTiming = {
       totalResources: resources.length,
@@ -162,9 +164,8 @@ export class WebVitalsCollectorBase {
    * 获取默认的设备信息
    */
   protected getDefaultDevice() {
-    const deviceMemory = (navigator as Navigator & { deviceMemory?: number })
-      .deviceMemory;
-    const hardwareConcurrency = navigator.hardwareConcurrency;
+    const {deviceMemory} = (navigator as Navigator & { deviceMemory?: number });
+    const {hardwareConcurrency} = navigator;
 
     return {
       ...(deviceMemory !== undefined && { memory: deviceMemory }),

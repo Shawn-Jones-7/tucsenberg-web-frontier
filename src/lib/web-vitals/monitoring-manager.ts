@@ -4,8 +4,8 @@
  */
 
 // 导出核心类
-export { PerformanceMonitoringManager } from './monitoring-manager-core';
+export { PerformanceMonitoringManager } from '@/lib/web-vitals/monitoring-manager-core';
 
 // 导出工具类
-export { MonitoringUtils } from './monitoring-utils';
-export { MonitoringReportGenerator } from './monitoring-report-generator';
+export { MonitoringUtils } from '@/lib/web-vitals/monitoring-utils';
+export { MonitoringReportGenerator } from '@/lib/web-vitals/monitoring-report-generator';

@@ -13,7 +13,7 @@ const isDev =
 function devOnly(fn: (...args: LogArgs) => void) {
   return (...args: LogArgs) => {
     if (isDev) {
-      // eslint-disable-next-line no-console
+       
       fn(...args);
     }
   };

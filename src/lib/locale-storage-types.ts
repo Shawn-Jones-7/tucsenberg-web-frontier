@@ -71,7 +71,7 @@ export type {
   DataExport,
   DataImportResult,
 } from './locale-storage-types-data';
-export type { MaintenanceOptions } from './locale-storage-types-data';
+export type { MaintenanceOptions } from '@/lib/locale-storage-types-data';
 export type {
   ExportData,
   ImportData,
@@ -134,5 +134,5 @@ export type {
 } from './locale-storage-types-data';
 
 // 配置别名（值与类型分别导出）
-export { DEFAULT_STORAGE_CONFIG as DefaultConfig } from './locale-storage-types-config';
-export type { StorageConfig as Config } from './locale-storage-types-config';
+export { DEFAULT_STORAGE_CONFIG as DefaultConfig } from '@/lib/locale-storage-types-config';
+export type { StorageConfig as Config } from '@/lib/locale-storage-types-config';

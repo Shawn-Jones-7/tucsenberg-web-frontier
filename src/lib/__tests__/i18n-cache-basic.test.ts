@@ -10,7 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { _Locale } from '@/types/i18n';
 import { _WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { i18nCache, I18nCacheManager } from '../i18n-cache';
+import { i18nCache, I18nCacheManager } from '@/lib/i18n-cache';
 
 // Mock localStorage
 const mockLocalStorage = {

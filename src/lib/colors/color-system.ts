@@ -2,8 +2,8 @@
  * 颜色系统工具类
  */
 
-import { darkThemeColors } from './dark-theme';
-import { lightThemeColors } from './light-theme';
+import { darkThemeColors } from '@/lib/colors/dark-theme';
+import { lightThemeColors } from '@/lib/colors/light-theme';
 import {
   calculateContrast,
   checkContrastCompliance,

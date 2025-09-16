@@ -45,7 +45,7 @@ function fixUnusedImportsInFile(filePath, errors) {
     return false;
   }
 
-  let content = fs.readFileSync(filePath, 'utf8');
+  const content = fs.readFileSync(filePath, 'utf8');
   let modified = false;
 
   // 按变量名分组处理

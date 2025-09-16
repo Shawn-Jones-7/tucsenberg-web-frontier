@@ -1,8 +1,8 @@
 'use client';
 
-import { ControlPanel } from './components';
-import { MainContent, PageHeader } from './page-components';
-import { useDiagnosticsData } from './page-hooks';
+import { ControlPanel } from '@/app/[locale]/diagnostics/components';
+import { MainContent, PageHeader } from '@/app/[locale]/diagnostics/page-components';
+import { useDiagnosticsData } from '@/app/[locale]/diagnostics/page-hooks';
 
 export default function DiagnosticsPage() {
   const {

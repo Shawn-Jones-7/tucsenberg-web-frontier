@@ -120,7 +120,7 @@ export const MEMORY_CONSTANTS = {
 } as const;
 
 /** MB常量 - 用于向后兼容 */
-export const MB = MEMORY_CONSTANTS.MB;
+export const {MB} = MEMORY_CONSTANTS;
 
 /** 分页和列表常量 */
 export const PAGINATION_CONSTANTS = {

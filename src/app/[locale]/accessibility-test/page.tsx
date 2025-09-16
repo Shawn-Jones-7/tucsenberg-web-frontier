@@ -6,11 +6,11 @@
 
 import { useState } from 'react';
 import { runAccessibilityTests } from '@/lib/accessibility-tester';
-import { AutomatedTestSection } from './components/automated-test-section';
-import { KeyboardShortcutsGuide } from './components/keyboard-shortcuts-guide';
-import { ManualTestGuide } from './components/manual-test-guide';
-import { ScreenReaderGuide } from './components/screen-reader-guide';
-import { TestTargetSection } from './components/test-target-section';
+import { AutomatedTestSection } from '@/app/[locale]/accessibility-test/components/automated-test-section';
+import { KeyboardShortcutsGuide } from '@/app/[locale]/accessibility-test/components/keyboard-shortcuts-guide';
+import { ManualTestGuide } from '@/app/[locale]/accessibility-test/components/manual-test-guide';
+import { ScreenReaderGuide } from '@/app/[locale]/accessibility-test/components/screen-reader-guide';
+import { TestTargetSection } from '@/app/[locale]/accessibility-test/components/test-target-section';
 
 export default function AccessibilityTestPage() {
   // const _t = useTranslations(); // TODO: Add translations for accessibility test page

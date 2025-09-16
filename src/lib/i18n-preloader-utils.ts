@@ -4,16 +4,16 @@
  */
 
 // 重新导出工厂函数
-export { createTranslationPreloader } from './i18n-preloader-utils/factory-functions';
+export { createTranslationPreloader } from '@/lib/i18n-preloader-utils/factory-functions';
 
 // 重新导出预加载器工厂类
-export { PreloaderFactory } from './i18n-preloader-utils/preloader-factory';
+export { PreloaderFactory } from '@/lib/i18n-preloader-utils/preloader-factory';
 
 // 重新导出预加载器管理器
-export { PreloaderManager } from './i18n-preloader-utils/preloader-manager';
+export { PreloaderManager } from '@/lib/i18n-preloader-utils/preloader-manager';
 
 // 重新导出工具函数
-export { PreloaderUtils } from './i18n-preloader-utils/preloader-utils';
+export { PreloaderUtils } from '@/lib/i18n-preloader-utils/preloader-utils';
 
 // 重新导出全局实例和便捷函数
 export {

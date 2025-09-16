@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useEnhancedTheme } from '../use-enhanced-theme';
+import { useEnhancedTheme } from '@/hooks/use-enhanced-theme';
 
 // Mock dependencies using vi.hoisted() to solve hoisting issues
 const {

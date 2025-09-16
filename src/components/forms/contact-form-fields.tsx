@@ -4,7 +4,7 @@
  */
 
 // Re-export all field components
-export { AdditionalFields } from './fields/additional-fields';
-export { CheckboxFields } from './fields/checkbox-fields';
-export { ContactFields } from './fields/contact-fields';
-export { NameFields } from './fields/name-fields';
+export { AdditionalFields } from '@/components/forms/fields/additional-fields';
+export { CheckboxFields } from '@/components/forms/fields/checkbox-fields';
+export { ContactFields } from '@/components/forms/fields/contact-fields';
+export { NameFields } from '@/components/forms/fields/name-fields';

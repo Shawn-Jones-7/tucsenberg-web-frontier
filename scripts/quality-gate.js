@@ -190,7 +190,7 @@ class QualityGate {
         gate.checks.coverage = coverageData.total;
 
         // 检查覆盖率阈值
-        const thresholds = this.config.gates.coverage.thresholds;
+        const {thresholds} = this.config.gates.coverage;
         const failedMetrics = [];
 
         Object.keys(thresholds).forEach((metric) => {

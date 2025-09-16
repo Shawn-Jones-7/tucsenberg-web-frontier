@@ -23,7 +23,7 @@
 
 // 开发工具组件的向后兼容导出
 import dynamic from 'next/dynamic';
-import { CoreDynamicComponents } from './dynamic-imports-core';
+import { CoreDynamicComponents } from '@/components/shared/dynamic-imports-core';
 
 export {
   CardSkeletonFallback,
@@ -43,8 +43,8 @@ export {
   withDynamicSuspense,
   withErrorBoundary,
 } from './dynamic-imports-base';
-export type { DynamicImportConfig } from './dynamic-imports-base';
-export { CoreDynamicComponents } from './dynamic-imports-core';
+export type { DynamicImportConfig } from '@/components/shared/dynamic-imports-base';
+export { CoreDynamicComponents } from '@/components/shared/dynamic-imports-core';
 
 // import { DevToolsDynamicComponents, DevelopmentOnlyComponents } from './dynamic-imports-devtools'; // 暂时禁用
 // import { I18nDynamicComponents } from './dynamic-imports-i18n'; // 暂时禁用

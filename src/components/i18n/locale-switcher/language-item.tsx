@@ -3,7 +3,7 @@ import { Check, Loader2 } from 'lucide-react';
 import type { Locale } from '@/types/i18n';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Link } from '@/i18n/routing';
-import { LANGUAGE_CONFIG } from './config';
+import { LANGUAGE_CONFIG } from '@/components/i18n/locale-switcher/config';
 
 interface LanguageItemProps {
   targetLocale: Locale;

@@ -19,4 +19,4 @@ export {
 } from './dynamic-imports/ui-components';
 
 // 重新导出配置
-export { CoreDynamicComponents } from './dynamic-imports/exports';
+export { CoreDynamicComponents } from '@/components/shared/dynamic-imports/exports';

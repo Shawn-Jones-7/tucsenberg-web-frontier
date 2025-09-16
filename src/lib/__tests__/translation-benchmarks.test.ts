@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import type { Locale } from '@/types/i18n';
-import { TranslationBenchmarks } from '../translation-benchmarks';
-import type { QualityBenchmark } from '../translation-quality-types';
+import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
+import type { QualityBenchmark } from '@/lib/translation-quality-types';
 
 describe('TranslationBenchmarks', () => {
   let benchmarks: TranslationBenchmarks;

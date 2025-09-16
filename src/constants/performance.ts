@@ -1,3 +1,5 @@
+import { COUNT_FIVE, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * 性能监控相关常量定义
  * 用于替换代码中的魔法数字，提高可维护性
@@ -19,9 +21,9 @@ export const PERFORMANCE_CONSTANTS = {
   // 监控配置
   MONITORING: {
     /** 数据收集间隔 (分钟) */
-    DATA_COLLECTION_INTERVAL: 5,
+    DATA_COLLECTION_INTERVAL: COUNT_FIVE,
     /** 数据收集时长 (分钟) */
-    DATA_COLLECTION_DURATION: 60,
+    DATA_COLLECTION_DURATION: SECONDS_PER_MINUTE,
     /** 监控间隔 (ms) */
     MONITORING_INTERVAL: 60000,
     /** 最大数据点数量 */
@@ -31,8 +33,8 @@ export const PERFORMANCE_CONSTANTS = {
   },
 
   // 数据保留配置
-  /** 默认数据保留时间 (ms) - 5分钟 */
-  DEFAULT_RETENTION_TIME: 5 * 60 * 1000,
+  /** 默认数据保留时间 (ms) - COUNT_FIVE分钟 */
+  DEFAULT_RETENTION_TIME: COUNT_FIVE * SECONDS_PER_MINUTE * 1000,
   /** 默认最大指标数量 */
   DEFAULT_MAX_METRICS: 1000,
 

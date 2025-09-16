@@ -7,7 +7,7 @@
 
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContactFormContainer } from '../contact-form-container';
+import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 // Mock fetch
 global.fetch = vi.fn();

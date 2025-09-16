@@ -1,7 +1,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { TurnstileWidget, useTurnstile } from '../turnstile';
+import { TurnstileWidget, useTurnstile } from '@/components/security/turnstile';
 
 // 最早时机设置环境变量 - 在任何模块导入之前
 vi.stubEnv('NEXT_PUBLIC_TURNSTILE_SITE_KEY', 'test-site-key-12345');

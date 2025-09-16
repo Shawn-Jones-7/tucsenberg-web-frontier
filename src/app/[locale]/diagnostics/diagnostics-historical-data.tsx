@@ -7,8 +7,8 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { HistoryItem } from './diagnostics-constants';
-import { formatMetric, type SimpleWebVitals } from './utils';
+import { HistoryItem } from '@/app/[locale]/diagnostics/diagnostics-constants';
+import { formatMetric, type SimpleWebVitals } from '@/app/[locale]/diagnostics/utils';
 
 // 历史数据组件属性接口
 interface HistoricalDataProps {

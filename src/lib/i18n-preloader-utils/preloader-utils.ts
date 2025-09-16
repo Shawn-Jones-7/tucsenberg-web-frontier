@@ -4,6 +4,8 @@
  */
 
 import type { Locale, Messages } from '@/types/i18n';
+import { COUNT_TEN, COUNT_FIVE, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8, COUNT_PAIR, PERCENTAGE_HALF, BYTES_PER_KB, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import type {
   IPreloader,
   PreloaderConfig,
@@ -61,13 +63,13 @@ export const PreloaderUtils = {
    */
   calculatePriority(locale: Locale, metrics: PreloaderMetrics): number {
     // 基础优先级
-    const basePriority = locale === 'en' ? 10 : 5;
+    const basePriority = locale === 'en' ? COUNT_TEN : COUNT_FIVE;
 
     // 根据使用频率调整
-    const usageBonus = Math.min(metrics.successfulPreloads * 0.1, 5);
+    const usageBonus = Math.min(metrics.successfulPreloads * MAGIC_0_1, COUNT_FIVE);
 
     // 根据错误率调整
-    const errorPenalty = metrics.failedPreloads * 0.2;
+    const errorPenalty = metrics.failedPreloads * MAGIC_0_2;
 
     return Math.max(basePriority + usageBonus - errorPenalty, 1);
   },
@@ -133,7 +135,7 @@ export const PreloaderUtils = {
     const recommendations: string[] = [];
 
     // 检查成功率
-    if (stats.successRate < 0.8) {
+    if (stats.successRate < MAGIC_0_8) {
       issues.push(`Low success rate: ${(stats.successRate * 100).toFixed(1)}%`);
       recommendations.push('Check network connectivity and API endpoints');
     }
@@ -147,7 +149,7 @@ export const PreloaderUtils = {
     }
 
     // 检查错误数量
-    if (stats.errorCount > 5) {
+    if (stats.errorCount > COUNT_FIVE) {
       issues.push(`High error count: ${stats.errorCount}`);
       recommendations.push(
         'Review error logs and implement better error handling',
@@ -157,7 +159,7 @@ export const PreloaderUtils = {
     const status =
       issues.length === 0
         ? 'healthy'
-        : issues.length <= 2
+        : issues.length <= COUNT_PAIR
           ? 'warning'
           : 'error';
 
@@ -174,23 +176,23 @@ export const PreloaderUtils = {
       preloadLocales: ['en', 'zh'],
       batchSize: 3,
       delayBetweenBatches: 100,
-      maxConcurrency: 5,
+      maxConcurrency: COUNT_FIVE,
       timeout: 10000,
       retryCount: 3,
       retryDelay: 1000,
       smartPreload: {
         enabled: true,
-        maxLocales: 5,
-        minUsageThreshold: 0.1,
-        usageWindow: 24,
+        maxLocales: COUNT_FIVE,
+        minUsageThreshold: MAGIC_0_1,
+        usageWindow: HOURS_PER_DAY,
         preloadTrigger: 'idle',
-        scheduleInterval: 60,
+        scheduleInterval: SECONDS_PER_MINUTE,
       },
-      memoryLimit: 50 * 1024 * 1024, // 50MB
+      memoryLimit: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
       networkThrottling: false,
       priorityQueue: true,
       cacheStrategy: 'adaptive',
-      cacheTTL: 24 * 60 * 60 * 1000, // 24 hours
+      cacheTTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // HOURS_PER_DAY hours
       maxCacheSize: 100,
       enableMetrics: true,
       metricsInterval: 60000, // 1 minute

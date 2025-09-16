@@ -1,4 +1,6 @@
 import { useMemo } from 'react';
+import { MAGIC_0_8, MAGIC_0_5 } from '@/constants/magic-numbers';
+
 import { Languages } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@/types/i18n';
@@ -14,10 +16,10 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { usePathname } from '@/i18n/routing';
-import type { EnhancedLocaleSwitcherProps } from './config';
-import { LANGUAGE_CONFIG, SOURCE_ICONS } from './config';
-import { LanguageItem } from './language-item';
-import { useLanguageSwitch } from './use-language-switch';
+import type { EnhancedLocaleSwitcherProps } from '@/components/i18n/locale-switcher/config';
+import { LANGUAGE_CONFIG, SOURCE_ICONS } from '@/components/i18n/locale-switcher/config';
+import { LanguageItem } from '@/components/i18n/locale-switcher/language-item';
+import { useLanguageSwitch } from '@/components/i18n/locale-switcher/use-language-switch';
 
 export const EnhancedLocaleSwitcherComponent = ({
   showDetectionInfo = false,
@@ -57,9 +59,9 @@ export const EnhancedLocaleSwitcherComponent = ({
       SOURCE_ICONS[detectionInfo.source as keyof typeof SOURCE_ICONS] ||
       Languages;
     const confidenceColor =
-      detectionInfo.confidence > 0.8
+      detectionInfo.confidence > MAGIC_0_8
         ? 'green'
-        : detectionInfo.confidence > 0.5
+        : detectionInfo.confidence > MAGIC_0_5
           ? 'yellow'
           : 'red';
 

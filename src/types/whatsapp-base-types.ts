@@ -181,7 +181,7 @@ export type MediaType = 'image' | 'document' | 'audio' | 'video';
 export function isTextMessage(
   message: WhatsAppMessage,
 ): message is WhatsAppMessage & { text: NonNullable<WhatsAppMessage['text']> } {
-  return message.type === 'text' && !!message.text;
+  return message.type === 'text' && Boolean(message.text);
 }
 
 export function isImageMessage(
@@ -189,7 +189,7 @@ export function isImageMessage(
 ): message is WhatsAppMessage & {
   image: NonNullable<WhatsAppMessage['image']>;
 } {
-  return message.type === 'image' && !!message.image;
+  return message.type === 'image' && Boolean(message.image);
 }
 
 export function isDocumentMessage(
@@ -197,7 +197,7 @@ export function isDocumentMessage(
 ): message is WhatsAppMessage & {
   document: NonNullable<WhatsAppMessage['document']>;
 } {
-  return message.type === 'document' && !!message.document;
+  return message.type === 'document' && Boolean(message.document);
 }
 
 export function isAudioMessage(
@@ -205,7 +205,7 @@ export function isAudioMessage(
 ): message is WhatsAppMessage & {
   audio: NonNullable<WhatsAppMessage['audio']>;
 } {
-  return message.type === 'audio' && !!message.audio;
+  return message.type === 'audio' && Boolean(message.audio);
 }
 
 export function isVideoMessage(
@@ -213,7 +213,7 @@ export function isVideoMessage(
 ): message is WhatsAppMessage & {
   video: NonNullable<WhatsAppMessage['video']>;
 } {
-  return message.type === 'video' && !!message.video;
+  return message.type === 'video' && Boolean(message.video);
 }
 
 export function isLocationMessage(
@@ -221,7 +221,7 @@ export function isLocationMessage(
 ): message is WhatsAppMessage & {
   location: NonNullable<WhatsAppMessage['location']>;
 } {
-  return message.type === 'location' && !!message.location;
+  return message.type === 'location' && Boolean(message.location);
 }
 
 export function isContactsMessage(
@@ -229,7 +229,7 @@ export function isContactsMessage(
 ): message is WhatsAppMessage & {
   contacts: NonNullable<WhatsAppMessage['contacts']>;
 } {
-  return message.type === 'contacts' && !!message.contacts;
+  return message.type === 'contacts' && Boolean(message.contacts);
 }
 
 // Constants

@@ -5,7 +5,7 @@ import type { ContentType } from '@/types/content';
 import { ContentError } from '@/types/content';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
-import { getContentFiles, parseContentFile } from '../content-parser';
+import { getContentFiles, parseContentFile } from '@/lib/content-parser';
 
 // Mock dependencies
 vi.mock('fs');

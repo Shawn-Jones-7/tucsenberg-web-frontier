@@ -13,7 +13,7 @@ export type {
 } from './airtable/types';
 
 // 重新导出服务类
-export { AirtableService } from './airtable/service';
+export { AirtableService } from '@/lib/airtable/service';
 
 // 重新导出单例实例
-export { airtableService } from './airtable/instance';
+export { airtableService } from '@/lib/airtable/instance';

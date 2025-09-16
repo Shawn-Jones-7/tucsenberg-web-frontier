@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { env } from '../../../../env.mjs';
+import { env } from '@/../env.mjs';
 
 interface TurnstileVerificationRequest {
   token: string;

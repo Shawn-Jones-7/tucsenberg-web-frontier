@@ -18,7 +18,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useLocale, useTranslations } from 'next-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { EnhancedLocaleSwitcher } from '../enhanced-locale-switcher';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 
 // Mock next-intl hooks
 vi.mock('next-intl', () => ({

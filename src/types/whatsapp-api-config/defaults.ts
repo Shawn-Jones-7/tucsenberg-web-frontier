@@ -3,8 +3,8 @@
  * WhatsApp API Default Configurations
  */
 
-import { API_VERSIONS } from './constants';
-import type { ApiConfig, WebhookConfig } from './interfaces';
+import { API_VERSIONS } from '@/types/whatsapp-api-config/constants';
+import type { ApiConfig, WebhookConfig } from '@/types/whatsapp-api-config/interfaces';
 
 export const DEFAULT_API_CONFIG: Partial<ApiConfig> = {
   baseUrl: 'https://graph.facebook.com',

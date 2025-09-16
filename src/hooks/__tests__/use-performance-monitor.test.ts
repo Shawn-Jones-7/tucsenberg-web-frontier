@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TEST_BASE_NUMBERS } from '@/constants/test-constants';
-import { usePerformanceMonitor } from '../use-performance-monitor';
+import { usePerformanceMonitor } from '@/hooks/use-performance-monitor';
 
 // Mock performance.memory
 const mockPerformanceMemory = {

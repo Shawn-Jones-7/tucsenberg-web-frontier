@@ -6,7 +6,7 @@
 'use client';
 
 // 重新导出事件管理器
-export { PreferenceEventManager } from './locale-storage-preference-events/event-manager';
+export { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
 
 // 重新导出事件创建函数
 export {
@@ -26,7 +26,7 @@ export {
 } from './locale-storage-preference-events/history-manager';
 
 // 重新导出统计分析
-export { getPreferenceChangeStats } from './locale-storage-preference-events/stats-analyzer';
+export { getPreferenceChangeStats } from '@/lib/locale-storage-preference-events/stats-analyzer';
 
 // 重新导出事件监听器
 export {

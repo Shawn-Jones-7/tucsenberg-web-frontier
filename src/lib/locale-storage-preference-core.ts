@@ -8,14 +8,14 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   StorageOperationResult,
   UserLocalePreference,
   ValidationResult,
 } from './locale-storage-types';
-import { isUserLocalePreference } from './locale-storage-types';
+import { isUserLocalePreference } from '@/lib/locale-storage-types';
 
 // ==================== 数据验证功能 ====================
 
@@ -257,7 +257,7 @@ export function hasUserPreference(): boolean {
 
   return (
     (localPreference && validatePreferenceData(localPreference).isValid) ||
-    !!cookieLocale
+    Boolean(cookieLocale)
   );
 }
 
@@ -277,14 +277,12 @@ export function getPreferenceSourcePriority(): Array<{
   return [
     {
       source: 'localStorage',
-      available: !!(
-        localPreference && validatePreferenceData(localPreference).isValid
-      ),
+      available: Boolean(localPreference && validatePreferenceData(localPreference).isValid),
       priority: 1,
     },
     {
       source: 'cookies',
-      available: !!cookieLocale,
+      available: Boolean(cookieLocale),
       priority: 2,
     },
     {

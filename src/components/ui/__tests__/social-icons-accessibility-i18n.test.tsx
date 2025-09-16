@@ -10,7 +10,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { SocialIconLink } from '../social-icons';
+import { SocialIconLink } from '@/components/ui/social-icons';
 
 describe('Social Icons Accessibility - Internationalization Tests', () => {
   beforeEach(() => {

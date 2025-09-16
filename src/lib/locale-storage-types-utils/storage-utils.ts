@@ -1,3 +1,5 @@
+import { COUNT_FIVE, MAGIC_16 } from '@/constants/magic-numbers';
+
 /**
  * 语言存储系统存储工具函数
  * Locale Storage System Storage Utility Functions
@@ -46,9 +48,9 @@ export function generateChecksum(data: unknown): string {
 
   for (let i = 0; i < str.length; i++) {
     const char = str.charCodeAt(i);
-    hash = (hash << 5) - hash + char;
+    hash = (hash << COUNT_FIVE) - hash + char;
     hash = hash & hash; // 转换为32位整数
   }
 
-  return Math.abs(hash).toString(16);
+  return Math.abs(hash).toString(MAGIC_16);
 }

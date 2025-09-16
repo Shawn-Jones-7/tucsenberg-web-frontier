@@ -8,8 +8,8 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import type {} from './locale-storage-types';
-import { getDetectionHistory } from './locale-storage-history-core';
+import type {} from '@/lib/locale-storage-types';
+import { getDetectionHistory } from '@/lib/locale-storage-history-core';
 import {
   getLocaleGroupStats,
   getSourceGroupStats,

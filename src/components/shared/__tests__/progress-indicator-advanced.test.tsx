@@ -8,7 +8,7 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ProgressIndicator } from '../progress-indicator';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 // Mock useTranslations
 const mockUseTranslations = vi.fn();

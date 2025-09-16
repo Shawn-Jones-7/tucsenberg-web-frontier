@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { ReactScanDemoClient } from './react-scan-demo-client';
+import { ReactScanDemoClient } from '@/app/[locale]/react-scan-demo/react-scan-demo-client';
 
 export async function generateMetadata({
   params,

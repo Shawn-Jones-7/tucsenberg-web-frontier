@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Link } from '@/i18n/routing';
-import { AnimatedIcon } from './animated-icon';
-import { ProgressIndicator } from './progress-indicator';
+import { AnimatedIcon } from '@/components/shared/animated-icon';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 interface EmailSubscriptionProps {
   showEmailSubscription: boolean;

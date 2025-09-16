@@ -8,8 +8,8 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import {
   getUserPreference,
   saveUserPreference,
@@ -378,7 +378,7 @@ export function getStorageUsage(): {
 
       // 估算使用大小
       let totalSize = 0;
-      for (let key in localStorage) {
+      for (const key in localStorage) {
         if (localStorage.hasOwnProperty(key)) {
           totalSize += localStorage[key].length + key.length;
         }

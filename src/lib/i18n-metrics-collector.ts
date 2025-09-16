@@ -271,7 +271,7 @@ export class I18nMetricsCollector implements MetricsCollector {
   // 计算性能等级
   private calculatePerformanceGrade(): 'A' | 'B' | 'C' | 'D' | 'F' {
     const hitRate = this.metrics.cacheHitRate;
-    const errorRate = this.metrics.errorRate;
+    const {errorRate} = this.metrics;
     const avgLoadTime = this.metrics.loadTime;
 
     // 基于多个指标计算综合评分

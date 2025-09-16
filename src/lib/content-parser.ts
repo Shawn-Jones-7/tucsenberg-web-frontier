@@ -16,8 +16,8 @@ import type {
 import { ContentError } from '@/types/content';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
-import { CONTENT_DIR, validateFilePath } from './content-utils';
-import { validateContentMetadata } from './content-validation';
+import { CONTENT_DIR, validateFilePath } from '@/lib/content-utils';
+import { validateContentMetadata } from '@/lib/content-validation';
 
 /**
  * Parse MDX file with frontmatter

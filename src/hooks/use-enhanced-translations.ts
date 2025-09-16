@@ -1,6 +1,6 @@
 'use client';
 
-/* eslint-disable max-lines-per-function, no-unused-vars, security/detect-object-injection, no-undef, no-shadow */
+/* eslint-disable max-lines-per-function, security/detect-object-injection, no-shadow */
 import { useCallback, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { I18nPerformanceMonitor } from '@/lib/i18n-performance';

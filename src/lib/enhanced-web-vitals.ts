@@ -24,14 +24,14 @@ export type {
 } from './web-vitals/types';
 
 // 重新导出常量
-export { PERFORMANCE_THRESHOLDS } from './web-vitals/constants';
+export { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 
 // 重新导出所有类
-export { PerformanceAlertSystem } from './web-vitals/alert-system';
-export { PerformanceBaselineManager } from './web-vitals/baseline-manager';
-export { EnhancedWebVitalsCollector } from './web-vitals/collector';
-export { PerformanceMonitoringManager } from './web-vitals/monitoring-manager';
-export { PerformanceRegressionDetector } from './web-vitals/regression-detector';
+export { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system';
+export { PerformanceBaselineManager } from '@/lib/web-vitals/baseline-manager';
+export { EnhancedWebVitalsCollector } from '@/lib/web-vitals/collector';
+export { PerformanceMonitoringManager } from '@/lib/web-vitals/monitoring-manager';
+export { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 
 // 重新导出实例
 export {

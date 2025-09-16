@@ -8,8 +8,8 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import {
   getUserPreference,
   saveUserPreference,

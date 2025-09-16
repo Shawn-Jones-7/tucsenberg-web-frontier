@@ -1,7 +1,7 @@
 import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { fireEvent, render } from '@/test/utils';
-import { LanguageToggle } from '../language-toggle';
+import { LanguageToggle } from '@/components/language-toggle';
 
 // Hoisted mock functions
 const { mockPush, mockUsePathname } = vi.hoisted(() => ({

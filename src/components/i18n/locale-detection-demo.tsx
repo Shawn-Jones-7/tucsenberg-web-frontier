@@ -15,7 +15,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { EnhancedLocaleSwitcher } from './enhanced-locale-switcher';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 
 // 工具函数
 const getConfidenceColor = (confidence: number) => {

@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import type { TestResults } from './utils';
+import type { TestResults } from '@/app/[locale]/diagnostics/demo/utils';
 import {
   getMetricLabel,
   getMetricStatus,

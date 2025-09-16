@@ -1,3 +1,5 @@
+import { COUNT_PAIR } from '@/constants/magic-numbers';
+
 /**
  * 速率限制工具
  * Rate limiting utilities
@@ -245,7 +247,7 @@ export function slidingWindowRateLimit(
  */
 export function cleanupSlidingWindow(): void {
   const now = Date.now();
-  const maxAge = RATE_LIMIT_CONSTANTS.DEFAULT_WINDOW_MS * 2; // Keep entries for 2x window size
+  const maxAge = RATE_LIMIT_CONSTANTS.DEFAULT_WINDOW_MS * COUNT_PAIR; // Keep entries for 2x window size
 
   for (const [key, entry] of slidingWindowStore.entries()) {
     const oldestTimestamp = Math.min(...entry.timestamps);

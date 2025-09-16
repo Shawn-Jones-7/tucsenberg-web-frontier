@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
-import type { Locale, PageType } from './seo-metadata';
-import { createPageSEOConfig, generateLocalizedMetadata } from './seo-metadata';
+import type { Locale, PageType } from '@/lib/seo-metadata';
+import { createPageSEOConfig, generateLocalizedMetadata } from '@/lib/seo-metadata';
 
 /**
  * 生成页面元数据的便捷函数
@@ -20,5 +20,5 @@ export function generatePageMetadata({
 }
 
 // 重新导出相关类型和函数以保持兼容性
-export { createPageSEOConfig, generateLocalizedMetadata } from './seo-metadata';
-export type { Locale, PageType } from './seo-metadata';
+export { createPageSEOConfig, generateLocalizedMetadata } from '@/lib/seo-metadata';
+export type { Locale, PageType } from '@/lib/seo-metadata';

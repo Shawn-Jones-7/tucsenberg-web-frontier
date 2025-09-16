@@ -18,7 +18,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Label } from '../label';
+import { Label } from '@/components/ui/label';
 
 describe('Label State Management - Main Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;

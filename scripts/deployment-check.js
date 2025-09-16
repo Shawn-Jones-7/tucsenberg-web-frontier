@@ -145,7 +145,7 @@ class DeploymentChecker {
 
         console.log('❌ 安全检查失败');
         return false;
-      } else {
+      } 
         // 轻微安全问题，警告但不阻塞
         this.report.checks.security = {
           status: 'WARN',
@@ -161,7 +161,7 @@ class DeploymentChecker {
 
         console.log('⚠️  安全检查有警告');
         return true;
-      }
+      
     }
   }
 

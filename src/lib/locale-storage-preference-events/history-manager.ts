@@ -6,8 +6,8 @@
 'use client';
 
 import { logger } from '@/lib/logger';
-import { LocalStorageManager } from '../locale-storage-local';
-import type { UserLocalePreference } from '../locale-storage-types';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
+import type { UserLocalePreference } from '@/lib/locale-storage-types';
 
 /**
  * 偏好历史管理

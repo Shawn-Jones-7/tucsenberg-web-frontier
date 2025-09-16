@@ -9,7 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import type { SimpleWebVitals } from './utils';
+import type { SimpleWebVitals } from '@/app/[locale]/diagnostics/utils';
 
 // 控制面板组件属性接口
 interface ControlPanelProps {

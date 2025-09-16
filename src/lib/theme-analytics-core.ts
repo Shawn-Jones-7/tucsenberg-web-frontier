@@ -5,6 +5,8 @@
  * Theme analytics core class
  */
 import * as Sentry from '@sentry/nextjs';
+import { COUNT_FIVE, COUNT_TRIPLE, PERCENTAGE_HALF, DAYS_PER_MONTH } from '@/constants/magic-numbers';
+
 import type {
   ThemeAnalyticsConfig,
   ThemePerformanceMetrics,
@@ -12,7 +14,7 @@ import type {
   ThemeSwitchPattern,
   ThemeUsageStats,
 } from './theme-analytics-types';
-import { ThemeAnalyticsUtils } from './theme-analytics-utils';
+import { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
 
 /**
  * 主题分析管理器
@@ -187,7 +189,7 @@ export class ThemeAnalytics {
 
     // 发送使用统计
     Sentry.setContext('theme-usage', {
-      statistics: usageStats.slice(0, 5), // 只发送前5个最常用的主题
+      statistics: usageStats.slice(0, COUNT_FIVE), // 只发送前COUNT_FIVE个最常用的主题
       totalThemes: usageStats.length,
       sessionDuration: Date.now() - this.sessionStartTime,
     });
@@ -199,7 +201,7 @@ export class ThemeAnalytics {
     ) {
       const topPatterns = this.switchPatterns
         .sort((a, b) => b.frequency - a.frequency)
-        .slice(0, 3);
+        .slice(0, COUNT_TRIPLE);
 
       Sentry.setContext('theme-patterns', {
         topPatterns: topPatterns.map((p) => ({
@@ -261,10 +263,10 @@ export class ThemeAnalytics {
     }
 
     // 清理切换模式数据（保留最近的模式）
-    if (this.switchPatterns.length > 50) {
+    if (this.switchPatterns.length > PERCENTAGE_HALF) {
       this.switchPatterns = this.switchPatterns
         .sort((a, b) => b.frequency - a.frequency)
-        .slice(0, 30);
+        .slice(0, DAYS_PER_MONTH);
     }
   }
 }

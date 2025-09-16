@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ResponsiveShowcase } from '../responsive-showcase';
+import { ResponsiveShowcase } from '@/components/home/showcase/responsive-showcase';
 
 // Mock翻译函数
 const mockT = vi.fn((key: string) => {

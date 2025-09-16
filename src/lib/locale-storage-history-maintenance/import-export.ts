@@ -10,7 +10,9 @@ import {
   HistoryCacheManager,
   validateHistoryData,
 } from '../locale-storage-history-core';
-import { LocalStorageManager } from '../locale-storage-local';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { COUNT_PAIR } from '@/constants/magic-numbers';
+
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
@@ -40,7 +42,7 @@ export function exportHistoryAsJson(): StorageOperationResult<string> {
   }
 
   try {
-    const jsonString = JSON.stringify(historyResult.data, null, 2);
+    const jsonString = JSON.stringify(historyResult.data, null, COUNT_PAIR);
     return {
       ...historyResult,
       data: jsonString,

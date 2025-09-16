@@ -6,6 +6,8 @@
  */
 
 import { logger } from '@/lib/logger';
+import { COUNT_FIVE, COUNT_TEN, MAGIC_16, COUNT_PAIR, MAGIC_8, MAGIC_32, MAGIC_0_3 } from '@/constants/magic-numbers';
+
 import type {
   PerformanceConfig,
   PerformanceMetrics,
@@ -73,7 +75,7 @@ export function useReactScanIntegration(
           timestamp: Date.now(),
         },
         tags: ['react-scan', 'component-render'],
-        priority: renderCount > 5 ? 'high' : 'medium',
+        priority: renderCount > COUNT_FIVE ? 'high' : 'medium',
       });
     },
 
@@ -282,17 +284,17 @@ export class ReactScanAnalyzer {
         unnecessaryRenders: metrics.unnecessaryRenders,
       }))
       .sort((a, b) => b.averageTime - a.averageTime)
-      .slice(0, 10);
+      .slice(0, COUNT_TEN);
 
     const recommendations: string[] = [];
 
     // 生成建议
     if (topSlowComponents.length > 0) {
       const slowestComponent = topSlowComponents[0];
-      if (slowestComponent && slowestComponent.averageTime > 16) {
+      if (slowestComponent && slowestComponent.averageTime > MAGIC_16) {
         // 超过一帧的时间
         recommendations.push(
-          `Consider optimizing ${slowestComponent.name} - average render time: ${slowestComponent.averageTime.toFixed(2)}ms`,
+          `Consider optimizing ${slowestComponent.name} - average render time: ${slowestComponent.averageTime.toFixed(COUNT_PAIR)}ms`,
         );
       }
     }
@@ -361,9 +363,9 @@ export const ReactScanUtils = {
       return `${(milliseconds * 1000).toFixed(1)}μs`;
     }
     if (milliseconds < 1000) {
-      return `${milliseconds.toFixed(2)}ms`;
+      return `${milliseconds.toFixed(COUNT_PAIR)}ms`;
     }
-    return `${(milliseconds / 1000).toFixed(2)}s`;
+    return `${(milliseconds / 1000).toFixed(COUNT_PAIR)}s`;
   },
 
   /**
@@ -373,9 +375,9 @@ export const ReactScanUtils = {
   getRenderPerformanceRating(
     renderTime: number,
   ): 'excellent' | 'good' | 'fair' | 'poor' {
-    if (renderTime < 8) return 'excellent';
-    if (renderTime < 16) return 'good';
-    if (renderTime < 32) return 'fair';
+    if (renderTime < MAGIC_8) return 'excellent';
+    if (renderTime < MAGIC_16) return 'good';
+    if (renderTime < MAGIC_32) return 'fair';
     return 'poor';
   },
 
@@ -403,14 +405,14 @@ export const ReactScanUtils = {
   }): string[] {
     const suggestions: string[] = [];
 
-    if (componentStats.averageTime > 16) {
+    if (componentStats.averageTime > MAGIC_16) {
       suggestions.push(
         'Consider breaking down this component into smaller components',
       );
       suggestions.push('Use React.memo to prevent unnecessary re-renders');
     }
 
-    if (componentStats.unnecessaryRenders > componentStats.renders * 0.3) {
+    if (componentStats.unnecessaryRenders > componentStats.renders * MAGIC_0_3) {
       suggestions.push(
         'High rate of unnecessary renders detected - check prop dependencies',
       );

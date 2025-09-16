@@ -1,7 +1,7 @@
 // 导入主要功能类
-import type { LocaleDetectionResult } from './locale-detection-types';
-import { BaseLocaleDetector } from './locale-detector-base';
-import { SmartLocaleDetector as SmartDetector } from './locale-detector-smart';
+import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
+import { BaseLocaleDetector } from '@/lib/locale-detector-base';
+import { SmartLocaleDetector as SmartDetector } from '@/lib/locale-detector-smart';
 
 /**
  * 语言检测器 - 主入口文件
@@ -27,9 +27,9 @@ export {
   GEO_API_CONFIG,
   QUALITY_THRESHOLDS,
 } from './locale-detector-constants';
-export type { DetectionSource } from './locale-detector-constants';
-export { BaseLocaleDetector } from './locale-detector-base';
-export { SmartLocaleDetector as SmartDetector } from './locale-detector-smart';
+export type { DetectionSource } from '@/lib/locale-detector-constants';
+export { BaseLocaleDetector } from '@/lib/locale-detector-base';
+export { SmartLocaleDetector as SmartDetector } from '@/lib/locale-detector-smart';
 
 /**
  * 智能语言检测器 - 向后兼容的主类

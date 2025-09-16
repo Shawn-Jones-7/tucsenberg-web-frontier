@@ -4,7 +4,7 @@
  */
 
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { AlertSystemChecker, type AlertInfo } from './alert-system-checker';
+import { AlertSystemChecker, type AlertInfo } from '@/lib/web-vitals/alert-system-checker';
 import {
   AlertSystemSender,
   type AlertHistoryEntry,

@@ -4,6 +4,8 @@
  */
 
 import * as Sentry from '@sentry/nextjs';
+import { COUNT_PAIR, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import type {
   ThemePerformanceMetrics,
   ThemePerformanceSummary,
@@ -120,7 +122,7 @@ export class ThemeAnalyticsUtils {
 
     if (existing) {
       existing.frequency += 1;
-      existing.avgDuration = (existing.avgDuration + duration) / 2;
+      existing.avgDuration = (existing.avgDuration + duration) / COUNT_PAIR;
     } else {
       switchPatterns.push({
         sequence,
@@ -136,7 +138,7 @@ export class ThemeAnalyticsUtils {
    */
   static cleanupOldData(
     performanceMetrics: ThemePerformanceMetrics[],
-    maxAge: number = 24 * 60 * 60 * 1000, // 24小时
+    maxAge: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // HOURS_PER_DAY小时
   ): void {
     const cutoffTime = Date.now() - maxAge;
 

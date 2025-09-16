@@ -6,7 +6,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Input } from '../input';
+import { Input } from '@/components/ui/input';
 
 describe('Input - States & Accessibility', () => {
   let user: ReturnType<typeof userEvent.setup>;

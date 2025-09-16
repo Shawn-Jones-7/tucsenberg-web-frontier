@@ -16,7 +16,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Moon, Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ThemeMenuItem } from '../theme-menu-item';
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 
 // Mock the DropdownMenuItem component
 vi.mock('@/components/ui/dropdown-menu', () => ({

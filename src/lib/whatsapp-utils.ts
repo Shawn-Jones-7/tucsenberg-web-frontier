@@ -1,3 +1,5 @@
+import { BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, MAGIC_20, MAGIC_256, MAGIC_36, MAGIC_72, MAGIC_9 } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp Business API 工具函数
  * 提供验证、格式化等辅助功能
@@ -12,7 +14,7 @@ export class WhatsAppUtils {
    */
   static validatePhoneNumber(phoneNumber: string): boolean {
     // 基本验证：应该包含国家代码，只包含数字
-    const phoneRegex = /^\d{10,15}$/;
+    const phoneRegex = /^\d{COUNT_TEN,15}$/;
     return phoneRegex.test(phoneNumber.replace(/\D/g, ''));
   }
 
@@ -39,7 +41,7 @@ export class WhatsAppUtils {
   static validateTemplateParameters(parameters: string[]): boolean {
     return parameters.every(
       (param) =>
-        typeof param === 'string' && param.length > 0 && param.length <= 1024,
+        typeof param === 'string' && param.length > 0 && param.length <= BYTES_PER_KB,
     );
   }
 
@@ -49,7 +51,7 @@ export class WhatsAppUtils {
   static validateButtons(
     buttons: Array<{ id: string; title: string }>,
   ): boolean {
-    if (buttons.length === 0 || buttons.length > 3) {
+    if (buttons.length === 0 || buttons.length > COUNT_TRIPLE) {
       return false;
     }
 
@@ -58,9 +60,9 @@ export class WhatsAppUtils {
         typeof button.id === 'string' &&
         typeof button.title === 'string' &&
         button.id.length > 0 &&
-        button.id.length <= 256 &&
+        button.id.length <= MAGIC_256 &&
         button.title.length > 0 &&
-        button.title.length <= 20,
+        button.title.length <= MAGIC_20,
     );
   }
 
@@ -70,7 +72,7 @@ export class WhatsAppUtils {
   static validateListRows(
     rows: Array<{ id: string; title: string; description?: string }>,
   ): boolean {
-    if (rows.length === 0 || rows.length > 10) {
+    if (rows.length === 0 || rows.length > COUNT_TEN) {
       return false;
     }
 
@@ -81,9 +83,9 @@ export class WhatsAppUtils {
         row.id.length > 0 &&
         row.id.length <= 200 &&
         row.title.length > 0 &&
-        row.title.length <= 24 &&
+        row.title.length <= HOURS_PER_DAY &&
         (!row.description ||
-          (row.description.length > 0 && row.description.length <= 72)),
+          (row.description.length > 0 && row.description.length <= MAGIC_72)),
     );
   }
 
@@ -91,7 +93,7 @@ export class WhatsAppUtils {
    * 生成唯一的消息ID
    */
   static generateMessageId(): string {
-    return `msg_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `msg_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
   }
 
   /**

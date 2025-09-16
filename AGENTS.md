@@ -54,6 +54,8 @@
 
 ### File Organization for Server/Client Components
 
+> 下列目录结构仅作为参考示例；当前仓库按业务功能拆分组件目录（如 `components/forms/`、`components/contact/` 等）。
+
 ```
 src/
 ├── components/
@@ -219,8 +221,7 @@ To prevent serialization errors and ensure a clean separation between Server and
 
 - **No non-serializable props**: Server Components must not pass functions, class instances, Symbols, or DOM nodes via props.
 - **Client directive**: Any component that contains event handlers (`onClick`, `onSubmit`, etc.) or uses React hooks such as `useState` or `useEffect` **must** begin with `'use client';`.
-- **Container-presentational split**: Fetch data in a Server Component _container_ and render interactivity in a Client Component _presentational_ child.
-- **Lint enforcement**: Enable `eslint-plugin-react-server` (or the RSC rule set from `@next/eslint-plugin-react`) and add the CI command `pnpm run lint:rsc`; the build must fail on `react-server/no-server-function-props` violations.
+- **Container-presentational split**: 在条件允许时，将数据获取放在 Server Component，将交互放在 Client Component；目前主要依赖代码评审来保持边界清晰。
 
 ## UI Component Guidelines
 
@@ -237,7 +238,7 @@ To prevent serialization errors and ensure a clean separation between Server and
 - Use the `useTranslations` hook inside components
 - Store translations in `messages/[locale].json`
 - **Strict ICU typing**: enable `strictMessageTypeSafety` in `getRequestConfig` and declare `AppConfig.Messages` in `global.ts` to get compile-time checks for message arguments
-- **Provider composition**: create a single `'use client'` `Providers` component that combines `NextIntlClientProvider` with other context providers (e.g. Shadcn `ThemeProvider`) to avoid double hydration
+- **Provider composition**: 当前在 `src/app/[locale]/layout.tsx` 中直接组合 `NextIntlClientProvider`、`EnterpriseAnalytics`、`ThemeProvider`，如需复用可再抽离统一 Providers 组件
 
 ## Multi-language File Synchronization Rules
 
@@ -251,19 +252,15 @@ To prevent serialization errors and ensure a clean separation between Server and
 
 - Enable **strict CSP** site-wide via `headers()` in `next.config.ts`
 - Set security headers: `X-Frame-Options: DENY`, `X-Content-Type-Options: nosniff`, `Strict-Transport-Security`, `Referrer-Policy`
-- Use **botid** for form protection and bot detection on contact forms and key interactions
+- Use **Cloudflare Turnstile** for form protection and bot detection on contact forms and key interactions
 - Implement **basic rate limiting** via Next.js Middleware for API routes when needed
 - Run `pnpm audit` in CI and enable **GitHub Dependabot** for automatic security updates
 
 ## Content Management Guidelines
 
-### Primary CMS: Payload CMS 3.0+
+### Dynamic Content Management
 
-- Use **Payload CMS** as the primary content management system for dynamic content
-- Configure with **PostgreSQL** for production and **SQLite** for development
-- Manage dynamic content: product information, company news, case studies, team profiles
-- Enable content editors to update website content without developer intervention
-- Integrate with Next.js App Router for seamless content delivery
+- 动态内容暂由代码与静态资源直接维护，暂无外部 CMS 集成
 
 ### Static Content: MDX
 
@@ -276,14 +273,13 @@ To prevent serialization errors and ensure a clean separation between Server and
 
 ### Content Strategy
 
-- **Dynamic content** (frequently updated): Use Payload CMS
-- **Static content** (documentation, policies): Use MDX files
-- **Hybrid approach**: Combine both systems for optimal content management
+- **Static content** (documentation, policies): Use MDX files，保持多语言同步
+- **Dynamic content**: 由团队根据业务需求评估后再行决定是否引入 CMS 方案
 
 ## Service Integration Guidelines
 
 - Call the **Resend** API inside API routes to send emails
-- Manage email templates as standalone React components
+- 当前邮件模版通过字符串生成（`src/lib/resend-templates.ts`），后续如需视觉复用可逐步迁移为 React 组件
 - Initialize **Vercel Analytics** in the layout component for performance monitoring
 - Recommend **Zustand** for lightweight state management; use **Redux Toolkit** for complex scenarios
 
@@ -298,16 +294,15 @@ To prevent serialization errors and ensure a clean separation between Server and
 
   Maintain a single, canonical alias for project imports:
 
-  - The alias `@/` **must** always resolve to `./src/`.
-  - This mapping **must** be identical in `tsconfig.json`, `next.config.ts`, and ESLint's import resolver.
-  - When moving files or restructuring directories, update the alias configuration **first**, then move code.
-  - A custom script `pnpm run alias:check` should assert alias consistency during CI.
+  - The alias `@/` **must** always resolve to `./src/`。
+  - This mapping **must** be identical in `tsconfig.json`, `next.config.ts`, and ESLint 的 import 解析配置。
+  - 调整目录结构前请先更新别名配置，目前通过代码评审和静态检查人工确认别名一致性。
 
 ## Environment Variables & Config Validation
 
 - Define and validate env vars in `env.mjs` using **@t3-oss/env-nextjs**
 - Fail CI if required variables are missing
-- **Never** commit any `.env.*` files to the repository
+- 仓库包含开发/示例用 `.env.*` 文件，禁止在其中提交生产密钥或敏感凭证
 
 ## Monitoring & Logging
 
@@ -331,7 +326,7 @@ To prevent serialization errors and ensure a clean separation between Server and
 - **Unit tests**: **vitest** – filenames `*.test.ts?(x)`
 - **End-to-end tests**: **@playwright/test** – directory `e2e/`
 - **Performance benchmarks**: **@lhci/cli** (Lighthouse CI)
-- All PRs must pass `pnpm lint && pnpm test && pnpm test:e2e`
+- CI 会执行 `pnpm type-check`、`pnpm type-check:tests`、`pnpm lint:check`、`pnpm test:coverage`、`pnpm test:e2e`
 - Statement coverage ≥ 80 %
   +- **ESM-only packages**: when using Jest, include ESM deps (e.g. `next-intl`) in `transformIgnorePatterns`; for Vitest, inline them via `server.deps.inline` to avoid resolution errors.
 
@@ -344,63 +339,17 @@ To prevent serialization errors and ensure a clean separation between Server and
 
 ## CI/CD Guidelines
 
-- Use **Lefthook** pre-commit hooks to run lint, tests, and type checks
+- Use **Lefthook** pre-commit hooks执行 `pnpm format:check`、`pnpm type-check`、`pnpm quality:quick:staged` 以及架构守卫脚本
 - Validate commit messages with **commitlint**
-- GitHub Actions workflow: install → lint → typecheck → test → build → deploy
+- GitHub Actions workflow：依次执行 `pnpm type-check`、`pnpm type-check:tests`、`pnpm lint:check`、`pnpm format:check`、`pnpm test:coverage`、`pnpm test:e2e`、`pnpm size:check`、`pnpm build`
 - Use **Dependabot** for dependency upgrades and security patches
 - Cache the pnpm store to speed up CI
 - Deploy to **Vercel** (Preview and Production environments)
-- If Next.js-specific ESLint rules are required, extend **@antfu/eslint-config** with **eslint-config-next**
-- Add an **alias consistency** job: `pnpm run alias:check`.
-- Add an **RSC boundary lint** job: `pnpm run lint:rsc`.
+- 若后续需要额外 lint 任务（如别名一致性、RSC 边界），再增补对应脚本和 CI job
 
 ## Enhanced ESLint Configuration for React 19
 
-### RSC Boundary Enforcement
-
-```javascript
-// eslint.config.mjs
-import reactServerPlugin from 'eslint-plugin-react-server';
-
-export default [
-  {
-    plugins: {
-      'react-server': reactServerPlugin,
-    },
-    rules: {
-      'react-server/no-server-function-props': 'error',
-      'react-server/no-client-hooks-in-server': 'error',
-      'react-server/no-browser-apis-in-server': 'error',
-    },
-  },
-];
-```
-
-### CI/CD Integration
-
-```bash
-# Add to package.json scripts
-{
-  "scripts": {
-    "lint:rsc": "eslint --ext .tsx,.ts src/ --rule 'react-server/no-server-function-props: error'",
-    "lint:full": "pnpm run lint && pnpm run lint:rsc"
-  }
-}
-```
-
-### Pre-commit Hooks
-
-```yaml
-# .lefthook.yml
-pre-commit:
-  commands:
-    lint:
-      run: pnpm run lint:full
-    typecheck:
-      run: pnpm run type-check
-    test:
-      run: pnpm run test
-```
+项目当前使用自定义的安全与质量规则集（参见 `eslint.config.mjs`），尚未集成 `eslint-plugin-react-server`。如后续需要对 RSC 边界做静态检查，可参考官方插件文档追加配置与脚本。
 
 ## Code Output Format
 
@@ -425,19 +374,14 @@ pre-commit:
 - Consider performance impact and error handling
 - Before upgrading React or Next.js versions:
   - Run `pnpm why` to snapshot the dependency tree.
-  - Execute `pnpm run alias:check` and `pnpm run lint:rsc`.
-  - Review the official upgrade guide for breaking changes.
-  - Open a preview PR and request at least one reviewer to validate **path alias** and **RSC boundary** checks.
+  - Review the official upgrade guide for breaking changes。
+  - 在预览 PR 中请额外关注路径别名与 RSC 边界，必要时可新增专项脚本再执行。
 
 ## Project Structure Constraints
 
 - **Source code directory**: All source code must be in `src/` directory only
 - **App Router structure**: Use `src/app/[locale]/` for internationalized routing
-- **Component layering**: Follow strict component organization:
-  - `src/components/ui/` - shadcn/ui base components
-  - `src/components/layout/` - layout-related components
-  - `src/components/business/` - business logic components
-  - `src/components/shared/` - cross-business shared components
+- **Component organization**: 采用按功能/领域划分的组件目录结构（例如 `components/forms/`、`components/layout/`、`components/monitoring/` 等），保持复用组件放在 `components/shared/`
 - **Content management**: Store MDX content in `content/` with language separation
 - **Static assets**: All static files must be in `public/` directory
 
@@ -447,8 +391,8 @@ Maintain a single, canonical alias for project imports:
 
 - The alias `@/` **must** always resolve to `./src/`.
 - This mapping **must** be identical in `tsconfig.json`, `next.config.ts`, and ESLint's import resolver.
-- When moving files or restructuring directories, update the alias configuration **first**, then move code.
-- A custom script `pnpm run alias:check` should assert alias consistency during CI.
+- When moving files or restructuring directories, update the alias configuration **first**, then move code。
+- 当前通过代码评审及 TypeScript/ESLint 检查关注别名正确性。
 
 ## React 19 Server Components Guidelines
 

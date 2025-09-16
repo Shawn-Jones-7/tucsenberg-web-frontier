@@ -312,7 +312,7 @@ function fixMagicNumbers(errors, constantsPath) {
         if (importMatch) {
           content = content.replace(
             importMatch[0],
-            importMatch[0] + '\n' + importStatement,
+            `${importMatch[0]  }\n${  importStatement}`,
           );
           modified = true;
         }

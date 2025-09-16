@@ -2,7 +2,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // 导入被测试的组件
-import { HeroSection } from '../hero-section';
+import { HeroSection } from '@/components/home/hero-section';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const {

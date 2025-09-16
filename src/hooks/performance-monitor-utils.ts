@@ -1,4 +1,6 @@
 import React from 'react';
+import { MAGIC_36, COUNT_PAIR, MAGIC_9 } from '@/constants/magic-numbers';
+
 import type {
   MonitoringControls,
   PerformanceAlert,
@@ -16,9 +18,9 @@ import type {
 export const PERFORMANCE_CONSTANTS = {
   MEMORY_THRESHOLD_MB: 50,
   MEMORY_BYTES_PER_MB: 1048576, // 1024 * 1024
-  TIME_CALCULATION_FACTOR: 36,
-  CALCULATION_DIVISOR: 2,
-  CALCULATION_MULTIPLIER: 9,
+  TIME_CALCULATION_FACTOR: MAGIC_36,
+  CALCULATION_DIVISOR: COUNT_PAIR,
+  CALCULATION_MULTIPLIER: MAGIC_9,
 } as const;
 
 /**
@@ -205,7 +207,7 @@ export const validateAndSanitizeOptions = (
  * 生成唯一ID的辅助函数
  */
 export const generateAlertId = (): string => {
-  return `alert_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `alert_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
 };
 
 /**
@@ -213,7 +215,7 @@ export const generateAlertId = (): string => {
  */
 export const formatMemoryUsage = (bytes: number): string => {
   const mb = bytes / PERFORMANCE_CONSTANTS.MEMORY_BYTES_PER_MB;
-  return `${mb.toFixed(2)}MB`;
+  return `${mb.toFixed(COUNT_PAIR)}MB`;
 };
 
 /**
@@ -221,9 +223,9 @@ export const formatMemoryUsage = (bytes: number): string => {
  */
 export const formatTime = (milliseconds: number): string => {
   if (milliseconds < 1000) {
-    return `${milliseconds.toFixed(2)}ms`;
+    return `${milliseconds.toFixed(COUNT_PAIR)}ms`;
   }
-  return `${(milliseconds / 1000).toFixed(2)}s`;
+  return `${(milliseconds / 1000).toFixed(COUNT_PAIR)}s`;
 };
 
 /**

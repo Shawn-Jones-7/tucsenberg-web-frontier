@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ContactFormContainer } from './contact-form-container';
+import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 /**
  * 主要联系表单组件

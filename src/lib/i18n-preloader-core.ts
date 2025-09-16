@@ -257,7 +257,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
   async smartPreload(): Promise<void> {
     // 获取使用统计
     const metrics = this.metricsCollector.getMetrics();
-    const localeUsage = metrics.localeUsage;
+    const {localeUsage} = metrics;
 
     // 按使用频率排序
     const sortedLocales = Object.entries(localeUsage)

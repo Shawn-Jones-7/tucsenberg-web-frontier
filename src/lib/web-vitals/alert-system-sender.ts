@@ -9,8 +9,8 @@ import {
   sendWebhookNotification,
   storeAlerts,
 } from './alert-notifications';
-import type { AlertInfo } from './alert-system-checker';
-import type { PerformanceAlert, PerformanceAlertConfig } from './types';
+import type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
+import type { PerformanceAlert, PerformanceAlertConfig } from '@/lib/web-vitals/types';
 
 /**
  * 预警历史记录接口

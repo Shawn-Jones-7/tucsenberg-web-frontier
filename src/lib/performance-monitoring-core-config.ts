@@ -6,9 +6,11 @@
  */
 
 import { logger } from '@/lib/logger';
+import { COUNT_PAIR, COUNT_TEN, OFFSET_NEGATIVE_LARGE } from '@/constants/magic-numbers';
+
 import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
 import { MB } from '@/constants/units';
-import type { PerformanceConfig } from './performance-monitoring-types';
+import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
 import {
   generateEnvironmentConfig,
   validateConfig,
@@ -223,7 +225,7 @@ export class PerformanceConfigManager {
    * Export configuration as JSON
    */
   exportConfig(): string {
-    return JSON.stringify(this.config, null, 2);
+    return JSON.stringify(this.config, null, COUNT_PAIR);
   }
 
   /**
@@ -262,10 +264,10 @@ export class PerformanceConfigManager {
     maxMetrics: number;
     thresholds: Record<string, number>;
   } {
-    const global = this.config.global;
-    const component = this.config.component;
-    const network = this.config.network;
-    const bundle = this.config.bundle;
+    const {global} = this.config;
+    const {component} = this.config;
+    const {network} = this.config;
+    const {bundle} = this.config;
 
     const enabledModules: string[] = [];
     if (component?.enabled) enabledModules.push('component');
@@ -373,8 +375,8 @@ export class PerformanceConfigManager {
     });
 
     // 限制历史记录数量
-    if (this.configHistory.length > 10) {
-      this.configHistory = this.configHistory.slice(-10);
+    if (this.configHistory.length > COUNT_TEN) {
+      this.configHistory = this.configHistory.slice(-COUNT_TEN);
     }
   }
 

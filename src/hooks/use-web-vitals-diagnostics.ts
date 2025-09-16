@@ -1,8 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import { MAGIC_85, MAGIC_15 } from '@/constants/magic-numbers';
+
 import { enhancedWebVitalsCollector } from '@/lib/enhanced-web-vitals';
-import { useReportExport } from './web-vitals-diagnostics-export';
+import { useReportExport } from '@/hooks/web-vitals-diagnostics-export';
 import {
   useWebVitalsDataPersistence,
   useWebVitalsInitialization,
@@ -60,7 +62,7 @@ const useWebVitalsRefresh = (
     return {
       timestamp: Date.now(),
       vitals: vitals,
-      score: 85 + Math.random() * 15,
+      score: MAGIC_85 + Math.random() * MAGIC_15,
       issues: [],
       recommendations: [],
       pageUrl:

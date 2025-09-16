@@ -1,7 +1,7 @@
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TEST_BASE_NUMBERS } from '@/constants/test-constants';
-import { useReducedMotion } from '../use-reduced-motion';
+import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
 // Mock matchMedia
 const mockMatchMedia = vi.fn();

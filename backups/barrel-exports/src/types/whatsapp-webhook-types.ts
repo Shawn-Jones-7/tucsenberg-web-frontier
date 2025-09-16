@@ -83,10 +83,10 @@ import {
  */
 
 // 重新导出所有模块的功能
-export * from './whatsapp-webhook-base';
-export * from './whatsapp-webhook-messages';
-export * from './whatsapp-webhook-events';
-export * from './whatsapp-webhook-utils';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-webhook-base';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-webhook-messages';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-webhook-events';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-webhook-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 

@@ -1,4 +1,4 @@
-// 数字常量文件
+// 自动生成的数字常量文件
 // 用于替换代码中的魔法数字，提升可读性和维护性
 
 // 动画和时间常量 (毫秒)
@@ -27,8 +27,6 @@ export const COUNT_TRIPLE = 3;
 export const COUNT_QUAD = 4;
 export const COUNT_FIVE = 5;
 export const COUNT_TEN = 10;
-export const COUNT_TWENTY = 20;
-export const COUNT_FIFTY = 50;
 
 // 百分比常量
 export const PERCENTAGE_QUARTER = 25;
@@ -44,29 +42,6 @@ export const DAYS_PER_YEAR = 365;
 
 // 数据单位常量
 export const BYTES_PER_KB = 1024;
-export const BYTES_PER_MB = 1024 * 1024;
-
-// 网格和布局
-export const GRID_COLUMNS_DEFAULT = 12;
-export const GRID_GAP_SMALL = 8;
-export const GRID_GAP_MEDIUM = 16;
-export const GRID_GAP_LARGE = 24;
-
-// 响应式断点 (像素)
-export const BREAKPOINT_SM = 640;
-export const BREAKPOINT_MD = 768;
-export const BREAKPOINT_LG = 1024;
-export const BREAKPOINT_XL = 1280;
-
-// Z-index层级
-export const Z_INDEX_DROPDOWN = 1000;
-export const Z_INDEX_MODAL = 2000;
-export const Z_INDEX_TOOLTIP = 3000;
-
-// 常见数值
-export const DEFAULT_TIMEOUT = 5000;
-export const MAX_RETRIES = 3;
-export const DEFAULT_PAGE_SIZE = 10;
 
 // 负数偏移常量
 export const OFFSET_NEGATIVE_SMALL = -2;
@@ -96,12 +71,79 @@ export const HEX_MASK_6_BITS = 0x3f;
 export const HEX_MASK_HIGH_BIT = 0x80;
 export const HEX_MASK_SIGN_BIT_32 = 0x80000000;
 
-// 小数常量 (百分比和比例)
-export const DECIMAL_3_PERCENT = 0.03;
-export const DECIMAL_5_PERCENT = 0.05;
-export const DECIMAL_12_PERCENT = 0.12;
-export const DECIMAL_85_PERCENT = 0.85;
-export const DECIMAL_95_PERCENT = 0.95;
-export const DECIMAL_96_PERCENT = 0.96;
-export const DECIMAL_99_PERCENT = 0.99;
-export const DECIMAL_VERY_SMALL = 0.001;
+// 其他动态生成的常量
+export const MAGIC_36 = 36;
+export const MAGIC_9 = 9;
+export const MAGIC_0_8 = 0.8;
+export const MAGIC_0_5 = 0.5;
+export const MAGIC_2000 = 2000;
+export const MAGIC_60000 = 60000;
+export const MAGIC_3600000 = 3600000;
+export const MAGIC_1048576 = 1048576;
+export const MAGIC_10000 = 10000;
+export const MAGIC_85 = 85;
+export const MAGIC_15 = 15;
+export const MAGIC_0_95 = 0.95;
+export const MAGIC_90 = 90;
+export const MAGIC_80 = 80;
+export const MAGIC_70 = 70;
+export const MAGIC_0_25 = 0.25;
+export const MAGIC_0_1 = 0.1;
+export const MAGIC_4000 = 4000;
+export const MAGIC_2500 = 2500;
+export const MAGIC_75 = 75;
+export const MAGIC_300000 = 300000;
+export const MAGIC_0_9 = 0.9;
+export const MAGIC_0_7 = 0.7;
+export const MAGIC_17 = 17;
+export const MAGIC_18 = 18;
+export const MAGIC_22 = 22;
+export const MAGIC_999 = 999;
+export const MAGIC_0_2 = 0.2;
+export const MAGIC_1_5 = 1.5;
+export const MAGIC_6 = 6;
+export const MAGIC_16 = 16;
+export const MAGIC_0_3 = 0.3;
+export const MAGIC_1_1 = 1.1;
+export const MAGIC_40 = 40;
+export const MAGIC_20 = 20;
+export const MAGIC_0_6 = 0.6;
+export const MAGIC_512 = 512;
+export const MAGIC_8 = 8;
+export const MAGIC_32 = 32;
+export const MAGIC_12 = 12;
+export const MAGIC_255 = 255;
+export const MAGIC_HEX_03 = 0x03;
+export const MAGIC_HEX_04 = 0x04;
+export const MAGIC_HEX_3 = 0x3;
+export const MAGIC_HEX_8 = 0x8;
+export const MAGIC_48 = 48;
+export const MAGIC_64 = 64;
+export const MAGIC_1800 = 1800;
+export const MAGIC_800 = 800;
+export const MAGIC_600 = 600;
+export const MAGIC_256 = 256;
+export const MAGIC_72 = 72;
+export const MAGIC_131 = 131;
+export const MAGIC_131000 = 131000;
+export const MAGIC_131014 = 131014;
+export const MAGIC_131016 = 131016;
+export const MAGIC_131052 = 131052;
+export const MAGIC_131053 = 131053;
+export const MAGIC_132 = 132;
+export const MAGIC_133 = 133;
+export const MAGIC_136 = 136;
+export const MAGIC_190 = 190;
+export const MAGIC_368 = 368;
+export const MAGIC_131005 = 131005;
+export const MAGIC_131008 = 131008;
+export const MAGIC_131009 = 131009;
+export const MAGIC_131021 = 131021;
+export const MAGIC_131026 = 131026;
+export const MAGIC_131047 = 131047;
+export const MAGIC_131051 = 131051;
+export const MAGIC_4096 = 4096;
+export const MAGIC_429 = 429;
+export const MAGIC_95 = 95;
+export const MAGIC_99 = 99;
+export const MAGIC_0_99 = 0.99;

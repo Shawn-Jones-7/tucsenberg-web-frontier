@@ -4,6 +4,8 @@
  */
 
 import type { Locale } from '@/types/i18n';
+import { MAGIC_0_9, MAGIC_0_7, COUNT_PAIR, MAGIC_0_5, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, MAGIC_0_8 } from '@/constants/magic-numbers';
+
 import type {
   IPreloader,
   PreloadOptions,
@@ -25,7 +27,7 @@ export const batchStrategy: PreloadStrategy = async (
   locales: Locale[],
   options?: PreloadOptions,
 ) => {
-  const batchSize = 2;
+  const batchSize = COUNT_PAIR;
   const batches: Locale[][] = [];
 
   for (let i = 0; i < locales.length; i += batchSize) {
@@ -51,10 +53,10 @@ export const adaptiveStrategy: PreloadStrategy = async (
   const stats = preloader.getPreloadStats();
 
   // 根据当前性能选择策略
-  if (stats.successRate > 0.9 && stats.averageLoadTime < 1000) {
+  if (stats.successRate > MAGIC_0_9 && stats.averageLoadTime < 1000) {
     // 性能良好，使用立即策略
     await immediateStrategy(preloader, locales, options);
-  } else if (stats.successRate > 0.7) {
+  } else if (stats.successRate > MAGIC_0_7) {
     // 性能一般，使用渐进式策略
     await progressiveStrategy(preloader, locales, options);
   } else {
@@ -74,9 +76,7 @@ export const networkAwareStrategy: PreloadStrategy = async (
 ) => {
   // 检测网络状况
   const isOnline = navigator.onLine;
-  const connection = (
-    navigator as { connection?: { effectiveType?: string; downlink?: number } }
-  ).connection;
+  const {connection} = (navigator as { connection?: { effectiveType?: string; downlink?: number } });
 
   if (!isOnline) {
     // 离线状态，不进行预加载
@@ -86,10 +86,10 @@ export const networkAwareStrategy: PreloadStrategy = async (
   if (connection) {
     const { effectiveType, downlink } = connection;
 
-    if (effectiveType === '4g' && (downlink ?? 0) > 2) {
+    if (effectiveType === '4g' && (downlink ?? 0) > COUNT_PAIR) {
       // 快速网络，使用立即策略
       await immediateStrategy(preloader, locales, options);
-    } else if (effectiveType === '3g' || (downlink ?? 0) > 0.5) {
+    } else if (effectiveType === '3g' || (downlink ?? 0) > MAGIC_0_5) {
       // 中等网络，使用渐进式策略
       await progressiveStrategy(preloader, locales, options);
     } else {
@@ -115,10 +115,10 @@ export const timeAwareStrategy: PreloadStrategy = async (
   const hour = now.getHours();
 
   // 根据时间选择策略
-  if (hour >= 9 && hour <= 17) {
+  if (hour >= MAGIC_9 && hour <= MAGIC_17) {
     // 工作时间，使用快速策略
     await immediateStrategy(preloader, locales, options);
-  } else if (hour >= 18 && hour <= 22) {
+  } else if (hour >= MAGIC_18 && hour <= MAGIC_22) {
     // 晚上，使用渐进式策略
     await progressiveStrategy(preloader, locales, options);
   } else {
@@ -137,20 +137,18 @@ export const memoryAwareStrategy: PreloadStrategy = async (
   options?: PreloadOptions,
 ) => {
   // 检查可用内存
-  const memory = (
-    performance as {
+  const {memory} = (performance as {
       memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
-    }
-  ).memory;
+    });
 
   if (memory) {
     const { usedJSHeapSize, totalJSHeapSize } = memory;
     const memoryUsage = usedJSHeapSize / totalJSHeapSize;
 
-    if (memoryUsage < 0.5) {
+    if (memoryUsage < MAGIC_0_5) {
       // 内存充足，使用立即策略
       await immediateStrategy(preloader, locales, options);
-    } else if (memoryUsage < 0.8) {
+    } else if (memoryUsage < MAGIC_0_8) {
       // 内存一般，使用渐进式策略
       await progressiveStrategy(preloader, locales, options);
     } else {

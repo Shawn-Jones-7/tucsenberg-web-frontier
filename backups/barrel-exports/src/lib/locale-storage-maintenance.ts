@@ -9,10 +9,10 @@
 
 // 重新导出所有模块的功能
 // 导入各个功能模块
-import { LocaleCleanupManager } from './locale-storage-maintenance-cleanup';
-import { LocaleImportExportManager } from './locale-storage-maintenance-import-export';
-import { LocaleMaintenanceOperationsManager } from './locale-storage-maintenance-operations';
-import { LocaleValidationManager } from './locale-storage-maintenance-validation';
+import { LocaleCleanupManager } from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-cleanup';
+import { LocaleImportExportManager } from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-import-export';
+import { LocaleMaintenanceOperationsManager } from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-operations';
+import { LocaleValidationManager } from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-validation';
 import type {
   ExportData,
   ImportData,
@@ -20,10 +20,10 @@ import type {
   StorageOperationResult,
 } from './locale-storage-types';
 
-export * from './locale-storage-maintenance-cleanup';
-export * from './locale-storage-maintenance-validation';
-export * from './locale-storage-maintenance-operations';
-export * from './locale-storage-maintenance-import-export';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-cleanup';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-validation';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-operations';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-maintenance-import-export';
 
 /**
  * 语言存储维护管理器 - 统一接口

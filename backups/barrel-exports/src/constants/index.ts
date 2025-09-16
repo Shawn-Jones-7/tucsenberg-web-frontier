@@ -4,22 +4,22 @@
  */
 
 // 国际化常量
-export * from './i18n-constants';
+export * from '@/../backups/barrel-exports/src/constants/i18n-constants';
 
 // 应用程序常量
-export * from './app-constants';
+export * from '@/../backups/barrel-exports/src/constants/app-constants';
 
 // 测试相关常量
-export * from './test-constants';
+export * from '@/../backups/barrel-exports/src/constants/test-constants';
 
 // 安全相关常量
-export * from './security-constants';
+export * from '@/../backups/barrel-exports/src/constants/security-constants';
 
 // SEO相关常量
-export * from './seo-constants';
+export * from '@/../backups/barrel-exports/src/constants/seo-constants';
 
 // 重新导出主要常量对象以便于使用
-export { APP_CONSTANTS } from './app-constants';
-export { SECURITY_CONSTANTS } from './security-constants';
-export { SEO_CONSTANTS } from './seo-constants';
-export { TEST_CONSTANTS } from './test-constants';
+export { APP_CONSTANTS } from '@/../backups/barrel-exports/src/constants/app-constants';
+export { SECURITY_CONSTANTS } from '@/../backups/barrel-exports/src/constants/security-constants';
+export { SEO_CONSTANTS } from '@/../backups/barrel-exports/src/constants/seo-constants';
+export { TEST_CONSTANTS } from '@/../backups/barrel-exports/src/constants/test-constants';

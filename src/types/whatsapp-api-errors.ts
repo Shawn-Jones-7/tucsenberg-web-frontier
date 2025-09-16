@@ -1,3 +1,5 @@
+import { COUNT_PAIR, MAGIC_36, MAGIC_9 } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp API 错误处理类型定义
  * WhatsApp API Error Handling Type Definitions
@@ -485,10 +487,10 @@ export const ErrorUtils = {
   calculateRetryDelay(
     attempt: number,
     baseDelay: number = 1000,
-    multiplier: number = 2,
+    multiplier: number = COUNT_PAIR,
     maxDelay: number = 30000,
   ): number {
-    const delay = baseDelay * Math.pow(multiplier, attempt - 1);
+    const delay = baseDelay * multiplier**(attempt - 1);
     return Math.min(delay, maxDelay);
   },
 
@@ -502,7 +504,7 @@ export const ErrorUtils = {
     version: string = '1.0.0',
   ): ErrorReport {
     return {
-      id: `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `error_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`,
       timestamp: new Date().toISOString(),
       error: errorDetails,
       environment,

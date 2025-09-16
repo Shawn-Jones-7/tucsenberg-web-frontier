@@ -3,14 +3,16 @@
  * WhatsApp Webhook Utility Class
  */
 
-import type { WebhookEntry, WebhookPayload } from '../whatsapp-webhook-base';
+import type { WebhookEntry, WebhookPayload } from '@/types/whatsapp-webhook-base';
+import { MAGIC_0_95, MAGIC_0_99 } from '@/constants/magic-numbers';
+
 import type {
   EventFilter,
   EventStatistics,
   MessageReceivedEvent,
   WebhookEvent,
 } from '../whatsapp-webhook-events';
-import type { IncomingWhatsAppMessage } from '../whatsapp-webhook-messages';
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
   SignatureVerificationConfig,
   WebhookParsingResult,
@@ -327,8 +329,8 @@ export class WebhookUtils {
           0,
         min_ms: processingTimes[0] || 0,
         max_ms: processingTimes[processingTimes.length - 1] || 0,
-        p95_ms: processingTimes[Math.floor(processingTimes.length * 0.95)] || 0,
-        p99_ms: processingTimes[Math.floor(processingTimes.length * 0.99)] || 0,
+        p95_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] || 0,
+        p99_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] || 0,
       },
       error_rate: 0, // 应该基于实际错误计算
       success_rate: 1, // 应该基于实际成功率计算

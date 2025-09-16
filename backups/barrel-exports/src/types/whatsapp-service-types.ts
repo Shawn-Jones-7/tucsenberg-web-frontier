@@ -64,10 +64,10 @@ import type {
  */
 
 // 重新导出所有模块的类型和功能
-export * from './whatsapp-service-config';
-export * from './whatsapp-service-errors';
-export * from './whatsapp-service-monitoring';
-export * from './whatsapp-service-interface';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-service-config';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-service-errors';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-service-monitoring';
+export * from '@/../backups/barrel-exports/src/types/whatsapp-service-interface';
 
 // ==================== 向后兼容的常量导出 ====================
 

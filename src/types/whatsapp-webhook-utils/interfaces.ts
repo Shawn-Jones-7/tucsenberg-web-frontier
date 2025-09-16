@@ -3,7 +3,7 @@
  * WhatsApp Webhook Utility Interface Definitions
  */
 
-import type { WebhookEvent } from '../whatsapp-webhook-events';
+import type { WebhookEvent } from '@/types/whatsapp-webhook-events';
 
 /**
  * Webhook解析结果

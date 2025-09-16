@@ -9,7 +9,7 @@ import type {
   MetricsCollector,
   PreloadConfig,
 } from '../i18n-cache-types';
-import { TranslationPreloader } from '../i18n-preloader-core';
+import { TranslationPreloader } from '@/lib/i18n-preloader-core';
 
 /**
  * 创建预加载器实例的工厂函数

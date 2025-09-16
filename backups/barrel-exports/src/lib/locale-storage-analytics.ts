@@ -52,10 +52,10 @@ import type {
   StorageStats,
 } from './locale-storage-types';
 
-export * from './locale-storage-analytics-core';
-export * from './locale-storage-analytics-events';
-export * from './locale-storage-analytics-performance';
-export * from './locale-storage-analytics-utils';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-analytics-core';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-analytics-events';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-analytics-performance';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-analytics-utils';
 
 /**
  * 存储分析管理器 - 向后兼容类

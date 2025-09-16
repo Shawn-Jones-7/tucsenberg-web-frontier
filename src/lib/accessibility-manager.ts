@@ -12,7 +12,7 @@ import {
   THEME_ANNOUNCEMENTS,
   type ScreenReaderConfig,
 } from './accessibility-types';
-import { logger } from './logger';
+import { logger } from '@/lib/logger';
 
 /**
  * 无障碍性管理器

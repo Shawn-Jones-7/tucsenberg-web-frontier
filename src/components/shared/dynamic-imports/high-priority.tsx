@@ -6,7 +6,7 @@
  * 高优先级和核心UI组件的动态导入定义
  */
 import dynamic from 'next/dynamic';
-import { MinimalLoadingFallback } from '../dynamic-imports-base';
+import { MinimalLoadingFallback } from '@/components/shared/dynamic-imports-base';
 
 // ==================== 高优先级动态导入组件 ====================
 

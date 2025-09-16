@@ -4,6 +4,8 @@
  */
 
 import { z } from 'zod';
+import { COUNT_TEN, SECONDS_PER_MINUTE, DAYS_PER_WEEK } from '@/constants/magic-numbers';
+
 import { airtableService } from '@/lib/airtable';
 import { logger } from '@/lib/logger';
 import { resendService } from '@/lib/resend';
@@ -54,7 +56,7 @@ export async function validateFormData(body: unknown, clientIP: string) {
   const submittedAt = new Date(formData.submittedAt);
   const now = new Date();
   const timeDiff = now.getTime() - submittedAt.getTime();
-  const maxAge = 10 * 60 * 1000; // 10分钟
+  const maxAge = COUNT_TEN * SECONDS_PER_MINUTE * 1000; // COUNT_TEN分钟
 
   if (timeDiff > maxAge || timeDiff < 0) {
     logger.warn('Form submission time validation failed', {
@@ -244,7 +246,7 @@ export function validateAdminAccess(authHeader: string | null): boolean {
     return false;
   }
 
-  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
+  const token = authHeader.substring(DAYS_PER_WEEK); // Remove 'Bearer ' prefix
   return token === adminToken;
 }
 

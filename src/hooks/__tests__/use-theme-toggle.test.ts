@@ -2,7 +2,7 @@ import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { TEST_DELAY_VALUES } from '@/constants/test-constants';
-import { useThemeToggle } from '../use-theme-toggle';
+import { useThemeToggle } from '@/hooks/use-theme-toggle';
 
 // View Transitions API will be mocked in vi.hoisted
 

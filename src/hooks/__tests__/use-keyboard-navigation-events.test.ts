@@ -4,7 +4,7 @@
 
 import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { useKeyboardNavigation } from '../use-keyboard-navigation';
+import { useKeyboardNavigation } from '@/hooks/use-keyboard-navigation';
 
 // Mock focus method
 const mockFocus = vi.fn();

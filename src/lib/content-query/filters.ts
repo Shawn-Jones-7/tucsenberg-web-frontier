@@ -8,7 +8,7 @@ import type {
   ContentQueryOptions,
   ParsedContent,
 } from '@/types/content';
-import { getContentConfig } from '../content-utils';
+import { getContentConfig } from '@/lib/content-utils';
 
 /**
  * Check if draft posts are allowed based on configuration and options

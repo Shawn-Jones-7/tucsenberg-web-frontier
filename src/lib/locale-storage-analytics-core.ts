@@ -7,7 +7,7 @@
 
 'use client';
 
-import { LocalStorageManager } from './locale-storage-local';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   ErrorType,
   LocaleDetectionHistory,
@@ -16,7 +16,7 @@ import type {
   StorageOperationResult,
   StorageStats,
 } from './locale-storage-types';
-import { estimateStorageSize } from './locale-storage-types';
+import { estimateStorageSize } from '@/lib/locale-storage-types';
 
 // ==================== 核心统计功能 ====================
 

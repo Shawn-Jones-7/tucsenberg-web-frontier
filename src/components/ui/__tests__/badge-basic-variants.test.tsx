@@ -15,7 +15,7 @@
 import React, { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { Badge } from '../badge';
+import { Badge } from '@/components/ui/badge';
 
 describe('Badge Basic Rendering & Variants Tests - Index', () => {
   it('renders badge with default props', () => {

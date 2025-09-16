@@ -7,8 +7,8 @@ import type {
   LocaleDetectionHistory,
   UserLocalePreference,
 } from './locale-storage-manager';
-import { LocaleStorageManager } from './locale-storage-manager';
-import { STORAGE_KEYS } from './locale-storage-types';
+import { LocaleStorageManager } from '@/lib/locale-storage-manager';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * React Hook: 使用语言偏好存储

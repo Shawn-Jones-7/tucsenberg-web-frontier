@@ -37,7 +37,7 @@ const CONFIG = {
   LOCALES: ['en', 'zh'],
 };
 
-let scanResults = {
+const scanResults = {
   totalFiles: 0,
   scannedFiles: 0,
   translationKeys: new Set(),

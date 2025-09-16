@@ -25,7 +25,7 @@ export function ReactScanGuide() {
   const toggleSection = (section: string) => {
     setOpenSections((prev) => ({
       ...prev,
-      // eslint-disable-next-line security/detect-object-injection
+       
       [section]:
         !Object.prototype.hasOwnProperty.call(prev, section) || !prev[section], // section 来自内部控制，安全
     }));
@@ -55,7 +55,7 @@ export function ReactScanGuide() {
           {title}
         </CardTitle>
       </CardHeader>
-      {/* eslint-disable-next-line security/detect-object-injection */}
+      { }
       {Object.prototype.hasOwnProperty.call(openSections, id) &&
         openSections[id] && <CardContent>{children}</CardContent>}
     </Card>

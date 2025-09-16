@@ -3,11 +3,11 @@
  * WhatsApp API Utility Functions
  */
 
-import { API_VERSIONS, MEDIA_TYPES, MESSAGE_TYPES } from './constants';
-import { DEFAULT_API_CONFIG } from './defaults';
-import { ERROR_CODE_MESSAGES, RETRYABLE_ERROR_CODES } from './errors';
-import type { ApiConfig } from './interfaces';
-import type { ApiVersion, ErrorCode, MediaType, MessageType } from './types';
+import { API_VERSIONS, MEDIA_TYPES, MESSAGE_TYPES } from '@/types/whatsapp-api-config/constants';
+import { DEFAULT_API_CONFIG } from '@/types/whatsapp-api-config/defaults';
+import { ERROR_CODE_MESSAGES, RETRYABLE_ERROR_CODES } from '@/types/whatsapp-api-config/errors';
+import type { ApiConfig } from '@/types/whatsapp-api-config/interfaces';
+import type { ApiVersion, ErrorCode, MediaType, MessageType } from '@/types/whatsapp-api-config/types';
 
 /**
  * 配置工具函数

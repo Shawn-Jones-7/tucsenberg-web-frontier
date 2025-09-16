@@ -11,9 +11,9 @@ import type {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
-import { TranslationBenchmarks } from './translation-benchmarks';
-import { TranslationManager } from './translation-manager';
-import { TranslationValidators } from './translation-validators';
+import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
+import { TranslationManager } from '@/lib/translation-manager';
+import { TranslationValidators } from '@/lib/translation-validators';
 
 // 导入拆分的模块
 export type {

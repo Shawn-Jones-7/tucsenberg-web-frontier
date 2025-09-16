@@ -4,7 +4,7 @@
  */
 
 import { logger } from '@/lib/logger';
-import { env } from '../../env.mjs';
+import { env } from '@/../env.mjs';
 
 /**
  * Security headers for API responses

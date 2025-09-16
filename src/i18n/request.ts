@@ -5,7 +5,7 @@ import {
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { routing } from './routing';
+import { routing } from '@/i18n/routing';
 
 // 辅助函数：获取格式配置
 function getFormats(locale: string) {

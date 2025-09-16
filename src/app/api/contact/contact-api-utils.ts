@@ -4,6 +4,8 @@
  */
 
 import { NextRequest } from 'next/server';
+import { MAGIC_36, COUNT_PAIR, MAGIC_9 } from '@/constants/magic-numbers';
+
 import { logger } from '@/lib/logger';
 
 // 常量定义
@@ -186,7 +188,7 @@ export function validateEnvironmentConfig(): {
  * Generate request ID for log tracing
  */
 export function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  return `req_${Date.now()}_${Math.random().toString(MAGIC_36).substring(COUNT_PAIR, MAGIC_9)}`;
 }
 
 /**

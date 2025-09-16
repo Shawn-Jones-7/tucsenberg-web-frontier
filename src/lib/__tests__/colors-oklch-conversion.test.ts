@@ -8,7 +8,7 @@
  */
 
 import { TEST_CONSTANTS } from '@/constants/test-constants';
-import { calculateContrast, oklchToCSS, type OKLCHColor } from '../colors';
+import { calculateContrast, oklchToCSS, type OKLCHColor } from '@/lib/colors';
 
 describe('OKLCH Color Conversion and Calculation Tests', () => {
   describe('oklchToCSS', () => {

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { ComponentStats } from './data-reader';
+import type { ComponentStats } from '@/components/dev-tools/react-scan-analyzer/data-reader';
 
 interface StatsTableProps {
   componentStats: ComponentStats[];

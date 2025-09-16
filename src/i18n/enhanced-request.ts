@@ -4,7 +4,7 @@ import {
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { routing } from './routing';
+import { routing } from '@/i18n/routing';
 
 // 重用 request.ts 中的辅助函数
 function getEnhancedFormats(locale: string) {

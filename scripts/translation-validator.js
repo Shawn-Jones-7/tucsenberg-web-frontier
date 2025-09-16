@@ -78,7 +78,7 @@ const CONFIG = {
   },
 };
 
-let validationResults = {
+const validationResults = {
   totalKeys: 0,
   validatedKeys: 0,
   issues: [],

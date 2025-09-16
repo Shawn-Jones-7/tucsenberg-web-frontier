@@ -1,4 +1,6 @@
 import { useCallback } from 'react';
+import { COUNT_TRIPLE, MAGIC_0_25, MAGIC_0_1, MAGIC_4000, MAGIC_2500, ANIMATION_DURATION_NORMAL, COUNT_FIVE, OFFSET_NEGATIVE_MEDIUM, MAGIC_90, MAGIC_75, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+
 import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import type {
   DiagnosticReport,
@@ -47,7 +49,7 @@ export function exportCsvReport(historicalReports: DiagnosticReport[]): void {
   const csvRows = historicalReports.map((report) => [
     new Date(report.timestamp).toISOString(),
     report.pageUrl,
-    report.vitals.cls.toFixed(3),
+    report.vitals.cls.toFixed(COUNT_TRIPLE),
     report.vitals.lcp.toFixed(0),
     report.vitals.fid.toFixed(0),
     report.vitals.fcp.toFixed(0),
@@ -194,29 +196,29 @@ function generateInsights(reports: DiagnosticReport[]): string[] {
   const averages = calculateAverageMetrics(reports);
 
   // CLS 分析
-  if (averages.cls > 0.25) {
+  if (averages.cls > MAGIC_0_25) {
     insights.push(
       'High Cumulative Layout Shift detected. Consider optimizing layout stability.',
     );
-  } else if (averages.cls > 0.1) {
+  } else if (averages.cls > MAGIC_0_1) {
     insights.push(
       'Moderate Cumulative Layout Shift. Room for improvement in layout stability.',
     );
   }
 
   // LCP 分析
-  if (averages.lcp > 4000) {
+  if (averages.lcp > MAGIC_4000) {
     insights.push(
       'Slow Largest Contentful Paint. Consider optimizing loading performance.',
     );
-  } else if (averages.lcp > 2500) {
+  } else if (averages.lcp > MAGIC_2500) {
     insights.push(
       'Moderate Largest Contentful Paint. Some optimization opportunities exist.',
     );
   }
 
   // FID 分析
-  if (averages.fid > 300) {
+  if (averages.fid > ANIMATION_DURATION_NORMAL) {
     insights.push(
       'High First Input Delay. Consider optimizing JavaScript execution.',
     );
@@ -227,9 +229,9 @@ function generateInsights(reports: DiagnosticReport[]): string[] {
   }
 
   // 趋势分析
-  if (reports.length >= 5) {
-    const recent = reports.slice(-5);
-    const older = reports.slice(0, -5);
+  if (reports.length >= COUNT_FIVE) {
+    const recent = reports.slice(-COUNT_FIVE);
+    const older = reports.slice(0, -COUNT_FIVE);
 
     if (older.length > 0) {
       const recentAvg = calculateAverageMetrics(recent);
@@ -278,7 +280,7 @@ export function exportExcelReport(historicalReports: DiagnosticReport[]): void {
       date.toLocaleDateString(),
       date.toLocaleTimeString(),
       report.pageUrl,
-      report.vitals.cls.toFixed(3),
+      report.vitals.cls.toFixed(COUNT_TRIPLE),
       report.vitals.lcp.toFixed(0),
       report.vitals.fid.toFixed(0),
       report.vitals.fcp.toFixed(0),
@@ -309,8 +311,8 @@ export function exportExcelReport(historicalReports: DiagnosticReport[]): void {
 function getPerformanceStatus(report: DiagnosticReport): string {
   const score = report.score || 0;
 
-  if (score >= 90) return 'Excellent';
-  if (score >= 75) return 'Good';
-  if (score >= 50) return 'Needs Improvement';
+  if (score >= MAGIC_90) return 'Excellent';
+  if (score >= MAGIC_75) return 'Good';
+  if (score >= PERCENTAGE_HALF) return 'Needs Improvement';
   return 'Poor';
 }

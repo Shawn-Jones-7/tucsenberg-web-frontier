@@ -4,7 +4,7 @@ import {
   DELAY_CONSTANTS,
   PERFORMANCE_CONSTANTS,
 } from '../../../constants/app-constants';
-import { AccessibilityManager, useAccessibility } from '../../accessibility';
+import { AccessibilityManager, useAccessibility } from '@/lib/accessibility';
 
 // Mock logger module
 vi.mock('../../logger', () => ({

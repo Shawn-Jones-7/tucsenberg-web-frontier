@@ -4,8 +4,8 @@
  */
 
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { PERFORMANCE_THRESHOLDS } from './constants';
-import type { DetailedWebVitals, PerformanceBaseline } from './types';
+import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
+import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
 
 /**
  * 性能监控工具类

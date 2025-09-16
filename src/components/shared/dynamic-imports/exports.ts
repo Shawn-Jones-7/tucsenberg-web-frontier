@@ -1,7 +1,7 @@
 /**
  * 核心动态组件导出配置
  */
-import { DynamicAnimatedIcon, DynamicProgressIndicator } from './high-priority';
+import { DynamicAnimatedIcon, DynamicProgressIndicator } from '@/components/shared/dynamic-imports/high-priority';
 import {
   DynamicAnimatedCounter,
   DynamicCarousel,

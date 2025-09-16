@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createLogger, log, logger, LogLevel } from '../logger';
+import { createLogger, log, logger, LogLevel } from '@/lib/logger';
 
 // Mock console methods
 const mockConsole = {

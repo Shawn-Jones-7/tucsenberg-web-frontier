@@ -324,7 +324,7 @@ export class ErrorLogger {
     errorTrends: Array<{ date: string; count: number }>;
   } {
     const total = this.errorLog.length;
-    const totalOperations = AccessLogger.getAccessStats().totalOperations;
+    const {totalOperations} = AccessLogger.getAccessStats();
     const errorRate = totalOperations > 0 ? (total / totalOperations) * 100 : 0;
 
     // 统计严重程度分布

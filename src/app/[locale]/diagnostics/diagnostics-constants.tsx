@@ -4,7 +4,7 @@ import { AlertTriangle, CheckCircle, XCircle } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 
 // 重新导出类型以便其他文件使用
-export type { SimpleWebVitals } from './utils';
+export type { SimpleWebVitals } from '@/app/[locale]/diagnostics/utils';
 
 // 常量定义 - 避免魔法数字
 export const UI_CONSTANTS = {

@@ -1,7 +1,7 @@
 // 导入核心功能
-import { PerformanceMonitoringCore } from './performance-monitoring-core';
-import type { PerformanceConfig } from './performance-monitoring-types';
-import { generateEnvironmentConfig } from './performance-monitoring-types';
+import { PerformanceMonitoringCore } from '@/lib/performance-monitoring-core';
+import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
+import { generateEnvironmentConfig } from '@/lib/performance-monitoring-types';
 
 /**
  * 性能监控协调器 - 主入口文件

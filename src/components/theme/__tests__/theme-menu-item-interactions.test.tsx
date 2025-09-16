@@ -18,7 +18,7 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ThemeMenuItem } from '../theme-menu-item';
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({

@@ -4,6 +4,8 @@
  */
 
 import type { DetailedWebVitals } from '@/lib/enhanced-web-vitals';
+import { COUNT_PAIR, MAGIC_0_95, MAGIC_90, MAGIC_80, MAGIC_70, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import {
   WEB_VITALS_CONSTANTS,
   type DiagnosticReport,
@@ -169,13 +171,13 @@ export const calculateMedian = (values: number[]): number => {
   if (values.length === 0) return 0;
 
   const sorted = [...values].sort((a, b) => a - b);
-  const middle = Math.floor(sorted.length / 2);
+  const middle = Math.floor(sorted.length / COUNT_PAIR);
 
-  if (sorted.length % 2 === 0) {
+  if (sorted.length % COUNT_PAIR === 0) {
     const left = sorted[middle - 1] ?? 0;
     const right = sorted[middle] ?? 0;
     return Number(
-      ((left + right) / 2).toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
+      ((left + right) / COUNT_PAIR).toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
     );
   }
 
@@ -191,7 +193,7 @@ export const calculateP95 = (values: number[]): number => {
   if (values.length === 0) return 0;
 
   const sorted = [...values].sort((a, b) => a - b);
-  const index = Math.ceil(sorted.length * 0.95) - 1;
+  const index = Math.ceil(sorted.length * MAGIC_0_95) - 1;
 
   return Number(
     (sorted[Math.max(0, index)] ?? 0).toFixed(
@@ -233,10 +235,10 @@ export const calculateMetricStats = (values: number[]) => {
  * 计算性能等级
  */
 export const calculatePerformanceGrade = (score: number): string => {
-  if (score >= 90) return 'A';
-  if (score >= 80) return 'B';
-  if (score >= 70) return 'C';
-  if (score >= 60) return 'D';
+  if (score >= MAGIC_90) return 'A';
+  if (score >= MAGIC_80) return 'B';
+  if (score >= MAGIC_70) return 'C';
+  if (score >= SECONDS_PER_MINUTE) return 'D';
   return 'F';
 };
 

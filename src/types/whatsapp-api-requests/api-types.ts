@@ -21,7 +21,7 @@ import type {
   MessageForwardRequest,
   MessageReactionRequest,
 } from './message-actions-requests';
-import type { SendMessageRequest } from './message-requests';
+import type { SendMessageRequest } from '@/types/whatsapp-api-requests/message-requests';
 import type {
   MessageMarkRequest,
   PhoneNumberRegistrationRequest,

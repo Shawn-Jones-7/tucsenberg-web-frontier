@@ -214,7 +214,7 @@ class BarrelExportTransformer {
     }
 
     const currentDir = path.dirname(currentFilePath);
-    let resolvedPath = path.resolve(currentDir, modulePath);
+    const resolvedPath = path.resolve(currentDir, modulePath);
 
     // 尝试不同的扩展名
     const extensions = [
@@ -474,11 +474,11 @@ class BarrelExportTransformer {
         filesTransformed: this.transformStats.filesTransformed,
         transformationRate:
           this.transformStats.filesProcessed > 0
-            ? (
+            ? `${(
                 (this.transformStats.filesTransformed /
                   this.transformStats.filesProcessed) *
                 100
-              ).toFixed(2) + '%'
+              ).toFixed(2)  }%`
             : '0%',
       },
     };

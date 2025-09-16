@@ -5,9 +5,9 @@
 
 'use client';
 
-import type { DetailedWebVitals } from './types';
-import { WebVitalsCollectorAnalyzer } from './web-vitals-collector-analyzer';
-import { WebVitalsCollectorBase } from './web-vitals-collector-base';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
+import { WebVitalsCollectorAnalyzer } from '@/lib/web-vitals/web-vitals-collector-analyzer';
+import { WebVitalsCollectorBase } from '@/lib/web-vitals/web-vitals-collector-base';
 
 /**
  * 增强的 Web Vitals 数据收集器

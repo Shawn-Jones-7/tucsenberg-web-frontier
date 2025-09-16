@@ -9,7 +9,7 @@ import {
   consoleLogListener,
   historyRecordingListener,
 } from './event-listeners';
-import { PreferenceEventManager } from './event-manager';
+import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
 
 /**
  * 事件管理工具函数

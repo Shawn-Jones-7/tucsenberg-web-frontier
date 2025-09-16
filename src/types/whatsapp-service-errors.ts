@@ -1,3 +1,5 @@
+import { MAGIC_429, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp Service Error Types and Classes
  *
@@ -68,7 +70,7 @@ export class WhatsAppError extends Error {
    */
   isRetryable(): boolean {
     // Rate limit errors are retryable
-    if (this.code === 429) return true;
+    if (this.code === MAGIC_429) return true;
 
     // Network errors are retryable
     if (this.code >= 500) return true;
@@ -216,7 +218,7 @@ export class WhatsAppRateLimitError extends WhatsAppError {
     limit?: number,
     remaining?: number,
   ) {
-    super(message, 429, 'RateLimitError');
+    super(message, MAGIC_429, 'RateLimitError');
     this.name = 'WhatsAppRateLimitError';
     if (retryAfter !== undefined) {
       this.retryAfter = retryAfter;
@@ -245,7 +247,7 @@ export class WhatsAppRateLimitError extends WhatsAppError {
    * Get retry delay in milliseconds
    */
   getRetryDelay(): number {
-    return (this.retryAfter || 60) * 1000; // Default to 60 seconds
+    return (this.retryAfter || SECONDS_PER_MINUTE) * 1000; // Default to SECONDS_PER_MINUTE seconds
   }
 
   /**
@@ -426,7 +428,7 @@ export function createErrorFromApiResponse(
     return WhatsAppAuthError.invalidToken();
   }
 
-  if (status === 429) {
+  if (status === MAGIC_429) {
     const retryAfter =
       (data as Record<string, unknown>)?.error &&
       typeof (data as Record<string, unknown>).error === 'object'

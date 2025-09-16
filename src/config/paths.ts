@@ -4,12 +4,12 @@
  */
 
 // 重新导出类型定义
-export type { Locale, LocalizedPath, PageType } from './paths/types';
+export type { Locale, LocalizedPath, PageType } from '@/config/paths/types';
 
 // 重新导出配置
-export { PATHS_CONFIG } from './paths/paths-config';
-export { LOCALES_CONFIG } from './paths/locales-config';
-export { SITE_CONFIG } from './paths/site-config';
+export { PATHS_CONFIG } from '@/config/paths/paths-config';
+export { LOCALES_CONFIG } from '@/config/paths/locales-config';
+export { SITE_CONFIG } from '@/config/paths/site-config';
 
 // 重新导出工具函数
 export {
@@ -22,6 +22,6 @@ export {
 } from './paths/utils';
 
 // 重新导出类型
-export type { PathsConfig } from './paths/paths-config';
-export type { LocalesConfig } from './paths/locales-config';
-export type { SiteConfig } from './paths/site-config';
+export type { PathsConfig } from '@/config/paths/paths-config';
+export type { LocalesConfig } from '@/config/paths/locales-config';
+export type { SiteConfig } from '@/config/paths/site-config';

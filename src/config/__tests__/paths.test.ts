@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '../paths';
+import type { Locale } from '@/config/paths';
 import {
   getLocalizedPath,
   getPageTypeFromPath,

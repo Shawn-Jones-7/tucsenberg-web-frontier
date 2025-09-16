@@ -11,10 +11,10 @@
 // 导出常量和枚举
 // 导入主要功能类
 import type { Locale } from '@/types/i18n';
-import { LocaleStorageAnalytics as LocaleAnalyticsManager } from './locale-storage-analytics';
-import { LocaleHistoryManager } from './locale-storage-history';
-import { LocaleMaintenanceManager } from './locale-storage-maintenance';
-import { LocalePreferenceManager } from './locale-storage-preference';
+import { LocaleStorageAnalytics as LocaleAnalyticsManager } from '@/lib/locale-storage-analytics';
+import { LocaleHistoryManager } from '@/lib/locale-storage-history';
+import { LocaleMaintenanceManager } from '@/lib/locale-storage-maintenance';
+import { LocalePreferenceManager } from '@/lib/locale-storage-preference';
 import type {
   LocaleDetectionHistory,
   MaintenanceOptions,
@@ -178,7 +178,7 @@ export {
   LocaleHistoryManager,
   type HistoryManager,
 } from './locale-storage-history';
-export type { QueryConditions } from './locale-storage-history';
+export type { QueryConditions } from '@/lib/locale-storage-history';
 // 导出分析功能
 export {
   LocaleStorageAnalytics,
@@ -190,7 +190,7 @@ export type {
   ExportData,
 } from './locale-storage-analytics';
 // 导出维护功能
-export { LocaleMaintenanceManager } from './locale-storage-maintenance';
+export { LocaleMaintenanceManager } from '@/lib/locale-storage-maintenance';
 
 /**
  * 统一的语言存储管理器
@@ -206,7 +206,7 @@ export class LocaleStorageManager {
   static saveUserPreference(preference: UserLocalePreference): void {
     const result = LocalePreferenceManager.saveUserPreference(preference);
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**
@@ -225,7 +225,7 @@ export class LocaleStorageManager {
   static setUserOverride(locale: Locale): void {
     const result = LocalePreferenceManager.setUserOverride(locale);
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**
@@ -244,7 +244,7 @@ export class LocaleStorageManager {
   static clearUserOverride(): void {
     const result = LocalePreferenceManager.clearUserOverride();
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**
@@ -298,7 +298,7 @@ export class LocaleStorageManager {
   static clearAll(): void {
     const result = LocaleMaintenanceManager.clearAll();
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**
@@ -326,7 +326,7 @@ export class LocaleStorageManager {
   ): void {
     const result = LocaleMaintenanceManager.cleanupExpiredDetections(maxAgeMs);
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**
@@ -353,7 +353,7 @@ export class LocaleStorageManager {
 
     const result = LocaleMaintenanceManager.importData(importData);
     // 忽略返回值，保持向后兼容的void返回类型
-    return;
+    
   }
 
   /**

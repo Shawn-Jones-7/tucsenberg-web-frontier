@@ -1,12 +1,12 @@
 // 向后兼容的重新导出
-import type { BundleAnalyzerIntegration } from './performance-monitoring-integrations-bundle';
+import type { BundleAnalyzerIntegration } from '@/lib/performance-monitoring-integrations-bundle';
 import {
   BundleAnalyzerAnalyzer,
   BundleAnalyzerUtils,
   useBundleAnalyzerIntegration,
   validateBundleAnalyzerConfig,
 } from './performance-monitoring-integrations-bundle';
-import type { ReactScanIntegration } from './performance-monitoring-integrations-react-scan';
+import type { ReactScanIntegration } from '@/lib/performance-monitoring-integrations-react-scan';
 import {
   ReactScanAnalyzer,
   ReactScanUtils,
@@ -24,7 +24,7 @@ import {
   validateWebVitalsConfig,
   WebVitalsAnalyzer,
 } from './performance-monitoring-integrations-vitals';
-import type { WebEvalAgentIntegration } from './performance-monitoring-integrations-web-eval';
+import type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
 import {
   useWebEvalAgentIntegration,
   validateWebEvalAgentConfig,
@@ -43,20 +43,20 @@ import type {
  */
 
 // 重新导出所有模块的功能
-export type { ReactScanIntegration } from './performance-monitoring-integrations-react-scan';
+export type { ReactScanIntegration } from '@/lib/performance-monitoring-integrations-react-scan';
 export {
   useReactScanIntegration,
   validateReactScanConfig,
   ReactScanAnalyzer,
   ReactScanUtils,
 } from './performance-monitoring-integrations-react-scan';
-export type { WebEvalAgentIntegration } from './performance-monitoring-integrations-web-eval';
+export type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
 export {
   useWebEvalAgentIntegration,
   validateWebEvalAgentConfig,
   WebEvalAgentAnalyzer,
 } from './performance-monitoring-integrations-web-eval';
-export type { BundleAnalyzerIntegration } from './performance-monitoring-integrations-bundle';
+export type { BundleAnalyzerIntegration } from '@/lib/performance-monitoring-integrations-bundle';
 export {
   useBundleAnalyzerIntegration,
   validateBundleAnalyzerConfig,

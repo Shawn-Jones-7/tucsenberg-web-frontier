@@ -5,8 +5,8 @@
  * 提供各种类型的WhatsApp入站消息类型定义
  */
 
-import type { WhatsAppMessage } from './whatsapp-base-types';
-import type { MessageContext } from './whatsapp-webhook-base';
+import type { WhatsAppMessage } from '@/types/whatsapp-base-types';
+import type { MessageContext } from '@/types/whatsapp-webhook-base';
 
 /**
  * 入站文本消息

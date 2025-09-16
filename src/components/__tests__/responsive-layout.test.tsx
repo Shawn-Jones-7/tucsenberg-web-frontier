@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ResponsiveLayout } from '../responsive-layout';
+import { ResponsiveLayout } from '@/components/responsive-layout';
 
 // Mock hooks with vi.hoisted
 const mockUseBreakpoint = vi.hoisted(() => vi.fn());

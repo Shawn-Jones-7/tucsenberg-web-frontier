@@ -7,9 +7,9 @@ import type {
   SendMessageRequest,
   WhatsAppServiceResponse,
 } from '@/types/whatsapp';
-import { WhatsAppMediaService } from './whatsapp-media';
-import { WhatsAppMessageService } from './whatsapp-messages';
-import { WhatsAppUtils } from './whatsapp-utils';
+import { WhatsAppMediaService } from '@/lib/whatsapp-media';
+import { WhatsAppMessageService } from '@/lib/whatsapp-messages';
+import { WhatsAppUtils } from '@/lib/whatsapp-utils';
 
 /**
  * WhatsApp 核心服务类

@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // import type { Metadata } from 'next'; // Removed unused import
-import { generateLocaleMetadata } from '../layout-metadata';
+import { generateLocaleMetadata } from '@/app/[locale]/layout-metadata';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockCreatePageSEOConfig, mockGenerateLocalizedMetadata, mockRouting } =

@@ -6,7 +6,7 @@
  */
 
 import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
-import type { CacheEvent, CacheStats } from './i18n-cache-types-base';
+import type { CacheEvent, CacheStats } from '@/lib/i18n-cache-types-base';
 
 /**
  * 缓存存储接口

@@ -6,8 +6,10 @@
 'use client';
 
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { getDetectionHistory } from '../locale-storage-history-core';
-import type { StorageOperationResult } from '../locale-storage-types';
+import { MAGIC_1_5, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
+import { getDetectionHistory } from '@/lib/locale-storage-history-core';
+import type { StorageOperationResult } from '@/lib/locale-storage-types';
 import {
   cleanupDuplicateDetections,
   cleanupExpiredDetections,
@@ -116,7 +118,7 @@ export function getMaintenanceRecommendations(): {
 
   // 检查记录数量
   const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || 100;
-  if (records.length > maxRecords * 1.5) {
+  if (records.length > maxRecords * MAGIC_1_5) {
     recommendations.push(`历史记录过多 (${records.length})，建议清理`);
     urgency = 'high';
   } else if (records.length > maxRecords) {
@@ -125,7 +127,7 @@ export function getMaintenanceRecommendations(): {
   }
 
   // 检查过期记录
-  const thirtyDaysAgo = Date.now() - 30 * 24 * 60 * 60 * 1000;
+  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000;
   const expiredCount = records.filter(
     (r) => r.timestamp < thirtyDaysAgo,
   ).length;

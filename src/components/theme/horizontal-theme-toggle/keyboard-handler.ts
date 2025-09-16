@@ -1,4 +1,4 @@
-import { THEME_OPTIONS } from './theme-config';
+import { THEME_OPTIONS } from '@/components/theme/horizontal-theme-toggle/theme-config';
 
 /**
  * 处理键盘导航

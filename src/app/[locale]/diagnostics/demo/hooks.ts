@@ -3,7 +3,7 @@ import {
   analyzePerformance,
   testWebVitalsCollection,
 } from '@/scripts/test-web-vitals';
-import type { TestResults } from './utils';
+import type { TestResults } from '@/app/[locale]/diagnostics/demo/utils';
 import {
   exportTestResults,
   PERFORMANCE_CONSTANTS,

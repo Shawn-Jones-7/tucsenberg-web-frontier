@@ -6,8 +6,8 @@ import {
   executeBasicThemeTransition,
   executeCircularThemeTransition,
 } from './theme-transition-core';
-import type { EnhancedThemeHook } from './theme-transition-types';
-import { createDebounce, DEFAULT_CONFIG } from './theme-transition-utils';
+import type { EnhancedThemeHook } from '@/hooks/theme-transition-types';
+import { createDebounce, DEFAULT_CONFIG } from '@/hooks/theme-transition-utils';
 
 /**
  * 增强的主题切换 Hook
@@ -87,7 +87,7 @@ export function useEnhancedTheme(): EnhancedThemeHook {
 /**
  * 导出配置常量供外部使用
  */
-export { DEFAULT_CONFIG as THEME_TRANSITION_CONFIG } from './theme-transition-utils';
+export { DEFAULT_CONFIG as THEME_TRANSITION_CONFIG } from '@/hooks/theme-transition-utils';
 
 /**
  * 导出类型定义

@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { REACT_SCAN_CONFIG } from '@/constants/react-scan';
-import type { ReactScanStats, ReactScanWindow } from './react-scan-types';
+import type { ReactScanStats, ReactScanWindow } from '@/app/[locale]/react-scan-demo/react-scan-types';
 
 /**
  * React Scan 性能数据显示组件

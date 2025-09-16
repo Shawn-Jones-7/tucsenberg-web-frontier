@@ -1,3 +1,5 @@
+import { MAGIC_600 } from '@/constants/magic-numbers';
+
 /**
  * WhatsApp Webhook 工具函数
  * WhatsApp Webhook Utility Functions
@@ -54,7 +56,7 @@ export function createWebhookError(
 
 export function isRetryableError(error: WebhookError): boolean {
   // 5xx 错误通常可以重试
-  return error.code >= 500 && error.code < 600;
+  return error.code >= 500 && error.code < MAGIC_600;
 }
 
 /**

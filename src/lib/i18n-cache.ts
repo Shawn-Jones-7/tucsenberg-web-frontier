@@ -53,7 +53,7 @@ export {
 } from './i18n-metrics-collector';
 
 // LRU 缓存实现
-export { LRUCache, createLRUCache, type Cache } from './i18n-lru-cache';
+export { LRUCache, createLRUCache, type Cache } from '@/lib/i18n-lru-cache';
 
 // 翻译预加载器
 export {

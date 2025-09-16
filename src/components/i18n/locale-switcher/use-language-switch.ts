@@ -1,7 +1,9 @@
 import { useState, useTransition } from 'react';
+import { MAGIC_2000 } from '@/constants/magic-numbers';
+
 import type { Locale } from '@/types/i18n';
 import { useLocaleStorage } from '@/lib/locale-storage';
-import { TRANSITION_TIMEOUT } from './config';
+import { TRANSITION_TIMEOUT } from '@/components/i18n/locale-switcher/config';
 
 export const useLanguageSwitch = () => {
   const [switchingTo, setSwitchingTo] = useState<Locale | null>(null);
@@ -20,7 +22,7 @@ export const useLanguageSwitch = () => {
       setTimeout(() => {
         setSwitchingTo(null);
         setSwitchSuccess(true);
-        setTimeout(() => setSwitchSuccess(false), 2000);
+        setTimeout(() => setSwitchSuccess(false), MAGIC_2000);
       }, TRANSITION_TIMEOUT);
     });
   };

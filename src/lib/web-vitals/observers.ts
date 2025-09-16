@@ -1,7 +1,7 @@
 'use client';
 
 import { logger } from '@/lib/logger';
-import type { DetailedWebVitals } from './types';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
 /**
  * Web Vitals 观察器类

@@ -4,7 +4,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AnimatedCounter } from '../animated-counter';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Mock requestAnimationFrame and cancelAnimationFrame
 let animationFrameCallbacks: Array<() => void> = [];

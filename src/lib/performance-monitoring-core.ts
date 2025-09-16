@@ -1,10 +1,12 @@
 // 导入主要功能用于向后兼容
-import { PerformanceConfigManager } from './performance-monitoring-core-config';
+import { PerformanceConfigManager } from '@/lib/performance-monitoring-core-config';
+import { SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+
 import {
   PerformanceToolConflictChecker,
   type ToolConflictResult,
 } from './performance-monitoring-core-conflicts';
-import { PerformanceMetricsManager } from './performance-monitoring-core-metrics';
+import { PerformanceMetricsManager } from '@/lib/performance-monitoring-core-metrics';
 import {
   PerformanceReportGenerator,
   type PerformanceReport,
@@ -34,12 +36,12 @@ export {
   PerformanceMetricsManager,
   createMetricsManager,
 } from './performance-monitoring-core-metrics';
-export type { PerformanceReport } from './performance-monitoring-core-reports';
+export type { PerformanceReport } from '@/lib/performance-monitoring-core-reports';
 export {
   PerformanceReportGenerator,
   createReportGenerator,
 } from './performance-monitoring-core-reports';
-export type { ToolConflictResult } from './performance-monitoring-core-conflicts';
+export type { ToolConflictResult } from '@/lib/performance-monitoring-core-conflicts';
 export {
   PerformanceToolConflictChecker,
   createConflictChecker,
@@ -132,7 +134,7 @@ export class PerformanceMonitoringCore {
    * 生成性能报告
    * Generate performance report
    */
-  generateReport(timeWindow = 60 * 1000): PerformanceReport {
+  generateReport(timeWindow = SECONDS_PER_MINUTE * 1000): PerformanceReport {
     const metrics = this.metricsManager.getAllMetrics();
     return this.reportGenerator.generateReport(metrics, timeWindow);
   }

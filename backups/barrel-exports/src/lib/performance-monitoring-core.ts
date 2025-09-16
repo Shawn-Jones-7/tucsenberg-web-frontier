@@ -1,10 +1,10 @@
 // 导入主要功能用于向后兼容
-import { PerformanceConfigManager } from './performance-monitoring-core-config';
+import { PerformanceConfigManager } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-config';
 import {
   PerformanceToolConflictChecker,
   type ToolConflictResult,
 } from './performance-monitoring-core-conflicts';
-import { PerformanceMetricsManager } from './performance-monitoring-core-metrics';
+import { PerformanceMetricsManager } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-metrics';
 import {
   PerformanceReportGenerator,
   type PerformanceReport,
@@ -22,10 +22,10 @@ import type {
  */
 
 // 重新导出所有模块的功能
-export * from './performance-monitoring-core-config';
-export * from './performance-monitoring-core-metrics';
-export * from './performance-monitoring-core-reports';
-export * from './performance-monitoring-core-conflicts';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-config';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-metrics';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-reports';
+export * from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-conflicts';
 
 /**
  * 性能监控核心协调器类 - 向后兼容

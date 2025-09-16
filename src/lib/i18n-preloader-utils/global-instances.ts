@@ -4,10 +4,10 @@
  */
 
 import type { Locale, Messages } from '@/types/i18n';
-import type { CacheStorage, MetricsCollector } from '../i18n-cache-types';
-import type { IPreloader, PreloaderConfig } from '../i18n-preloader-types';
-import { PreloaderFactory } from './preloader-factory';
-import { PreloaderManager } from './preloader-manager';
+import type { CacheStorage, MetricsCollector } from '@/lib/i18n-cache-types';
+import type { IPreloader, PreloaderConfig } from '@/lib/i18n-preloader-types';
+import { PreloaderFactory } from '@/lib/i18n-preloader-utils/preloader-factory';
+import { PreloaderManager } from '@/lib/i18n-preloader-utils/preloader-manager';
 
 /**
  * 全局预加载器管理器实例

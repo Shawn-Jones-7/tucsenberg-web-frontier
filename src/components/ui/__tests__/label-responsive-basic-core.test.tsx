@@ -14,7 +14,7 @@
 
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Label } from '../label';
+import { Label } from '@/components/ui/label';
 
 describe('Label Responsive - Core Basic Tests', () => {
   describe('基本响应式样式', () => {

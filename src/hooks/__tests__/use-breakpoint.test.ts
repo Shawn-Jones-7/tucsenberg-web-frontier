@@ -4,7 +4,7 @@ import {
   TEST_BASE_NUMBERS,
   TEST_SCREEN_CONSTANTS,
 } from '@/constants/test-constants';
-import { useBreakpoint } from '../use-breakpoint';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 
 // Use vi.hoisted to ensure proper mock setup
 const {

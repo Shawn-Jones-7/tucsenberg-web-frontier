@@ -4,8 +4,8 @@
 
 import Airtable from 'airtable';
 import { env } from '@/../env.mjs';
-import { logger } from '../logger';
-import { airtableRecordSchema, validationHelpers } from '../validations';
+import { logger } from '@/lib/logger';
+import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
 import type {
   AirtableQueryOptions,
   AirtableRecord,

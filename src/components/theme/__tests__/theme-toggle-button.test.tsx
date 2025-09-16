@@ -1,7 +1,7 @@
 import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { ThemeToggleButton } from '../theme-toggle-button';
+import { ThemeToggleButton } from '@/components/theme/theme-toggle-button';
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({

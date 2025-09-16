@@ -68,11 +68,11 @@ import type {
   StorageOperationResult,
 } from './locale-storage-types';
 
-export * from './locale-storage-history-core';
-export * from './locale-storage-history-query';
-export * from './locale-storage-history-stats';
-export * from './locale-storage-history-maintenance';
-export * from './locale-storage-history-events';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history-core';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history-query';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history-stats';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history-maintenance';
+export * from '@/../backups/barrel-exports/src/lib/locale-storage-history-events';
 
 /**
  * 检测历史管理器 - 向后兼容类

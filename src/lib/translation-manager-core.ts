@@ -7,8 +7,8 @@ import type {
   ValidationReport,
 } from '@/types/translation-manager';
 import { logger } from '@/lib/logger';
-import { TranslationQualityManager } from './translation-manager-quality';
-import { TranslationManagerSecurity } from './translation-manager-security';
+import { TranslationQualityManager } from '@/lib/translation-manager-quality';
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
 
 /**
  * 翻译管理器核心类

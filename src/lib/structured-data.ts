@@ -24,7 +24,7 @@ import type {
 } from './structured-data-types';
 
 // 重新导出类型
-export type { Locale } from './structured-data-types';
+export type { Locale } from '@/lib/structured-data-types';
 
 /**
  * 生成本地化结构化数据

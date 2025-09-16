@@ -5,12 +5,12 @@
 
 import { logger } from '@/lib/logger';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { PerformanceAlertSystem } from './alert-system';
-import { PerformanceBaselineManager } from './baseline-manager';
-import { EnhancedWebVitalsCollector } from './collector';
-import { MonitoringReportGenerator } from './monitoring-report-generator';
-import { MonitoringUtils } from './monitoring-utils';
-import { PerformanceRegressionDetector } from './regression-detector';
+import { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system';
+import { PerformanceBaselineManager } from '@/lib/web-vitals/baseline-manager';
+import { EnhancedWebVitalsCollector } from '@/lib/web-vitals/collector';
+import { MonitoringReportGenerator } from '@/lib/web-vitals/monitoring-report-generator';
+import { MonitoringUtils } from '@/lib/web-vitals/monitoring-utils';
+import { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 import type {
   DetailedWebVitals,
   PerformanceAlertConfig,

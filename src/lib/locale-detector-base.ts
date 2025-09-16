@@ -5,7 +5,7 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from './locale-constants';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
 import {
   COUNTRY_CODE_TO_LOCALE_MAP,
   DETECTION_TIMEOUTS,

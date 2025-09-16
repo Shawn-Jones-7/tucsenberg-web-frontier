@@ -1,6 +1,6 @@
 import React from 'react';
 import { Download, Play, RotateCcw, Square } from 'lucide-react';
-import type { ComponentStats } from './data-reader';
+import type { ComponentStats } from '@/components/dev-tools/react-scan-analyzer/data-reader';
 
 interface ControlPanelProps {
   isRecording: boolean;

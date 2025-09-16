@@ -10,13 +10,13 @@ export type {
   WCAGLevel,
 } from './accessibility-types';
 
-export { THEME_ANNOUNCEMENTS, KEYBOARD_KEYS } from './accessibility-types';
+export { THEME_ANNOUNCEMENTS, KEYBOARD_KEYS } from '@/lib/accessibility-types';
 
 // 导出管理器类
-export { AccessibilityManager } from './accessibility-manager';
+export { AccessibilityManager } from '@/lib/accessibility-manager';
 
 // 导出工具函数
-export { AccessibilityUtils } from './accessibility-utils';
+export { AccessibilityUtils } from '@/lib/accessibility-utils';
 
 // 导出Hook和便捷函数
 export {

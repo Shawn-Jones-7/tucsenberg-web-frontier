@@ -1,7 +1,7 @@
 // 向后兼容的重新导出
 import type { Locale, Messages } from '@/types/i18n';
-import type { PreloadConfig } from './i18n-cache-types';
-import { TranslationPreloader } from './i18n-preloader-core';
+import type { PreloadConfig } from '@/lib/i18n-cache-types';
+import { TranslationPreloader } from '@/lib/i18n-preloader-core';
 import {
   createStrategyManager,
   getRecommendedStrategy,
@@ -86,9 +86,9 @@ export type {
   PreloadStateKey,
   PreloadStatsKey,
 } from './i18n-preloader-types';
-export { TranslationPreloader as CorePreloader } from './i18n-preloader-core';
-export * from './i18n-preloader-strategies';
-export * from './i18n-preloader-utils';
+export { TranslationPreloader as CorePreloader } from '@/lib/i18n-preloader-core';
+export * from '@/lib/i18n-preloader-strategies';
+export * from '@/lib/i18n-preloader-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 

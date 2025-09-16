@@ -4,8 +4,8 @@
  */
 
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { MonitoringUtils } from './monitoring-utils';
-import { PerformanceRegressionDetector } from './regression-detector';
+import { MonitoringUtils } from '@/lib/web-vitals/monitoring-utils';
+import { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 import type {
   DetailedWebVitals,
   PerformanceBaseline,

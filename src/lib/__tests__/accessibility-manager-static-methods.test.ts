@@ -3,7 +3,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { AccessibilityUtils } from '../accessibility';
+import { AccessibilityUtils } from '@/lib/accessibility';
 
 // vi.hoisted Mock setup
 const mockCheckContrastCompliance = vi.hoisted(() => vi.fn());

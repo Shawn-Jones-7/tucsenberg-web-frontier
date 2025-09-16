@@ -2,7 +2,7 @@
  * 明亮主题颜色定义
  */
 
-import type { ThemeColors } from './types';
+import type { ThemeColors } from '@/lib/colors/types';
 
 /**
  * 明亮主题颜色定义

@@ -1,5 +1,5 @@
 // 创建单例实例
-import { ResendService } from './resend-core';
+import { ResendService } from '@/lib/resend-core';
 
 /**
  * Resend邮件服务 - 统一导出入口
@@ -7,14 +7,14 @@ import { ResendService } from './resend-core';
  */
 
 // 导出核心服务类
-export { ResendService } from './resend-core';
+export { ResendService } from '@/lib/resend-core';
 
 // 导出工具类
-export { ResendUtils } from './resend-utils';
-export { ResendTemplates } from './resend-templates';
+export { ResendUtils } from '@/lib/resend-utils';
+export { ResendTemplates } from '@/lib/resend-templates';
 
 // 导出配置和类型
-export { EMAIL_CONFIG } from './resend-utils';
-export type { EmailTemplateData } from './validations';
+export { EMAIL_CONFIG } from '@/lib/resend-utils';
+export type { EmailTemplateData } from '@/lib/validations';
 
 export const resendService = new ResendService();

@@ -6,8 +6,10 @@
 'use client';
 
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { PERFORMANCE_THRESHOLDS } from './constants';
-import type { DetailedWebVitals } from './types';
+import { COUNT_TRIPLE, COUNT_PAIR, BYTES_PER_KB, PERCENTAGE_QUARTER, COUNT_TEN, DAYS_PER_MONTH, MAGIC_15, MAGIC_1800, COUNT_FIVE, MAGIC_800, MAGIC_600 } from '@/constants/magic-numbers';
+
+import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
 /**
  * Web Vitals 性能分析器
@@ -23,7 +25,7 @@ export class WebVitalsCollectorAnalyzer {
     recommendations: string[],
   ): void {
     if (cls > PERFORMANCE_THRESHOLDS.CLS_NEEDS_IMPROVEMENT) {
-      issues.push(`累积布局偏移 (CLS) 过高: ${cls.toFixed(3)}`);
+      issues.push(`累积布局偏移 (CLS) 过高: ${cls.toFixed(COUNT_TRIPLE)}`);
       recommendations.push(
         '为图片和广告设置明确的尺寸，避免动态内容插入导致布局偏移',
       );
@@ -86,10 +88,10 @@ export class WebVitalsCollectorAnalyzer {
       recommendations.push('优化慢速资源的加载，考虑压缩或使用 CDN');
     }
 
-    if (resourceTiming.totalSize > 2 * 1024 * 1024) {
+    if (resourceTiming.totalSize > COUNT_PAIR * BYTES_PER_KB * BYTES_PER_KB) {
       // 2MB
       issues.push(
-        `总资源大小过大: ${(resourceTiming.totalSize / 1024 / 1024).toFixed(1)}MB`,
+        `总资源大小过大: ${(resourceTiming.totalSize / BYTES_PER_KB / BYTES_PER_KB).toFixed(1)}MB`,
       );
       recommendations.push('减少资源大小，启用 gzip 压缩');
     }
@@ -104,37 +106,37 @@ export class WebVitalsCollectorAnalyzer {
 
     // CLS 评分
     if (metrics.cls > PERFORMANCE_THRESHOLDS.CLS_NEEDS_IMPROVEMENT) {
-      score -= 25;
+      score -= PERCENTAGE_QUARTER;
     } else if (metrics.cls > PERFORMANCE_THRESHOLDS.CLS_GOOD) {
-      score -= 10;
+      score -= COUNT_TEN;
     }
 
     // LCP 评分
     if (metrics.lcp > PERFORMANCE_THRESHOLDS.LCP_NEEDS_IMPROVEMENT) {
-      score -= 30;
+      score -= DAYS_PER_MONTH;
     } else if (metrics.lcp > PERFORMANCE_THRESHOLDS.LCP_GOOD) {
-      score -= 15;
+      score -= MAGIC_15;
     }
 
     // FID 评分
     if (metrics.fid > PERFORMANCE_THRESHOLDS.FID_NEEDS_IMPROVEMENT) {
-      score -= 25;
+      score -= PERCENTAGE_QUARTER;
     } else if (metrics.fid > PERFORMANCE_THRESHOLDS.FID_GOOD) {
-      score -= 10;
+      score -= COUNT_TEN;
     }
 
     // FCP 评分
     if (metrics.fcp > 3000) {
-      score -= 10;
-    } else if (metrics.fcp > 1800) {
-      score -= 5;
+      score -= COUNT_TEN;
+    } else if (metrics.fcp > MAGIC_1800) {
+      score -= COUNT_FIVE;
     }
 
     // TTFB 评分
-    if (metrics.ttfb > 800) {
-      score -= 10;
-    } else if (metrics.ttfb > 600) {
-      score -= 5;
+    if (metrics.ttfb > MAGIC_800) {
+      score -= COUNT_TEN;
+    } else if (metrics.ttfb > MAGIC_600) {
+      score -= COUNT_FIVE;
     }
 
     return Math.max(0, score);

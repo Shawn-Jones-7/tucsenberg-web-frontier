@@ -9,16 +9,16 @@ import {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
-import { TranslationBenchmarks } from './translation-benchmarks';
-import { TranslationManager } from './translation-manager';
+import { TranslationBenchmarks } from '@/../backups/barrel-exports/src/lib/translation-benchmarks';
+import { TranslationManager } from '@/../backups/barrel-exports/src/lib/translation-manager';
 import {
   BatchTranslationInput,
   QualityComparison,
 } from './translation-quality-types';
-import { TranslationValidators } from './translation-validators';
+import { TranslationValidators } from '@/../backups/barrel-exports/src/lib/translation-validators';
 
 // 导入拆分的模块
-export * from './translation-quality-types';
+export * from '@/../backups/barrel-exports/src/lib/translation-quality-types';
 
 /**
  * 翻译质量分析器

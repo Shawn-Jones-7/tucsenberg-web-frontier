@@ -8,14 +8,14 @@
 'use client';
 
 import { logger } from '@/lib/logger';
-import { CookieManager } from './locale-storage-cookie';
-import { LocalStorageManager } from './locale-storage-local';
+import { CookieManager } from '@/lib/locale-storage-cookie';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
   UserLocalePreference,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from './locale-storage-types';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 语言存储清理管理器

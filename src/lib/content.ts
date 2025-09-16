@@ -16,7 +16,7 @@ export {
 } from './content-query';
 
 // Re-export content parser functions
-export { parseContentFile, getContentFiles } from './content-parser';
+export { parseContentFile, getContentFiles } from '@/lib/content-parser';
 
 // Re-export content utility functions
 export {
@@ -30,4 +30,4 @@ export {
 } from './content-utils';
 
 // Re-export content validation functions
-export { validateContentMetadata } from './content-validation';
+export { validateContentMetadata } from '@/lib/content-validation';

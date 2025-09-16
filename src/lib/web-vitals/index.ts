@@ -1,9 +1,9 @@
 // 创建并导出全局实例
-import { PerformanceAlertSystem } from './alert-system';
-import { PerformanceBaselineManager } from './baseline-manager';
-import { EnhancedWebVitalsCollector } from './collector';
-import { PerformanceMonitoringManager } from './monitoring-manager';
-import { PerformanceRegressionDetector } from './regression-detector';
+import { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system';
+import { PerformanceBaselineManager } from '@/lib/web-vitals/baseline-manager';
+import { EnhancedWebVitalsCollector } from '@/lib/web-vitals/collector';
+import { PerformanceMonitoringManager } from '@/lib/web-vitals/monitoring-manager';
+import { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 
 /**
  * Web Vitals 增强监控系统
@@ -22,14 +22,14 @@ export type {
 } from './types';
 
 // 导出常量
-export { PERFORMANCE_THRESHOLDS } from './constants';
+export { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 
 // 导出类
-export { PerformanceAlertSystem } from './alert-system';
-export { PerformanceBaselineManager } from './baseline-manager';
-export { EnhancedWebVitalsCollector } from './collector';
-export { PerformanceMonitoringManager } from './monitoring-manager';
-export { PerformanceRegressionDetector } from './regression-detector';
+export { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system';
+export { PerformanceBaselineManager } from '@/lib/web-vitals/baseline-manager';
+export { EnhancedWebVitalsCollector } from '@/lib/web-vitals/collector';
+export { PerformanceMonitoringManager } from '@/lib/web-vitals/monitoring-manager';
+export { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 
 export const enhancedWebVitalsCollector = new EnhancedWebVitalsCollector();
 export const performanceBaselineManager = new PerformanceBaselineManager();

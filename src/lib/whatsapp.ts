@@ -1,6 +1,6 @@
 import WhatsApp from 'whatsapp';
-import { env } from '../../env.mjs';
-import { logger } from './logger';
+import { env } from '@/../env.mjs';
+import { logger } from '@/lib/logger';
 
 /**
  * WhatsApp webhook消息体类型定义

@@ -3,7 +3,7 @@
  * 提供具体的类型定义来替换any类型，提高类型安全性
  */
 import React from 'react';
-import type { Locale } from './i18n';
+import type { Locale } from '@/types/i18n';
 
 // ==================== 格式化相关类型 ====================
 

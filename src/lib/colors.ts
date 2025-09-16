@@ -4,11 +4,11 @@
  */
 
 // 重新导出类型定义
-export type { OKLCHColor, ContrastLevel, ThemeColors } from './colors/types';
+export type { OKLCHColor, ContrastLevel, ThemeColors } from '@/lib/colors/types';
 
 // 重新导出主题颜色
-export { lightThemeColors } from './colors/light-theme';
-export { darkThemeColors } from './colors/dark-theme';
+export { lightThemeColors } from '@/lib/colors/light-theme';
+export { darkThemeColors } from '@/lib/colors/dark-theme';
 
 // 重新导出工具函数
 export {
@@ -20,4 +20,4 @@ export {
 } from './colors/utils';
 
 // 重新导出颜色系统类
-export { ColorSystem } from './colors/color-system';
+export { ColorSystem } from '@/lib/colors/color-system';

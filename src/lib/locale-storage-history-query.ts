@@ -8,8 +8,8 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { getDetectionHistory } from './locale-storage-history-core';
-import type { LocaleDetectionRecord } from './locale-storage-types';
+import { getDetectionHistory } from '@/lib/locale-storage-history-core';
+import type { LocaleDetectionRecord } from '@/lib/locale-storage-types';
 
 // ==================== 基础查询功能 ====================
 

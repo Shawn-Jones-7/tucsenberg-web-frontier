@@ -6,6 +6,8 @@
  */
 
 import { logger } from '@/lib/logger';
+import { COUNT_FIVE, SECONDS_PER_MINUTE, MAGIC_36, COUNT_PAIR, MAGIC_9, MAGIC_1_1 } from '@/constants/magic-numbers';
+
 import { MB } from '@/constants/units';
 import type {
   BundlePerformanceData,
@@ -37,7 +39,7 @@ export class PerformanceMetricsManager {
    */
   private setupPeriodicCleanup(): void {
     const cleanupInterval =
-      this.config.global?.dataRetentionTime || 5 * 60 * 1000; // 5分钟
+      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * 1000; // COUNT_FIVE分钟
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupOldMetrics();
@@ -51,7 +53,7 @@ export class PerformanceMetricsManager {
   private cleanupOldMetrics(): void {
     const now = Date.now();
     const retentionTime =
-      this.config.global?.dataRetentionTime || 5 * 60 * 1000;
+      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * 1000;
     const maxMetrics = this.config.global?.maxMetrics || 1000;
 
     // 按时间清理
@@ -72,7 +74,7 @@ export class PerformanceMetricsManager {
    * Generate metric ID
    */
   private generateMetricId(): string {
-    return `metric_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    return `metric_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
   }
 
   /**
@@ -103,7 +105,7 @@ export class PerformanceMetricsManager {
 
     // 立即清理如果超出限制
     const maxMetrics = this.config.global?.maxMetrics || 1000;
-    if (this.metrics.length > maxMetrics * 1.1) {
+    if (this.metrics.length > maxMetrics * MAGIC_1_1) {
       // 10%缓冲
       this.cleanupOldMetrics();
     }
@@ -315,7 +317,7 @@ export class PerformanceMetricsManager {
     }
 
     const stats = this.getMetricsStats();
-    const timeSpanMinutes = stats.timeRange.span / (60 * 1000);
+    const timeSpanMinutes = stats.timeRange.span / (SECONDS_PER_MINUTE * 1000);
 
     return timeSpanMinutes > 0 ? this.metrics.length / timeSpanMinutes : 0;
   }
@@ -423,14 +425,12 @@ export class PerformanceMetricsManager {
     }
 
     const m = metric as PerformanceMetrics;
-    return !!(
-      m.type &&
+    return Boolean(m.type &&
       m.source &&
       typeof m.timestamp === 'number' &&
       m.timestamp > 0 &&
       m.data &&
-      typeof m.data === 'object'
-    );
+      typeof m.data === 'object');
   }
 
   /**

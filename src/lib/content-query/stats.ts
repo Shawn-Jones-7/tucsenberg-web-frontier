@@ -3,8 +3,8 @@
  */
 
 import type { ContentStats, Locale } from '@/types/content';
-import { getContentConfig } from '../content-utils';
-import { getAllPages, getAllPosts } from './queries';
+import { getContentConfig } from '@/lib/content-utils';
+import { getAllPages, getAllPosts } from '@/lib/content-query/queries';
 
 /**
  * Get content statistics
