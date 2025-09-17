@@ -3,10 +3,9 @@
  * Translation Preloader Strategy Utility Functions
  */
 
-import type { PreloaderMetrics } from '@/lib/i18n-preloader-types';
-import { COUNT_PAIR, MAGIC_0_5, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, MAGIC_0_9 } from '@/constants/magic-numbers';
-
+import { COUNT_PAIR, MAGIC_0_5, MAGIC_0_9, MAGIC_17, MAGIC_18, MAGIC_22, MAGIC_9, ONE, ZERO } from "@/constants/magic-numbers";
 import { strategyConfigs } from '@/lib/i18n-preloader-strategies/configs';
+import type { PreloaderMetrics } from '@/lib/i18n-preloader-types';
 
 /**
  * 策略工具函数
@@ -29,7 +28,7 @@ export const StrategyUtils = {
     ).connection;
     if (connection) {
       const { effectiveType, downlink } = connection;
-      if (effectiveType === '4g' && (downlink ?? 0) > COUNT_PAIR) {
+      if (effectiveType === '4g' && (downlink ?? ZERO) > COUNT_PAIR) {
         return 'fast';
       }
     }
@@ -79,7 +78,7 @@ export const StrategyUtils = {
     conditions: { network: string; memory: number; time: string },
   ): number {
     const config = strategyConfigs[strategy];
-    if (!config) return 0;
+    if (!config) return ZERO;
 
     let score = config.priority;
 
@@ -88,10 +87,10 @@ export const StrategyUtils = {
       score += COUNT_PAIR;
     }
     if (conditions.memory < MAGIC_0_5 && strategy === 'lazy') {
-      score += 1;
+      score += ONE;
     }
-    if (metrics.successRate > 0.9 && strategy === 'smart') {
-      score += 1;
+    if (metrics.successRate > MAGIC_0_9 && strategy === 'smart') {
+      score += ONE;
     }
 
     return score;

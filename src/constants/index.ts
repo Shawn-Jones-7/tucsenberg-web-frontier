@@ -3,6 +3,15 @@
  * 提供项目中所有常量的集中访问点
  */
 
+// 领域常量 - 新增的分类常量
+export * from './time';
+export * from './hex';
+export * from './count';
+export * from './decimal';
+
+// 魔法数字常量 - Facade聚合入口
+export * from './magic-numbers';
+
 // 国际化常量
 export {
   TIME_UNITS,
@@ -110,7 +119,7 @@ export type {
 } from './seo-constants';
 
 // 重新导出主要常量对象以便于使用
-export { APP_CONSTANTS } from '@/constants/app-constants';
-export { SECURITY_CONSTANTS } from '@/constants/security-constants';
-export { SEO_CONSTANTS } from '@/constants/seo-constants';
-export { TEST_CONSTANTS } from '@/constants/test-constants';
+export { APP_CONSTANTS } from './app-constants';
+export { SECURITY_CONSTANTS } from './security-constants';
+export { SEO_CONSTANTS } from './seo-constants';
+export { TEST_CONSTANTS } from './test-constants';

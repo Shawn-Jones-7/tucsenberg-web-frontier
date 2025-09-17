@@ -1,3 +1,5 @@
+import { ZERO } from "@/constants/magic-numbers";
+
 /**
  * WhatsApp API Base Type Definitions
  *
@@ -320,17 +322,12 @@ export function validateWhatsAppMessage(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
   };
 }
 
 // Export commonly used types with shorter names
 export type {
-  WhatsAppContact as Contact,
-  WhatsAppMessage as Message,
-  WhatsAppError as Error,
-  MessageStatusUpdate as StatusUpdate,
-  LocationData as Location,
-  ContactData as ContactInfo,
+  WhatsAppContact as Contact, ContactData as ContactInfo, WhatsAppError as Error, LocationData as Location, WhatsAppMessage as Message, MessageStatusUpdate as StatusUpdate
 };

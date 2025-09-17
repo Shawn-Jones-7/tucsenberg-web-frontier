@@ -1,9 +1,8 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { COUNT_PAIR } from '@/constants/magic-numbers';
-
+import { COUNT_PAIR, PERCENTAGE_FULL } from "@/constants/magic-numbers";
 import { usePerformanceMeasurements } from '@/hooks/performance-monitor-measurements';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import type {
   PerformanceAlert,
   PerformanceMetrics,
@@ -159,7 +158,7 @@ export function usePerformanceMonitor(
       // 延迟测量以确保页面完全加载
       const timer = setTimeout(() => {
         measurements.measureLoadTime();
-      }, 100);
+      }, PERCENTAGE_FULL);
 
       return () => clearTimeout(timer);
     }
@@ -188,31 +187,22 @@ export function usePerformanceMonitor(
  * 导出类型定义
  */
 export type {
-  PerformanceMetrics,
   PerformanceAlert,
-  PerformanceAlertSystem,
-  UsePerformanceMonitorOptions,
-  UsePerformanceMonitorReturn,
+  PerformanceAlertSystem, PerformanceMetrics, UsePerformanceMonitorOptions,
+  UsePerformanceMonitorReturn
 } from './performance-monitor-types';
 
 /**
  * 导出工具函数
  */
 export {
-  PERFORMANCE_CONSTANTS,
-  formatMemoryUsage,
-  formatTime,
-  checkPerformanceThresholds,
+  checkPerformanceThresholds, formatMemoryUsage,
+  formatTime, PERFORMANCE_CONSTANTS
 } from './performance-monitor-utils';
 
 /**
  * 导出测量函数
  */
 export {
-  measureNetworkLatency,
-  measureFirstContentfulPaint,
-  measureLargestContentfulPaint,
-  measureCumulativeLayoutShift,
-  measureFirstInputDelay,
-  measureComprehensivePerformance,
+  measureComprehensivePerformance, measureCumulativeLayoutShift, measureFirstContentfulPaint, measureFirstInputDelay, measureLargestContentfulPaint, measureNetworkLatency
 } from './performance-monitor-measurements';

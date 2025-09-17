@@ -1,4 +1,6 @@
 // 导入主要类型用于向后兼容
+import { PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import { DEFAULT_SERVICE_OPTIONS } from '@/types/whatsapp-service-config';
 import type {
   Cache,
   CacheConfig,
@@ -18,18 +20,17 @@ import type {
   ServiceEnvironmentConfig,
   WhatsAppConfig,
   WhatsAppServiceOptions,
-} from './whatsapp-service-config';
-import { DEFAULT_SERVICE_OPTIONS } from '@/types/whatsapp-service-config';
+} from '@/types/whatsapp-service-config';
 import type {
   WhatsAppError,
   WhatsAppValidationError,
-} from './whatsapp-service-errors';
+} from '@/types/whatsapp-service-errors';
 import {
   WhatsAppApiError,
   WhatsAppAuthError,
   WhatsAppNetworkError,
   WhatsAppRateLimitError,
-} from './whatsapp-service-errors';
+} from '@/types/whatsapp-service-errors';
 import type {
   ApiRequest,
   ApiResponse,
@@ -42,7 +43,7 @@ import type {
   WebhookConfig,
   WebhookHandler,
   WhatsAppServiceInterface,
-} from './whatsapp-service-interface';
+} from '@/types/whatsapp-service-interface';
 import type {
   ErrorEvent,
   HealthCheckEvent,
@@ -56,7 +57,7 @@ import type {
   ServiceMetrics,
   ServiceStatus,
   WhatsAppServiceEvent,
-} from './whatsapp-service-monitoring';
+} from '@/types/whatsapp-service-monitoring';
 
 /**
  * WhatsApp Service Types - Main Entry Point
@@ -66,45 +67,26 @@ import type {
  */
 
 // 重新导出所有模块的类型和功能
-export {
-  validateWhatsAppConfig,
-  validateServiceOptions,
-  mergeWithDefaults,
-} from './whatsapp-service-config';
-export {
-  isWhatsAppError,
-  isWhatsAppApiError,
-  isWhatsAppValidationError,
-  isWhatsAppRateLimitError,
-  isWhatsAppNetworkError,
-  isWhatsAppAuthError,
-  createErrorFromApiResponse,
-  getErrorSeverity,
-} from './whatsapp-service-errors';
-export type {
-  HealthCheckConfig,
-  MetricsConfig,
-  AlertConfig,
-} from './whatsapp-service-monitoring';
-export {
-  calculateUptime,
-  calculateErrorRate,
-  determineHealthStatus,
-  createDefaultMetrics,
-  createDefaultHealth,
-  updateMetrics,
-  needsAttention,
-} from './whatsapp-service-monitoring';
-export type {
-  Config,
-  ServiceOptions,
-  Status,
-  Health,
-  Metrics,
-  ServiceInterface,
-  ServiceError,
-} from './whatsapp-service-interface';
 export { isWhatsAppService } from '@/types/whatsapp-service-interface';
+export {
+  mergeWithDefaults, validateServiceOptions, validateWhatsAppConfig
+} from '@/types/whatsapp-service-config';
+export {
+  createErrorFromApiResponse,
+  getErrorSeverity, isWhatsAppApiError, isWhatsAppAuthError, isWhatsAppError, isWhatsAppNetworkError, isWhatsAppRateLimitError, isWhatsAppValidationError
+} from '@/types/whatsapp-service-errors';
+export type {
+  Config, Health,
+  Metrics, ServiceError, ServiceInterface, ServiceOptions,
+  Status
+} from '@/types/whatsapp-service-interface';
+export {
+  calculateErrorRate, calculateUptime, createDefaultHealth, createDefaultMetrics, determineHealthStatus, needsAttention, updateMetrics
+} from '@/types/whatsapp-service-monitoring';
+export type {
+  AlertConfig, HealthCheckConfig,
+  MetricsConfig
+} from '@/types/whatsapp-service-monitoring';
 
 // ==================== 向后兼容的常量导出 ====================
 
@@ -113,10 +95,7 @@ export { isWhatsAppService } from '@/types/whatsapp-service-interface';
  * Backward compatible constant exports
  */
 export {
-  DEFAULT_SERVICE_OPTIONS,
-  type DEFAULT_RETRY_CONFIG,
-  type DEFAULT_CIRCUIT_BREAKER_CONFIG,
-  type DEFAULT_CACHE_CONFIG,
+  DEFAULT_SERVICE_OPTIONS, type DEFAULT_CACHE_CONFIG, type DEFAULT_CIRCUIT_BREAKER_CONFIG, type DEFAULT_RETRY_CONFIG
 };
 
 // ==================== 向后兼容的类型别名 ====================
@@ -125,46 +104,17 @@ export {
  * 向后兼容的类型别名
  * Backward compatible type aliases
  */
-export type {
-  WhatsAppConfig,
-  WhatsAppServiceOptions,
-  ServiceEnvironmentConfig,
-  RetryConfig,
-  CircuitBreakerConfig,
-  CircuitBreakerState,
-  CacheConfig,
-  CacheEntry,
-  Cache,
-  LogEntry,
-  Logger,
-  MessageType,
-  MessageStatus,
-  ServiceEnvironment,
-  LogLevel,
-  ServiceHealth,
-  ServiceMetrics,
-  ServiceStatus,
-  ServiceEvent,
-  MessageSentEvent,
-  MessageDeliveredEvent,
-  MessageReadEvent,
-  MessageFailedEvent,
-  ErrorEvent,
-  HealthCheckEvent,
-  RateLimitEvent,
-  WhatsAppServiceEvent,
-  WhatsAppServiceInterface,
-  ApiRequest,
-  ApiResponse,
-  MessageRequest,
-  MessageResponse,
-  WebhookHandler,
-  WebhookConfig,
-  ServiceFactory,
-  ServiceBuilder,
-  ServicePlugin,
-  PluginManager,
-};
+  export type {
+    ApiRequest,
+    ApiResponse, Cache, CacheConfig,
+    CacheEntry, CircuitBreakerConfig,
+    CircuitBreakerState, ErrorEvent,
+    HealthCheckEvent, LogEntry,
+    Logger, LogLevel, MessageDeliveredEvent, MessageFailedEvent, MessageReadEvent, MessageRequest,
+    MessageResponse, MessageSentEvent, MessageStatus, MessageType, PluginManager, RateLimitEvent, RetryConfig, ServiceBuilder, ServiceEnvironment, ServiceEnvironmentConfig, ServiceEvent, ServiceFactory, ServiceHealth,
+    ServiceMetrics, ServicePlugin, ServiceStatus, WebhookConfig, WebhookHandler, WhatsAppConfig, WhatsAppServiceEvent,
+    WhatsAppServiceInterface, WhatsAppServiceOptions
+  };
 
 // ==================== 向后兼容的类导出 ====================
 
@@ -172,14 +122,9 @@ export type {
  * 向后兼容的错误类导出
  * Backward compatible error class exports
  */
-export {
-  type WhatsAppError,
-  WhatsAppApiError,
-  type WhatsAppValidationError,
-  WhatsAppRateLimitError,
-  WhatsAppNetworkError,
-  WhatsAppAuthError,
-};
+  export {
+    WhatsAppApiError, WhatsAppAuthError, WhatsAppNetworkError, WhatsAppRateLimitError, type WhatsAppError, type WhatsAppValidationError
+  };
 
 // ==================== 便捷工厂函数 ====================
 
@@ -216,9 +161,9 @@ export function createDefaultServiceStatus(): ServiceStatus {
     health: {
       status: 'healthy',
       lastCheck: Date.now(),
-      responseTime: 0,
-      errorRate: 0,
-      uptime: 100,
+      responseTime: ZERO,
+      errorRate: ZERO,
+      uptime: PERCENTAGE_FULL,
       details: {
         api: 'available',
         webhook: 'not_configured',
@@ -226,14 +171,14 @@ export function createDefaultServiceStatus(): ServiceStatus {
       },
     },
     metrics: {
-      messagesSent: 0,
-      messagesDelivered: 0,
-      messagesRead: 0,
-      messagesFailed: 0,
-      apiCalls: 0,
-      apiErrors: 0,
-      averageResponseTime: 0,
-      uptime: 100,
+      messagesSent: ZERO,
+      messagesDelivered: ZERO,
+      messagesRead: ZERO,
+      messagesFailed: ZERO,
+      apiCalls: ZERO,
+      apiErrors: ZERO,
+      averageResponseTime: ZERO,
+      uptime: PERCENTAGE_FULL,
       lastReset: Date.now(),
     },
     config: {

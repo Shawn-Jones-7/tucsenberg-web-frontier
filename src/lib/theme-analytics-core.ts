@@ -4,9 +4,10 @@
  * 主题分析核心类
  * Theme analytics core class
  */
+import { MAGIC_0_1 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
 import * as Sentry from '@sentry/nextjs';
-import { COUNT_FIVE, COUNT_TRIPLE, PERCENTAGE_HALF, DAYS_PER_MONTH } from '@/constants/magic-numbers';
-
 import type {
   ThemeAnalyticsConfig,
   ThemePerformanceMetrics,
@@ -14,7 +15,6 @@ import type {
   ThemeSwitchPattern,
   ThemeUsageStats,
 } from './theme-analytics-types';
-import { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
 
 /**
  * 主题分析管理器
@@ -27,7 +27,7 @@ export class ThemeAnalytics {
   private switchPatterns: ThemeSwitchPattern[] = [];
   private currentTheme: string = 'system';
   private sessionStartTime: number = Date.now();
-  private lastSwitchTime: number = 0;
+  private lastSwitchTime: number = ZERO;
 
   /**
    * 获取当前主题
@@ -39,8 +39,8 @@ export class ThemeAnalytics {
   constructor(config?: Partial<ThemeAnalyticsConfig>) {
     this.config = {
       enabled: process.env.NODE_ENV === 'production',
-      performanceThreshold: 100, // 100ms
-      sampleRate: 0.1, // 10% 采样
+      performanceThreshold: PERCENTAGE_FULL, // 100ms
+      sampleRate: MAGIC_0_1, // 10% 采样
       enableDetailedTracking: true,
       enableUserBehaviorAnalysis: true,
       ...config,
@@ -189,7 +189,7 @@ export class ThemeAnalytics {
 
     // 发送使用统计
     Sentry.setContext('theme-usage', {
-      statistics: usageStats.slice(0, COUNT_FIVE), // 只发送前COUNT_FIVE个最常用的主题
+      statistics: usageStats.slice(ZERO, COUNT_FIVE), // 只发送前COUNT_FIVE个最常用的主题
       totalThemes: usageStats.length,
       sessionDuration: Date.now() - this.sessionStartTime,
     });
@@ -197,11 +197,11 @@ export class ThemeAnalytics {
     // 发送切换模式分析
     if (
       this.config.enableUserBehaviorAnalysis &&
-      this.switchPatterns.length > 0
+      this.switchPatterns.length > ZERO
     ) {
       const topPatterns = this.switchPatterns
         .sort((a, b) => b.frequency - a.frequency)
-        .slice(0, COUNT_TRIPLE);
+        .slice(ZERO, COUNT_TRIPLE);
 
       Sentry.setContext('theme-patterns', {
         topPatterns: topPatterns.map((p) => ({
@@ -224,7 +224,7 @@ export class ThemeAnalytics {
     this.usageStats.clear();
     this.switchPatterns = [];
     this.sessionStartTime = Date.now();
-    this.lastSwitchTime = 0;
+    this.lastSwitchTime = ZERO;
   }
 
   /**
@@ -245,10 +245,10 @@ export class ThemeAnalytics {
    * 清理旧数据
    */
   private cleanupOldData(): void {
-    const hoursInDay = 24;
-    const minutesInHour = 60;
-    const secondsInMinute = 60;
-    const millisecondsInSecond = 1000;
+    const hoursInDay = HOURS_PER_DAY;
+    const minutesInHour = SECONDS_PER_MINUTE;
+    const secondsInMinute = SECONDS_PER_MINUTE;
+    const millisecondsInSecond = ANIMATION_DURATION_VERY_SLOW;
     const maxAge =
       hoursInDay * minutesInHour * secondsInMinute * millisecondsInSecond; // 24小时
 
@@ -266,7 +266,7 @@ export class ThemeAnalytics {
     if (this.switchPatterns.length > PERCENTAGE_HALF) {
       this.switchPatterns = this.switchPatterns
         .sort((a, b) => b.frequency - a.frequency)
-        .slice(0, DAYS_PER_MONTH);
+        .slice(ZERO, DAYS_PER_MONTH);
     }
   }
 }

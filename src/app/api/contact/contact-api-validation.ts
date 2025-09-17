@@ -3,22 +3,21 @@
  * Contact form API validation and data processing
  */
 
-import { z } from 'zod';
-import { COUNT_TEN, SECONDS_PER_MINUTE, DAYS_PER_WEEK } from '@/constants/magic-numbers';
-
+import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, DAYS_PER_WEEK, ONE, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { airtableService } from '@/lib/airtable';
 import { logger } from '@/lib/logger';
 import { resendService } from '@/lib/resend';
 import type { ContactFormData } from '@/lib/validations';
 import { contactFormSchema } from '@/lib/validations';
-import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
+import { z } from 'zod';
 
 /**
  * 扩展的联系表单模式，包含Turnstile token
  * Extended contact form schema with Turnstile token
  */
 export const contactFormWithTokenSchema = contactFormSchema.extend({
-  turnstileToken: z.string().min(1, 'Security verification required'),
+  turnstileToken: z.string().min(ONE, 'Security verification required'),
   submittedAt: z.string(),
 });
 
@@ -56,9 +55,9 @@ export async function validateFormData(body: unknown, clientIP: string) {
   const submittedAt = new Date(formData.submittedAt);
   const now = new Date();
   const timeDiff = now.getTime() - submittedAt.getTime();
-  const maxAge = COUNT_TEN * SECONDS_PER_MINUTE * 1000; // COUNT_TEN分钟
+  const maxAge = COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // COUNT_TEN分钟
 
-  if (timeDiff > maxAge || timeDiff < 0) {
+  if (timeDiff > maxAge || timeDiff < ZERO) {
     logger.warn('Form submission time validation failed', {
       submittedAt: formData.submittedAt,
       timeDiff,
@@ -210,10 +209,10 @@ export async function getContactFormStats() {
       return {
         success: true,
         data: {
-          totalContacts: 0,
-          newContacts: 0,
-          completedContacts: 0,
-          recentContacts: 0,
+          totalContacts: ZERO,
+          newContacts: ZERO,
+          completedContacts: ZERO,
+          recentContacts: ZERO,
         },
       };
     }

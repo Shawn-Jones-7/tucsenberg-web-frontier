@@ -5,8 +5,10 @@
  * 提供缓存系统所需的工具函数、验证器和辅助方法
  */
 
-import type { Locale } from '@/types/i18n';
+import { COUNT_100000, COUNT_256, MAGIC_9 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import type { AdvancedCacheConfig } from '@/lib/i18n-cache-types-advanced';
+import type { Locale } from '@/types/i18n';
 import type {
   CacheConfig,
   CacheConfigValidation,
@@ -43,9 +45,9 @@ export const CacheKeyUtils = {
   } {
     const parts = cacheKey.split(':');
     return {
-      locale: parts[0] as Locale,
-      ...(parts[1] && { namespace: parts[1] }),
-      ...(parts[2] && { key: parts[2] }),
+      locale: parts[ZERO] as Locale,
+      ...(parts[ONE] && { namespace: parts[ONE] }),
+      ...(parts[COUNT_PAIR] && { key: parts[COUNT_PAIR] }),
     };
   },
 
@@ -54,7 +56,7 @@ export const CacheKeyUtils = {
    * Validate cache key format
    */
   validate(key: string): boolean {
-    return typeof key === 'string' && key.length > 0 && key.length <= 256;
+    return typeof key === 'string' && key.length > ZERO && key.length <= COUNT_256;
   },
 
   /**
@@ -102,7 +104,7 @@ export const CacheTimeUtils = {
    */
   getRemainingTime(timestamp: number, ttl: number): number {
     const elapsed = Date.now() - timestamp;
-    return Math.max(0, ttl - elapsed);
+    return Math.max(ZERO, ttl - elapsed);
   },
 
   /**
@@ -110,14 +112,14 @@ export const CacheTimeUtils = {
    * Format time
    */
   formatDuration(milliseconds: number): string {
-    const seconds = Math.floor(milliseconds / 1000);
-    const minutes = Math.floor(seconds / 60);
-    const hours = Math.floor(minutes / 60);
-    const days = Math.floor(hours / 24);
+    const seconds = Math.floor(milliseconds / ANIMATION_DURATION_VERY_SLOW);
+    const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+    const hours = Math.floor(minutes / SECONDS_PER_MINUTE);
+    const days = Math.floor(hours / HOURS_PER_DAY);
 
-    if (days > 0) return `${days}d ${hours % 24}h`;
-    if (hours > 0) return `${hours}h ${minutes % 60}m`;
-    if (minutes > 0) return `${minutes}m ${seconds % 60}s`;
+    if (days > ZERO) return `${days}d ${hours % HOURS_PER_DAY}h`;
+    if (hours > ZERO) return `${hours}h ${minutes % SECONDS_PER_MINUTE}m`;
+    if (minutes > ZERO) return `${minutes}m ${seconds % SECONDS_PER_MINUTE}s`;
     return `${seconds}s`;
   },
 
@@ -127,11 +129,11 @@ export const CacheTimeUtils = {
    */
   parseTimeString(timeStr: string): number {
     const units: Record<string, number> = {
-      ms: 1,
-      s: 1000,
-      m: 60 * 1000,
-      h: 60 * 60 * 1000,
-      d: 24 * 60 * 60 * 1000,
+      ms: ONE,
+      s: ANIMATION_DURATION_VERY_SLOW,
+      m: SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+      h: SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+      d: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
     };
 
     const match = timeStr.match(/^(\d+)(ms|s|m|h|d)$/);
@@ -139,7 +141,7 @@ export const CacheTimeUtils = {
 
     const [, value, unit] = match;
     if (!value || !unit) throw new Error(`Invalid time format: ${timeStr}`);
-    return parseInt(value, 10) * (units[unit as keyof typeof units] || 1);
+    return parseInt(value, COUNT_TEN) * (units[unit as keyof typeof units] || ONE);
   },
 } as const;
 
@@ -156,7 +158,7 @@ export const CacheSizeUtils = {
     try {
       return new Blob([JSON.stringify(obj)]).size;
     } catch {
-      return 0;
+      return ZERO;
     }
   },
 
@@ -167,14 +169,14 @@ export const CacheSizeUtils = {
   formatBytes(bytes: number): string {
     const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     let size = bytes;
-    let unitIndex = 0;
+    let unitIndex = ZERO;
 
-    while (size >= 1024 && unitIndex < units.length - 1) {
-      size /= 1024;
-      unitIndex += 1;
+    while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
+      size /= BYTES_PER_KB;
+      unitIndex += ONE;
     }
 
-    return `${size.toFixed(2)} ${units[unitIndex]}`;
+    return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
   },
 
   /**
@@ -183,11 +185,11 @@ export const CacheSizeUtils = {
    */
   parseSize(sizeStr: string): number {
     const units: Record<string, number> = {
-      B: 1,
-      KB: 1024,
-      MB: 1024 * 1024,
-      GB: 1024 * 1024 * 1024,
-      TB: 1024 * 1024 * 1024 * 1024,
+      B: ONE,
+      KB: BYTES_PER_KB,
+      MB: BYTES_PER_KB * BYTES_PER_KB,
+      GB: BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB,
+      TB: BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB,
     };
 
     const match = sizeStr.match(/^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$/i);
@@ -196,7 +198,7 @@ export const CacheSizeUtils = {
     const [, value, unit] = match;
     if (!value || !unit) throw new Error(`Invalid size format: ${sizeStr}`);
     return (
-      parseFloat(value) * (units[unit.toUpperCase() as keyof typeof units] || 1)
+      parseFloat(value) * (units[unit.toUpperCase() as keyof typeof units] || ONE)
     );
   },
 } as const;
@@ -212,7 +214,7 @@ export const CacheStatsUtils = {
    */
   calculateHitRate(hits: number, misses: number): number {
     const total = hits + misses;
-    return total > 0 ? hits / total : 0;
+    return total > ZERO ? hits / total : ZERO;
   },
 
   /**
@@ -220,11 +222,11 @@ export const CacheStatsUtils = {
    * Calculate average age
    */
   calculateAverageAge(items: Array<{ timestamp: number }>): number {
-    if (items.length === 0) return 0;
+    if (items.length === ZERO) return ZERO;
     const now = Date.now();
     const totalAge = items.reduce(
       (sum, item) => sum + (now - item.timestamp),
-      0,
+      ZERO,
     );
     return totalAge / items.length;
   },
@@ -292,17 +294,17 @@ export const CacheValidationUtils = {
     const warnings: string[] = [];
 
     if (config.maxSize !== undefined) {
-      if (typeof config.maxSize !== 'number' || config.maxSize < 1) {
+      if (typeof config.maxSize !== 'number' || config.maxSize < ONE) {
         errors.push('maxSize must be a positive number');
-      } else if (config.maxSize > 100000) {
+      } else if (config.maxSize > COUNT_100000) {
         warnings.push('maxSize is very large, consider reducing it');
       }
     }
 
     if (config.ttl !== undefined) {
-      if (typeof config.ttl !== 'number' || config.ttl < 0) {
+      if (typeof config.ttl !== 'number' || config.ttl < ZERO) {
         errors.push('ttl must be a non-negative number');
-      } else if (config.ttl > 24 * 60 * 60 * 1000) {
+      } else if (config.ttl > HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW) {
         warnings.push('ttl is very long (>24h), consider reducing it');
       }
     }
@@ -310,7 +312,7 @@ export const CacheValidationUtils = {
     if (config.storageKey !== undefined) {
       if (
         typeof config.storageKey !== 'string' ||
-        config.storageKey.length === 0
+        config.storageKey.length === ZERO
       ) {
         errors.push('storageKey must be a non-empty string');
       }
@@ -323,7 +325,7 @@ export const CacheValidationUtils = {
     }
 
     return {
-      isValid: errors.length === 0,
+      isValid: errors.length === ZERO,
       errors,
       warnings,
     };
@@ -348,13 +350,13 @@ export const CacheValidationUtils = {
     if (config.compression) {
       if (
         config.compression.enableCompression &&
-        config.compression.threshold < 0
+        config.compression.threshold < ZERO
       ) {
         errors.push('compression threshold must be non-negative');
       }
       if (
         config.compression.level !== undefined &&
-        (config.compression.level < 1 || config.compression.level > 9)
+        (config.compression.level < ONE || config.compression.level > MAGIC_9)
       ) {
         errors.push('compression level must be between 1 and 9');
       }
@@ -364,13 +366,13 @@ export const CacheValidationUtils = {
     if (config.performance) {
       if (
         config.performance.maxConcurrentLoads !== undefined &&
-        config.performance.maxConcurrentLoads < 1
+        config.performance.maxConcurrentLoads < ONE
       ) {
         errors.push('maxConcurrentLoads must be at least 1');
       }
       if (
         config.performance.loadTimeout !== undefined &&
-        config.performance.loadTimeout < 1000
+        config.performance.loadTimeout < ANIMATION_DURATION_VERY_SLOW
       ) {
         warnings.push(
           'loadTimeout is very short (<1s), consider increasing it',
@@ -379,7 +381,7 @@ export const CacheValidationUtils = {
     }
 
     return {
-      isValid: errors.length === 0,
+      isValid: errors.length === ZERO,
       errors,
       warnings,
     };
@@ -489,7 +491,7 @@ export const CacheEventUtils = {
   aggregateEvents<T>(events: CacheEvent<T>[]): Record<string, number> {
     const stats: Record<string, number> = {};
     events.forEach((event) => {
-      stats[event.type] = (stats[event.type] || 0) + 1;
+      stats[event.type] = (stats[event.type] || ZERO) + ONE;
     });
     return stats;
   },
@@ -518,7 +520,7 @@ export const CacheDebugUtils = {
    * Format debug output
    */
   formatDebugOutput(info: Record<string, unknown>): string {
-    return JSON.stringify(info, null, 2);
+    return JSON.stringify(info, null, COUNT_PAIR);
   },
 
   /**
@@ -539,10 +541,10 @@ export const CacheDebugUtils = {
     if (typeof performance !== 'undefined' && performance.measure) {
       performance.measure(name, startMark, endMark);
       const entries = performance.getEntriesByName(name);
-      return entries.length > 0
-        ? (entries[entries.length - 1]?.duration ?? 0)
-        : 0;
+      return entries.length > ZERO
+        ? (entries[entries.length - ONE]?.duration ?? ZERO)
+        : ZERO;
     }
-    return 0;
+    return ZERO;
   },
 } as const;

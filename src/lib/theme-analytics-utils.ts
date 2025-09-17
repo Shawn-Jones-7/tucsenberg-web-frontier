@@ -3,9 +3,8 @@
  * Theme analytics utility functions
  */
 
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import * as Sentry from '@sentry/nextjs';
-import { COUNT_PAIR, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
 import type {
   ThemePerformanceMetrics,
   ThemePerformanceSummary,
@@ -23,10 +22,10 @@ export class ThemeAnalyticsUtils {
   static shouldSample(sampleRate: number): boolean {
     // 使用crypto.getRandomValues()替代Math.random()以提高安全性
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-      const array = new Uint32Array(1);
+      const array = new Uint32Array(ONE);
       crypto.getRandomValues(array);
-      const maxUint32 = 0xffffffff;
-      const randomValue = (array[0] || 0) / maxUint32;
+      const maxUint32 = ZERO;
+      const randomValue = (array[ZERO] || ZERO) / maxUint32;
       return randomValue < sampleRate;
     }
 
@@ -44,7 +43,7 @@ export class ThemeAnalyticsUtils {
         height: window.innerHeight,
       };
     }
-    return { width: 0, height: 0 };
+    return { width: ZERO, height: ZERO };
   }
 
   /**
@@ -91,15 +90,15 @@ export class ThemeAnalyticsUtils {
   ): void {
     const existing = usageStats.get(theme);
     if (existing) {
-      existing.count += 1;
+      existing.count += ONE;
       existing.lastUsed = timestamp;
       existing.sessionDuration += timestamp - lastSwitchTime;
     } else {
       usageStats.set(theme, {
         theme,
-        count: 1,
+        count: ONE,
         lastUsed: timestamp,
-        sessionDuration: 0,
+        sessionDuration: ZERO,
       });
     }
   }
@@ -121,12 +120,12 @@ export class ThemeAnalyticsUtils {
     );
 
     if (existing) {
-      existing.frequency += 1;
+      existing.frequency += ONE;
       existing.avgDuration = (existing.avgDuration + duration) / COUNT_PAIR;
     } else {
       switchPatterns.push({
         sequence,
-        frequency: 1,
+        frequency: ONE,
         avgDuration: duration,
         timeOfDay: new Date().getHours(),
       });
@@ -138,7 +137,7 @@ export class ThemeAnalyticsUtils {
    */
   static cleanupOldData(
     performanceMetrics: ThemePerformanceMetrics[],
-    maxAge: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // HOURS_PER_DAY小时
+    maxAge: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY小时
   ): void {
     const cutoffTime = Date.now() - maxAge;
 
@@ -148,7 +147,7 @@ export class ThemeAnalyticsUtils {
     );
 
     // 清空原数组并添加有效数据
-    performanceMetrics.length = 0;
+    performanceMetrics.length = ZERO;
     performanceMetrics.push(...validMetrics);
   }
 
@@ -159,13 +158,13 @@ export class ThemeAnalyticsUtils {
     performanceMetrics: ThemePerformanceMetrics[],
     usageStats: Map<string, ThemeUsageStats>,
   ): ThemePerformanceSummary {
-    if (performanceMetrics.length === 0) {
+    if (performanceMetrics.length === ZERO) {
       return {
-        totalSwitches: 0,
-        averageDuration: 0,
-        slowSwitches: 0,
-        fastestSwitch: 0,
-        slowestSwitch: 0,
+        totalSwitches: ZERO,
+        averageDuration: ZERO,
+        slowSwitches: ZERO,
+        fastestSwitch: ZERO,
+        slowestSwitch: ZERO,
         mostUsedTheme: 'system',
         viewTransitionSupport: false,
       };
@@ -173,15 +172,15 @@ export class ThemeAnalyticsUtils {
 
     const durations = performanceMetrics.map((m) => m.switchDuration);
     const averageDuration =
-      durations.reduce((a, b) => a + b, 0) / durations.length;
-    const slowSwitches = durations.filter((d) => d > 100).length; // 超过100ms的切换
+      durations.reduce((a, b) => a + b, ZERO) / durations.length;
+    const slowSwitches = durations.filter((d) => d > PERCENTAGE_FULL).length; // 超过100ms的切换
     const fastestSwitch = Math.min(...durations);
     const slowestSwitch = Math.max(...durations);
 
     // 找出最常用的主题
     const usageArray = Array.from(usageStats.values());
     const mostUsedTheme =
-      usageArray.length > 0
+      usageArray.length > ZERO
         ? usageArray.reduce((a, b) => (a.count > b.count ? a : b)).theme
         : 'system';
 

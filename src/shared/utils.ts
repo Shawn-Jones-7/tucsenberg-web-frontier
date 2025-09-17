@@ -3,6 +3,7 @@
  * 提供项目中常用的工具函数，包括日期格式化、邮箱验证等
  */
 
+import { ZERO } from "@/constants/magic-numbers";
 import { EMAIL_VALIDATION } from '@/constants/react-scan';
 
 /**
@@ -16,7 +17,7 @@ import { EMAIL_VALIDATION } from '@/constants/react-scan';
  * ```
  */
 export function formatDate(date: Date): string {
-  return date.toISOString().split('T')[0]!;
+  return date.toISOString().split('T')[ZERO]!;
 }
 
 /**
@@ -49,7 +50,7 @@ function validateEmailBasicFormat(email: string): boolean {
 function validateLocalPart(localPart: string): boolean {
   if (
     !localPart ||
-    localPart.length === 0 ||
+    localPart.length === ZERO ||
     localPart.length > EMAIL_VALIDATION.LOCAL_PART_MAX_LENGTH
   ) {
     return false;
@@ -71,7 +72,7 @@ function validateLocalPart(localPart: string): boolean {
 function validateDomainPart(domainPart: string): boolean {
   if (
     !domainPart ||
-    domainPart.length === 0 ||
+    domainPart.length === ZERO ||
     domainPart.length > EMAIL_VALIDATION.DOMAIN_PART_MAX_LENGTH
   ) {
     return false;

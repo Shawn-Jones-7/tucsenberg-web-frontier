@@ -1,4 +1,6 @@
-import { COUNT_FIVE, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+// 直接定义基础常量，避免循环依赖
+const COUNT_FIVE = 5 as const;
+const SECONDS_PER_MINUTE = 60 as const;
 
 /**
  * 性能监控相关常量定义

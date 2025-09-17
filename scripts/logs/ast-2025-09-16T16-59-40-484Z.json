@@ -1,0 +1,783 @@
+{
+  "timestamp": "2025-09-16T16:59:40.485Z",
+  "options": {
+    "write": false,
+    "dryRun": true
+  },
+  "summary": {
+    "filesProcessed": 475,
+    "filesModified": 35,
+    "totalReplacements": 53
+  },
+  "logs": [
+    {
+      "file": "src/config/security.ts",
+      "changes": [
+        {
+          "start": 4405,
+          "end": 4407,
+          "raw": "36",
+          "constant": "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE"
+        ],
+        "aliased": {}
+      }
+    },
+    {
+      "file": "src/hooks/theme-transition-utils.ts",
+      "changes": [
+        {
+          "start": 455,
+          "end": 458,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/hooks/use-theme-toggle.ts",
+      "changes": [
+        {
+          "start": 1222,
+          "end": 1225,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/i18n-cache-manager.ts",
+      "changes": [
+        {
+          "start": 2995,
+          "end": 2998,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/i18n-metrics-collector.ts",
+      "changes": [
+        {
+          "start": 7377,
+          "end": 7380,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/i18n-performance.ts",
+      "changes": [
+        {
+          "start": 4307,
+          "end": 4310,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 4337,
+          "end": 4340,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST",
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/locale-storage-analytics-events.ts",
+      "changes": [
+        {
+          "start": 5535,
+          "end": 5538,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/locale-storage-analytics-utils.ts",
+      "changes": [
+        {
+          "start": 8639,
+          "end": 8642,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/locale-storage-maintenance-operations.ts",
+      "changes": [
+        {
+          "start": 12306,
+          "end": 12309,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/locale-storage-types-base.ts",
+      "changes": [
+        {
+          "start": 8016,
+          "end": 8019,
+          "raw": "255",
+          "constant": "FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH"
+        ],
+        "aliased": {}
+      }
+    },
+    {
+      "file": "src/lib/performance-monitoring-constants.ts",
+      "changes": [
+        {
+          "start": 1025,
+          "end": 1028,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/performance-monitoring-core-reports.ts",
+      "changes": [
+        {
+          "start": 5467,
+          "end": 5470,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/performance-monitoring-integrations-bundle.ts",
+      "changes": [
+        {
+          "start": 10940,
+          "end": 10943,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/performance-monitoring-integrations-web-eval.ts",
+      "changes": [
+        {
+          "start": 10482,
+          "end": 10485,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 11004,
+          "end": 11007,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST",
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/security-validation.ts",
+      "changes": [
+        {
+          "start": 170,
+          "end": 173,
+          "raw": "254",
+          "constant": "INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH"
+        ],
+        "aliased": {}
+      }
+    },
+    {
+      "file": "src/lib/translation-manager-security.ts",
+      "changes": [
+        {
+          "start": 1900,
+          "end": 1903,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 2368,
+          "end": 2371,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 2850,
+          "end": 2853,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/translation-utils.ts",
+      "changes": [
+        {
+          "start": 422,
+          "end": 425,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/web-vitals-monitor.ts",
+      "changes": [
+        {
+          "start": 1437,
+          "end": 1440,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 1452,
+          "end": 1455,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST",
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/whatsapp-utils.ts",
+      "changes": [
+        {
+          "start": 1930,
+          "end": 1933,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/types/whatsapp-api-errors.ts",
+      "changes": [
+        {
+          "start": 7463,
+          "end": 7466,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/types/whatsapp-service-errors.ts",
+      "changes": [
+        {
+          "start": 972,
+          "end": 975,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 2039,
+          "end": 2042,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 3850,
+          "end": 3853,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        },
+        {
+          "start": 6574,
+          "end": 6577,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 7927,
+          "end": 7930,
+          "raw": "401",
+          "constant": "HTTP_UNAUTHORIZED",
+          "negated": false
+        },
+        {
+          "start": 10232,
+          "end": 10235,
+          "raw": "401",
+          "constant": "HTTP_UNAUTHORIZED",
+          "negated": false
+        },
+        {
+          "start": 11747,
+          "end": 11750,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST",
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST",
+          "HTTP_UNAUTHORIZED": "HTTP_UNAUTHORIZED_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/components/i18n/translation-preloader.tsx",
+      "changes": [
+        {
+          "start": 4731,
+          "end": 4734,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 6143,
+          "end": 6146,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST",
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/i18n-preloader-strategies/basic-strategies.ts",
+      "changes": [
+        {
+          "start": 1160,
+          "end": 1163,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/i18n-preloader-strategies/configs.ts",
+      "changes": [
+        {
+          "start": 1080,
+          "end": 1083,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 1388,
+          "end": 1391,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 2463,
+          "end": 2466,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        },
+        {
+          "start": 2740,
+          "end": 2743,
+          "raw": "600",
+          "constant": "WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE"
+        ],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST",
+          "HTTP_OK": "HTTP_OK_CONST",
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/locale-storage-types-config/presets.ts",
+      "changes": [
+        {
+          "start": 825,
+          "end": 828,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/lib/web-vitals/alert-notifications.ts",
+      "changes": [
+        {
+          "start": 156,
+          "end": 158,
+          "raw": "36",
+          "constant": "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE"
+        ],
+        "aliased": {}
+      }
+    },
+    {
+      "file": "src/lib/web-vitals/constants.ts",
+      "changes": [
+        {
+          "start": 1446,
+          "end": 1450,
+          "raw": "1080",
+          "constant": "TEST_APP_CONSTANTS.STANDARD_HEIGHT",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "TEST_APP_CONSTANTS.STANDARD_HEIGHT"
+        ],
+        "aliased": {}
+      }
+    },
+    {
+      "file": "src/lib/web-vitals/web-vitals-collector-analyzer.ts",
+      "changes": [
+        {
+          "start": 2249,
+          "end": 2252,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/types/whatsapp-webhook-utils/functions.ts",
+      "changes": [
+        {
+          "start": 1204,
+          "end": 1207,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/app/[locale]/accessibility-test/page.tsx",
+      "changes": [
+        {
+          "start": 1007,
+          "end": 1010,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/components/home/cta/action-cards.tsx",
+      "changes": [
+        {
+          "start": 324,
+          "end": 327,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_OK": "HTTP_OK_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/app/api/monitoring/dashboard/handlers/delete-handler.ts",
+      "changes": [
+        {
+          "start": 671,
+          "end": 674,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        },
+        {
+          "start": 1553,
+          "end": 1556,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST",
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/app/api/monitoring/dashboard/handlers/get-handler.ts",
+      "changes": [
+        {
+          "start": 2779,
+          "end": 2782,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/app/api/monitoring/dashboard/handlers/post-handler.ts",
+      "changes": [
+        {
+          "start": 612,
+          "end": 615,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        },
+        {
+          "start": 1612,
+          "end": 1615,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST",
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    },
+    {
+      "file": "src/app/api/monitoring/dashboard/handlers/put-handler.ts",
+      "changes": [
+        {
+          "start": 531,
+          "end": 534,
+          "raw": "400",
+          "constant": "HTTP_BAD_REQUEST",
+          "negated": false
+        },
+        {
+          "start": 1447,
+          "end": 1450,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "HTTP_BAD_REQUEST": "HTTP_BAD_REQUEST_CONST",
+          "ANIMATION_DURATION_SLOW": "ANIMATION_DURATION_SLOW_CONST"
+        }
+      }
+    }
+  ]
+}

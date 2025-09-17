@@ -3,9 +3,10 @@
  * Preloader Factory Class
  */
 
-import type { Messages } from '@/types/i18n';
+import { ONE } from "@/constants/magic-numbers";
 import type { CacheStorage, MetricsCollector } from '@/lib/i18n-cache-types';
 import { TranslationPreloader } from '@/lib/i18n-preloader-core';
+import type { Messages } from '@/types/i18n';
 import type {
   IPreloader,
   PreloaderConfig,
@@ -100,8 +101,8 @@ export class PreloaderFactory {
     const handlers = this.eventHandlers.get(event);
     if (handlers) {
       const index = handlers.indexOf(handler);
-      if (index > -1) {
-        handlers.splice(index, 1);
+      if (index > -ONE) {
+        handlers.splice(index, ONE);
       }
     }
   }

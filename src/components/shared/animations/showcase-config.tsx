@@ -2,11 +2,11 @@
  * 动画示例和配置
  */
 
-import React from 'react';
-import { CardContent } from '@/components/ui/card';
 import { AnimatedButton, AnimatedCard } from '@/components/shared/animations/card-button';
 import { AnimatedProgress, AnimatedSuccess } from '@/components/shared/animations/form-status';
 import { AnimatedHeroIcon, AnimatedTitle } from '@/components/shared/animations/icon-title';
+import { CardContent } from '@/components/ui/card';
+import { MAGIC_75 } from "@/constants/count";
 
 // 使用示例组件
 export const AnimationShowcase = () => (
@@ -16,7 +16,7 @@ export const AnimationShowcase = () => (
     <AnimatedCard>
       <CardContent className='p-6'>
         <div className='space-y-4'>
-          <AnimatedProgress value={75} />
+          <AnimatedProgress value={MAGIC_75} />
           <AnimatedButton>点击按钮</AnimatedButton>
           <AnimatedSuccess message='订阅成功！' />
         </div>

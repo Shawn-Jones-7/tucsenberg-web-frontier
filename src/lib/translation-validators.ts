@@ -1,10 +1,13 @@
 /**
  * 翻译验证器工具类
  */
+import { MAGIC_15, MAGIC_8 } from "@/constants/count";
+import { MAGIC_0_3, MAGIC_0_6 } from "@/constants/decimal";
+import { VALIDATION_THRESHOLDS } from '@/constants/i18n-constants';
+import { COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, ONE, PERCENTAGE_QUARTER, ZERO } from "@/constants/magic-numbers";
+import type { ValidationResult } from '@/lib/translation-quality-types';
 import type { Locale } from '@/types/i18n';
 import type { QualityIssue } from '@/types/translation-manager';
-import { VALIDATION_THRESHOLDS } from '@/constants/i18n-constants';
-import type { ValidationResult } from '@/lib/translation-quality-types';
 
 export class TranslationValidators {
   /**
@@ -15,7 +18,7 @@ export class TranslationValidators {
     translation: string,
   ): ValidationResult {
     const issues: QualityIssue[] = [];
-    let penalty = 0;
+    let penalty = ZERO;
 
     // 检查空翻译
     if (!translation.trim()) {
@@ -46,7 +49,7 @@ export class TranslationValidators {
     const missingPlaceholders = originalPlaceholders.filter(
       (ph) => !translatedPlaceholders.includes(ph),
     );
-    if (missingPlaceholders.length > 0) {
+    if (missingPlaceholders.length > ZERO) {
       issues.push({
         type: 'placeholder',
         severity: 'high',
@@ -70,7 +73,7 @@ export class TranslationValidators {
         message: 'Translation length significantly different from original',
         suggestion: 'Review translation for completeness and conciseness',
       });
-      penalty += 10;
+      penalty += COUNT_TEN;
     }
 
     return { issues, penalty };
@@ -84,7 +87,7 @@ export class TranslationValidators {
     locale: Locale,
   ): ValidationResult {
     const issues: QualityIssue[] = [];
-    let penalty = 0;
+    let penalty = ZERO;
 
     switch (locale) {
       case 'zh':
@@ -96,7 +99,7 @@ export class TranslationValidators {
             message: 'Contains traditional Chinese characters',
             suggestion: 'Use simplified Chinese for zh locale',
           });
-          penalty += 5;
+          penalty += COUNT_FIVE;
         }
         break;
 
@@ -109,7 +112,7 @@ export class TranslationValidators {
             message: 'Potential grammar issues detected',
             suggestion: 'Review grammar and sentence structure',
           });
-          penalty += 8;
+          penalty += MAGIC_8;
         }
         break;
     }
@@ -125,29 +128,29 @@ export class TranslationValidators {
     humanTranslation: string,
   ): ValidationResult {
     const issues: QualityIssue[] = [];
-    let penalty = 0;
+    let penalty = ZERO;
 
     const similarity = this.calculateSimilarity(
       aiTranslation,
       humanTranslation,
     );
 
-    if (similarity < 0.3) {
+    if (similarity < MAGIC_0_3) {
       issues.push({
         type: 'accuracy',
         severity: 'high',
         message: 'AI translation significantly differs from human reference',
         suggestion: 'Review translation accuracy and meaning preservation',
       });
-      penalty += 25;
-    } else if (similarity < 0.6) {
+      penalty += PERCENTAGE_QUARTER;
+    } else if (similarity < MAGIC_0_6) {
       issues.push({
         type: 'accuracy',
         severity: 'medium',
         message: 'AI translation moderately differs from human reference',
         suggestion: 'Consider adjusting translation for better accuracy',
       });
-      penalty += 15;
+      penalty += MAGIC_15;
     }
 
     // 检查关键术语
@@ -155,14 +158,14 @@ export class TranslationValidators {
     const aiTerms = this.extractKeyTerms(aiTranslation);
     const missingTerms = humanTerms.filter((term) => !aiTerms.includes(term));
 
-    if (missingTerms.length > 0) {
+    if (missingTerms.length > ZERO) {
       issues.push({
         type: 'terminology',
         severity: 'medium',
-        message: `Missing key terms: ${missingTerms.slice(0, 3).join(', ')}`,
+        message: `Missing key terms: ${missingTerms.slice(ZERO, COUNT_TRIPLE).join(', ')}`,
         suggestion: 'Include important terminology from reference translation',
       });
-      penalty += 10;
+      penalty += COUNT_TEN;
     }
 
     return { issues, penalty };
@@ -193,7 +196,7 @@ export class TranslationValidators {
   // 工具方法
   private static extractPlaceholders(text: string): string[] {
     const matches = text.match(/\{[^}]+\}/g) || [];
-    return matches.map((match) => match.slice(1, -1));
+    return matches.map((match) => match.slice(ONE, -ONE));
   }
 
   private static containsTraditionalChinese(text: string): boolean {
@@ -226,6 +229,6 @@ export class TranslationValidators {
   }
 
   private static extractKeyTerms(text: string): string[] {
-    return text.split(/\s+/).filter((word) => word.length > 3);
+    return text.split(/\s+/).filter((word) => word.length > COUNT_TRIPLE);
   }
 }

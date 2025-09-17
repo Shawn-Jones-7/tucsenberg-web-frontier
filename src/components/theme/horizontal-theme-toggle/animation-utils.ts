@@ -1,4 +1,4 @@
-import { COUNT_PAIR } from '@/constants/magic-numbers';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, PERCENTAGE_FULL } from "@/constants/magic-numbers";
 
 /**
  * 主题切换动画工具函数
@@ -9,8 +9,8 @@ export const createCircleBlurAnimation = (
   if (!buttonElement) return '';
 
   const rect = buttonElement.getBoundingClientRect();
-  const centerX = ((rect.left + rect.width / COUNT_PAIR) / window.innerWidth) * 100;
-  const centerY = ((rect.top + rect.height / COUNT_PAIR) / window.innerHeight) * 100;
+  const centerX = ((rect.left + rect.width / COUNT_PAIR) / window.innerWidth) * PERCENTAGE_FULL;
+  const centerY = ((rect.top + rect.height / COUNT_PAIR) / window.innerHeight) * PERCENTAGE_FULL;
 
   return `
     @supports (view-transition-name: root) {
@@ -73,7 +73,7 @@ export const applyThemeAnimation = (
       if (styleEl) {
         styleEl.remove();
       }
-    }, 1000);
+    }, ANIMATION_DURATION_VERY_SLOW);
   } else {
     // 直接切换主题，不使用动画
     setTheme(newTheme);

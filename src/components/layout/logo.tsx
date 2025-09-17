@@ -6,10 +6,12 @@
  */
 'use client';
 
-import Image from 'next/image';
-import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/utils';
+import { COUNT_120 } from "@/constants/count";
+import { HOURS_PER_DAY } from "@/constants/magic-numbers";
 import { Link } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import Image from 'next/image';
 
 /**
  * Logo Component
@@ -73,8 +75,8 @@ export function Logo({ className, showText = true, size = 'md' }: LogoProps) {
       <Image
         src='/next.svg'
         alt=''
-        width={120}
-        height={24}
+        width={COUNT_120}
+        height={HOURS_PER_DAY}
         className={cn(
           'transition-all duration-200 dark:invert',
           getSizeClass(size),

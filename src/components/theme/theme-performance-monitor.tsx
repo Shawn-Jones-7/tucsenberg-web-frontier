@@ -1,8 +1,9 @@
 'use client';
 
-import { useEffect } from 'react';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import { sendThemeReport, themeAnalytics } from '@/lib/theme-analytics';
+import { useEffect } from 'react';
 
 /**
  * 主题性能监控组件
@@ -11,9 +12,9 @@ import { sendThemeReport, themeAnalytics } from '@/lib/theme-analytics';
 export function ThemePerformanceMonitor() {
   useEffect(() => {
     // 定期发送性能报告（每5分钟）
-    const minutesInterval = 5;
-    const secondsInMinute = 60;
-    const millisecondsInSecond = 1000;
+    const minutesInterval = COUNT_FIVE;
+    const secondsInMinute = SECONDS_PER_MINUTE;
+    const millisecondsInSecond = ANIMATION_DURATION_VERY_SLOW;
     const reportIntervalMs =
       minutesInterval * secondsInMinute * millisecondsInSecond;
     const reportInterval = setInterval(() => {
@@ -67,13 +68,13 @@ export function ThemePerformanceDashboard() {
     }
 
     // 每秒更新一次统计信息
-    const updateIntervalMs = 10000; // 每10秒输出一次
+    const updateIntervalMs = TEN_SECONDS_MS; // 每10秒输出一次
     const updateInterval = setInterval(() => {
       const summary = themeAnalytics.getPerformanceSummary();
       const usage = themeAnalytics.getUsageStatistics();
 
       // 在控制台输出性能统计
-      if (summary.totalSwitches > 0) {
+      if (summary.totalSwitches > ZERO) {
         logger.info('Theme Performance Summary', { summary });
         logger.info('Theme Usage Statistics', { usage });
       }

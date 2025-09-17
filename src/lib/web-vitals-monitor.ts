@@ -1,5 +1,8 @@
 'use client';
 
+import { COUNT_800, MAGIC_1800, MAGIC_2500, MAGIC_4000 } from "@/constants/count";
+import { MAGIC_0_1, MAGIC_0_25 } from "@/constants/decimal";
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_SLOW, HTTP_OK, ONE, PERCENTAGE_FULL, THREE_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 
 /**
@@ -57,12 +60,12 @@ export class WebVitalsMonitor {
 
   // Web Vitals 阈值配置
   private static readonly THRESHOLDS = {
-    CLS: { good: 0.1, poor: 0.25 },
-    FID: { good: 100, poor: 300 },
-    LCP: { good: 2500, poor: 4000 },
-    FCP: { good: 1800, poor: 3000 },
-    TTFB: { good: 800, poor: 1800 },
-    INP: { good: 200, poor: 500 },
+    CLS: { good: MAGIC_0_1, poor: MAGIC_0_25 },
+    FID: { good: PERCENTAGE_FULL, poor: ANIMATION_DURATION_NORMAL },
+    LCP: { good: MAGIC_2500, poor: MAGIC_4000 },
+    FCP: { good: MAGIC_1800, poor: THREE_SECONDS_MS },
+    TTFB: { good: COUNT_800, poor: MAGIC_1800 },
+    INP: { good: HTTP_OK, poor: ANIMATION_DURATION_SLOW },
   } as const;
 
   private constructor() {
@@ -106,7 +109,7 @@ export class WebVitalsMonitor {
     if ('PerformanceObserver' in window) {
       try {
         const clsObserver = new PerformanceObserver((list) => {
-          let clsValue = 0;
+          let clsValue = ZERO;
           for (const entry of list.getEntries()) {
             const layoutShiftEntry = entry as LayoutShiftEntry;
             if (!layoutShiftEntry.hadRecentInput) {
@@ -127,7 +130,7 @@ export class WebVitalsMonitor {
       try {
         const lcpObserver = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1];
+          const lastEntry = entries[entries.length - ONE];
           if (lastEntry) {
             this.recordLCP(lastEntry.startTime);
           }
@@ -188,7 +191,7 @@ export class WebVitalsMonitor {
         const navigationEntries = performance.getEntriesByType(
           'navigation',
         ) as PerformanceNavigationTiming[];
-        if (navigationEntries.length > 0) {
+        if (navigationEntries.length > ZERO) {
           const [navigation] = navigationEntries;
           if (
             navigation &&
@@ -199,7 +202,7 @@ export class WebVitalsMonitor {
             this.recordTTFB(ttfb);
           }
         }
-      }, 0);
+      }, ZERO);
     }
   }
 
@@ -207,7 +210,7 @@ export class WebVitalsMonitor {
    * 记录 CLS 指标
    */
   recordCLS(value: number): void {
-    this.metrics.cls = (this.metrics.cls || 0) + value;
+    this.metrics.cls = (this.metrics.cls || ZERO) + value;
   }
 
   /**
@@ -253,7 +256,7 @@ export class WebVitalsMonitor {
       throw new Error(`Invalid metric: ${metric}`);
     }
     const safeThresholds = new Map(Object.entries(WebVitalsMonitor.THRESHOLDS));
-    const thresholds = safeThresholds.get(metric) || { good: 0, poor: 0 };
+    const thresholds = safeThresholds.get(metric) || { good: ZERO, poor: ZERO };
     let rating: 'good' | 'needs-improvement' | 'poor';
 
     if (value <= thresholds.good) {
@@ -276,9 +279,9 @@ export class WebVitalsMonitor {
     score: number;
   } {
     const metrics: WebVitalsMetrics = {
-      cls: this.metrics.cls || 0,
-      fid: this.metrics.fid || 0,
-      lcp: this.metrics.lcp || 0,
+      cls: this.metrics.cls || ZERO,
+      fid: this.metrics.fid || ZERO,
+      lcp: this.metrics.lcp || ZERO,
       ...(this.metrics.fcp !== undefined && { fcp: this.metrics.fcp }),
       ...(this.metrics.ttfb !== undefined && { ttfb: this.metrics.ttfb }),
       ...(this.metrics.inp !== undefined && { inp: this.metrics.inp }),
@@ -295,7 +298,7 @@ export class WebVitalsMonitor {
     // 计算总体性能评分
     const ratingValues = Object.values(ratings);
     const goodCount = ratingValues.filter((r) => r.rating === 'good').length;
-    const score = Math.round((goodCount / ratingValues.length) * 100);
+    const score = Math.round((goodCount / ratingValues.length) * PERCENTAGE_FULL);
 
     return { metrics, ratings, score };
   }

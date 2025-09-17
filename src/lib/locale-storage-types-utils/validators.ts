@@ -3,9 +3,8 @@
  * Locale Storage System Validation Functions
  */
 
+import { MAGIC_0_3, MAGIC_0_9, ONE, ZERO } from "@/constants/magic-numbers";
 import { BaseValidators } from '@/lib/locale-storage-types-base';
-import { MAGIC_0_9, MAGIC_0_3 } from '@/constants/magic-numbers';
-
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,
@@ -93,7 +92,7 @@ export function validatePreference(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -138,9 +137,9 @@ export function validateDetectionHistory(
     }
 
     // 验证时间顺序
-    for (let i = 1; i < history.detections.length; i++) {
+    for (let i = ONE; i < history.detections.length; i++) {
       const current = history.detections[i];
-      const previous = history.detections[i - 1];
+      const previous = history.detections[i - ONE];
       if (current && previous && current.timestamp < previous.timestamp) {
         warnings.push('Detections are not in chronological order');
         break;
@@ -156,13 +155,13 @@ export function validateDetectionHistory(
   // 验证总检测数
   if (
     typeof history.totalDetections !== 'number' ||
-    history.totalDetections < 0
+    history.totalDetections < ZERO
   ) {
     errors.push('Invalid totalDetections');
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };

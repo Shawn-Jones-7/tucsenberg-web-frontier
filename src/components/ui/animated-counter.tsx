@@ -1,14 +1,17 @@
 'use client';
 
 /// <reference lib="dom" />
-import * as React from 'react';
-import { forwardRef, useEffect, useState } from 'react';
+import { animationUtils } from '@/components/ui/animated-counter-helpers';
+import { COUNT_4 } from "@/constants/count";
+import { MAGIC_0_3, MAGIC_0_5 } from "@/constants/decimal";
+import { COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } from "@/constants/magic-numbers";
+import { ANIMATION_DURATIONS } from '@/constants/performance-constants';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { AccessibilityUtils } from '@/lib/accessibility-utils';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
-import { ANIMATION_DURATIONS } from '@/constants/performance-constants';
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { animationUtils } from '@/components/ui/animated-counter-helpers';
+import * as React from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
 /**
  * 缓动函数类型
@@ -21,25 +24,25 @@ export type EasingFunction = (_t: number) => number;
 // 缓动函数常量
 const EASING_CONSTANTS = {
   /** 立方幂次 */
-  CUBIC_POWER: 3,
+  CUBIC_POWER: COUNT_TRIPLE,
   /** 缓动阈值 */
-  THRESHOLD: 0.5,
+  THRESHOLD: MAGIC_0_5,
   /** 缓动倍数 */
-  MULTIPLIER: 4,
+  MULTIPLIER: COUNT_4,
   /** 缓动偏移 */
-  OFFSET: -2,
+  OFFSET: -COUNT_PAIR,
   /** 缓动除数 */
-  DIVISOR: 2,
+  DIVISOR: COUNT_PAIR,
 } as const;
 
 export const easingFunctions = {
   linear: (t: number) => t,
-  easeOut: (t: number) => 1 - (1 - t) ** EASING_CONSTANTS.CUBIC_POWER,
+  easeOut: (t: number) => ONE - (ONE - t) ** EASING_CONSTANTS.CUBIC_POWER,
   easeIn: (t: number) => t ** EASING_CONSTANTS.CUBIC_POWER,
   easeInOut: (t: number) =>
     t < EASING_CONSTANTS.THRESHOLD
       ? EASING_CONSTANTS.MULTIPLIER * t ** EASING_CONSTANTS.CUBIC_POWER
-      : 1 -
+      : ONE -
         (EASING_CONSTANTS.OFFSET * t + EASING_CONSTANTS.DIVISOR) **
           EASING_CONSTANTS.CUBIC_POWER /
           EASING_CONSTANTS.DIVISOR,
@@ -58,7 +61,7 @@ export const formatters = {
   /** 货币格式化 */
   currency: (value: number) => `$${Math.round(value).toLocaleString()}`,
   /** 小数格式化 */
-  decimal: (value: number) => value.toFixed(1),
+  decimal: (value: number) => value.toFixed(ONE),
 } as const;
 
 /**
@@ -148,7 +151,7 @@ function useAnimatedCounter({
   const [isAnimating, setIsAnimating] = useState(false);
 
   // Intersection Observer Hook
-  const INTERSECTION_THRESHOLD = 0.3;
+  const INTERSECTION_THRESHOLD = MAGIC_0_3;
   const observerConfig = {
     threshold: INTERSECTION_THRESHOLD,
     triggerOnce: true,
@@ -181,14 +184,14 @@ function useAnimatedCounter({
 
     const updateValue = (currentTime: number) => {
       const elapsed = currentTime - startTime;
-      const progress = Math.min(elapsed / duration, 1);
+      const progress = Math.min(elapsed / duration, ONE);
 
       const easedProgress = easing(progress);
       const newValue = startValue + difference * easedProgress;
 
       setCurrentValue(newValue);
 
-      if (progress < 1) {
+      if (progress < ONE) {
         animationUtils.scheduleFrame(updateValue);
       } else {
         setCurrentValue(to);
@@ -204,7 +207,7 @@ function useAnimatedCounter({
     const shouldAnimate = autoStart || (triggerOnVisible && isVisible);
 
     if (shouldAnimate && !isAnimating) {
-      if (delay > 0) {
+      if (delay > ZERO) {
         const timer = setTimeout(animate, delay);
         return () => clearTimeout(timer);
       }
@@ -226,14 +229,14 @@ export const AnimatedCounter = forwardRef<
 >(
   (
     {
-      from = 0,
+      from = ZERO,
       to,
       duration = ANIMATION_DURATIONS.COUNTER,
       formatter = formatters.default,
       easing = easingFunctions.easeOut,
       triggerOnVisible = true,
       observerOptions = {},
-      delay = 0,
+      delay = ZERO,
       autoStart = false,
       className,
       ...props

@@ -13,6 +13,7 @@ import {
   SITE_CONFIG,
   type PageType,
 } from '@/config/paths';
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { SEO_CONSTANTS } from '@/constants/seo-constants';
 
 // URL生成选项接口
@@ -219,8 +220,8 @@ export class URLGenerator {
     let path = url.replace(/^https?:\/\/[^/]+/, '');
 
     // 移除查询参数和锚点
-    const pathWithoutQuery = path.split('?')[0] || '';
-    path = pathWithoutQuery.split('#')[0] || '';
+    const pathWithoutQuery = path.split('?')[ZERO] || '';
+    path = pathWithoutQuery.split('#')[ZERO] || '';
 
     // 检测语言
     let locale: Locale = this.defaultLocale;
@@ -228,8 +229,8 @@ export class URLGenerator {
 
     // 检查是否有语言前缀
     const localeMatch = path.match(/^\/([a-z]{2})(?=\/|$)/);
-    if (localeMatch && this.locales.includes(localeMatch[1] as Locale)) {
-      locale = localeMatch[1] as Locale;
+    if (localeMatch && this.locales.includes(localeMatch[ONE] as Locale)) {
+      locale = localeMatch[ONE] as Locale;
       cleanPath = path.replace(/^\/[a-z]{2}/, '') || '/';
     }
 

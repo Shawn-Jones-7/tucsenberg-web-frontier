@@ -1,4 +1,4 @@
-import { COUNT_TRIPLE, MAGIC_0_8, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+import { COUNT_TRIPLE, MAGIC_0_8, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 无障碍性测试工具
@@ -34,7 +34,7 @@ export class AccessibilityTester {
       // 获取所有可聚焦元素
       const focusableElements = this.getFocusableElements();
 
-      if (focusableElements.length === 0) {
+      if (focusableElements.length === ZERO) {
         return {
           testName,
           passed: false,
@@ -48,7 +48,7 @@ export class AccessibilityTester {
 
       // 测试Tab键导航顺序
       const tabOrder: HTMLElement[] = [];
-      const currentElement = focusableElements[0];
+      const currentElement = focusableElements[ZERO];
 
       if (!currentElement) {
         return {
@@ -58,7 +58,7 @@ export class AccessibilityTester {
         };
       }
 
-      for (let i = 0; i < focusableElements.length; i++) {
+      for (let i = ZERO; i < focusableElements.length; i++) {
         currentElement.focus();
         tabOrder.push(document.activeElement as HTMLElement);
 
@@ -116,8 +116,8 @@ export class AccessibilityTester {
       );
       const links = document.querySelectorAll('a[href]');
 
-      let activationTests = 0;
-      let passedTests = 0;
+      let activationTests = ZERO;
+      let passedTests = ZERO;
 
       // 测试下拉菜单触发器
       for (const trigger of triggers) {
@@ -129,17 +129,17 @@ export class AccessibilityTester {
           element,
           'Enter',
         );
-        activationTests += 1;
-        if (enterResult) passedTests += 1;
+        activationTests += ONE;
+        if (enterResult) passedTests += ONE;
 
         // 测试Space键
         const spaceResult = await this.testElementKeyActivation(element, ' ');
-        activationTests += 1;
-        if (spaceResult) passedTests += 1;
+        activationTests += ONE;
+        if (spaceResult) passedTests += ONE;
       }
 
       // 测试导航链接
-      for (const link of Array.from(links).slice(0, COUNT_TRIPLE)) {
+      for (const link of Array.from(links).slice(ZERO, COUNT_TRIPLE)) {
         // 限制测试数量
         const element = link as HTMLElement;
         element.focus();
@@ -148,17 +148,17 @@ export class AccessibilityTester {
           element,
           'Enter',
         );
-        activationTests += 1;
-        if (enterResult) passedTests += 1;
+        activationTests += ONE;
+        if (enterResult) passedTests += ONE;
       }
 
       const successRate =
-        activationTests > 0 ? passedTests / activationTests : 0;
+        activationTests > ZERO ? passedTests / activationTests : ZERO;
 
       return {
         testName,
         passed: successRate >= MAGIC_0_8, // 80%通过率
-        details: `测试了${activationTests}个激活操作，成功率: ${(successRate * 100).toFixed(1)}%`,
+        details: `测试了${activationTests}个激活操作，成功率: ${(successRate * PERCENTAGE_FULL).toFixed(ONE)}%`,
         ...(successRate < MAGIC_0_8
           ? {
               suggestions: [
@@ -190,8 +190,8 @@ export class AccessibilityTester {
       const triggers = document.querySelectorAll(
         '[data-slot="navigation-menu-trigger"]',
       );
-      let escapeTests = 0;
-      let passedTests = 0;
+      let escapeTests = ZERO;
+      let passedTests = ZERO;
 
       for (const trigger of triggers) {
         const element = trigger as HTMLElement;
@@ -199,7 +199,7 @@ export class AccessibilityTester {
         // 先打开菜单
         element.focus();
         element.click();
-        await new Promise((resolve) => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
 
         // 检查菜单是否打开
         const isOpen =
@@ -215,24 +215,24 @@ export class AccessibilityTester {
           });
           element.dispatchEvent(escapeEvent);
 
-          await new Promise((resolve) => setTimeout(resolve, 100));
+          await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
 
           // 检查菜单是否关闭
           const isClosed =
             element.getAttribute('data-state') !== 'open' &&
             element.getAttribute('aria-expanded') !== 'true';
 
-          escapeTests += 1;
-          if (isClosed) passedTests += 1;
+          escapeTests += ONE;
+          if (isClosed) passedTests += ONE;
         }
       }
 
-      const successRate = escapeTests > 0 ? passedTests / escapeTests : 0;
+      const successRate = escapeTests > ZERO ? passedTests / escapeTests : ZERO;
 
       return {
         testName,
         passed: successRate >= MAGIC_0_8,
-        details: `测试了${escapeTests}个Escape关闭操作，成功率: ${(successRate * 100).toFixed(1)}%`,
+        details: `测试了${escapeTests}个Escape关闭操作，成功率: ${(successRate * PERCENTAGE_FULL).toFixed(ONE)}%`,
         ...(successRate < MAGIC_0_8
           ? {
               suggestions: [
@@ -271,7 +271,7 @@ export class AccessibilityTester {
           !nav.getAttribute('aria-label') &&
           !nav.getAttribute('aria-labelledby')
         ) {
-          issues.push(`导航容器${index + 1}缺少aria-label或aria-labelledby`);
+          issues.push(`导航容器${index + ONE}缺少aria-label或aria-labelledby`);
           suggestions.push('为导航容器添加描述性的aria-label');
         }
       });
@@ -282,12 +282,12 @@ export class AccessibilityTester {
       );
       triggers.forEach((trigger, index) => {
         if (!trigger.getAttribute('aria-expanded')) {
-          issues.push(`下拉菜单触发器${index + 1}缺少aria-expanded属性`);
+          issues.push(`下拉菜单触发器${index + ONE}缺少aria-expanded属性`);
           suggestions.push('为下拉菜单触发器添加aria-expanded属性');
         }
 
         if (!trigger.getAttribute('aria-haspopup')) {
-          issues.push(`下拉菜单触发器${index + 1}缺少aria-haspopup属性`);
+          issues.push(`下拉菜单触发器${index + ONE}缺少aria-haspopup属性`);
           suggestions.push('为下拉菜单触发器添加aria-haspopup属性');
         }
       });
@@ -298,19 +298,19 @@ export class AccessibilityTester {
       );
       const allLinks = document.querySelectorAll('a[href]');
 
-      if (currentPageLinks.length === 0 && allLinks.length > 0) {
+      if (currentPageLinks.length === ZERO && allLinks.length > ZERO) {
         issues.push('未找到当前页面的aria-current="page"标识');
         suggestions.push('为当前页面链接添加aria-current="page"属性');
       }
 
       return {
         testName,
-        passed: issues.length === 0,
+        passed: issues.length === ZERO,
         details:
-          issues.length === 0
+          issues.length === ZERO
             ? '所有ARIA属性配置正确'
             : `发现${issues.length}个ARIA属性问题: ${issues.join('; ')}`,
-        ...(suggestions.length > 0 ? { suggestions } : {}),
+        ...(suggestions.length > ZERO ? { suggestions } : {}),
       };
     } catch (_error) {
       // 忽略错误变量
@@ -350,10 +350,10 @@ export class AccessibilityTester {
     report += `总测试数: ${totalTests}\n`;
     report += `通过: ${passedTests}\n`;
     report += `失败: ${failedTests}\n`;
-    report += `通过率: ${((passedTests / totalTests) * 100).toFixed(1)}%\n\n`;
+    report += `通过率: ${((passedTests / totalTests) * PERCENTAGE_FULL).toFixed(ONE)}%\n\n`;
 
     this.results.forEach((result, index) => {
-      report += `${index + 1}. ${result.testName}\n`;
+      report += `${index + ONE}. ${result.testName}\n`;
       report += `   状态: ${result.passed ? '✅ 通过' : '❌ 失败'}\n`;
       report += `   详情: ${result.details}\n`;
       if (result.suggestions) {
@@ -404,7 +404,7 @@ export class AccessibilityTester {
       });
 
       element.dispatchEvent(keyEvent);
-      await new Promise((resolve) => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
 
       const newState = element.getAttribute('data-state');
       const newExpanded = element.getAttribute('aria-expanded');

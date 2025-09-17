@@ -3,21 +3,22 @@
  * 提供统一的监控API和管理功能
  */
 
-import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
 import {
   CACHE_LIMITS,
   PERFORMANCE_THRESHOLDS,
   REPORTING_THRESHOLDS,
   TIME_UNITS,
 } from '@/constants/i18n-constants';
+import { COUNT_TEN, COUNT_TRIPLE } from "@/constants/magic-numbers";
 import { EventCollector } from '@/lib/i18n-event-collector';
+import { PerformanceMonitor } from '@/lib/i18n-performance-monitor';
+import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
 import type {
   ErrorLevel,
   MonitoringConfig,
   MonitoringEvent,
   MonitoringEventType,
 } from './i18n-monitoring-types';
-import { PerformanceMonitor } from '@/lib/i18n-performance-monitor';
 
 // 主监控管理器
 export class I18nMonitor {
@@ -40,8 +41,8 @@ export class I18nMonitor {
       },
       qualityThresholds: {
         completeness: PERFORMANCE_THRESHOLDS.EXCELLENT,
-        consistency: PERFORMANCE_THRESHOLDS.GOOD + 10,
-        accuracy: PERFORMANCE_THRESHOLDS.EXCELLENT + 3,
+        consistency: PERFORMANCE_THRESHOLDS.GOOD + COUNT_TEN,
+        accuracy: PERFORMANCE_THRESHOLDS.EXCELLENT + COUNT_TRIPLE,
         freshness: CACHE_LIMITS.MAX_DETECTION_HISTORY,
       },
       maxEvents: CACHE_LIMITS.MAX_PERFORMANCE_DATA_POINTS,

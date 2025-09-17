@@ -2,6 +2,12 @@
  * 翻译质量检查和AI翻译验证工具
  * 提供翻译质量评估、AI翻译验证和质量基准对比功能
  */
+import { MAGIC_12, MAGIC_15, MAGIC_8 } from "@/constants/count";
+import { DEC_0_05, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8 } from "@/constants/decimal";
+import { COUNT_FIVE, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
+import { TranslationManager } from '@/lib/translation-manager';
+import { TranslationValidators } from '@/lib/translation-validators';
 import type { Locale } from '@/types/i18n';
 import type {
   BatchTranslationInput,
@@ -11,17 +17,12 @@ import type {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
-import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
-import { TranslationManager } from '@/lib/translation-manager';
-import { TranslationValidators } from '@/lib/translation-validators';
 
 // 导入拆分的模块
 export type {
-  AITranslationService,
-  QualityBenchmark,
+  AITranslationService, BatchTranslationInput, QualityBenchmark,
   QualityComparison,
-  ValidationResult,
-  BatchTranslationInput,
+  ValidationResult
 } from './translation-quality-types';
 
 /**
@@ -55,7 +56,7 @@ export class TranslationQualityAnalyzer {
     humanTranslation?: string,
   ): Promise<QualityScore> {
     const issues: QualityIssue[] = [];
-    let totalPenalty = 0;
+    let totalPenalty = ZERO;
 
     // 基础验证
     const basicResult = TranslationValidators.performBasicValidation(
@@ -94,8 +95,8 @@ export class TranslationQualityAnalyzer {
     }
 
     // 计算最终分数
-    const baseScore = 100;
-    const finalScore = Math.max(0, baseScore - totalPenalty);
+    const baseScore = PERCENTAGE_FULL;
+    const finalScore = Math.max(ZERO, baseScore - totalPenalty);
 
     const confidence = this.calculateConfidence(
       issues,
@@ -110,20 +111,20 @@ export class TranslationQualityAnalyzer {
       suggestions,
       // 分类分数
       grammar: Math.max(
-        0,
-        100 - issues.filter((i) => i.type === 'grammar').length * 10,
+        ZERO,
+        PERCENTAGE_FULL - issues.filter((i) => i.type === 'grammar').length * 10,
       ),
       consistency: Math.max(
-        0,
-        100 - issues.filter((i) => i.type === 'consistency').length * 15,
+        ZERO,
+        PERCENTAGE_FULL - issues.filter((i) => i.type === 'consistency').length * MAGIC_15,
       ),
       terminology: Math.max(
-        0,
-        100 - issues.filter((i) => i.type === 'terminology').length * 12,
+        ZERO,
+        PERCENTAGE_FULL - issues.filter((i) => i.type === 'terminology').length * MAGIC_12,
       ),
       fluency: Math.max(
-        0,
-        100 - issues.filter((i) => i.type === 'fluency').length * 8,
+        ZERO,
+        PERCENTAGE_FULL - issues.filter((i) => i.type === 'fluency').length * MAGIC_8,
       ),
     };
   }
@@ -164,14 +165,14 @@ export class TranslationQualityAnalyzer {
     // 确保包含所有必需属性
     return {
       baseline: (comparison as any)?.baseline || {
-        score: 0,
-        confidence: 0,
+        score: ZERO,
+        confidence: ZERO,
         issues: [],
         suggestions: [],
       },
       current: (comparison as any)?.current || currentScore,
-      improvement: (comparison as any)?.improvement || 0,
-      degradation: (comparison as any)?.degradation || 0,
+      improvement: (comparison as any)?.improvement || ZERO,
+      degradation: (comparison as any)?.degradation || ZERO,
       recommendations: (comparison as any)?.recommendations || [],
     };
   }
@@ -192,7 +193,7 @@ export class TranslationQualityAnalyzer {
     locale: Locale,
   ): Promise<{ issues: QualityIssue[]; penalty: number }> {
     const issues: QualityIssue[] = [];
-    let penalty = 0;
+    let penalty = ZERO;
 
     // 检查术语一致性
     const terminologyIssues = this.checkTerminologyConsistency(
@@ -201,7 +202,7 @@ export class TranslationQualityAnalyzer {
       locale,
     );
     issues.push(...terminologyIssues);
-    penalty += terminologyIssues.length * 5;
+    penalty += terminologyIssues.length * COUNT_FIVE;
 
     // 检查上下文相关性
     const contextIssues = TranslationValidators.checkContextRelevance(
@@ -209,7 +210,7 @@ export class TranslationQualityAnalyzer {
       translation,
     );
     issues.push(...contextIssues);
-    penalty += contextIssues.length * 8;
+    penalty += contextIssues.length * MAGIC_8;
 
     return { issues, penalty };
   }
@@ -233,10 +234,10 @@ export class TranslationQualityAnalyzer {
     issues: QualityIssue[],
     hasHumanReference: boolean,
   ): number {
-    let confidence = 0.8; // 基础置信度
+    let confidence = MAGIC_0_8; // 基础置信度
 
     if (hasHumanReference) {
-      confidence += 0.2; // 有人工参考提高置信度
+      confidence += MAGIC_0_2; // 有人工参考提高置信度
     }
 
     // 根据问题严重程度调整置信度
@@ -247,10 +248,10 @@ export class TranslationQualityAnalyzer {
       (i) => i.severity === 'medium',
     ).length;
 
-    confidence -= highSeverityIssues * 0.1;
-    confidence -= mediumSeverityIssues * 0.05;
+    confidence -= highSeverityIssues * MAGIC_0_1;
+    confidence -= mediumSeverityIssues * DEC_0_05;
 
-    return Math.max(0.1, Math.min(1.0, confidence));
+    return Math.max(MAGIC_0_1, Math.min(ONE, confidence));
   }
 
   /**

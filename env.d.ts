@@ -59,6 +59,70 @@ interface EnvVariables {
   VERCEL_URL?: string;
   PORT?: string;
 
+  // API Configuration
+  API_TIMEOUT?: string;
+  UPLOAD_TIMEOUT?: string;
+  WEBSOCKET_TIMEOUT?: string;
+  HEALTH_CHECK_TIMEOUT?: string;
+
+  // Retry Configuration
+  DEFAULT_RETRIES?: string;
+  API_RETRIES?: string;
+  UPLOAD_RETRIES?: string;
+  RETRY_DELAY_BASE?: string;
+
+  // Rate Limiting
+  API_REQUESTS_PER_MINUTE?: string;
+  UPLOADS_PER_HOUR?: string;
+  CONTACT_FORMS_PER_HOUR?: string;
+
+  // Port Configuration
+  API_PORT?: string;
+  DEV_TOOLS_PORT?: string;
+  TEST_PORT?: string;
+  MONITORING_PORT?: string;
+  API_MONITORING_PORT?: string;
+
+  // Development Configuration
+  HOT_RELOAD_DELAY?: string;
+  FILE_WATCH_DEBOUNCE?: string;
+  DEV_TOOLS_REFRESH_INTERVAL?: string;
+
+  // Cache Configuration
+  STATIC_CACHE_TTL?: string;
+  API_CACHE_TTL?: string;
+  SESSION_CACHE_TTL?: string;
+  I18N_CACHE_TTL?: string;
+
+  // Size Limits
+  MAX_UPLOAD_SIZE?: string;
+  MAX_REQUEST_SIZE?: string;
+  MAX_CACHE_SIZE?: string;
+  MAX_LOG_SIZE?: string;
+
+  // Monitoring Configuration
+  PERFORMANCE_SAMPLE_RATE?: string;
+  ERROR_SAMPLE_RATE?: string;
+  MONITORING_INTERVAL?: string;
+  HEALTH_CHECK_INTERVAL?: string;
+
+  // Performance Thresholds
+  LCP_GOOD_THRESHOLD?: string;
+  FID_GOOD_THRESHOLD?: string;
+  CLS_GOOD_THRESHOLD?: string;
+  TTFB_GOOD_THRESHOLD?: string;
+
+  // Security Configuration
+  JWT_EXPIRES_IN?: string;
+  BCRYPT_ROUNDS?: string;
+  CSRF_TOKEN_LENGTH?: string;
+  SESSION_TIMEOUT?: string;
+
+  // Feature Flags
+  ENABLE_PERFORMANCE_MONITORING?: string;
+  ENABLE_ERROR_TRACKING?: string;
+  ENABLE_AB_TESTING?: string;
+
   // Public environment variables (prefixed with NEXT_PUBLIC_)
   NEXT_PUBLIC_APP_URL?: string;
   NEXT_PUBLIC_TURNSTILE_SITE_KEY?: string;

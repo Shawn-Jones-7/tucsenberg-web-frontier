@@ -1,5 +1,6 @@
 'use client';
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
@@ -23,7 +24,7 @@ export class WebVitalsObservers {
 
     try {
       const observer = new PerformanceObserver((list) => {
-        let clsValue = 0;
+        let clsValue = ZERO;
         for (const entry of list.getEntries()) {
           const layoutShift = entry as PerformanceEntry & {
             hadRecentInput?: boolean;
@@ -34,7 +35,7 @@ export class WebVitalsObservers {
             clsValue += layoutShift.value;
           }
         }
-        this.metrics.cls = (this.metrics.cls || 0) + clsValue;
+        this.metrics.cls = (this.metrics.cls || ZERO) + clsValue;
       });
 
       observer.observe({ type: 'layout-shift', buffered: true });
@@ -55,7 +56,7 @@ export class WebVitalsObservers {
     try {
       const observer = new PerformanceObserver((list) => {
         const entries = list.getEntries();
-        const lastEntry = entries[entries.length - 1];
+        const lastEntry = entries[entries.length - ONE];
         if (lastEntry) {
           this.metrics.lcp = lastEntry.startTime;
         }
@@ -130,7 +131,7 @@ export class WebVitalsObservers {
 
     try {
       const observer = new PerformanceObserver((list) => {
-        let maxINP = 0;
+        let maxINP = ZERO;
         for (const entry of list.getEntries()) {
           const interaction = entry as PerformanceEntry & {
             processingEnd: number;
@@ -138,7 +139,7 @@ export class WebVitalsObservers {
           const inp = interaction.processingEnd - interaction.startTime;
           maxINP = Math.max(maxINP, inp);
         }
-        this.metrics.inp = Math.max(this.metrics.inp || 0, maxINP);
+        this.metrics.inp = Math.max(this.metrics.inp || ZERO, maxINP);
       });
 
       observer.observe({ type: 'event', buffered: true });

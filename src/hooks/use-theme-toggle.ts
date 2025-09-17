@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useCallback, useState } from 'react';
-import { useAccessibility } from '@/lib/accessibility';
+import { PERCENTAGE_HALF } from "@/constants/magic-numbers";
 import { supportsViewTransitions } from '@/hooks/theme-transition-utils';
 import { useEnhancedTheme } from '@/hooks/use-enhanced-theme';
+import { useAccessibility } from '@/lib/accessibility';
+import React, { useCallback, useState } from 'react';
 
 /**
  * 检查组件是否已挂载的hook
@@ -43,7 +44,7 @@ function createThemeChangeHandler(
     setCircularTheme(newTheme, event);
 
     // 延迟播报完成状态
-    const reducedMotionDelay = 50;
+    const reducedMotionDelay = PERCENTAGE_HALF;
     const normalDelay = 400;
     setTimeout(
       () => {

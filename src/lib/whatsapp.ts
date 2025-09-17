@@ -1,6 +1,7 @@
-import WhatsApp from 'whatsapp';
 import { env } from '@/../env.mjs';
+import { COUNT_TEN, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
+import WhatsApp from 'whatsapp';
 
 /**
  * WhatsApp webhook消息体类型定义
@@ -32,8 +33,8 @@ export class WhatsAppService {
 
     // WhatsApp constructor expects phoneNumberId as number
     const phoneNumberId = env.WHATSAPP_PHONE_NUMBER_ID
-      ? parseInt(env.WHATSAPP_PHONE_NUMBER_ID, 10)
-      : 0;
+      ? parseInt(env.WHATSAPP_PHONE_NUMBER_ID, COUNT_TEN)
+      : ZERO;
     this.client = new WhatsApp(phoneNumberId);
     // Set token separately if needed
     if (env.WHATSAPP_ACCESS_TOKEN) {
@@ -47,7 +48,7 @@ export class WhatsAppService {
   async sendTextMessage(to: string, message: string) {
     try {
       // WhatsApp API expects recipient as second parameter
-      const recipient = parseInt(to, 10);
+      const recipient = parseInt(to, COUNT_TEN);
       const response = await this.client.messages.text(
         {
           body: message,
@@ -77,7 +78,7 @@ export class WhatsAppService {
   ) {
     try {
       // WhatsApp API expects recipient as second parameter
-      const recipient = parseInt(to, 10);
+      const recipient = parseInt(to, COUNT_TEN);
       // WhatsApp template message with correct structure
       const templateObject = {
         name: templateName,
@@ -120,8 +121,8 @@ export class WhatsAppService {
    */
   async handleIncomingMessage(body: WhatsAppWebhookBody) {
     try {
-      const entry = body.entry?.[0];
-      const changes = entry?.changes?.[0];
+      const entry = body.entry?.[ZERO];
+      const changes = entry?.changes?.[ZERO];
       const value = changes?.value;
 
       if (value?.messages) {

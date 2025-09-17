@@ -4,9 +4,14 @@
  * 主缓存管理器，整合 LRU 缓存、预加载器和性能指标收集器
  */
 
-import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
-import { logger } from '@/lib/logger';
+import { MAGIC_70, MAGIC_80 } from "@/constants/count";
 import { CACHE_DURATIONS, CACHE_LIMITS } from '@/constants/i18n-constants';
+import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, HTTP_OK, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { LRUCache } from '@/lib/i18n-lru-cache';
+import { I18nMetricsCollector } from '@/lib/i18n-metrics-collector';
+import { TranslationPreloader } from '@/lib/i18n-preloader';
+import { logger } from '@/lib/logger';
+import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
 import type {
   CacheConfig,
   CacheDebugInfo,
@@ -15,9 +20,6 @@ import type {
   CacheStats,
   PreloadConfig,
 } from './i18n-cache-types';
-import { LRUCache } from '@/lib/i18n-lru-cache';
-import { I18nMetricsCollector } from '@/lib/i18n-metrics-collector';
-import { TranslationPreloader } from '@/lib/i18n-preloader';
 
 // 主缓存管理器实现
 export class I18nCacheManager implements CacheManager {
@@ -106,32 +108,32 @@ export class I18nCacheManager implements CacheManager {
     const recommendations: string[] = [];
 
     // 检查缓存命中率
-    if (metrics.cacheHitRate < 70) {
+    if (metrics.cacheHitRate < MAGIC_70) {
       issues.push('缓存命中率过低');
       recommendations.push('考虑增加缓存大小或调整 TTL');
     }
 
     // 检查错误率
-    if (metrics.errorRate > 5) {
+    if (metrics.errorRate > COUNT_FIVE) {
       issues.push('错误率过高');
       recommendations.push('检查网络连接和翻译文件完整性');
     }
 
     // 检查平均加载时间
-    if (metrics.loadTime > 200) {
+    if (metrics.loadTime > HTTP_OK) {
       issues.push('平均加载时间过长');
       recommendations.push('启用预加载或优化翻译文件大小');
     }
 
     // 检查缓存利用率
-    const utilizationRate = (stats.size / this.config.maxSize) * 100;
-    if (utilizationRate > 90) {
+    const utilizationRate = (stats.size / this.config.maxSize) * PERCENTAGE_FULL;
+    if (utilizationRate > ANGLE_90_DEG) {
       issues.push('缓存接近满载');
       recommendations.push('考虑增加缓存大小');
     }
 
     return {
-      isHealthy: issues.length === 0,
+      isHealthy: issues.length === ZERO,
       issues,
       performance: {
         hitRate: metrics.cacheHitRate,
@@ -161,7 +163,7 @@ export class I18nCacheManager implements CacheManager {
 
     // 基于使用模式调整配置
     const metrics = this.getMetrics();
-    if (metrics.cacheHitRate < 80) {
+    if (metrics.cacheHitRate < MAGIC_80) {
       // 如果命中率低，尝试智能预加载
       await this.preloader.smartPreload();
     }
@@ -178,7 +180,7 @@ export class I18nCacheManager implements CacheManager {
       metrics: this.getMetrics(),
     };
 
-    return JSON.stringify(data, null, 2);
+    return JSON.stringify(data, null, COUNT_PAIR);
   }
 
   // 导入缓存数据
@@ -268,9 +270,9 @@ export class I18nCacheManager implements CacheManager {
   private estimateMemoryUsage() {
     const cacheStats = this.cache.getDetailedStats();
     return {
-      used: cacheStats.memoryUsage || 0,
-      total: this.config.maxSize * 1024, // 估算值
-      percentage: cacheStats.utilizationRate || 0,
+      used: cacheStats.memoryUsage || ZERO,
+      total: this.config.maxSize * BYTES_PER_KB, // 估算值
+      percentage: cacheStats.utilizationRate || ZERO,
     };
   }
 
@@ -284,7 +286,7 @@ export class I18nCacheManager implements CacheManager {
           console.warn('Cache health check failed:', health.issues);
         }
       },
-      5 * 60 * 1000,
+      COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
     ); // 每5分钟检查一次
 
     // 定期清理过期项
@@ -292,7 +294,7 @@ export class I18nCacheManager implements CacheManager {
       () => {
         this.cache.cleanup();
       },
-      10 * 60 * 1000,
+      COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
     ); // 每10分钟清理一次
   }
 
@@ -330,12 +332,12 @@ export class I18nCacheManager implements CacheManager {
   // 获取所有缓存的语言
   getCachedLocales(): Locale[] {
     const keys = Array.from(this.cache.keys());
-    return [...new Set(keys.map((key) => key.split(':')[0] as Locale))];
+    return [...new Set(keys.map((key) => key.split(':')[ZERO] as Locale))];
   }
 
   // 获取缓存大小（字节）
   getCacheSize(): number {
-    return this.cache.getDetailedStats().memoryUsage || 0;
+    return this.cache.getDetailedStats().memoryUsage || ZERO;
   }
 
   // 检查是否正在预加载

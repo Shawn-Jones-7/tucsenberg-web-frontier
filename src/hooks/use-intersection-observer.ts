@@ -1,8 +1,10 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { MAGIC_0_1 } from "@/constants/decimal";
+import { ZERO } from "@/constants/magic-numbers";
 import { AccessibilityUtils } from '@/lib/accessibility';
 import { logger } from '@/lib/logger';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 /**
  * Intersection Observer Hook 配置选项
@@ -36,7 +38,7 @@ export interface IntersectionObserverHookReturn<
  * 默认配置
  */
 const DEFAULT_OPTIONS: Required<Omit<IntersectionObserverOptions, 'root'>> = {
-  threshold: 0.1,
+  threshold: MAGIC_0_1,
   rootMargin: '0px',
   triggerOnce: true,
 };
@@ -154,7 +156,7 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLElement>(
 
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-      const entry = entries.length > 0 ? entries[0] : null;
+      const entry = entries.length > ZERO ? entries[ZERO] : null;
       if (!entry) return;
 
       const isCurrentlyVisible = entry.isIntersecting;
@@ -234,7 +236,7 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLElement>(
  */
 export function useIntersectionObserverWithDelay(
   options: IntersectionObserverOptions = {},
-  delay = 0,
+  delay = ZERO,
 ): IntersectionObserverHookReturn {
   const {
     ref,
@@ -244,7 +246,7 @@ export function useIntersectionObserverWithDelay(
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
-    if (baseIsVisible && delay > 0) {
+    if (baseIsVisible && delay > ZERO) {
       const timer = setTimeout(() => {
         setIsVisible(true);
       }, delay);

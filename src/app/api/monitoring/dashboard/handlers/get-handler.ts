@@ -1,6 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { HOURS_24_IN_MS, HOURS_2_IN_MS } from '@/app/api/monitoring/dashboard/types';
+import { COUNT_120, COUNT_12000, COUNT_125000, COUNT_250, COUNT_45, COUNT_450, COUNT_45000, MAGIC_15, MAGIC_1800, MAGIC_8 } from "@/constants/count";
+import { DEC_0_001, DEC_0_02, DEC_0_05, DEC_0_08, DEC_0_65, DEC_0_94, DEC_0_96, MAGIC_0_25 } from "@/constants/decimal";
+import { COUNT_PAIR, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
-import { HOURS_2_IN_MS, HOURS_24_IN_MS } from '@/app/api/monitoring/dashboard/types';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * GET /api/monitoring/dashboard
@@ -22,39 +25,39 @@ export function handleGetRequest(request: NextRequest) {
         status: 'healthy',
         uptime: '99.9%',
         responseTime: {
-          average: 120,
-          p95: 250,
-          p99: 450,
+          average: COUNT_120,
+          p95: COUNT_250,
+          p99: COUNT_450,
         },
-        errorRate: 0.001,
+        errorRate: DEC_0_001,
       },
       performance: {
         webVitals: {
-          cls: { value: 0.05, rating: 'good' },
-          fid: { value: 45, rating: 'good' },
-          lcp: { value: 1800, rating: 'good' },
+          cls: { value: DEC_0_05, rating: 'good' },
+          fid: { value: COUNT_45, rating: 'good' },
+          lcp: { value: MAGIC_1800, rating: 'good' },
         },
         bundleSize: {
-          main: 45000,
-          framework: 125000,
-          css: 12000,
+          main: COUNT_45000,
+          framework: COUNT_125000,
+          css: COUNT_12000,
         },
-        cacheHitRate: 0.94,
+        cacheHitRate: DEC_0_94,
       },
       i18n: {
-        translationCoverage: 0.96,
+        translationCoverage: DEC_0_96,
         localeDistribution: {
-          en: 0.65,
-          zh: 0.25,
-          ja: 0.08,
-          other: 0.02,
+          en: DEC_0_65,
+          zh: MAGIC_0_25,
+          ja: DEC_0_08,
+          other: DEC_0_02,
         },
-        missingTranslations: 8,
+        missingTranslations: MAGIC_8,
       },
       security: {
-        cspViolations: 2,
-        suspiciousRequests: 0,
-        rateLimitHits: 15,
+        cspViolations: COUNT_PAIR,
+        suspiciousRequests: ZERO,
+        rateLimitHits: MAGIC_15,
         lastSecurityScan: new Date(Date.now() - HOURS_24_IN_MS).toISOString(),
       },
       alerts: [
@@ -66,9 +69,9 @@ export function handleGetRequest(request: NextRequest) {
         },
       ],
       summary: {
-        totalRequests: 125000,
+        totalRequests: COUNT_125000,
         uniqueUsers: 8900,
-        dataPoints: 45000,
+        dataPoints: COUNT_45000,
         lastUpdated: new Date().toISOString(),
       },
     };

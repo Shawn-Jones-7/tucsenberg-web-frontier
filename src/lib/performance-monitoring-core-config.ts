@@ -5,11 +5,10 @@
  * 负责性能监控的配置管理、验证和合并功能
  */
 
-import { logger } from '@/lib/logger';
-import { COUNT_PAIR, COUNT_TEN, OFFSET_NEGATIVE_LARGE } from '@/constants/magic-numbers';
-
+import { COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
 import { MB } from '@/constants/units';
+import { logger } from '@/lib/logger';
 import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
 import {
   generateEnvironmentConfig,
@@ -283,7 +282,7 @@ export class PerformanceConfigManager {
       maxMetrics:
         global?.maxMetrics || PERFORMANCE_CONSTANTS.DEFAULT_MAX_METRICS,
       thresholds: {
-        componentRenderTime: component?.thresholds?.renderTime || 100,
+        componentRenderTime: component?.thresholds?.renderTime || PERCENTAGE_FULL,
         networkResponseTime: network?.thresholds?.responseTime || 1000,
         bundleSize: bundle?.thresholds?.size || MB, // 1MB
       },
@@ -348,7 +347,7 @@ export class PerformanceConfigManager {
     }
 
     return {
-      isDifferent: differences.length > 0,
+      isDifferent: differences.length > ZERO,
       differences,
     };
   }
@@ -392,13 +391,13 @@ export class PerformanceConfigManager {
    * 回滚到之前的配置
    * Rollback to previous configuration
    */
-  rollbackConfig(steps = 1): boolean {
-    if (this.configHistory.length < steps + 1) {
+  rollbackConfig(steps = ONE): boolean {
+    if (this.configHistory.length < steps + ONE) {
       return false;
     }
 
     const targetConfig =
-      this.configHistory[this.configHistory.length - steps - 1];
+      this.configHistory[this.configHistory.length - steps - ONE];
     const newConfig: any = {};
     if (targetConfig?.config) {
       Object.keys(targetConfig.config).forEach((key) => {

@@ -1,8 +1,9 @@
 'use client';
 
-import * as React from 'react';
-import * as ProgressPrimitive from '@radix-ui/react-progress';
+import { PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { cn } from '@/lib/utils';
+import * as ProgressPrimitive from '@radix-ui/react-progress';
+import * as React from 'react';
 
 const Progress = React.forwardRef<
   React.ElementRef<typeof ProgressPrimitive.Root>,
@@ -18,7 +19,7 @@ const Progress = React.forwardRef<
   >
     <ProgressPrimitive.Indicator
       className='bg-primary h-full w-full flex-1 transition-all'
-      style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+      style={{ transform: `translateX(-${PERCENTAGE_FULL - (value || ZERO)}%)` }}
     />
   </ProgressPrimitive.Root>
 ));

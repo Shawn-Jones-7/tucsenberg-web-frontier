@@ -1,12 +1,13 @@
 /* eslint-disable security/detect-object-injection */
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 import type { Locale } from '@/config/paths';
 import { SITE_CONFIG, type PageType } from '@/config/paths';
+import { ONE } from "@/constants/magic-numbers";
 import {
   generateCanonicalURL,
   generateLanguageAlternates,
 } from '@/services/url-generator';
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 
 // 重新导出类型以保持向后兼容
 export type { Locale, PageType } from '@/config/paths';
@@ -83,9 +84,9 @@ export async function generateLocalizedMetadata(
       googleBot: {
         'index': true,
         'follow': true,
-        'max-video-preview': -1,
+        'max-video-preview': -ONE,
         'max-image-preview': 'large',
-        'max-snippet': -1,
+        'max-snippet': -ONE,
       },
     },
 

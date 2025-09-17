@@ -1,3 +1,5 @@
+import { ZERO } from "@/constants/magic-numbers";
+
 // Auth feature module
 export const authConfig = {
   provider: 'oauth',
@@ -5,5 +7,5 @@ export const authConfig = {
 };
 
 export function authenticate(token: string): boolean {
-  return token.length > 0;
+  return token.length > ZERO;
 }

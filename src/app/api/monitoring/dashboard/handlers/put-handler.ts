@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { HTTP_BAD_REQUEST } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * PUT /api/monitoring/dashboard
@@ -17,7 +18,7 @@ export async function handlePutRequest(request: NextRequest) {
           error: 'Invalid configuration data',
           message: 'Configuration object is required',
         },
-        { status: 400 },
+        { status: HTTP_BAD_REQUEST },
       );
     }
 

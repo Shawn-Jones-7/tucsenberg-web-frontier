@@ -1,4 +1,4 @@
-import { COUNT_FIVE, MAGIC_16 } from '@/constants/magic-numbers';
+import { COUNT_FIVE, MAGIC_16, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 语言存储系统存储工具函数
@@ -34,7 +34,7 @@ export function estimateStorageSize(data: unknown): number {
   try {
     return new Blob([JSON.stringify(data)]).size;
   } catch {
-    return 0;
+    return ZERO;
   }
 }
 
@@ -44,9 +44,9 @@ export function estimateStorageSize(data: unknown): number {
  */
 export function generateChecksum(data: unknown): string {
   const str = JSON.stringify(data);
-  let hash = 0;
+  let hash = ZERO;
 
-  for (let i = 0; i < str.length; i++) {
+  for (let i = ZERO; i < str.length; i++) {
     const char = str.charCodeAt(i);
     hash = (hash << COUNT_FIVE) - hash + char;
     hash = hash & hash; // 转换为32位整数

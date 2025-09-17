@@ -1,4 +1,4 @@
-import { COUNT_FIVE, COUNT_TEN, MAGIC_0_1, MAGIC_2000, MAGIC_95, MAGIC_99 } from '@/constants/magic-numbers';
+import { COUNT_FIVE, COUNT_TEN, FIVE_SECONDS_MS, MAGIC_0_1, MAGIC_2000, MAGIC_95, MAGIC_99, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 
 /**
  * WhatsApp Service Monitoring and Health Types
@@ -298,8 +298,8 @@ export interface AlertConfig {
  * Calculate service uptime percentage
  */
 export function calculateUptime(totalTime: number, downTime: number): number {
-  if (totalTime <= 0) return 100;
-  return Math.max(0, Math.min(100, ((totalTime - downTime) / totalTime) * 100));
+  if (totalTime <= ZERO) return PERCENTAGE_FULL;
+  return Math.max(ZERO, Math.min(PERCENTAGE_FULL, ((totalTime - downTime) / totalTime) * PERCENTAGE_FULL));
 }
 
 /**
@@ -309,8 +309,8 @@ export function calculateErrorRate(
   totalRequests: number,
   errorCount: number,
 ): number {
-  if (totalRequests <= 0) return 0;
-  return Math.min(100, (errorCount / totalRequests) * 100);
+  if (totalRequests <= ZERO) return ZERO;
+  return Math.min(PERCENTAGE_FULL, (errorCount / totalRequests) * PERCENTAGE_FULL);
 }
 
 /**
@@ -322,7 +322,7 @@ export function determineHealthStatus(
   uptime: number,
 ): 'healthy' | 'degraded' | 'unhealthy' {
   // Unhealthy thresholds
-  if (errorRate > COUNT_TEN || responseTime > 5000 || uptime < MAGIC_95) {
+  if (errorRate > COUNT_TEN || responseTime > FIVE_SECONDS_MS || uptime < MAGIC_95) {
     return 'unhealthy';
   }
 
@@ -339,14 +339,14 @@ export function determineHealthStatus(
  */
 export function createDefaultMetrics(): ServiceMetrics {
   return {
-    messagesSent: 0,
-    messagesDelivered: 0,
-    messagesRead: 0,
-    messagesFailed: 0,
-    apiCalls: 0,
-    apiErrors: 0,
-    averageResponseTime: 0,
-    uptime: 100,
+    messagesSent: ZERO,
+    messagesDelivered: ZERO,
+    messagesRead: ZERO,
+    messagesFailed: ZERO,
+    apiCalls: ZERO,
+    apiErrors: ZERO,
+    averageResponseTime: ZERO,
+    uptime: PERCENTAGE_FULL,
     lastReset: Date.now(),
   };
 }
@@ -358,9 +358,9 @@ export function createDefaultHealth(): ServiceHealth {
   return {
     status: 'healthy',
     lastCheck: Date.now(),
-    responseTime: 0,
-    errorRate: 0,
-    uptime: 100,
+    responseTime: ZERO,
+    errorRate: ZERO,
+    uptime: PERCENTAGE_FULL,
     details: {
       api: 'available',
       webhook: 'not_configured',

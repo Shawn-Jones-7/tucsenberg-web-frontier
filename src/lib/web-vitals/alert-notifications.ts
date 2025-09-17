@@ -1,11 +1,15 @@
 import { logger } from '@/lib/logger';
 import { formatMetricValue } from '@/lib/web-vitals/alert-helpers';
+import { ALERT_SYSTEM_CONSTANTS } from "@/constants/performance-constants";
+const RANDOM_ID_BASE = ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE;
+import { COUNT_PAIR, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import { MAGIC_9 } from "@/constants/count";
 
 // 常量定义
 const ALERT_ID_CONSTANTS = {
-  BASE_36: 36,
-  SUBSTR_START: 2,
-  SUBSTR_LENGTH: 9,
+  BASE_36: ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE,
+  SUBSTR_START: COUNT_PAIR,
+  SUBSTR_LENGTH: MAGIC_9,
 } as const;
 
 /**
@@ -114,9 +118,9 @@ export function storeAlerts(alerts: AlertData[]): void {
     const allAlerts = [...existingAlerts, ...newAlerts];
 
     // 限制存储的警报数量
-    const maxAlerts = 100;
+    const maxAlerts = PERCENTAGE_FULL;
     if (allAlerts.length > maxAlerts) {
-      allAlerts.splice(0, allAlerts.length - maxAlerts);
+      allAlerts.splice(ZERO, allAlerts.length - maxAlerts);
     }
 
     localStorage.setItem('performance_alerts', JSON.stringify(allAlerts));

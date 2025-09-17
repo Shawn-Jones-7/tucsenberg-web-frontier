@@ -3,7 +3,7 @@ import { checkA11y, injectAxe } from 'axe-playwright';
 import {
   removeInterferingElements,
   waitForStablePage,
-} from './test-environment-setup';
+} from '@/tests/e2e/test-environment-setup';
 
 test.describe('Navigation System', () => {
   test.beforeEach(async ({ page }) => {

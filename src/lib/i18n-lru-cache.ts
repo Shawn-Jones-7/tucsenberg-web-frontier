@@ -4,15 +4,15 @@
  * 提供高性能的 LRU 缓存，支持 TTL、持久化存储和性能监控
  */
 
+import { COUNT_4, MAGIC_32, MAGIC_8 } from "@/constants/count";
+import { COUNT_PAIR, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import type {
   CacheConfig,
-  CacheEvent,
-  CacheEventType,
   CacheItem,
   CacheStats,
   CacheStorage,
-  MetricsCollector,
+  MetricsCollector
 } from './i18n-cache-types';
 
 // LRU 缓存实现
@@ -50,7 +50,7 @@ export class LRUCache<T> implements CacheStorage<T> {
 
     // 更新访问顺序 (LRU)
     this.cache.delete(key);
-    item.hits += 1;
+    item.hits += ONE;
     this.cache.set(key, item);
 
     this.metricsCollector.recordCacheHit();
@@ -76,7 +76,7 @@ export class LRUCache<T> implements CacheStorage<T> {
       data: value,
       timestamp: Date.now(),
       ttl,
-      hits: 0,
+      hits: ZERO,
     };
 
     this.cache.set(key, item);
@@ -147,14 +147,14 @@ export class LRUCache<T> implements CacheStorage<T> {
     const items = Array.from(this.cache.values());
     return {
       size: this.cache.size,
-      totalHits: items.reduce((sum, item) => sum + item.hits, 0),
+      totalHits: items.reduce((sum, item) => sum + item.hits, ZERO),
       averageAge:
-        items.length > 0
+        items.length > ZERO
           ? items.reduce(
               (sum, item) => sum + (Date.now() - item.timestamp),
               0,
             ) / items.length
-          : 0,
+          : ZERO,
     };
   }
 
@@ -175,42 +175,42 @@ export class LRUCache<T> implements CacheStorage<T> {
         max: Math.max(...ages),
         median: this.calculateMedian(ages),
         average:
-          ages.length > 0 ? ages.reduce((a, b) => a + b, 0) / ages.length : 0,
+          ages.length > ZERO ? ages.reduce((a, b) => a + b, ZERO) / ages.length : ZERO,
       },
       hitDistribution: {
         min: Math.min(...hits),
         max: Math.max(...hits),
         median: this.calculateMedian(hits),
         average:
-          hits.length > 0 ? hits.reduce((a, b) => a + b, 0) / hits.length : 0,
+          hits.length > ZERO ? hits.reduce((a, b) => a + b, ZERO) / hits.length : ZERO,
       },
       ttlDistribution: {
         min: Math.min(...ttls),
         max: Math.max(...ttls),
         median: this.calculateMedian(ttls),
         average:
-          ttls.length > 0 ? ttls.reduce((a, b) => a + b, 0) / ttls.length : 0,
+          ttls.length > ZERO ? ttls.reduce((a, b) => a + b, ZERO) / ttls.length : ZERO,
       },
       expiredItems: items.filter((item) => now - item.timestamp > item.ttl)
         .length,
-      utilizationRate: (this.cache.size / this.config.maxSize) * 100,
+      utilizationRate: (this.cache.size / this.config.maxSize) * PERCENTAGE_FULL,
     };
   }
 
   // 清理过期项
   cleanup(): number {
     const now = Date.now();
-    let cleanedCount = 0;
+    let cleanedCount = ZERO;
 
     for (const [key, item] of this.cache.entries()) {
       if (now - item.timestamp > item.ttl) {
         this.cache.delete(key);
         this.emitEvent('expire', key, item.data);
-        cleanedCount += 1;
+        cleanedCount += ONE;
       }
     }
 
-    if (cleanedCount > 0 && this.config.enablePersistence) {
+    if (cleanedCount > ZERO && this.config.enablePersistence) {
       this.saveToStorage();
     }
 
@@ -242,10 +242,10 @@ export class LRUCache<T> implements CacheStorage<T> {
 
   // 批量删除
   deleteMultiple(keys: string[]): number {
-    let deletedCount = 0;
+    let deletedCount = ZERO;
     keys.forEach((key) => {
       if (this.delete(key)) {
-        deletedCount += 1;
+        deletedCount += ONE;
       }
     });
     return deletedCount;
@@ -297,17 +297,17 @@ export class LRUCache<T> implements CacheStorage<T> {
 
   // 估算内存使用量
   private estimateMemoryUsage(): number {
-    let totalSize = 0;
+    let totalSize = ZERO;
 
     for (const [key, item] of this.cache.entries()) {
       // 估算键的大小
-      totalSize += key.length * 2; // UTF-16 字符
+      totalSize += key.length * COUNT_PAIR; // UTF-16 字符
 
       // 估算值的大小
       totalSize += this.estimateObjectSize(item.data);
 
       // 估算缓存项元数据的大小
-      totalSize += 32; // timestamp, ttl, hits 等
+      totalSize += MAGIC_32; // timestamp, ttl, hits 等
     }
 
     return totalSize;
@@ -315,43 +315,43 @@ export class LRUCache<T> implements CacheStorage<T> {
 
   // 估算对象大小
   private estimateObjectSize(obj: unknown): number {
-    if (obj === null || obj === undefined) return 0;
+    if (obj === null || obj === undefined) return ZERO;
 
     if (typeof obj === 'string') {
-      return obj.length * 2; // UTF-16
+      return obj.length * COUNT_PAIR; // UTF-16
     }
 
     if (typeof obj === 'number') {
-      return 8; // 64-bit number
+      return MAGIC_8; // 64-bit number
     }
 
     if (typeof obj === 'boolean') {
-      return 4;
+      return COUNT_4;
     }
 
     if (Array.isArray(obj)) {
-      return obj.reduce((sum, item) => sum + this.estimateObjectSize(item), 0);
+      return obj.reduce((sum, item) => sum + this.estimateObjectSize(item), ZERO);
     }
 
     if (typeof obj === 'object') {
       return Object.entries(obj).reduce((sum, [key, value]) => {
-        return sum + key.length * 2 + this.estimateObjectSize(value);
-      }, 0);
+        return sum + key.length * COUNT_PAIR + this.estimateObjectSize(value);
+      }, ZERO);
     }
 
-    return 0;
+    return ZERO;
   }
 
   // 计算中位数
   private calculateMedian(numbers: number[]): number {
-    if (numbers.length === 0) return 0;
+    if (numbers.length === ZERO) return ZERO;
 
     const sorted = [...numbers].sort((a, b) => a - b);
     const mid = Math.floor(sorted.length / 2);
 
-    return sorted.length % 2 === 0
-      ? ((sorted[mid - 1] || 0) + (sorted[mid] || 0)) / 2
-      : sorted[mid] || 0;
+    return sorted.length % COUNT_PAIR === ZERO
+      ? ((sorted[mid - ONE] || ZERO) + (sorted[mid] || ZERO)) / COUNT_PAIR
+      : sorted[mid] || ZERO;
   }
 
   // 发出事件

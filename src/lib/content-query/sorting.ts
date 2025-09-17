@@ -2,6 +2,7 @@
  * 内容排序和分页函数
  */
 
+import { ZERO } from "@/constants/magic-numbers";
 import type {
   BlogPost,
   ContentError,
@@ -92,7 +93,7 @@ export function paginatePosts(
   options: ContentQueryOptions,
 ): BlogPost[] {
   if (options.offset || options.limit) {
-    const start = options.offset || 0;
+    const start = options.offset || ZERO;
     const end = options.limit ? start + options.limit : undefined;
     return posts.slice(start, end);
   }

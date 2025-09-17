@@ -1,0 +1,58 @@
+{
+  "timestamp": "2025-09-16T17:41:31.289Z",
+  "options": {
+    "write": true,
+    "dryRun": false,
+    "files": "../../ast-replacement-demo.ts",
+    "limit": 1
+  },
+  "summary": {
+    "filesProcessed": 1,
+    "filesModified": 1,
+    "totalReplacements": 4
+  },
+  "logs": [
+    {
+      "file": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/ast-replacement-demo.ts",
+      "changes": [
+        {
+          "start": 64,
+          "end": 68,
+          "raw": "2000",
+          "constant": "MAGIC_2000",
+          "negated": false
+        },
+        {
+          "start": 97,
+          "end": 100,
+          "raw": "0.8",
+          "constant": "MAGIC_0_8",
+          "negated": false
+        },
+        {
+          "start": 124,
+          "end": 125,
+          "raw": "7",
+          "constant": "DAYS_PER_WEEK",
+          "negated": false
+        },
+        {
+          "start": 154,
+          "end": 158,
+          "raw": "1024",
+          "constant": "BYTES_PER_KB",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "MAGIC_2000": "MAGIC_2000_CONST",
+          "MAGIC_0_8": "MAGIC_0_8_CONST",
+          "DAYS_PER_WEEK": "DAYS_PER_WEEK_CONST",
+          "BYTES_PER_KB": "BYTES_PER_KB_CONST"
+        }
+      }
+    }
+  ]
+}

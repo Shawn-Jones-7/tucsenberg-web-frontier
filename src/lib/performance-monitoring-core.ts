@@ -1,12 +1,11 @@
 // 导入主要功能用于向后兼容
+import { ANIMATION_DURATION_VERY_SLOW, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
 import { PerformanceConfigManager } from '@/lib/performance-monitoring-core-config';
-import { SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
+import { PerformanceMetricsManager } from '@/lib/performance-monitoring-core-metrics';
 import {
   PerformanceToolConflictChecker,
   type ToolConflictResult,
 } from './performance-monitoring-core-conflicts';
-import { PerformanceMetricsManager } from '@/lib/performance-monitoring-core-metrics';
 import {
   PerformanceReportGenerator,
   type PerformanceReport,
@@ -26,27 +25,21 @@ import type {
  */
 
 // 重新导出所有模块的功能
-export {
-  PerformanceConfigManager,
-  createConfigManager,
-  getDefaultConfig,
-  validatePerformanceConfig,
-} from './performance-monitoring-core-config';
-export {
-  PerformanceMetricsManager,
-  createMetricsManager,
-} from './performance-monitoring-core-metrics';
+export type { ToolConflictResult } from '@/lib/performance-monitoring-core-conflicts';
 export type { PerformanceReport } from '@/lib/performance-monitoring-core-reports';
 export {
-  PerformanceReportGenerator,
-  createReportGenerator,
-} from './performance-monitoring-core-reports';
-export type { ToolConflictResult } from '@/lib/performance-monitoring-core-conflicts';
+  createConfigManager,
+  getDefaultConfig, PerformanceConfigManager, validatePerformanceConfig
+} from './performance-monitoring-core-config';
 export {
-  PerformanceToolConflictChecker,
-  createConflictChecker,
-  quickConflictCheck,
+  createConflictChecker, PerformanceToolConflictChecker, quickConflictCheck
 } from './performance-monitoring-core-conflicts';
+export {
+  createMetricsManager, PerformanceMetricsManager
+} from './performance-monitoring-core-metrics';
+export {
+  createReportGenerator, PerformanceReportGenerator
+} from './performance-monitoring-core-reports';
 
 /**
  * 性能监控核心协调器类 - 向后兼容
@@ -134,7 +127,7 @@ export class PerformanceMonitoringCore {
    * 生成性能报告
    * Generate performance report
    */
-  generateReport(timeWindow = SECONDS_PER_MINUTE * 1000): PerformanceReport {
+  generateReport(timeWindow = SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): PerformanceReport {
     const metrics = this.metricsManager.getAllMetrics();
     return this.reportGenerator.generateReport(metrics, timeWindow);
   }

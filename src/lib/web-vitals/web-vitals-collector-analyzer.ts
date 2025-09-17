@@ -5,9 +5,8 @@
 
 'use client';
 
+import { BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, MAGIC_15, MAGIC_1800, MAGIC_600, MAGIC_800, ONE, PERCENTAGE_FULL, PERCENTAGE_QUARTER, THREE_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { COUNT_TRIPLE, COUNT_PAIR, BYTES_PER_KB, PERCENTAGE_QUARTER, COUNT_TEN, DAYS_PER_MONTH, MAGIC_15, MAGIC_1800, COUNT_FIVE, MAGIC_800, MAGIC_600 } from '@/constants/magic-numbers';
-
 import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
@@ -47,7 +46,7 @@ export class WebVitalsCollectorAnalyzer {
     recommendations: string[],
   ): void {
     if (lcp > PERFORMANCE_THRESHOLDS.LCP_NEEDS_IMPROVEMENT) {
-      issues.push(`最大内容绘制 (LCP) 过慢: ${lcp.toFixed(0)}ms`);
+      issues.push(`最大内容绘制 (LCP) 过慢: ${lcp.toFixed(ZERO)}ms`);
       recommendations.push('优化图片加载，使用现代图片格式如 WebP');
       recommendations.push('减少服务器响应时间，优化后端性能');
       recommendations.push('使用 CDN 加速资源加载');
@@ -63,7 +62,7 @@ export class WebVitalsCollectorAnalyzer {
     recommendations: string[],
   ): void {
     if (fid > PERFORMANCE_THRESHOLDS.FID_NEEDS_IMPROVEMENT) {
-      issues.push(`首次输入延迟 (FID) 过高: ${fid.toFixed(0)}ms`);
+      issues.push(`首次输入延迟 (FID) 过高: ${fid.toFixed(ZERO)}ms`);
       recommendations.push('减少 JavaScript 执行时间，考虑代码分割和懒加载');
       recommendations.push('优化第三方脚本，延迟非关键脚本的加载');
       recommendations.push('使用 Web Workers 处理计算密集型任务');
@@ -79,11 +78,11 @@ export class WebVitalsCollectorAnalyzer {
     recommendations: string[],
   ): void {
     if (
-      resourceTiming.slowResources.length > 0 &&
-      resourceTiming.slowResources[0]!.duration > 500
+      resourceTiming.slowResources.length > ZERO &&
+      resourceTiming.slowResources[ZERO]!.duration > 500
     ) {
       issues.push(
-        `发现慢速资源: ${resourceTiming.slowResources[0]!.name} (${resourceTiming.slowResources[0]!.duration.toFixed(0)}ms)`,
+        `发现慢速资源: ${resourceTiming.slowResources[ZERO]!.name} (${resourceTiming.slowResources[ZERO]!.duration.toFixed(ZERO)}ms)`,
       );
       recommendations.push('优化慢速资源的加载，考虑压缩或使用 CDN');
     }
@@ -91,7 +90,7 @@ export class WebVitalsCollectorAnalyzer {
     if (resourceTiming.totalSize > COUNT_PAIR * BYTES_PER_KB * BYTES_PER_KB) {
       // 2MB
       issues.push(
-        `总资源大小过大: ${(resourceTiming.totalSize / BYTES_PER_KB / BYTES_PER_KB).toFixed(1)}MB`,
+        `总资源大小过大: ${(resourceTiming.totalSize / BYTES_PER_KB / BYTES_PER_KB).toFixed(ONE)}MB`,
       );
       recommendations.push('减少资源大小，启用 gzip 压缩');
     }
@@ -126,7 +125,7 @@ export class WebVitalsCollectorAnalyzer {
     }
 
     // FCP 评分
-    if (metrics.fcp > 3000) {
+    if (metrics.fcp > THREE_SECONDS_MS) {
       score -= COUNT_TEN;
     } else if (metrics.fcp > MAGIC_1800) {
       score -= COUNT_FIVE;
@@ -139,7 +138,7 @@ export class WebVitalsCollectorAnalyzer {
       score -= COUNT_FIVE;
     }
 
-    return Math.max(0, score);
+    return Math.max(ZERO, score);
   }
 
   /**
@@ -229,11 +228,11 @@ export class WebVitalsCollectorAnalyzer {
         previous: previousMetrics.lcp,
         change: currentMetrics.lcp - previousMetrics.lcp,
         changePercent:
-          previousMetrics.lcp > 0
+          previousMetrics.lcp > ZERO
             ? ((currentMetrics.lcp - previousMetrics.lcp) /
                 previousMetrics.lcp) *
-              100
-            : 0,
+              PERCENTAGE_FULL
+            : ZERO,
       },
       {
         metric: 'FID',
@@ -241,11 +240,11 @@ export class WebVitalsCollectorAnalyzer {
         previous: previousMetrics.fid,
         change: currentMetrics.fid - previousMetrics.fid,
         changePercent:
-          previousMetrics.fid > 0
+          previousMetrics.fid > ZERO
             ? ((currentMetrics.fid - previousMetrics.fid) /
                 previousMetrics.fid) *
-              100
-            : 0,
+              PERCENTAGE_FULL
+            : ZERO,
       },
       {
         metric: 'CLS',
@@ -253,17 +252,17 @@ export class WebVitalsCollectorAnalyzer {
         previous: previousMetrics.cls,
         change: currentMetrics.cls - previousMetrics.cls,
         changePercent:
-          previousMetrics.cls > 0
+          previousMetrics.cls > ZERO
             ? ((currentMetrics.cls - previousMetrics.cls) /
                 previousMetrics.cls) *
-              100
-            : 0,
+              PERCENTAGE_FULL
+            : ZERO,
       },
     ];
 
     // 计算总体趋势
-    const improvingCount = changes.filter((c) => c.change < 0).length;
-    const decliningCount = changes.filter((c) => c.change > 0).length;
+    const improvingCount = changes.filter((c) => c.change < ZERO).length;
+    const decliningCount = changes.filter((c) => c.change > ZERO).length;
 
     let trend: 'improving' | 'declining' | 'stable';
     if (improvingCount > decliningCount) {

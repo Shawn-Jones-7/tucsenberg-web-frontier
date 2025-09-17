@@ -7,6 +7,9 @@
 
 'use client';
 
+import { MAGIC_6 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { DAYS_PER_WEEK } from "@/constants/time";
 import { logger } from '@/lib/logger';
 import type {
   StorageEvent,
@@ -48,8 +51,8 @@ export class EventManager {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
-      if (index > -1) {
-        listeners.splice(index, 1);
+      if (index > -ONE) {
+        listeners.splice(index, ONE);
       }
     }
   }
@@ -89,10 +92,10 @@ export class EventManager {
    */
   static getListenerCount(eventType?: string): number {
     if (eventType) {
-      return this.eventListeners.get(eventType)?.length || 0;
+      return this.eventListeners.get(eventType)?.length || ZERO;
     }
 
-    let total = 0;
+    let total = ZERO;
     for (const listeners of this.eventListeners.values()) {
       total += listeners.length;
     }
@@ -129,7 +132,7 @@ export interface AccessLogEntry {
  */
 export class AccessLogger {
   private static accessLog: AccessLogEntry[] = [];
-  private static readonly MAX_LOG_ENTRIES = 1000;
+  private static readonly MAX_LOG_ENTRIES = ANIMATION_DURATION_VERY_SLOW;
 
   /**
    * 记录访问日志
@@ -155,7 +158,7 @@ export class AccessLogger {
 
     // 限制日志条目数量
     if (this.accessLog.length > this.MAX_LOG_ENTRIES) {
-      this.accessLog = this.accessLog.slice(0, this.MAX_LOG_ENTRIES);
+      this.accessLog = this.accessLog.slice(ZERO, this.MAX_LOG_ENTRIES);
     }
 
     // 触发访问事件
@@ -172,7 +175,7 @@ export class AccessLogger {
    * Get access log
    */
   static getAccessLog(limit?: number): AccessLogEntry[] {
-    return limit ? this.accessLog.slice(0, limit) : [...this.accessLog];
+    return limit ? this.accessLog.slice(ZERO, limit) : [...this.accessLog];
   }
 
   /**
@@ -197,17 +200,17 @@ export class AccessLogger {
   } {
     const total = this.accessLog.length;
     const successful = this.accessLog.filter((entry) => entry.success).length;
-    const successRate = total > 0 ? (successful / total) * 100 : 100;
+    const successRate = total > ZERO ? (successful / total) * PERCENTAGE_FULL : PERCENTAGE_FULL;
 
     // 计算平均响应时间
     const responseTimes = this.accessLog
       .filter((entry) => entry.responseTime !== undefined)
       .map((entry) => entry.responseTime!);
     const averageResponseTime =
-      responseTimes.length > 0
-        ? responseTimes.reduce((sum, time) => sum + time, 0) /
+      responseTimes.length > ZERO
+        ? responseTimes.reduce((sum, time) => sum + time, ZERO) /
           responseTimes.length
-        : 0;
+        : ZERO;
 
     // 统计操作类型
     const operationCounts: Record<string, number> = {};
@@ -215,14 +218,14 @@ export class AccessLogger {
 
     for (const entry of this.accessLog) {
       operationCounts[entry.operation] =
-        (operationCounts[entry.operation] || 0) + 1;
-      keyCounts[entry.key] = (keyCounts[entry.key] || 0) + 1;
+        (operationCounts[entry.operation] || ZERO) + ONE;
+      keyCounts[entry.key] = (keyCounts[entry.key] || ZERO) + ONE;
     }
 
     // 获取最近的错误
     const recentErrors = this.accessLog
       .filter((entry) => !entry.success)
-      .slice(0, 10);
+      .slice(ZERO, COUNT_TEN);
 
     return {
       totalOperations: total,
@@ -279,7 +282,7 @@ export class ErrorLogger {
 
     // 限制错误日志条目数量
     if (this.errorLog.length > this.MAX_ERROR_ENTRIES) {
-      this.errorLog = this.errorLog.slice(0, this.MAX_ERROR_ENTRIES);
+      this.errorLog = this.errorLog.slice(ZERO, this.MAX_ERROR_ENTRIES);
     }
 
     // 触发错误事件
@@ -301,7 +304,7 @@ export class ErrorLogger {
    * Get error log
    */
   static getErrorLog(limit?: number): ErrorLogEntry[] {
-    return limit ? this.errorLog.slice(0, limit) : [...this.errorLog];
+    return limit ? this.errorLog.slice(ZERO, limit) : [...this.errorLog];
   }
 
   /**
@@ -325,14 +328,14 @@ export class ErrorLogger {
   } {
     const total = this.errorLog.length;
     const {totalOperations} = AccessLogger.getAccessStats();
-    const errorRate = totalOperations > 0 ? (total / totalOperations) * 100 : 0;
+    const errorRate = totalOperations > ZERO ? (total / totalOperations) * PERCENTAGE_FULL : ZERO;
 
     // 统计严重程度分布
     const severityDistribution: Record<string, number> = {
-      low: 0,
-      medium: 0,
-      high: 0,
-      critical: 0,
+      low: ZERO,
+      medium: ZERO,
+      high: ZERO,
+      critical: ZERO,
     };
 
     for (const entry of this.errorLog) {
@@ -340,12 +343,12 @@ export class ErrorLogger {
         entry.severity &&
         severityDistribution[entry.severity] !== undefined
       ) {
-        severityDistribution[entry.severity]! += 1;
+        severityDistribution[entry.severity]! += ONE;
       }
     }
 
     // 获取最近错误
-    const recentErrors = this.errorLog.slice(0, 10);
+    const recentErrors = this.errorLog.slice(ZERO, COUNT_TEN);
 
     // 计算错误趋势（按天）
     const errorTrends = this.calculateErrorTrends();
@@ -371,19 +374,19 @@ export class ErrorLogger {
     const now = new Date();
 
     // 初始化最近7天的数据
-    for (let i = 6; i >= 0; i--) {
+    for (let i = MAGIC_6; i >= ZERO; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[0] || date.toISOString();
-      trends[dateStr] = 0;
+      const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
+      trends[dateStr] = ZERO;
     }
 
     // 统计错误数量
     for (const entry of this.errorLog) {
       const date = new Date(entry.timestamp);
-      const dateStr = date.toISOString().split('T')[0] || date.toISOString();
+      const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
       if (Object.prototype.hasOwnProperty.call(trends, dateStr)) {
-        trends[dateStr] = (trends[dateStr] || 0) + 1;
+        trends[dateStr] = (trends[dateStr] || ZERO) + ONE;
       }
     }
 
@@ -398,7 +401,7 @@ export class ErrorLogger {
  * Cleanup analytics data
  */
 export function cleanupAnalyticsData(
-  maxAge: number = 7 * 24 * 60 * 60 * 1000,
+  maxAge: number = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
 ): void {
   const cutoffTime = Date.now() - maxAge;
 

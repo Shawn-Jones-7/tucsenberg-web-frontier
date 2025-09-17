@@ -10,7 +10,7 @@ import type {
   WhatsAppContact,
   WhatsAppError,
   WhatsAppMessage,
-} from './whatsapp-base-types';
+} from '@/types/whatsapp-base-types';
 
 /**
  * Webhook入口类型

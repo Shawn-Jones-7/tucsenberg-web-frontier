@@ -39,12 +39,12 @@ export const ERROR_CODE_MESSAGES: Record<ErrorCode, string> = {
  * Retryable error codes
  */
 export const RETRYABLE_ERROR_CODES: ErrorCode[] = [
-  131, // Generic temporary error
-  131000, // Generic temporary error
-  131014, // Request timeout
-  131016, // Service temporarily unavailable
-  131052, // Media download error
-  131053, // Media upload error
+  MAGIC_131, // Generic temporary error
+  MAGIC_131000, // Generic temporary error
+  MAGIC_131014, // Request timeout
+  MAGIC_131016, // Service temporarily unavailable
+  MAGIC_131052, // Media download error
+  MAGIC_131053, // Media upload error
 ];
 
 /**

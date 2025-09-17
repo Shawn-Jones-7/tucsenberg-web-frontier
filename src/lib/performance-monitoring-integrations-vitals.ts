@@ -1,5 +1,3 @@
-import { COUNT_PAIR, MAGIC_0_9, MAGIC_1_1, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM, PERCENTAGE_HALF } from '@/constants/magic-numbers';
-
 /**
  * Web Vitals 和环境检查性能监控集成
  * Web Vitals and Environment Check Performance Monitoring Integration
@@ -7,6 +5,7 @@ import { COUNT_PAIR, MAGIC_0_9, MAGIC_1_1, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_N
  * 提供与Web Vitals工具的集成钩子和环境兼容性检查功能
  */
 
+import { COUNT_PAIR, MAGIC_0_9, MAGIC_1_1, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
 import type {
   PerformanceConfig,
   PerformanceMetrics,
@@ -155,7 +154,7 @@ export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult 
   }
 
   return {
-    isCompatible: issues.length === 0,
+    isCompatible: issues.length === ZERO,
     issues,
     recommendations,
     environment,
@@ -260,21 +259,21 @@ export function validateWebVitalsConfig(config: PerformanceConfig): {
 
         if (
           thresholds.lcp &&
-          (typeof thresholds.lcp !== 'number' || thresholds.lcp <= 0)
+          (typeof thresholds.lcp !== 'number' || thresholds.lcp <= ZERO)
         ) {
           warnings.push('Web Vitals LCP threshold should be a positive number');
         }
 
         if (
           thresholds.fid &&
-          (typeof thresholds.fid !== 'number' || thresholds.fid <= 0)
+          (typeof thresholds.fid !== 'number' || thresholds.fid <= ZERO)
         ) {
           warnings.push('Web Vitals FID threshold should be a positive number');
         }
 
         if (
           thresholds.cls &&
-          (typeof thresholds.cls !== 'number' || thresholds.cls <= 0)
+          (typeof thresholds.cls !== 'number' || thresholds.cls <= ZERO)
         ) {
           warnings.push('Web Vitals CLS threshold should be a positive number');
         }
@@ -283,7 +282,7 @@ export function validateWebVitalsConfig(config: PerformanceConfig): {
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -332,7 +331,7 @@ export class WebVitalsAnalyzer {
     const current = this.vitals.get(name) || {
       values: [],
       ratings: [],
-      lastUpdated: 0,
+      lastUpdated: ZERO,
     };
 
     current.values.push(value);
@@ -342,7 +341,7 @@ export class WebVitalsAnalyzer {
     this.vitals.set(name, current);
 
     // 保持数组大小在合理范围内
-    if (current.values.length > 100) {
+    if (current.values.length > PERCENTAGE_FULL) {
       current.values = current.values.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
       current.ratings = current.ratings.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
@@ -358,7 +357,7 @@ export class WebVitalsAnalyzer {
     const current = this.customMetrics.get(name) || {
       values: [],
       unit,
-      lastUpdated: 0,
+      lastUpdated: ZERO,
     };
 
     current.values.push(value);
@@ -367,7 +366,7 @@ export class WebVitalsAnalyzer {
     this.customMetrics.set(name, current);
 
     // 保持数组大小在合理范围内
-    if (current.values.length > 100) {
+    if (current.values.length > PERCENTAGE_FULL) {
       current.values = current.values.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
@@ -398,27 +397,27 @@ export class WebVitalsAnalyzer {
         rating: 'good' | 'needs-improvement' | 'poor';
       }
     > = {};
-    let totalScore = 0;
-    let vitalCount = 0;
+    let totalScore = ZERO;
+    let vitalCount = ZERO;
 
     for (const [name, data] of this.vitals.entries()) {
-      if (data.values.length === 0) continue;
+      if (data.values.length === ZERO) continue;
 
       const average =
-        data.values.reduce((sum, val) => sum + val, 0) / data.values.length;
-      const latest = data.values[data.values.length - 1] ?? 0;
-      const latestRating = data.ratings[data.ratings.length - 1] ?? 'poor';
+        data.values.reduce((sum, val) => sum + val, ZERO) / data.values.length;
+      const latest = data.values[data.values.length - ONE] ?? ZERO;
+      const latestRating = data.ratings[data.ratings.length - ONE] ?? 'poor';
 
       // 计算趋势
       let trend: 'improving' | 'stable' | 'degrading' = 'stable';
       if (data.values.length >= COUNT_PAIR) {
         const recent = data.values.slice(OFFSET_NEGATIVE_MEDIUM);
         const older = data.values.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM);
-        if (recent.length > 0 && older.length > 0) {
+        if (recent.length > ZERO && older.length > ZERO) {
           const recentAvg =
-            recent.reduce((sum, val) => sum + val, 0) / recent.length;
+            recent.reduce((sum, val) => sum + val, ZERO) / recent.length;
           const olderAvg =
-            older.reduce((sum, val) => sum + val, 0) / older.length;
+            older.reduce((sum, val) => sum + val, ZERO) / older.length;
 
           if (recentAvg < olderAvg * MAGIC_0_9) trend = 'improving';
           else if (recentAvg > olderAvg * MAGIC_1_1) trend = 'degrading';
@@ -435,15 +434,15 @@ export class WebVitalsAnalyzer {
       // 计算分数
       const ratingScore =
         latestRating === 'good'
-          ? 100
+          ? PERCENTAGE_FULL
           : latestRating === 'needs-improvement'
             ? PERCENTAGE_HALF
-            : 0;
+            : ZERO;
       totalScore += ratingScore;
-      vitalCount += 1;
+      vitalCount += ONE;
     }
 
-    const score = vitalCount > 0 ? totalScore / vitalCount : 0;
+    const score = vitalCount > ZERO ? totalScore / vitalCount : ZERO;
 
     // 生成建议
     const recommendations: string[] = [];

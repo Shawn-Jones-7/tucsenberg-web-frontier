@@ -7,15 +7,17 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
+import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
   UserLocalePreference,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 语言存储清理管理器
@@ -56,7 +58,7 @@ export class LocaleCleanupManager {
    * Clean up expired detection records
    */
   static cleanupExpiredDetections(
-    maxAgeMs: number = 30 * 24 * 60 * 60 * 1000,
+    maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   ): StorageOperationResult {
     try {
       const historyData = LocalStorageManager.get<LocaleDetectionHistory>(
@@ -80,7 +82,7 @@ export class LocaleCleanupManager {
 
       const cleanedCount = originalCount - validDetections.length;
 
-      if (cleanedCount > 0) {
+      if (cleanedCount > ZERO) {
         const updatedHistory: LocaleDetectionHistory = {
           detections: validDetections,
           history: validDetections,
@@ -103,7 +105,7 @@ export class LocaleCleanupManager {
       return {
         success: true,
         timestamp: Date.now(),
-        data: { cleanedCount: 0, remainingCount: originalCount },
+        data: { cleanedCount: ZERO, remainingCount: originalCount },
       };
     } catch (error) {
       return {
@@ -148,7 +150,7 @@ export class LocaleCleanupManager {
    */
   static cleanupInvalidPreferences(): StorageOperationResult {
     try {
-      let cleanedItems = 0;
+      let cleanedItems = ZERO;
       const issues: string[] = [];
 
       // 检查并清理localStorage中的偏好数据
@@ -158,7 +160,7 @@ export class LocaleCleanupManager {
 
       if (localPreference && !this.isValidPreferenceData(localPreference)) {
         LocalStorageManager.remove(STORAGE_KEYS.LOCALE_PREFERENCE);
-        cleanedItems += 1;
+        cleanedItems += ONE;
         issues.push('已清理localStorage中的无效偏好数据');
       }
 
@@ -171,12 +173,12 @@ export class LocaleCleanupManager {
           const parsed = JSON.parse(cookiePreference) as UserLocalePreference;
           if (!this.isValidPreferenceData(parsed)) {
             CookieManager.remove(STORAGE_KEYS.LOCALE_PREFERENCE);
-            cleanedItems += 1;
+            cleanedItems += ONE;
             issues.push('已清理Cookie中的无效偏好数据');
           }
         } catch {
           CookieManager.remove(STORAGE_KEYS.LOCALE_PREFERENCE);
-          cleanedItems += 1;
+          cleanedItems += ONE;
           issues.push('已清理Cookie中的格式错误偏好数据');
         }
       }
@@ -215,7 +217,7 @@ export class LocaleCleanupManager {
       const originalCount = historyData.detections.length;
       const seen = new Set<string>();
       const uniqueDetections = historyData.detections.filter((detection) => {
-        const key = `${detection.locale}-${detection.source}-${Math.floor(detection.timestamp / 60000)}`; // 按分钟分组
+        const key = `${detection.locale}-${detection.source}-${Math.floor(detection.timestamp / MINUTE_MS)}`; // 按分钟分组
         if (seen.has(key)) {
           return false;
         }
@@ -225,7 +227,7 @@ export class LocaleCleanupManager {
 
       const duplicateCount = originalCount - uniqueDetections.length;
 
-      if (duplicateCount > 0) {
+      if (duplicateCount > ZERO) {
         const updatedHistory: LocaleDetectionHistory = {
           detections: uniqueDetections,
           history: uniqueDetections,
@@ -248,7 +250,7 @@ export class LocaleCleanupManager {
       return {
         success: true,
         timestamp: Date.now(),
-        data: { duplicateCount: 0, remainingCount: originalCount },
+        data: { duplicateCount: ZERO, remainingCount: originalCount },
       };
     } catch (error) {
       return {
@@ -280,8 +282,8 @@ export class LocaleCleanupManager {
     if (typeof preference.confidence !== 'number') return false;
 
     // 验证值的合理性
-    if (preference.confidence < 0 || preference.confidence > 1) return false;
-    if (preference.timestamp > Date.now() || preference.timestamp < 0)
+    if (preference.confidence < ZERO || preference.confidence > ONE) return false;
+    if (preference.timestamp > Date.now() || preference.timestamp < ZERO)
       return false;
 
     return true;
@@ -297,16 +299,16 @@ export class LocaleCleanupManager {
     invalidPreferences: number;
     duplicateDetections: number;
   } {
-    let totalItems = 0;
-    let expiredDetections = 0;
-    let invalidPreferences = 0;
-    let duplicateDetections = 0;
+    let totalItems = ZERO;
+    let expiredDetections = ZERO;
+    let invalidPreferences = ZERO;
+    let duplicateDetections = ZERO;
 
     try {
       // 统计总项目数
       Object.values(STORAGE_KEYS).forEach((key) => {
-        if (LocalStorageManager.get(key) !== null) totalItems += 1;
-        if (CookieManager.get(key) !== null) totalItems += 1;
+        if (LocalStorageManager.get(key) !== null) totalItems += ONE;
+        if (CookieManager.get(key) !== null) totalItems += ONE;
       });
 
       // 统计过期检测记录
@@ -315,7 +317,7 @@ export class LocaleCleanupManager {
       );
       if (historyData?.detections) {
         const now = Date.now();
-        const maxAge = 30 * 24 * 60 * 60 * 1000; // 30天
+        const maxAge = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 30天
         expiredDetections = historyData.detections.filter(
           (detection) => now - detection.timestamp > maxAge,
         ).length;
@@ -323,9 +325,9 @@ export class LocaleCleanupManager {
         // 统计重复检测记录
         const seen = new Set<string>();
         historyData.detections.forEach((detection) => {
-          const key = `${detection.locale}-${detection.source}-${Math.floor(detection.timestamp / 60000)}`;
+          const key = `${detection.locale}-${detection.source}-${Math.floor(detection.timestamp / MINUTE_MS)}`;
           if (seen.has(key)) {
-            duplicateDetections += 1;
+            duplicateDetections += ONE;
           } else {
             seen.add(key);
           }
@@ -337,7 +339,7 @@ export class LocaleCleanupManager {
         STORAGE_KEYS.LOCALE_PREFERENCE,
       );
       if (localPreference && !this.isValidPreferenceData(localPreference)) {
-        invalidPreferences += 1;
+        invalidPreferences += ONE;
       }
 
       const cookiePreference = CookieManager.get(
@@ -347,10 +349,10 @@ export class LocaleCleanupManager {
         try {
           const parsed = JSON.parse(cookiePreference) as UserLocalePreference;
           if (!this.isValidPreferenceData(parsed)) {
-            invalidPreferences += 1;
+            invalidPreferences += ONE;
           }
         } catch {
-          invalidPreferences += 1;
+          invalidPreferences += ONE;
         }
       }
     } catch (error) {

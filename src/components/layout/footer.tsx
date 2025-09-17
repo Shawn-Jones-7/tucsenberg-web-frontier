@@ -7,16 +7,18 @@
 
 'use client';
 
-import type { FC } from 'react';
-import Link from 'next/link';
-import { useLocale, useTranslations } from 'next-intl';
+import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
+import { COUNT_14 } from "@/constants/count";
+import { ZERO } from "@/constants/magic-numbers";
 import {
   FOOTER_CONFIG,
   getCopyrightText,
   type FooterLink,
   type FooterSection,
 } from '@/lib/footer-config';
-import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
+import { useLocale, useTranslations } from 'next-intl';
+import Link from 'next/link';
+import type { FC } from 'react';
 
 // Footer Link Component
 interface FooterLinkComponentProps {
@@ -40,7 +42,7 @@ const FooterLinkComponent: FC<FooterLinkComponentProps> = ({
         className={`inline-flex items-center gap-1 text-gray-600 transition-colors duration-200 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 ${className}`}
       >
         {linkText}
-        <ExternalLinkIcon size={14} />
+        <ExternalLinkIcon size={COUNT_14} />
       </a>
     );
   }
@@ -121,7 +123,7 @@ const CompanyLogo: FC = () => {
         {/* Logo placeholder - replace with actual logo */}
         <div className='flex h-8 w-8 items-center justify-center rounded-md bg-gray-900 dark:bg-gray-100'>
           <span className='text-sm font-bold text-white dark:text-gray-900'>
-            {company.name.charAt(0)}
+            {company.name.charAt(ZERO)}
           </span>
         </div>
         <span className='text-lg font-semibold'>{company.name}</span>

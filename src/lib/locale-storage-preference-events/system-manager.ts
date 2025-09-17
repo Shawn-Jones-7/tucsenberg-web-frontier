@@ -5,11 +5,12 @@
 
 'use client';
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
+import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
 import {
   consoleLogListener,
   historyRecordingListener,
 } from './event-listeners';
-import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
 
 /**
  * 事件管理工具函数
@@ -60,13 +61,13 @@ export function getEventSystemStatus(): {
   lastEventTime: number | null;
 } {
   const listenerStats = PreferenceEventManager.getListenerStats();
-  const eventHistory = PreferenceEventManager.getEventHistory(1);
+  const eventHistory = PreferenceEventManager.getEventHistory(ONE);
 
   return {
-    isActive: listenerStats.totalListeners > 0,
+    isActive: listenerStats.totalListeners > ZERO,
     listenerStats,
     eventHistoryCount: PreferenceEventManager.getEventHistory().length,
     lastEventTime:
-      eventHistory.length > 0 ? eventHistory[0]?.timestamp || null : null,
+      eventHistory.length > ZERO ? eventHistory[ZERO]?.timestamp || null : null,
   };
 }

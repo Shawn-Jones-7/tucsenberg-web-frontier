@@ -1,0 +1,1381 @@
+{
+  "timestamp": "2025-09-16T16:01:56.766Z",
+  "summary": {
+    "totalNumbers": 271,
+    "categoriesFound": 11,
+    "categoryStats": {
+      "PERCENTAGE_DECIMAL": 40,
+      "COORDINATE": 39,
+      "NUMERIC": 111,
+      "ANGLE": 7,
+      "HTTP_STATUS": 6,
+      "ANIMATION_DURATION": 6,
+      "MEMORY_SIZE": 7,
+      "BREAKPOINT": 14,
+      "TIME_MS": 34,
+      "YEAR": 2,
+      "PORT": 5
+    }
+  },
+  "analysis": {
+    "6": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_6",
+      "description": "数值常量"
+    },
+    "7": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_7",
+      "description": "数值常量"
+    },
+    "8": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_8",
+      "description": "数值常量"
+    },
+    "9": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_9",
+      "description": "数值常量"
+    },
+    "11": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_11",
+      "description": "数值常量"
+    },
+    "12": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_12",
+      "description": "数值常量"
+    },
+    "14": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_14",
+      "description": "数值常量"
+    },
+    "15": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_15",
+      "description": "数值常量"
+    },
+    "16": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_16",
+      "description": "数值常量"
+    },
+    "17": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_17",
+      "description": "数值常量"
+    },
+    "18": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_18",
+      "description": "数值常量"
+    },
+    "20": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_20",
+      "description": "数值常量"
+    },
+    "22": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_22",
+      "description": "数值常量"
+    },
+    "23": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_23",
+      "description": "数值常量"
+    },
+    "32": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_32",
+      "description": "数值常量"
+    },
+    "35": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_35",
+      "description": "数值常量"
+    },
+    "36": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_36",
+      "description": "数值常量"
+    },
+    "40": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_40",
+      "description": "数值常量"
+    },
+    "42": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_42",
+      "description": "数值常量"
+    },
+    "45": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_45_DEG",
+      "description": "角度值"
+    },
+    "49": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_49",
+      "description": "数值常量"
+    },
+    "51": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_51",
+      "description": "数值常量"
+    },
+    "64": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_64",
+      "description": "数值常量"
+    },
+    "65": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_65",
+      "description": "数值常量"
+    },
+    "70": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_70",
+      "description": "数值常量"
+    },
+    "72": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_72",
+      "description": "数值常量"
+    },
+    "73": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_73",
+      "description": "数值常量"
+    },
+    "75": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_75",
+      "description": "数值常量"
+    },
+    "78": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_78",
+      "description": "数值常量"
+    },
+    "79": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_79",
+      "description": "数值常量"
+    },
+    "80": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_80",
+      "description": "数值常量"
+    },
+    "81": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_81",
+      "description": "数值常量"
+    },
+    "82": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_82",
+      "description": "数值常量"
+    },
+    "83": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_83",
+      "description": "数值常量"
+    },
+    "84": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_84",
+      "description": "数值常量"
+    },
+    "85": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_85",
+      "description": "数值常量"
+    },
+    "87": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_87",
+      "description": "数值常量"
+    },
+    "88": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_88",
+      "description": "数值常量"
+    },
+    "89": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_89",
+      "description": "数值常量"
+    },
+    "90": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_90_DEG",
+      "description": "角度值"
+    },
+    "91": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_91",
+      "description": "数值常量"
+    },
+    "92": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_92",
+      "description": "数值常量"
+    },
+    "95": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_95",
+      "description": "数值常量"
+    },
+    "96": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_96",
+      "description": "数值常量"
+    },
+    "99": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_99",
+      "description": "数值常量"
+    },
+    "123": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_123",
+      "description": "数值常量"
+    },
+    "125": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_125",
+      "description": "数值常量"
+    },
+    "128": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_128",
+      "description": "数值常量"
+    },
+    "130": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_130",
+      "description": "数值常量"
+    },
+    "131": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131",
+      "description": "数值常量"
+    },
+    "132": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_132",
+      "description": "数值常量"
+    },
+    "133": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_133",
+      "description": "数值常量"
+    },
+    "136": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_136",
+      "description": "数值常量"
+    },
+    "160": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_160",
+      "description": "数值常量"
+    },
+    "180": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_180_DEG",
+      "description": "角度值"
+    },
+    "190": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_190",
+      "description": "数值常量"
+    },
+    "204": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_204",
+      "description": "HTTP状态码"
+    },
+    "240": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_240",
+      "description": "数值常量"
+    },
+    "250": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_250",
+      "description": "动画持续时间"
+    },
+    "254": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_254",
+      "description": "数值常量"
+    },
+    "255": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_255",
+      "description": "数值常量"
+    },
+    "256": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_256",
+      "description": "内存和存储大小"
+    },
+    "320": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_MOBILE_SMALL",
+      "description": "响应式断点"
+    },
+    "360": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_360_DEG",
+      "description": "角度值"
+    },
+    "368": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_368",
+      "description": "数值常量"
+    },
+    "375": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_MOBILE",
+      "description": "响应式断点"
+    },
+    "401": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_401",
+      "description": "HTTP状态码"
+    },
+    "403": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_403",
+      "description": "HTTP状态码"
+    },
+    "415": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_415",
+      "description": "HTTP状态码"
+    },
+    "429": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_429",
+      "description": "HTTP状态码"
+    },
+    "450": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_450",
+      "description": "数值常量"
+    },
+    "456": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_456",
+      "description": "数值常量"
+    },
+    "480": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_MOBILE_LARGE",
+      "description": "响应式断点"
+    },
+    "503": {
+      "category": "HTTP_STATUS",
+      "constantName": "HTTP_503",
+      "description": "HTTP状态码"
+    },
+    "512": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_512",
+      "description": "内存和存储大小"
+    },
+    "600": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_600",
+      "description": "动画持续时间"
+    },
+    "640": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_SM",
+      "description": "响应式断点"
+    },
+    "667": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_MOBILE_LANDSCAPE",
+      "description": "响应式断点"
+    },
+    "700": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_700",
+      "description": "动画持续时间"
+    },
+    "720": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_HD_HEIGHT",
+      "description": "响应式断点"
+    },
+    "750": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_750",
+      "description": "动画持续时间"
+    },
+    "768": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_MD",
+      "description": "响应式断点"
+    },
+    "800": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_TABLET_SMALL",
+      "description": "响应式断点"
+    },
+    "890": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_890",
+      "description": "数值常量"
+    },
+    "900": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_900",
+      "description": "动画持续时间"
+    },
+    "996": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_996",
+      "description": "数值常量"
+    },
+    "997": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_997",
+      "description": "数值常量"
+    },
+    "998": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_998",
+      "description": "数值常量"
+    },
+    "999": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_999",
+      "description": "数值常量"
+    },
+    "1001": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1001",
+      "description": "数值常量"
+    },
+    "1005": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1005",
+      "description": "数值常量"
+    },
+    "1010": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1010",
+      "description": "数值常量"
+    },
+    "1020": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1020",
+      "description": "数值常量"
+    },
+    "1050": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1050",
+      "description": "数值常量"
+    },
+    "1080": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_HD_HEIGHT_FULL",
+      "description": "响应式断点"
+    },
+    "1100": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1100",
+      "description": "数值常量"
+    },
+    "1150": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1150",
+      "description": "数值常量"
+    },
+    "1180": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1180",
+      "description": "数值常量"
+    },
+    "1200": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_DESKTOP",
+      "description": "响应式断点"
+    },
+    "1234": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1234",
+      "description": "数值常量"
+    },
+    "1280": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_XL",
+      "description": "响应式断点"
+    },
+    "1300": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1300",
+      "description": "数值常量"
+    },
+    "1400": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1400",
+      "description": "数值常量"
+    },
+    "1412": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1412",
+      "description": "数值常量"
+    },
+    "1450": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1450",
+      "description": "数值常量"
+    },
+    "1500": {
+      "category": "ANIMATION_DURATION",
+      "constantName": "ANIMATION_DURATION_1500",
+      "description": "动画持续时间"
+    },
+    "1536": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_2XL",
+      "description": "响应式断点"
+    },
+    "1600": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_DESKTOP_LARGE",
+      "description": "响应式断点"
+    },
+    "1800": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1800",
+      "description": "数值常量"
+    },
+    "1900": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1900",
+      "description": "数值常量"
+    },
+    "1920": {
+      "category": "BREAKPOINT",
+      "constantName": "BREAKPOINT_FULL_HD",
+      "description": "响应式断点"
+    },
+    "2000": {
+      "category": "TIME_MS",
+      "constantName": "TWO_SECONDS_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "2024": {
+      "category": "YEAR",
+      "constantName": "YEAR_2024",
+      "description": "年份"
+    },
+    "2025": {
+      "category": "YEAR",
+      "constantName": "YEAR_2025",
+      "description": "年份"
+    },
+    "2048": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_2KB",
+      "description": "内存和存储大小"
+    },
+    "2100": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_2100",
+      "description": "数值常量"
+    },
+    "2150": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_2150",
+      "description": "数值常量"
+    },
+    "2200": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_2200",
+      "description": "数值常量"
+    },
+    "2500": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_2500",
+      "description": "数值常量"
+    },
+    "2800": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_2800",
+      "description": "数值常量"
+    },
+    "3000": {
+      "category": "TIME_MS",
+      "constantName": "THREE_SECONDS_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "3075": {
+      "category": "PORT",
+      "constantName": "PORT_3075",
+      "description": "端口号"
+    },
+    "3100": {
+      "category": "PORT",
+      "constantName": "PORT_3100",
+      "description": "端口号"
+    },
+    "3500": {
+      "category": "PORT",
+      "constantName": "PORT_3500",
+      "description": "端口号"
+    },
+    "4000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_4000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "4096": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_4KB",
+      "description": "内存和存储大小"
+    },
+    "5000": {
+      "category": "TIME_MS",
+      "constantName": "FIVE_SECONDS_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "6000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_6000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "7000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_7000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "8000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_8000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "8192": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_8KB",
+      "description": "内存和存储大小"
+    },
+    "8888": {
+      "category": "PORT",
+      "constantName": "PORT_8888",
+      "description": "端口号"
+    },
+    "8900": {
+      "category": "PORT",
+      "constantName": "PORT_8900",
+      "description": "端口号"
+    },
+    "9000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_9000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "10000": {
+      "category": "TIME_MS",
+      "constantName": "TEN_SECONDS_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "12000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_12000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "12345": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_12345",
+      "description": "数值常量"
+    },
+    "15000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_15000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "16000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_16000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "30000": {
+      "category": "TIME_MS",
+      "constantName": "THIRTY_SECONDS_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "45000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_45000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "50000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_50000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "60000": {
+      "category": "TIME_MS",
+      "constantName": "MINUTE_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "65536": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_64KB",
+      "description": "内存和存储大小"
+    },
+    "100000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_100000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "120000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_120000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "125000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_125000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "131000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_131000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "131005": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131005",
+      "description": "数值常量"
+    },
+    "131008": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131008",
+      "description": "数值常量"
+    },
+    "131009": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131009",
+      "description": "数值常量"
+    },
+    "131014": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131014",
+      "description": "数值常量"
+    },
+    "131016": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131016",
+      "description": "数值常量"
+    },
+    "131021": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131021",
+      "description": "数值常量"
+    },
+    "131026": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131026",
+      "description": "数值常量"
+    },
+    "131047": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131047",
+      "description": "数值常量"
+    },
+    "131051": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131051",
+      "description": "数值常量"
+    },
+    "131052": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131052",
+      "description": "数值常量"
+    },
+    "131053": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_131053",
+      "description": "数值常量"
+    },
+    "170000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_170000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "200000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_200000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "200100": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_200100",
+      "description": "数值常量"
+    },
+    "300000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_300000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "400000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_400000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "500000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_500000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "999999": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_999999",
+      "description": "数值常量"
+    },
+    "1000000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_1000000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "1024000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_1024000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "1048576": {
+      "category": "MEMORY_SIZE",
+      "constantName": "BYTES_1MB",
+      "description": "内存和存储大小"
+    },
+    "1234567": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1234567",
+      "description": "数值常量"
+    },
+    "1664525": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1664525",
+      "description": "数值常量"
+    },
+    "1800000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_1800000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "2000000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_2000000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "2048000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_2048000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "3600000": {
+      "category": "TIME_MS",
+      "constantName": "HOUR_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "4000000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_4000000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "31536000": {
+      "category": "TIME_MS",
+      "constantName": "TIME_31536000_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "86400000": {
+      "category": "TIME_MS",
+      "constantName": "DAY_MS",
+      "description": "时间相关（毫秒）"
+    },
+    "999999999": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_999999999",
+      "description": "数值常量"
+    },
+    "1000000000": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1000000000",
+      "description": "数值常量"
+    },
+    "1500000000": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1500000000",
+      "description": "数值常量"
+    },
+    "1e-10": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_0",
+      "description": "百分比（小数形式）"
+    },
+    "0.000001": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_000001",
+      "description": "地理坐标"
+    },
+    "0.00001": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_00001",
+      "description": "地理坐标"
+    },
+    "0.001": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_0",
+      "description": "百分比（小数形式）"
+    },
+    "0.01": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_1",
+      "description": "百分比（小数形式）"
+    },
+    "0.012345679": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_012345679",
+      "description": "地理坐标"
+    },
+    "0.03": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_3",
+      "description": "百分比（小数形式）"
+    },
+    "0.05": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_5",
+      "description": "百分比（小数形式）"
+    },
+    "0.1": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_10",
+      "description": "百分比（小数形式）"
+    },
+    "0.118": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_12",
+      "description": "百分比（小数形式）"
+    },
+    "0.12": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_12",
+      "description": "百分比（小数形式）"
+    },
+    "0.123456789": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_123456789",
+      "description": "地理坐标"
+    },
+    "0.123456789012345": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_123456789012345",
+      "description": "地理坐标"
+    },
+    "0.145": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_14",
+      "description": "百分比（小数形式）"
+    },
+    "0.15": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_15",
+      "description": "百分比（小数形式）"
+    },
+    "0.189": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_19",
+      "description": "百分比（小数形式）"
+    },
+    "0.2": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_20",
+      "description": "百分比（小数形式）"
+    },
+    "0.205": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_21",
+      "description": "百分比（小数形式）"
+    },
+    "0.222": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_22",
+      "description": "百分比（小数形式）"
+    },
+    "0.2222222222222222": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_2222222222222222",
+      "description": "地理坐标"
+    },
+    "0.245": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_25",
+      "description": "百分比（小数形式）"
+    },
+    "0.25": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_25",
+      "description": "百分比（小数形式）"
+    },
+    "0.262": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_26",
+      "description": "百分比（小数形式）"
+    },
+    "0.3": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_30",
+      "description": "百分比（小数形式）"
+    },
+    "0.4": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_40",
+      "description": "百分比（小数形式）"
+    },
+    "0.45": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_45",
+      "description": "百分比（小数形式）"
+    },
+    "0.48": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_48",
+      "description": "百分比（小数形式）"
+    },
+    "0.500000000000001": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_500000000000001",
+      "description": "地理坐标"
+    },
+    "0.5000001": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_5000001",
+      "description": "地理坐标"
+    },
+    "0.5001": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_5001",
+      "description": "地理坐标"
+    },
+    "0.55": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_55",
+      "description": "百分比（小数形式）"
+    },
+    "0.556": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_56",
+      "description": "百分比（小数形式）"
+    },
+    "0.577": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_58",
+      "description": "百分比（小数形式）"
+    },
+    "0.6": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_60",
+      "description": "百分比（小数形式）"
+    },
+    "0.631": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_63",
+      "description": "百分比（小数形式）"
+    },
+    "0.646": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_65",
+      "description": "百分比（小数形式）"
+    },
+    "0.6666666666666666": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_6666666666666666",
+      "description": "地理坐标"
+    },
+    "0.7": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_70",
+      "description": "百分比（小数形式）"
+    },
+    "0.708": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_71",
+      "description": "百分比（小数形式）"
+    },
+    "0.75": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_75",
+      "description": "百分比（小数形式）"
+    },
+    "0.8": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_80",
+      "description": "百分比（小数形式）"
+    },
+    "0.82": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_82",
+      "description": "百分比（小数形式）"
+    },
+    "0.828": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_83",
+      "description": "百分比（小数形式）"
+    },
+    "0.85": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_85",
+      "description": "百分比（小数形式）"
+    },
+    "0.876543211": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_876543211",
+      "description": "地理坐标"
+    },
+    "0.922": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_92",
+      "description": "百分比（小数形式）"
+    },
+    "0.95": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_95",
+      "description": "百分比（小数形式）"
+    },
+    "0.96": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_96",
+      "description": "百分比（小数形式）"
+    },
+    "0.97": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_97",
+      "description": "百分比（小数形式）"
+    },
+    "0.985": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "OPACITY_99",
+      "description": "百分比（小数形式）"
+    },
+    "0.987654321": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_987654321",
+      "description": "地理坐标"
+    },
+    "0.987654321098765": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_987654321098765",
+      "description": "地理坐标"
+    },
+    "0.99": {
+      "category": "PERCENTAGE_DECIMAL",
+      "constantName": "PERCENT_99",
+      "description": "百分比（小数形式）"
+    },
+    "0.9999999": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_0_9999999",
+      "description": "地理坐标"
+    },
+    "1.1": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_1_1",
+      "description": "地理坐标"
+    },
+    "1.2": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_1_2",
+      "description": "地理坐标"
+    },
+    "1.23456789012345": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_1_23456789012345",
+      "description": "地理坐标"
+    },
+    "2.5": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_2_5",
+      "description": "地理坐标"
+    },
+    "3.53": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_3_53",
+      "description": "地理坐标"
+    },
+    "4.5": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_4_5",
+      "description": "地理坐标"
+    },
+    "5.2": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_5_2",
+      "description": "地理坐标"
+    },
+    "5.88": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_5_88",
+      "description": "地理坐标"
+    },
+    "6.25": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_6_25",
+      "description": "地理坐标"
+    },
+    "10.15": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_10_15",
+      "description": "地理坐标"
+    },
+    "14.1": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_14_1",
+      "description": "地理坐标"
+    },
+    "27.325": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_27_325",
+      "description": "地理坐标"
+    },
+    "39.9042": {
+      "category": "COORDINATE",
+      "constantName": "COORD_BEIJING_LAT",
+      "description": "地理坐标"
+    },
+    "40.7128": {
+      "category": "COORDINATE",
+      "constantName": "COORD_NYC_LAT",
+      "description": "地理坐标"
+    },
+    "62.5": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_62_5",
+      "description": "地理坐标"
+    },
+    "74.006": {
+      "category": "COORDINATE",
+      "constantName": "COORD_NYC_LNG",
+      "description": "地理坐标"
+    },
+    "84.429": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_84_429",
+      "description": "地理坐标"
+    },
+    "85.7": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_85_7",
+      "description": "地理坐标"
+    },
+    "92.86": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_92_86",
+      "description": "地理坐标"
+    },
+    "99.99": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_99_99",
+      "description": "地理坐标"
+    },
+    "116.4074": {
+      "category": "COORDINATE",
+      "constantName": "COORD_BEIJING_LNG",
+      "description": "地理坐标"
+    },
+    "123.45": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_123_45",
+      "description": "地理坐标"
+    },
+    "123.456": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_123_456",
+      "description": "地理坐标"
+    },
+    "123.7": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_123_7",
+      "description": "地理坐标"
+    },
+    "142.5": {
+      "category": "COORDINATE",
+      "constantName": "COORDINATE_142_5",
+      "description": "地理坐标"
+    },
+    "184.704": {
+      "category": "NUMERIC",
+      "constantName": "DECIMAL_184_704",
+      "description": "数值常量"
+    },
+    "359.9": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_360_DEG",
+      "description": "角度值"
+    },
+    "359.999999": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_360_DEG",
+      "description": "角度值"
+    },
+    "359.999999999999": {
+      "category": "ANGLE",
+      "constantName": "ANGLE_360_DEG",
+      "description": "角度值"
+    },
+    "500.5": {
+      "category": "NUMERIC",
+      "constantName": "DECIMAL_500_5",
+      "description": "数值常量"
+    },
+    "537.36": {
+      "category": "NUMERIC",
+      "constantName": "DECIMAL_537_36",
+      "description": "数值常量"
+    },
+    "1234.56": {
+      "category": "NUMERIC",
+      "constantName": "DECIMAL_1234_56",
+      "description": "数值常量"
+    },
+    "5000.5": {
+      "category": "NUMERIC",
+      "constantName": "DECIMAL_5000_5",
+      "description": "数值常量"
+    },
+    "4294967296": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_4294967296",
+      "description": "数值常量"
+    },
+    "1000000000000": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1000000000000",
+      "description": "数值常量"
+    },
+    "1704067200000": {
+      "category": "NUMERIC",
+      "constantName": "NUMBER_1704067200000",
+      "description": "数值常量"
+    }
+  },
+  "recommendations": [
+    "存在大量通用数值常量，建议进一步细化分类规则",
+    "响应式断点较多，建议统一到专门的断点常量文件中"
+  ]
+}

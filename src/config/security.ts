@@ -1,4 +1,8 @@
-import { env } from '@/../env.mjs';
+import { env } from '../../env.mjs';
+import { COUNT_PAIR, ZERO } from "../constants/magic-numbers";
+import { ALERT_SYSTEM_CONSTANTS } from "../constants/performance-constants";
+const RANDOM_ID_BASE = ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE;
+import { MAGIC_15 } from "../constants/count";
 
 /**
  * Security configuration for the application
@@ -75,7 +79,7 @@ export function generateCSP(nonce?: string): string {
   return Object.entries(cspDirectives)
     .filter(([, value]) => value !== undefined)
     .map(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0) {
+      if (Array.isArray(value) && value.length > ZERO) {
         return `${key} ${value.join(' ')}`;
       }
       return key;
@@ -161,9 +165,9 @@ export function getSecurityHeaders(nonce?: string, testMode = false) {
  */
 // Constants for nonce generation
 const NONCE_CONSTANTS = {
-  RADIX_36: 36,
-  SUBSTRING_START: 2,
-  SUBSTRING_END: 15,
+  RADIX_36: ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE,
+  SUBSTRING_START: COUNT_PAIR,
+  SUBSTRING_END: MAGIC_15,
 } as const;
 
 export function generateNonce(): string {

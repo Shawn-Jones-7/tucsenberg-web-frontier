@@ -5,8 +5,11 @@
  * 提供预加载器相关的类型定义和接口
  */
 
-import type { Locale, Messages } from '@/types/i18n';
+import { COUNT_4 } from "@/constants/count";
+import { MAGIC_0_1, MAGIC_0_8 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS } from "@/constants/magic-numbers";
 import type { CacheOperationResult } from '@/lib/i18n-cache-types';
+import type { Locale, Messages } from '@/types/i18n';
 
 /**
  * 预加载状态
@@ -416,17 +419,17 @@ export class PreloaderCacheError extends PreloaderError {
  * Preloader constants
  */
 export const PRELOADER_CONSTANTS = {
-  DEFAULT_BATCH_SIZE: 3,
-  DEFAULT_DELAY_BETWEEN_BATCHES: 100,
-  DEFAULT_MAX_CONCURRENCY: 5,
-  DEFAULT_TIMEOUT: 10000,
-  DEFAULT_RETRY_COUNT: 3,
-  DEFAULT_RETRY_DELAY: 1000,
-  DEFAULT_CACHE_TTL: 24 * 60 * 60 * 1000, // 24 hours
-  DEFAULT_MEMORY_LIMIT: 50 * 1024 * 1024, // 50MB
-  MIN_USAGE_THRESHOLD: 0.1,
-  MAX_PRELOAD_LOCALES: 10,
-  PERFORMANCE_SCORE_THRESHOLD: 0.8,
+  DEFAULT_BATCH_SIZE: COUNT_TRIPLE,
+  DEFAULT_DELAY_BETWEEN_BATCHES: PERCENTAGE_FULL,
+  DEFAULT_MAX_CONCURRENCY: COUNT_FIVE,
+  DEFAULT_TIMEOUT: TEN_SECONDS_MS,
+  DEFAULT_RETRY_COUNT: COUNT_TRIPLE,
+  DEFAULT_RETRY_DELAY: ANIMATION_DURATION_VERY_SLOW,
+  DEFAULT_CACHE_TTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24 hours
+  DEFAULT_MEMORY_LIMIT: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
+  MIN_USAGE_THRESHOLD: MAGIC_0_1,
+  MAX_PRELOAD_LOCALES: COUNT_TEN,
+  PERFORMANCE_SCORE_THRESHOLD: MAGIC_0_8,
 } as const;
 
 /**
@@ -464,10 +467,10 @@ export enum PreloaderState {
  * Preload priority enum
  */
 export enum PreloadPriority {
-  LOW = 1,
-  NORMAL = 2,
-  HIGH = 3,
-  CRITICAL = 4,
+  LOW = ONE,
+  NORMAL = COUNT_PAIR,
+  HIGH = COUNT_TRIPLE,
+  CRITICAL = COUNT_4,
 }
 
 /**

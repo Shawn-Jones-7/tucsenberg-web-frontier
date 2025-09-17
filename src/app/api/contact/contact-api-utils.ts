@@ -3,15 +3,15 @@
  * Contact form API utility functions
  */
 
-import { NextRequest } from 'next/server';
-import { MAGIC_36, COUNT_PAIR, MAGIC_9 } from '@/constants/magic-numbers';
-
+import { COUNT_FIVE, COUNT_PAIR, MAGIC_36, MAGIC_9, ONE, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import { logger } from '@/lib/logger';
+import { NextRequest } from 'next/server';
 
 // 常量定义
 export const RATE_LIMIT_CONFIG = {
-  MAX_REQUESTS: 5,
-  WINDOW_MS: 60000,
+  MAX_REQUESTS: COUNT_FIVE,
+  WINDOW_MS: MINUTE_MS,
 } as const;
 
 /**
@@ -35,7 +35,7 @@ export function checkRateLimit(
   const current = rateLimitStore.get(key);
 
   if (!current || now > current.resetTime) {
-    rateLimitStore.set(key, { count: 1, resetTime: now + windowMs });
+    rateLimitStore.set(key, { count: ONE, resetTime: now + windowMs });
     return true;
   }
 
@@ -43,7 +43,7 @@ export function checkRateLimit(
     return false;
   }
 
-  current.count += 1;
+  current.count += ONE;
   rateLimitStore.set(key, current);
   return true;
 }
@@ -105,7 +105,7 @@ export function getClientIP(request: NextRequest): string {
   const realIP = request.headers.get('x-real-ip');
 
   if (forwarded) {
-    return forwarded.split(',')[0]?.trim() || 'unknown';
+    return forwarded.split(',')[ZERO]?.trim() || 'unknown';
   }
 
   if (realIP) {
@@ -142,17 +142,17 @@ export function getRateLimitStatus(ip: string): {
 
   if (!current || now > current.resetTime) {
     return {
-      remaining: RATE_LIMIT_CONFIG.MAX_REQUESTS - 1,
+      remaining: RATE_LIMIT_CONFIG.MAX_REQUESTS - ONE,
       resetTime: now + RATE_LIMIT_CONFIG.WINDOW_MS,
       isLimited: false,
     };
   }
 
-  const remaining = Math.max(0, RATE_LIMIT_CONFIG.MAX_REQUESTS - current.count);
+  const remaining = Math.max(ZERO, RATE_LIMIT_CONFIG.MAX_REQUESTS - current.count);
   return {
     remaining,
     resetTime: current.resetTime,
-    isLimited: remaining === 0,
+    isLimited: remaining === ZERO,
   };
 }
 
@@ -178,7 +178,7 @@ export function validateEnvironmentConfig(): {
   });
 
   return {
-    isValid: missingVars.length === 0,
+    isValid: missingVars.length === ZERO,
     missingVars,
   };
 }

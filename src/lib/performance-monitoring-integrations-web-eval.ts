@@ -1,13 +1,5 @@
-/**
- * Web Eval Agent 性能监控集成
- * Web Eval Agent Performance Monitoring Integration
- *
- * 提供与Web Eval Agent工具的集成钩子，用于监控用户交互和页面性能
- */
-
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HTTP_BAD_REQUEST_CONST, HTTP_OK_CONST, MAGIC_0_9, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_NEGATIVE_MASSIVE, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
-import { ANIMATION_DURATION_NORMAL, OFFSET_NEGATIVE_MASSIVE, OFFSET_NEGATIVE_EXTRA_LARGE, COUNT_TEN, MAGIC_0_9 } from '@/constants/magic-numbers';
-
 import type {
   PerformanceConfig,
   PerformanceMetrics,
@@ -75,7 +67,7 @@ export function useWebEvalAgentIntegration(
       method: string,
       status: number,
       timing: number,
-      size = 0,
+      size = ZERO,
     ) => {
       if (!config.webEvalAgent.enabled || !config.webEvalAgent.captureNetwork)
         return;
@@ -169,7 +161,7 @@ export function validateWebEvalAgentConfig(config: PerformanceConfig): {
     if (
       config.webEvalAgent.maxInteractionsPerSession &&
       (typeof config.webEvalAgent.maxInteractionsPerSession !== 'number' ||
-        config.webEvalAgent.maxInteractionsPerSession <= 0)
+        config.webEvalAgent.maxInteractionsPerSession <= ZERO)
     ) {
       warnings.push(
         'Web Eval Agent maxInteractionsPerSession should be a positive number',
@@ -178,7 +170,7 @@ export function validateWebEvalAgentConfig(config: PerformanceConfig): {
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -239,22 +231,22 @@ export class WebEvalAgentAnalyzer {
     if (!this.config.webEvalAgent.enabled) return;
 
     const current = this.interactions.get(action) || {
-      count: 0,
-      totalTime: 0,
-      successCount: 0,
-      lastInteraction: 0,
+      count: ZERO,
+      totalTime: ZERO,
+      successCount: ZERO,
+      lastInteraction: ZERO,
     };
 
-    current.count += 1;
+    current.count += ONE;
     current.totalTime += timing;
-    if (success) current.successCount += 1;
+    if (success) current.successCount += ONE;
     current.lastInteraction = Date.now();
 
     this.interactions.set(action, current);
 
     // 检查是否超过会话限制
     const maxInteractions =
-      this.config.webEvalAgent.maxInteractionsPerSession || 1000;
+      this.config.webEvalAgent.maxInteractionsPerSession || ANIMATION_DURATION_VERY_SLOW;
     if (current.count > maxInteractions) {
       logger.warn(`Interaction ${action} has exceeded session limit`, {
         maxInteractions,
@@ -271,7 +263,7 @@ export class WebEvalAgentAnalyzer {
     method: string,
     status: number,
     timing: number,
-    size = 0,
+    size = ZERO,
   ): void {
     if (
       !this.config.webEvalAgent.enabled ||
@@ -308,7 +300,7 @@ export class WebEvalAgentAnalyzer {
     });
 
     // 保持数组大小在合理范围内
-    if (this.pageLoads.length > 100) {
+    if (this.pageLoads.length > PERCENTAGE_FULL) {
       this.pageLoads = this.pageLoads.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
@@ -331,7 +323,7 @@ export class WebEvalAgentAnalyzer {
     });
 
     // 保持数组大小在合理范围内
-    if (this.errors.length > 100) {
+    if (this.errors.length > PERCENTAGE_FULL) {
       this.errors = this.errors.slice(OFFSET_NEGATIVE_EXTRA_LARGE);
     }
   }
@@ -356,15 +348,15 @@ export class WebEvalAgentAnalyzer {
     const interactions = Array.from(this.interactions.entries());
     const totalInteractions = interactions.reduce(
       (sum, [, metrics]) => sum + metrics.count,
-      0,
+      ZERO,
     );
     const totalTime = interactions.reduce(
       (sum, [, metrics]) => sum + metrics.totalTime,
-      0,
+      ZERO,
     );
     const totalSuccesses = interactions.reduce(
       (sum, [, metrics]) => sum + metrics.successCount,
-      0,
+      ZERO,
     );
 
     const topSlowActions = interactions
@@ -375,22 +367,22 @@ export class WebEvalAgentAnalyzer {
         successRate: metrics.successCount / metrics.count,
       }))
       .sort((a, b) => b.averageTime - a.averageTime)
-      .slice(0, COUNT_TEN);
+      .slice(ZERO, COUNT_TEN);
 
     const recommendations: string[] = [];
 
     // 生成建议
-    if (topSlowActions.length > 0) {
-      const slowestAction = topSlowActions[0];
-      if (slowestAction && slowestAction.averageTime > 1000) {
+    if (topSlowActions.length > ZERO) {
+      const slowestAction = topSlowActions[ZERO];
+      if (slowestAction && slowestAction.averageTime > ANIMATION_DURATION_VERY_SLOW) {
         recommendations.push(
-          `Action "${slowestAction.action}" is slow (${slowestAction.averageTime.toFixed(0)}ms average)`,
+          `Action "${slowestAction.action}" is slow (${slowestAction.averageTime.toFixed(ZERO)}ms average)`,
         );
       }
     }
 
     const lowSuccessActions = topSlowActions.filter((a) => a.successRate < MAGIC_0_9);
-    if (lowSuccessActions.length > 0) {
+    if (lowSuccessActions.length > ZERO) {
       recommendations.push(
         `${lowSuccessActions.length} actions have low success rates. Consider improving error handling.`,
       );
@@ -399,8 +391,8 @@ export class WebEvalAgentAnalyzer {
     return {
       totalInteractions,
       uniqueActions: interactions.length,
-      averageResponseTime: totalTime / totalInteractions || 0,
-      successRate: totalSuccesses / totalInteractions || 0,
+      averageResponseTime: totalTime / totalInteractions || ZERO,
+      successRate: totalSuccesses / totalInteractions || ZERO,
       topSlowActions,
       recommendations,
     };
@@ -431,19 +423,19 @@ export class WebEvalAgentAnalyzer {
     const totalRequests = this.networkRequests.length;
     const totalTime = this.networkRequests.reduce(
       (sum, req) => sum + req.timing,
-      0,
+      ZERO,
     );
     const successfulRequests = this.networkRequests.filter(
-      (req) => req.status >= 200 && req.status < ANIMATION_DURATION_NORMAL,
+      (req) => req.status >= HTTP_OK_CONST && req.status < ANIMATION_DURATION_NORMAL,
     );
     const totalDataTransferred = this.networkRequests.reduce(
       (sum, req) => sum + req.size,
-      0,
+      ZERO,
     );
 
     const slowestRequests = [...this.networkRequests]
       .sort((a, b) => b.timing - a.timing)
-      .slice(0, COUNT_TEN)
+      .slice(ZERO, COUNT_TEN)
       .map((req) => ({
         url: req.url,
         method: req.method,
@@ -452,7 +444,7 @@ export class WebEvalAgentAnalyzer {
       }));
 
     const errorRequests = this.networkRequests
-      .filter((req) => req.status >= 400)
+      .filter((req) => req.status >= HTTP_BAD_REQUEST_CONST)
       .map((req) => ({
         url: req.url,
         method: req.method,
@@ -462,8 +454,8 @@ export class WebEvalAgentAnalyzer {
 
     return {
       totalRequests,
-      averageResponseTime: totalTime / totalRequests || 0,
-      successRate: successfulRequests.length / totalRequests || 0,
+      averageResponseTime: totalTime / totalRequests || ZERO,
+      successRate: successfulRequests.length / totalRequests || ZERO,
       totalDataTransferred,
       slowestRequests,
       errorRequests,
@@ -486,22 +478,22 @@ export class WebEvalAgentAnalyzer {
     const totalPageLoads = this.pageLoads.length;
     const totalLoadTime = this.pageLoads.reduce((sum, page) => {
       return (
-        sum + (page.timing.loadComplete || page.timing.domContentLoaded || 0)
+        sum + (page.timing.loadComplete || page.timing.domContentLoaded || ZERO)
       );
-    }, 0);
+    }, ZERO);
 
     const slowestPages = this.pageLoads
       .map((page) => ({
         url: page.url,
-        loadTime: page.timing.loadComplete || page.timing.domContentLoaded || 0,
+        loadTime: page.timing.loadComplete || page.timing.domContentLoaded || ZERO,
         timestamp: page.timestamp,
       }))
       .sort((a, b) => b.loadTime - a.loadTime)
-      .slice(0, COUNT_TEN);
+      .slice(ZERO, COUNT_TEN);
 
     return {
       totalPageLoads,
-      averageLoadTime: totalLoadTime / totalPageLoads || 0,
+      averageLoadTime: totalLoadTime / totalPageLoads || ZERO,
       slowestPages,
     };
   }
@@ -512,8 +504,8 @@ export class WebEvalAgentAnalyzer {
    */
   reset(): void {
     this.interactions.clear();
-    this.networkRequests.length = 0;
-    this.pageLoads.length = 0;
-    this.errors.length = 0;
+    this.networkRequests.length = ZERO;
+    this.pageLoads.length = ZERO;
+    this.errors.length = ZERO;
   }
 }

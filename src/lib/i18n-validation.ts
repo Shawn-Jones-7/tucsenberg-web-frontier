@@ -2,6 +2,7 @@
  * 企业级国际化验证工具
  * 提供翻译完整性检查、质量验证和同步机制
  */
+import { ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { routing } from '@/i18n/routing';
 
 export interface TranslationValidationResult {
@@ -90,12 +91,12 @@ export async function validateTranslations(): Promise<TranslationValidationResul
     const totalKeys = allKeys.size * routing.locales.length;
     const missingCount = missingKeys.length;
     const coverage =
-      totalKeys > 0 ? ((totalKeys - missingCount) / totalKeys) * 100 : 100;
+      totalKeys > ZERO ? ((totalKeys - missingCount) / totalKeys) * PERCENTAGE_FULL : PERCENTAGE_FULL;
 
     return {
       isValid:
         errors.filter((e) => e.severity === 'critical' || e.severity === 'high')
-          .length === 0,
+          .length === ZERO,
       errors,
       warnings,
       coverage,
@@ -115,7 +116,7 @@ export async function validateTranslations(): Promise<TranslationValidationResul
         },
       ],
       warnings: [],
-      coverage: 0,
+      coverage: ZERO,
       missingKeys: [],
       inconsistentKeys: [],
     };
@@ -170,9 +171,9 @@ export function generateTranslationReport(
   let report = '# 翻译质量报告\n\n';
 
   report += `## 总体状态: ${isValid ? '✅ 通过' : '❌ 失败'}\n`;
-  report += `## 覆盖率: ${coverage.toFixed(1)}%\n\n`;
+  report += `## 覆盖率: ${coverage.toFixed(ONE)}%\n\n`;
 
-  if (errors.length > 0) {
+  if (errors.length > ZERO) {
     report += '## 错误\n\n';
     errors.forEach((error) => {
       report += `- **${error.severity.toUpperCase()}**: ${error.message} (${error.locale}.${error.key})\n`;
@@ -180,7 +181,7 @@ export function generateTranslationReport(
     report += '\n';
   }
 
-  if (warnings.length > 0) {
+  if (warnings.length > ZERO) {
     report += '## 警告\n\n';
     warnings.forEach((warning) => {
       report += `- **${warning.type}**: ${warning.message} (${warning.locale}.${warning.key})\n`;
@@ -191,7 +192,7 @@ export function generateTranslationReport(
     report += '\n';
   }
 
-  if (missingKeys.length > 0) {
+  if (missingKeys.length > ZERO) {
     report += '## 缺失的翻译键\n\n';
     missingKeys.forEach((key) => {
       report += `- ${key}\n`;
@@ -313,7 +314,7 @@ function checkPlaceholderConsistency(
 ): void {
   const placeholders = value.match(/\{[^}]+\}/g) || [];
   const referencePlaceholders = getNestedValue(
-    translations[routing.locales[0]] || {},
+    translations[routing.locales[ZERO]] || {},
     key,
   );
   if (typeof referencePlaceholders === 'string') {
@@ -352,7 +353,7 @@ export function createTranslationSyncChecker() {
     },
 
     getCoverage(): number {
-      return lastValidation?.coverage ?? 0;
+      return lastValidation?.coverage ?? ZERO;
     },
   };
 }

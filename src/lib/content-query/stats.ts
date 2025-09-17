@@ -2,9 +2,10 @@
  * 内容统计函数
  */
 
-import type { ContentStats, Locale } from '@/types/content';
-import { getContentConfig } from '@/lib/content-utils';
+import { ZERO } from "@/constants/magic-numbers";
 import { getAllPages, getAllPosts } from '@/lib/content-query/queries';
+import { getContentConfig } from '@/lib/content-utils';
+import type { ContentStats, Locale } from '@/types/content';
 
 /**
  * Get content statistics
@@ -12,12 +13,12 @@ import { getAllPages, getAllPosts } from '@/lib/content-query/queries';
 export function getContentStats(): ContentStats {
   const config = getContentConfig();
   const stats: ContentStats = {
-    totalPosts: 0,
-    totalPages: 0,
+    totalPosts: ZERO,
+    totalPages: ZERO,
     postsByLocale: {} as Record<Locale, number>,
     pagesByLocale: {} as Record<Locale, number>,
-    totalTags: 0,
-    totalCategories: 0,
+    totalTags: ZERO,
+    totalCategories: ZERO,
     lastUpdated: new Date().toISOString(),
   };
 

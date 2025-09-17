@@ -1,6 +1,6 @@
-import { getTranslations } from 'next-intl/server';
-import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
 import { type PageType } from '@/config/paths';
+import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
+import { getTranslations } from 'next-intl/server';
 import {
   generateArticleData,
   generateBreadcrumbData,
@@ -9,6 +9,7 @@ import {
   generateWebSiteData,
 } from './structured-data-generators';
 // 导入需要的函数
+import { COUNT_PAIR } from "@/constants/magic-numbers";
 import {
   generateArticleSchema,
   generateProductSchema,
@@ -74,7 +75,7 @@ export async function generateLocalizedStructuredData(
  * 生成JSON-LD脚本标签
  */
 export function generateJSONLD(structuredData: unknown): string {
-  const JSON_INDENT = 2;
+  const JSON_INDENT = COUNT_PAIR;
   return JSON.stringify(structuredData, null, JSON_INDENT);
 }
 
@@ -86,7 +87,7 @@ export {
   generateBreadcrumbSchema,
   generateFAQSchema,
   generateLocalBusinessSchema,
-  generateProductSchema,
+  generateProductSchema
 } from './structured-data-helpers';
 
 // 函数重载：根据页面类型返回不同长度的元组，便于测试中按索引访问

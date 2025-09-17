@@ -15,7 +15,7 @@ import {
   APIErrorSimulator,
   ErrorRecoveryTester,
   NetworkErrorSimulator,
-} from './setup';
+} from '@/tests/error-scenarios/setup';
 
 // Mock fetch for testing
 const originalFetch = global.fetch;

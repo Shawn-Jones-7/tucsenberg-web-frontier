@@ -3,6 +3,7 @@
  * Translation Preloader Strategy Manager
  */
 
+import { ONE } from "@/constants/magic-numbers";
 import type {
   PreloaderMetrics,
   PreloadStrategy,
@@ -104,7 +105,7 @@ export class PreloadStrategyManager {
 
     if (conditions.maxErrorRate) {
       const errorRate =
-        metrics.failedPreloads / Math.max(metrics.totalPreloads, 1);
+        metrics.failedPreloads / Math.max(metrics.totalPreloads, ONE);
       if (errorRate > conditions.maxErrorRate) {
         return false;
       }

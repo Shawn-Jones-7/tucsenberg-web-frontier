@@ -1,9 +1,5 @@
 'use client';
 
-import type { ReactNode } from 'react';
-import { Component, type ErrorInfo } from 'react';
-import { useTranslations } from 'next-intl';
-import { logger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -12,6 +8,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
+import { useTranslations } from 'next-intl';
+import type { ReactNode } from 'react';
+import { Component, type ErrorInfo } from 'react';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -115,7 +116,7 @@ function ErrorFallback({ onReset, error: _error }: ErrorFallbackProps) {
             variant='outline'
             className='gap-2'
             data-testid='error-boundary-button'
-            tabIndex={0}
+            tabIndex={ZERO}
           >
             <span
               className='h-4 w-4'

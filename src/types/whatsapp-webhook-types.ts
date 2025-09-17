@@ -4,7 +4,7 @@ import type {
   WhatsAppContact,
   WhatsAppError,
   WhatsAppMessage,
-} from './whatsapp-base-types';
+} from '@/types/whatsapp-base-types';
 import type {
   CompleteWebhookConfig,
   MessageContext,
@@ -26,7 +26,7 @@ import type {
   WebhookTransformConfig,
   WebhookVerificationRequest,
   WebhookVerificationResponse,
-} from './whatsapp-webhook-base';
+} from '@/types/whatsapp-webhook-base';
 import type {
   AccountUpdateEvent,
   EventBatch,
@@ -45,7 +45,7 @@ import type {
   WebhookErrorEvent,
   WebhookEvent,
   WebhookProcessor,
-} from './whatsapp-webhook-events';
+} from '@/types/whatsapp-webhook-events';
 import type {
   INCOMING_MESSAGE_TYPES,
   IncomingAudioMessage,
@@ -65,7 +65,7 @@ import type {
   IncomingWhatsAppMessage,
   INTERACTIVE_MESSAGE_TYPES,
   MEDIA_MESSAGE_TYPES,
-} from './whatsapp-webhook-messages';
+} from '@/types/whatsapp-webhook-messages';
 import {
   createWebhookError,
   createWebhookVerificationResponse,
@@ -73,7 +73,7 @@ import {
   isTimestampValid,
   isWebhookVerificationRequest,
   WebhookUtils,
-} from './whatsapp-webhook-utils';
+} from '@/types/whatsapp-webhook-utils';
 
 /**
  * WhatsApp Webhook 类型定义 - 主入口
@@ -106,7 +106,7 @@ export type {
   WebhookField,
   WebhookObjectType,
   WebhookChangeField,
-} from './whatsapp-webhook-base';
+} from '@/types/whatsapp-webhook-base';
 
 // 常量和函数导出
 export {
@@ -118,7 +118,7 @@ export {
   isMessageStatusUpdate,
   isWebhookError,
   isWebhookVerificationRequest,
-} from './whatsapp-webhook-base';
+} from '@/types/whatsapp-webhook-base';
 
 export type {
   IncomingTextMessage,
@@ -139,7 +139,7 @@ export type {
   IncomingMessageType,
   MediaMessageType,
   InteractiveMessageType,
-} from './whatsapp-webhook-messages';
+} from '@/types/whatsapp-webhook-messages';
 
 export {
   INCOMING_MESSAGE_TYPES,
@@ -164,7 +164,7 @@ export {
   getMessageText,
   getMessageMediaId,
   hasMessageContext,
-} from './whatsapp-webhook-messages';
+} from '@/types/whatsapp-webhook-messages';
 
 export type {
   MessageReceivedEvent,
@@ -186,7 +186,7 @@ export type {
   WebhookEventType,
   MessageEventType,
   SystemEventType,
-} from './whatsapp-webhook-events';
+} from '@/types/whatsapp-webhook-events';
 
 export {
   WEBHOOK_EVENT_TYPES,
@@ -208,7 +208,7 @@ export {
   shouldRetryEvent,
   getEventTimestamp,
   isEventExpired,
-} from './whatsapp-webhook-events';
+} from '@/types/whatsapp-webhook-events';
 
 export type {
   WebhookParsingResult,
@@ -222,14 +222,14 @@ export type {
   WebhookDebugInfo,
   EventAggregationResult,
   WebhookUtils,
-} from './whatsapp-webhook-utils';
+} from '@/types/whatsapp-webhook-utils';
 
 export {
   createWebhookVerificationResponse,
   createWebhookError,
   isRetryableError,
   isTimestampValid,
-} from './whatsapp-webhook-utils';
+} from '@/types/whatsapp-webhook-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 

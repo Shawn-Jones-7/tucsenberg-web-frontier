@@ -1,20 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { Turnstile } from '@marsidev/react-turnstile';
-import { useTranslations } from 'next-intl';
-import { useForm } from 'react-hook-form';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import type { ContactFormData, FormSubmissionStatus } from '@/lib/validations';
 import { contactFormSchema } from '@/lib/validations';
-import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Turnstile } from '@marsidev/react-turnstile';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
 import {
-  AdditionalFields,
-  CheckboxFields,
-  ContactFields,
-  NameFields,
+    AdditionalFields,
+    CheckboxFields,
+    ContactFields,
+    NameFields,
 } from './contact-form-fields';
 
 /**
@@ -168,9 +169,9 @@ function useContactForm() {
   };
 
   // Rate limiting check (5 minutes = 300000ms)
-  const RATE_LIMIT_MINUTES = 5;
+  const RATE_LIMIT_MINUTES = COUNT_FIVE;
   const SECONDS_PER_MINUTE = 60;
-  const MS_PER_SECOND = 1000;
+  const MS_PER_SECOND = ANIMATION_DURATION_VERY_SLOW;
   const RATE_LIMIT_WINDOW =
     RATE_LIMIT_MINUTES * SECONDS_PER_MINUTE * MS_PER_SECOND;
   const isRateLimited =

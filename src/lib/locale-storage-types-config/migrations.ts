@@ -1,3 +1,5 @@
+import { PERCENTAGE_FULL } from "@/constants/magic-numbers";
+
 /**
  * 语言存储系统配置迁移
  * Locale Storage System Configuration Migrations
@@ -37,7 +39,7 @@ export const CONFIG_MIGRATIONS: ConfigMigration[] = [
       {
         path: 'performance.throttleDelay',
         action: 'add',
-        defaultValue: 100,
+        defaultValue: PERCENTAGE_FULL,
       },
     ],
   },

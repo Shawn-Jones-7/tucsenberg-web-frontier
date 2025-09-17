@@ -1,0 +1,15 @@
+{
+  "timestamp": "2025-09-16T17:29:56.928Z",
+  "options": {
+    "write": false,
+    "dryRun": true,
+    "files": "../../test-ast-replacement.ts",
+    "limit": 1
+  },
+  "summary": {
+    "filesProcessed": 1,
+    "filesModified": 0,
+    "totalReplacements": 0
+  },
+  "logs": []
+}

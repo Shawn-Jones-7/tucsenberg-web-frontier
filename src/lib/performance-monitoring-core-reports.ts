@@ -1,4 +1,3 @@
-import { BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_0_3, MAGIC_0_6, MAGIC_20, MAGIC_40, MAGIC_80, PERCENTAGE_HALF, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
 
 /**
  * 性能监控核心报告生成
@@ -7,6 +6,8 @@ import { BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_0_3, MAGIC_0_
  * 负责性能报告的生成、评分计算和建议提供功能
  */
 
+import { DEC_0_4, MAGIC_0_2 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_0_3, MAGIC_0_5, MAGIC_0_6, MAGIC_1_5, MAGIC_20, MAGIC_40, MAGIC_80, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import type {
   BundlePerformanceData,
   ComponentPerformanceData,
@@ -85,7 +86,7 @@ export class PerformanceReportGenerator {
    */
   generateReport(
     metrics: PerformanceMetrics[],
-    timeWindow = SECONDS_PER_MINUTE * 1000,
+    timeWindow = SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   ): PerformanceReport {
     const now = Date.now();
     const windowStart = now - timeWindow;
@@ -124,13 +125,13 @@ export class PerformanceReportGenerator {
     const sources = [...new Set(metrics.map((m) => m.source))];
     const types = [...new Set(metrics.map((m) => m.type))];
 
-    const timeSpanMinutes = (windowEnd - windowStart) / (SECONDS_PER_MINUTE * 1000);
+    const timeSpanMinutes = (windowEnd - windowStart) / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
     const averageMetricsPerMinute =
-      timeSpanMinutes > 0 ? metrics.length / timeSpanMinutes : 0;
+      timeSpanMinutes > ZERO ? metrics.length / timeSpanMinutes : ZERO;
 
     return {
       totalMetrics: metrics.length,
-      recentMetrics: metrics.filter((m) => windowEnd - m.timestamp < SECONDS_PER_MINUTE * 1000)
+      recentMetrics: metrics.filter((m) => windowEnd - m.timestamp < SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW)
         .length, // 最近1分钟
       sources,
       types,
@@ -151,18 +152,18 @@ export class PerformanceReportGenerator {
 
     // 组件性能建议
     const componentMetrics = metrics.filter((m) => m.type === 'component');
-    if (componentMetrics.length > 0) {
+    if (componentMetrics.length > ZERO) {
       const slowComponents = componentMetrics.filter((m) => {
         if (this.isComponentData(m.data)) {
           return (
-            (Number(m.data.renderTime) || 0) >
-            (this.config.component?.thresholds?.renderTime || 100)
+            (Number(m.data.renderTime) || ZERO) >
+            (this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL)
           );
         }
         return false;
       });
 
-      if (slowComponents.length > 0) {
+      if (slowComponents.length > ZERO) {
         recommendations.push(
           `发现 ${slowComponents.length} 个组件渲染时间超过阈值，建议优化组件性能`,
         );
@@ -171,10 +172,10 @@ export class PerformanceReportGenerator {
       const avgRenderTime =
         componentMetrics.reduce((sum, m) => {
           if (this.isComponentData(m.data)) {
-            return sum + (Number(m.data.renderTime) || 0);
+            return sum + (Number(m.data.renderTime) || ZERO);
           }
           return sum;
-        }, 0) / componentMetrics.length;
+        }, ZERO) / componentMetrics.length;
       if (avgRenderTime > PERCENTAGE_HALF) {
         recommendations.push(
           '组件平均渲染时间较高，考虑使用 React.memo 或 useMemo 优化',
@@ -184,18 +185,18 @@ export class PerformanceReportGenerator {
 
     // 网络性能建议
     const networkMetrics = metrics.filter((m) => m.type === 'network');
-    if (networkMetrics.length > 0) {
+    if (networkMetrics.length > ZERO) {
       const slowRequests = networkMetrics.filter((m) => {
         if (this.isNetworkData(m.data)) {
           return (
-            (Number(m.data.responseTime) || 0) >
+            (Number(m.data.responseTime) || ZERO) >
             (this.config.network?.thresholds?.responseTime || 1000)
           );
         }
         return false;
       });
 
-      if (slowRequests.length > 0) {
+      if (slowRequests.length > ZERO) {
         recommendations.push(
           `发现 ${slowRequests.length} 个网络请求响应时间超过阈值，建议优化API性能`,
         );
@@ -204,10 +205,10 @@ export class PerformanceReportGenerator {
       const avgResponseTime =
         networkMetrics.reduce((sum, m) => {
           if (this.isNetworkData(m.data)) {
-            return sum + (Number(m.data.responseTime) || 0);
+            return sum + (Number(m.data.responseTime) || ZERO);
           }
           return sum;
-        }, 0) / networkMetrics.length;
+        }, ZERO) / networkMetrics.length;
       if (avgResponseTime > 500) {
         recommendations.push('网络请求平均响应时间较高，考虑使用缓存或CDN优化');
       }
@@ -215,18 +216,18 @@ export class PerformanceReportGenerator {
 
     // 打包大小建议
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
-    if (bundleMetrics.length > 0) {
+    if (bundleMetrics.length > ZERO) {
       const largeBundles = bundleMetrics.filter((m) => {
         if (this.isBundleData(m.data)) {
           return (
-            (Number(m.data.size) || 0) >
+            (Number(m.data.size) || ZERO) >
             (this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB)
           );
         }
         return false;
       });
 
-      if (largeBundles.length > 0) {
+      if (largeBundles.length > ZERO) {
         recommendations.push(
           `发现 ${largeBundles.length} 个打包文件大小超过阈值，建议进行代码分割`,
         );
@@ -234,10 +235,10 @@ export class PerformanceReportGenerator {
 
       const totalBundleSize = bundleMetrics.reduce((sum, m) => {
         if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || 0);
+          return sum + (Number(m.data.size) || ZERO);
         }
         return sum;
-      }, 0);
+      }, ZERO);
       if (totalBundleSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
         // 5MB
         recommendations.push('总打包大小较大，建议使用动态导入和懒加载优化');
@@ -245,11 +246,11 @@ export class PerformanceReportGenerator {
     }
 
     // 通用建议
-    if (metrics.length > 100) {
+    if (metrics.length > PERCENTAGE_FULL) {
       recommendations.push('性能指标数量较多，建议调整监控频率或增加数据清理');
     }
 
-    if (recommendations.length === 0) {
+    if (recommendations.length === ZERO) {
       recommendations.push('当前性能表现良好，继续保持！');
     }
 
@@ -268,7 +269,7 @@ export class PerformanceReportGenerator {
     const bundleScore = this.calculateBundleScore(metrics);
 
     // 计算总体评分（加权平均）
-    const weights = { component: 0.4, network: 0.4, bundle: 0.2 };
+    const weights = { component: DEC_0_4, network: DEC_0_4, bundle: MAGIC_0_2 };
     const overall =
       componentScore * weights.component +
       networkScore * weights.network +
@@ -288,21 +289,21 @@ export class PerformanceReportGenerator {
    */
   private calculateComponentScore(metrics: PerformanceMetrics[]): number {
     const componentMetrics = metrics.filter((m) => m.type === 'component');
-    if (componentMetrics.length === 0) return 100;
+    if (componentMetrics.length === ZERO) return PERCENTAGE_FULL;
 
-    const threshold = this.config.component?.thresholds?.renderTime || 100;
+    const threshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
     const avgRenderTime =
       componentMetrics.reduce((sum, m) => {
         if (this.isComponentData(m.data)) {
-          return sum + (Number(m.data.renderTime) || 0);
+          return sum + (Number(m.data.renderTime) || ZERO);
         }
         return sum;
-      }, 0) / componentMetrics.length;
+      }, ZERO) / componentMetrics.length;
 
     // 评分算法：基于平均渲染时间与阈值的比较
-    if (avgRenderTime <= threshold * 0.5) return 100;
+    if (avgRenderTime <= threshold * MAGIC_0_5) return PERCENTAGE_FULL;
     if (avgRenderTime <= threshold) return MAGIC_80;
-    if (avgRenderTime <= threshold * 1.5) return SECONDS_PER_MINUTE;
+    if (avgRenderTime <= threshold * MAGIC_1_5) return SECONDS_PER_MINUTE;
     if (avgRenderTime <= threshold * COUNT_PAIR) return MAGIC_40;
     return MAGIC_20;
   }
@@ -313,22 +314,22 @@ export class PerformanceReportGenerator {
    */
   private calculateNetworkScore(metrics: PerformanceMetrics[]): number {
     const networkMetrics = metrics.filter((m) => m.type === 'network');
-    if (networkMetrics.length === 0) return 100;
+    if (networkMetrics.length === ZERO) return PERCENTAGE_FULL;
 
     const threshold = this.config.network?.thresholds?.responseTime || 1000;
     const avgResponseTime =
       networkMetrics.reduce((sum, m) => {
         if (this.isNetworkData(m.data)) {
-          return sum + (Number(m.data.responseTime) || 0);
+          return sum + (Number(m.data.responseTime) || ZERO);
         }
         return sum;
-      }, 0) / networkMetrics.length;
+      }, ZERO) / networkMetrics.length;
 
     // 评分算法：基于平均响应时间与阈值的比较
-    if (avgResponseTime <= threshold * MAGIC_0_3) return 100;
+    if (avgResponseTime <= threshold * MAGIC_0_3) return PERCENTAGE_FULL;
     if (avgResponseTime <= threshold * MAGIC_0_6) return MAGIC_80;
     if (avgResponseTime <= threshold) return SECONDS_PER_MINUTE;
-    if (avgResponseTime <= threshold * 1.5) return MAGIC_40;
+    if (avgResponseTime <= threshold * MAGIC_1_5) return MAGIC_40;
     return MAGIC_20;
   }
 
@@ -338,18 +339,18 @@ export class PerformanceReportGenerator {
    */
   private calculateBundleScore(metrics: PerformanceMetrics[]): number {
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
-    if (bundleMetrics.length === 0) return 100;
+    if (bundleMetrics.length === ZERO) return PERCENTAGE_FULL;
 
     const threshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB; // 1MB
     const totalSize = bundleMetrics.reduce((sum, m) => {
       if (this.isBundleData(m.data)) {
-        return sum + (Number(m.data.size) || 0);
+        return sum + (Number(m.data.size) || ZERO);
       }
       return sum;
-    }, 0);
+    }, ZERO);
 
     // 评分算法：基于总打包大小与阈值的比较
-    if (totalSize <= threshold * 0.5) return 100;
+    if (totalSize <= threshold * MAGIC_0_5) return PERCENTAGE_FULL;
     if (totalSize <= threshold) return MAGIC_80;
     if (totalSize <= threshold * COUNT_PAIR) return SECONDS_PER_MINUTE;
     if (totalSize <= threshold * COUNT_TRIPLE) return MAGIC_40;
@@ -402,11 +403,11 @@ export class PerformanceReportGenerator {
     // 组件分析
     const componentMetrics = metrics.filter((m) => m.type === 'component');
     const componentThreshold =
-      this.config.component?.thresholds?.renderTime || 100;
+      this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
     const slowestComponents = componentMetrics
       .filter((m) => {
         if (this.isComponentData(m.data)) {
-          return (Number(m.data.renderTime) || 0) > componentThreshold;
+          return (Number(m.data.renderTime) || ZERO) > componentThreshold;
         }
         return false;
       })
@@ -414,18 +415,18 @@ export class PerformanceReportGenerator {
         if (this.isComponentData(m.data)) {
           return {
             name: m.id || m.type,
-            value: Number(m.data.renderTime) || 0,
+            value: Number(m.data.renderTime) || ZERO,
             threshold: componentThreshold,
           };
         }
         return {
           name: m.id || m.type,
-          value: 0,
+          value: ZERO,
           threshold: componentThreshold,
         };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, COUNT_FIVE);
+      .slice(ZERO, COUNT_FIVE);
 
     // 网络分析
     const networkMetrics = metrics.filter((m) => m.type === 'network');
@@ -434,7 +435,7 @@ export class PerformanceReportGenerator {
     const slowestRequests = networkMetrics
       .filter((m) => {
         if (this.isNetworkData(m.data)) {
-          return (Number(m.data.responseTime) || 0) > networkThreshold;
+          return (Number(m.data.responseTime) || ZERO) > networkThreshold;
         }
         return false;
       })
@@ -442,14 +443,14 @@ export class PerformanceReportGenerator {
         if (this.isNetworkData(m.data)) {
           return {
             name: m.id || m.type,
-            value: Number(m.data.responseTime) || 0,
+            value: Number(m.data.responseTime) || ZERO,
             threshold: networkThreshold,
           };
         }
-        return { name: m.id || m.type, value: 0, threshold: networkThreshold };
+        return { name: m.id || m.type, value: ZERO, threshold: networkThreshold };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, COUNT_FIVE);
+      .slice(ZERO, COUNT_FIVE);
 
     // 打包分析
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
@@ -457,7 +458,7 @@ export class PerformanceReportGenerator {
     const largestBundles = bundleMetrics
       .filter((m) => {
         if (this.isBundleData(m.data)) {
-          return (Number(m.data.size) || 0) > bundleThreshold;
+          return (Number(m.data.size) || ZERO) > bundleThreshold;
         }
         return false;
       })
@@ -465,14 +466,14 @@ export class PerformanceReportGenerator {
         if (this.isBundleData(m.data)) {
           return {
             name: m.id || m.type,
-            value: Number(m.data.size) || 0,
+            value: Number(m.data.size) || ZERO,
             threshold: bundleThreshold,
           };
         }
-        return { name: m.id || m.type, value: 0, threshold: bundleThreshold };
+        return { name: m.id || m.type, value: ZERO, threshold: bundleThreshold };
       })
       .sort((a, b) => b.value - a.value)
-      .slice(0, COUNT_FIVE);
+      .slice(ZERO, COUNT_FIVE);
 
     return {
       overview,
@@ -483,10 +484,10 @@ export class PerformanceReportGenerator {
           averageRenderTime:
             componentMetrics.reduce((sum, m) => {
               if (this.isComponentData(m.data)) {
-                return sum + (Number(m.data.renderTime) || 0);
+                return sum + (Number(m.data.renderTime) || ZERO);
               }
               return sum;
-            }, 0) / componentMetrics.length || 0,
+            }, ZERO) / componentMetrics.length || ZERO,
         },
         networkAnalysis: {
           slowestRequests,
@@ -494,20 +495,20 @@ export class PerformanceReportGenerator {
           averageResponseTime:
             networkMetrics.reduce((sum, m) => {
               if (this.isNetworkData(m.data)) {
-                return sum + (Number(m.data.responseTime) || 0);
+                return sum + (Number(m.data.responseTime) || ZERO);
               }
               return sum;
-            }, 0) / networkMetrics.length || 0,
+            }, ZERO) / networkMetrics.length || ZERO,
         },
         bundleAnalysis: {
           largestBundles,
           sizeDistribution: this.calculateDistribution(bundleMetrics),
           totalSize: bundleMetrics.reduce((sum, m) => {
             if (this.isBundleData(m.data)) {
-              return sum + (Number(m.data.size) || 0);
+              return sum + (Number(m.data.size) || ZERO);
             }
             return sum;
-          }, 0),
+          }, ZERO),
         },
       },
       trends: {
@@ -529,7 +530,7 @@ export class PerformanceReportGenerator {
 
     metrics.forEach((metric) => {
       const key = metric.id || metric.type;
-      distribution[key] = (distribution[key] || 0) + 1;
+      distribution[key] = (distribution[key] || ZERO) + ONE;
     });
 
     return distribution;
@@ -548,34 +549,34 @@ export class PerformanceReportGenerator {
     const sortedMetrics = metrics.sort((a, b) => a.timestamp - b.timestamp);
     const midPoint = Math.floor(sortedMetrics.length / COUNT_PAIR);
 
-    const firstHalf = sortedMetrics.slice(0, midPoint);
+    const firstHalf = sortedMetrics.slice(ZERO, midPoint);
     const secondHalf = sortedMetrics.slice(midPoint);
 
     const firstAvg =
       firstHalf.reduce((sum, m) => {
         if (this.isComponentData(m.data)) {
-          return sum + (Number(m.data.renderTime) || 0);
+          return sum + (Number(m.data.renderTime) || ZERO);
         } else if (this.isNetworkData(m.data)) {
-          return sum + (Number(m.data.responseTime) || 0);
+          return sum + (Number(m.data.responseTime) || ZERO);
         } else if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || 0);
+          return sum + (Number(m.data.size) || ZERO);
         }
         return sum;
-      }, 0) / firstHalf.length;
+      }, ZERO) / firstHalf.length;
 
     const secondAvg =
       secondHalf.reduce((sum, m) => {
         if (this.isComponentData(m.data)) {
-          return sum + (Number(m.data.renderTime) || 0);
+          return sum + (Number(m.data.renderTime) || ZERO);
         } else if (this.isNetworkData(m.data)) {
-          return sum + (Number(m.data.responseTime) || 0);
+          return sum + (Number(m.data.responseTime) || ZERO);
         } else if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || 0);
+          return sum + (Number(m.data.size) || ZERO);
         }
         return sum;
-      }, 0) / secondHalf.length;
+      }, ZERO) / secondHalf.length;
 
-    const changePercent = ((secondAvg - firstAvg) / firstAvg) * 100;
+    const changePercent = ((secondAvg - firstAvg) / firstAvg) * PERCENTAGE_FULL;
 
     if (changePercent < -COUNT_FIVE) return 'improving'; // 性能提升
     if (changePercent > COUNT_FIVE) return 'degrading'; // 性能下降

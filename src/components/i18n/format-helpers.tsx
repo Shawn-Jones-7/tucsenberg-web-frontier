@@ -1,8 +1,9 @@
 'use client';
 
-import { memo } from 'react';
-import { useFormatter, useLocale, useTranslations } from 'next-intl';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import type { DateFormatOptions } from '@/types/i18n-enhanced';
+import { useFormatter, useLocale, useTranslations } from 'next-intl';
+import { memo } from 'react';
 
 interface FormatDateProps {
   date: Date | string | number;
@@ -10,7 +11,7 @@ interface FormatDateProps {
   className?: string;
 }
 
-const MILLISECONDS_PER_DAY = 1000 * 60 * 60 * 24;
+const MILLISECONDS_PER_DAY = ANIMATION_DURATION_VERY_SLOW * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * HOURS_PER_DAY;
 
 const FormatDateComponent = ({
   date,
@@ -30,11 +31,11 @@ const FormatDateComponent = ({
   let formattedDate: string;
 
   if (format === 'relative') {
-    if (diffInDays === 0) {
+    if (diffInDays === ZERO) {
       formattedDate = t('today');
-    } else if (diffInDays === 1) {
+    } else if (diffInDays === ONE) {
       formattedDate = t('yesterday');
-    } else if (diffInDays === -1) {
+    } else if (diffInDays === -ONE) {
       formattedDate = t('tomorrow');
     } else {
       formattedDate = formatter.dateTime(dateObj, {
@@ -114,7 +115,7 @@ const FormatNumberComponent = ({
       if (maximumFractionDigits !== undefined) {
         percentOptions.maximumFractionDigits = maximumFractionDigits;
       }
-      formattedNumber = formatter.number(value / 100, percentOptions as any);
+      formattedNumber = formatter.number(value / PERCENTAGE_FULL, percentOptions as any);
       break;
     }
     default: {
@@ -152,8 +153,8 @@ const PluralComponent = ({ count, category, className }: PluralProps) => {
   const t = useTranslations(`formatting.plurals.${category}`);
 
   const getPluralKey = (count: number): 'zero' | 'one' | 'other' => {
-    if (count === 0) return 'zero';
-    if (count === 1) return 'one';
+    if (count === ZERO) return 'zero';
+    if (count === ONE) return 'one';
     return 'other';
   };
 
@@ -190,10 +191,10 @@ const RichTextComponent = ({ text, values = {}, className }: RichTextProps) => {
     // Process basic markdown-like formatting
     return processed.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/).map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index}>{part.slice(2, -2)}</strong>;
+        return <strong key={index}>{part.slice(COUNT_PAIR, -COUNT_PAIR)}</strong>;
       }
       if (part.startsWith('*') && part.endsWith('*')) {
-        return <em key={index}>{part.slice(1, -1)}</em>;
+        return <em key={index}>{part.slice(ONE, -ONE)}</em>;
       }
       if (part.startsWith('`') && part.endsWith('`')) {
         return (
@@ -201,7 +202,7 @@ const RichTextComponent = ({ text, values = {}, className }: RichTextProps) => {
             key={index}
             className='bg-muted rounded px-1'
           >
-            {part.slice(1, -1)}
+            {part.slice(ONE, -ONE)}
           </code>
         );
       }

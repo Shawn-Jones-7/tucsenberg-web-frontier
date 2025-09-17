@@ -3,9 +3,8 @@
  * Basic Translation Preloader Strategy Implementations
  */
 
+import { COUNT_PAIR, MAGIC_999, ONE, ZERO } from "@/constants/magic-numbers";
 import type { Locale } from '@/types/i18n';
-import { MAGIC_999, COUNT_PAIR } from '@/constants/magic-numbers';
-
 import type {
   IPreloader,
   PreloadOptions,
@@ -65,7 +64,7 @@ export const priorityStrategy: PreloadStrategy = async (
 ) => {
   // 定义语言优先级
   const priorityMap: Record<Locale, number> = {
-    en: 1,
+    en: ONE,
     zh: COUNT_PAIR,
   };
 
@@ -95,7 +94,7 @@ export const lazyStrategy: PreloadStrategy = async (
   options?: PreloadOptions,
 ) => {
   // 只预加载当前最需要的语言
-  if (locales.length > 0) {
-    await preloader.preloadLocale(locales[0]!, options);
+  if (locales.length > ZERO) {
+    await preloader.preloadLocale(locales[ZERO]!, options);
   }
 };

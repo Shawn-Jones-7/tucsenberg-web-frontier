@@ -5,14 +5,12 @@
  * including text, image, interactive, and other specialized message formats.
  */
 
+import { COUNT_TEN, COUNT_TRIPLE, MAGIC_20, MAGIC_4096, ONE, ZERO } from "@/constants/magic-numbers";
+import type { TemplateMessage } from '@/types/whatsapp-template-types';
 import type {
   ContactData,
-  LocationData,
-  WhatsAppContact,
-} from './whatsapp-base-types';
-import type { TemplateMessage } from '@/types/whatsapp-template-types';
-import { MAGIC_4096, COUNT_TRIPLE, MAGIC_20, COUNT_TEN } from '@/constants/magic-numbers';
-
+  LocationData
+} from '@/types/whatsapp-base-types';
 
 // Base Message Structure
 interface BaseMessage {
@@ -333,7 +331,7 @@ export function validateTextMessage(
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  if (!message.text.body || message.text.body.trim().length === 0) {
+  if (!message.text.body || message.text.body.trim().length === ZERO) {
     errors.push('Text message body cannot be empty');
   }
 
@@ -341,7 +339,7 @@ export function validateTextMessage(
     errors.push('Text message body cannot exceed MAGIC_4096 characters');
   }
 
-  return { isValid: errors.length === 0, errors, warnings };
+  return { isValid: errors.length === ZERO, errors, warnings };
 }
 
 export function validateInteractiveMessage(
@@ -352,14 +350,14 @@ export function validateInteractiveMessage(
 
   if (
     !message.interactive.body.text ||
-    message.interactive.body.text.trim().length === 0
+    message.interactive.body.text.trim().length === ZERO
   ) {
     errors.push('Interactive message body cannot be empty');
   }
 
   if (message.interactive.type === 'button') {
     const action = message.interactive.action as InteractiveButtonAction;
-    if (!action.buttons || action.buttons.length === 0) {
+    if (!action.buttons || action.buttons.length === ZERO) {
       errors.push('Button interactive message must have at least one button');
     } else if (action.buttons.length > COUNT_TRIPLE) {
       errors.push('Button interactive message cannot have more than COUNT_TRIPLE buttons');
@@ -367,11 +365,11 @@ export function validateInteractiveMessage(
 
     action.buttons?.forEach((button, index) => {
       if (!button.reply.id || !button.reply.title) {
-        errors.push(`Button ${index + 1} must have both id and title`);
+        errors.push(`Button ${index + ONE} must have both id and title`);
       }
       if (button.reply.title.length > MAGIC_20) {
         warnings.push(
-          `Button ${index + 1} title should not exceed MAGIC_20 characters`,
+          `Button ${index + ONE} title should not exceed MAGIC_20 characters`,
         );
       }
     });
@@ -379,7 +377,7 @@ export function validateInteractiveMessage(
 
   if (message.interactive.type === 'list') {
     const action = message.interactive.action as InteractiveListAction;
-    if (!action.sections || action.sections.length === 0) {
+    if (!action.sections || action.sections.length === ZERO) {
       errors.push('List interactive message must have at least one section');
     } else if (action.sections.length > COUNT_TEN) {
       errors.push('List interactive message cannot have more than COUNT_TEN sections');
@@ -390,25 +388,25 @@ export function validateInteractiveMessage(
     }
 
     action.sections?.forEach((section, sectionIndex) => {
-      if (!section.rows || section.rows.length === 0) {
-        errors.push(`Section ${sectionIndex + 1} must have at least one row`);
+      if (!section.rows || section.rows.length === ZERO) {
+        errors.push(`Section ${sectionIndex + ONE} must have at least one row`);
       } else if (section.rows.length > COUNT_TEN) {
         errors.push(
-          `Section ${sectionIndex + 1} cannot have more than COUNT_TEN rows`,
+          `Section ${sectionIndex + ONE} cannot have more than COUNT_TEN rows`,
         );
       }
 
       section.rows?.forEach((row, rowIndex) => {
         if (!row.id || !row.title) {
           errors.push(
-            `Section ${sectionIndex + 1}, Row ${rowIndex + 1} must have both id and title`,
+            `Section ${sectionIndex + ONE}, Row ${rowIndex + ONE} must have both id and title`,
           );
         }
       });
     });
   }
 
-  return { isValid: errors.length === 0, errors, warnings };
+  return { isValid: errors.length === ZERO, errors, warnings };
 }
 
 // Constants
@@ -438,9 +436,6 @@ export const INTERACTIVE_TYPES = ['button', 'list'] as const;
 
 // Export commonly used types with shorter names
 export type {
-  WhatsAppOutgoingMessage as OutgoingMessage,
-  TextMessage as Text,
   ImageMessage as Image,
-  InteractiveMessage as Interactive,
-  TemplateMessageRequest as Template,
+  InteractiveMessage as Interactive, WhatsAppOutgoingMessage as OutgoingMessage, TemplateMessageRequest as Template, TextMessage as Text
 };

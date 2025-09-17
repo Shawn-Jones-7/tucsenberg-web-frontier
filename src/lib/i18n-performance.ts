@@ -1,10 +1,11 @@
-import { cache } from 'react';
-import { logger } from '@/lib/logger';
 import {
   CACHE_DURATIONS,
   CACHE_LIMITS,
   PERFORMANCE_THRESHOLDS,
 } from '@/constants/i18n-constants';
+import { ANIMATION_DURATION_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HTTP_OK, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
+import { cache } from 'react';
 
 /**
  * 缓存项接口
@@ -79,7 +80,7 @@ export class TranslationCache {
 
   private calculateHitRate(): number {
     // 简化的命中率计算
-    return this.cache.size > 0 ? PERFORMANCE_THRESHOLDS.EXCELLENT : 0;
+    return this.cache.size > ZERO ? PERFORMANCE_THRESHOLDS.EXCELLENT : ZERO;
   }
 }
 
@@ -128,9 +129,9 @@ export async function preloadTranslations(locales: string[]): Promise<void> {
 export class I18nPerformanceMonitor {
   private static metrics = {
     loadTime: [] as number[],
-    cacheHits: 0,
-    cacheMisses: 0,
-    errors: 0,
+    cacheHits: ZERO,
+    cacheMisses: ZERO,
+    errors: ZERO,
   };
 
   static recordLoadTime(time: number): void {
@@ -142,31 +143,31 @@ export class I18nPerformanceMonitor {
   }
 
   static recordCacheHit(): void {
-    this.metrics.cacheHits += 1;
+    this.metrics.cacheHits += ONE;
   }
 
   static recordCacheMiss(): void {
-    this.metrics.cacheMisses += 1;
+    this.metrics.cacheMisses += ONE;
   }
 
   static recordError(): void {
-    this.metrics.errors += 1;
+    this.metrics.errors += ONE;
   }
 
   static getMetrics() {
     const loadTimes = this.metrics.loadTime;
     const avgLoadTime =
-      loadTimes.length > 0
-        ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length
-        : 0;
+      loadTimes.length > ZERO
+        ? loadTimes.reduce((a, b) => a + b, ZERO) / loadTimes.length
+        : ZERO;
 
     const totalRequests = this.metrics.cacheHits + this.metrics.cacheMisses;
     const cacheHitRate =
-      totalRequests > 0
+      totalRequests > ZERO
         ? ((this.metrics.cacheHits / totalRequests) *
             PERFORMANCE_THRESHOLDS.MAX_RESPONSE_TIME) /
-          10
-        : 0;
+          COUNT_TEN
+        : ZERO;
 
     return {
       averageLoadTime: avgLoadTime,
@@ -179,9 +180,9 @@ export class I18nPerformanceMonitor {
   static reset(): void {
     this.metrics = {
       loadTime: [],
-      cacheHits: 0,
-      cacheMisses: 0,
-      errors: 0,
+      cacheHits: ZERO,
+      cacheMisses: ZERO,
+      errors: ZERO,
     };
   }
 }
@@ -189,16 +190,16 @@ export class I18nPerformanceMonitor {
 // 性能基准目标
 export const PERFORMANCE_TARGETS = {
   TRANSLATION_LOAD_TIME: {
-    excellent: 50, // < 50ms
-    good: 100, // < 100ms
-    acceptable: 200, // < 200ms
-    poor: 500, // > 500ms
+    excellent: PERCENTAGE_HALF, // < 50ms
+    good: PERCENTAGE_FULL, // < 100ms
+    acceptable: HTTP_OK, // < 200ms
+    poor: ANIMATION_DURATION_SLOW, // > 500ms
   },
 
   CACHE_HIT_RATE: {
-    excellent: PERFORMANCE_THRESHOLDS.EXCELLENT + 3, // > 98%
+    excellent: PERFORMANCE_THRESHOLDS.EXCELLENT + COUNT_TRIPLE, // > 98%
     good: PERFORMANCE_THRESHOLDS.EXCELLENT, // > 95%
-    acceptable: PERFORMANCE_THRESHOLDS.GOOD + 10, // > 90%
+    acceptable: PERFORMANCE_THRESHOLDS.GOOD + COUNT_TEN, // > 90%
     poor: PERFORMANCE_THRESHOLDS.GOOD, // < 80%
   },
 };
@@ -218,7 +219,7 @@ export function evaluatePerformance(
     true,
   );
 
-  const overallScore = (loadTimeScore + cacheScore) / 2;
+  const overallScore = (loadTimeScore + cacheScore) / COUNT_PAIR;
 
   return {
     loadTimeScore,
@@ -257,9 +258,9 @@ function getPerformanceScore(
 }
 
 function getGrade(score: number): string {
-  if (score >= PERFORMANCE_THRESHOLDS.EXCELLENT - 5) return 'A';
+  if (score >= PERFORMANCE_THRESHOLDS.EXCELLENT - COUNT_FIVE) return 'A';
   if (score >= PERFORMANCE_THRESHOLDS.GOOD) return 'B';
-  if (score >= PERFORMANCE_THRESHOLDS.GOOD - 10) return 'C';
+  if (score >= PERFORMANCE_THRESHOLDS.GOOD - COUNT_TEN) return 'C';
   if (score >= PERFORMANCE_THRESHOLDS.FAIR) return 'D';
   return 'F';
 }

@@ -1,9 +1,10 @@
-import { logger } from '@/lib/logger';
+import { ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import {
   BASELINE_CONSTANTS,
   WEB_VITALS_THRESHOLDS,
 } from '@/constants/performance-constants';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
+import { logger } from '@/lib/logger';
 import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
 
 /**
@@ -59,7 +60,7 @@ export class PerformanceBaselineManager {
       // 保持最新的基准数据
       if (baselines.length > PerformanceBaselineManager.MAX_BASELINES) {
         baselines.splice(
-          0,
+          ZERO,
           baselines.length - PerformanceBaselineManager.MAX_BASELINES,
         );
       }
@@ -89,7 +90,7 @@ export class PerformanceBaselineManager {
       });
 
       // 返回最新的基准数据
-      return filtered.length > 0 ? filtered[filtered.length - 1] || null : null;
+      return filtered.length > ZERO ? filtered[filtered.length - ONE] || null : null;
     } catch (error) {
       logger.error('Failed to get recent baseline', { error });
       return null;
@@ -144,7 +145,7 @@ export class PerformanceBaselineManager {
    */
   private calculateScore(metrics: DetailedWebVitals): number {
     // 简化的评分算法
-    let score = 100;
+    let score = PERCENTAGE_FULL;
 
     // CLS 评分
     if (metrics.cls > BASELINE_CONSTANTS.CLS_BASELINE)
@@ -164,7 +165,7 @@ export class PerformanceBaselineManager {
     else if (metrics.fid > WEB_VITALS_THRESHOLDS.FID.GOOD)
       score -= BASELINE_CONSTANTS.INP_BASELINE_EXTRA_DAYS;
 
-    return Math.max(0, score);
+    return Math.max(ZERO, score);
   }
 
   /**

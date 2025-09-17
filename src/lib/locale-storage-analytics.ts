@@ -9,6 +9,8 @@
 
 // 重新导出所有模块的功能
 // 导入主要功能用于向后兼容
+import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
+import { DAYS_PER_WEEK } from "@/constants/time";
 import {
   calculateStorageStats,
   performHealthCheck,
@@ -29,15 +31,8 @@ import {
 } from './locale-storage-analytics-performance';
 import {
   CacheManager,
-  compressAnalyticsData,
   exportAnalyticsData,
-  formatByteSize,
-  formatDuration,
-  formatPercentage,
-  generateUniqueId,
-  optimizeAnalyticsStorage,
-  validateAnalyticsData,
-  type ExportData,
+  type ExportData
 } from './locale-storage-analytics-utils';
 import type {
   StorageEventListener,
@@ -47,37 +42,26 @@ import type {
 } from './locale-storage-types';
 
 export {
-  calculateStorageStats,
-  getStorageStats,
-  calculateHealthCheck,
-  performHealthCheck,
-  calculateStorageEfficiency,
+  calculateHealthCheck, calculateStorageEfficiency, calculateStorageStats,
+  getStorageStats, performHealthCheck
 } from './locale-storage-analytics-core';
 export {
-  EventManager,
-  cleanupAnalyticsData,
+  cleanupAnalyticsData, EventManager
 } from './locale-storage-analytics-events';
 export type {
   AccessLogEntry,
   AccessLogger,
   ErrorLogEntry,
-  ErrorLogger,
+  ErrorLogger
 } from './locale-storage-analytics-events';
 export {
-  getUsagePatterns,
-  getPerformanceMetrics,
-  getUsageTrends,
+  getPerformanceMetrics, getUsagePatterns, getUsageTrends
 } from './locale-storage-analytics-performance';
 export {
-  CacheManager,
-  exportAnalyticsData,
-  validateAnalyticsData,
-  compressAnalyticsData,
-  optimizeAnalyticsStorage,
-  formatByteSize,
+  CacheManager, compressAnalyticsData, exportAnalyticsData, formatByteSize,
   formatDuration,
   formatPercentage,
-  generateUniqueId,
+  generateUniqueId, optimizeAnalyticsStorage, validateAnalyticsData
 } from './locale-storage-analytics-utils';
 
 /**
@@ -191,7 +175,7 @@ export class LocaleStorageAnalytics {
    * 获取使用趋势
    * Get usage trends
    */
-  static getUsageTrends(days: number = 7): UsageTrends {
+  static getUsageTrends(days: number = DAYS_PER_WEEK): UsageTrends {
     return getUsageTrends(days);
   }
 
@@ -199,7 +183,7 @@ export class LocaleStorageAnalytics {
    * 清理分析数据
    * Cleanup analytics data
    */
-  static cleanupAnalyticsData(maxAge: number = 7 * 24 * 60 * 60 * 1000): void {
+  static cleanupAnalyticsData(maxAge: number = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): void {
     cleanupAnalyticsData(maxAge);
   }
 
@@ -249,9 +233,5 @@ export class LocaleStorageAnalytics {
  * Backward compatible type aliases
  */
 export type {
-  LocaleStorageAnalytics as Analytics,
-  UsagePatterns,
-  PerformanceMetrics,
-  UsageTrends,
-  ExportData,
+  LocaleStorageAnalytics as Analytics, ExportData, PerformanceMetrics, UsagePatterns, UsageTrends
 };

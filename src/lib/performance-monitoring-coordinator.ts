@@ -1,4 +1,5 @@
 // 导入核心功能
+import { ZERO } from "@/constants/magic-numbers";
 import { PerformanceMonitoringCore } from '@/lib/performance-monitoring-core';
 import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
 import { generateEnvironmentConfig } from '@/lib/performance-monitoring-types';
@@ -17,68 +18,17 @@ import { generateEnvironmentConfig } from '@/lib/performance-monitoring-types';
 
 // 重新导出所有模块的类型和功能
 export {
-  PerformanceMetricSource,
-  PerformanceMetricType,
-  PerformanceMetrics,
-  ReactScanConfig,
-  WebEvalAgentConfig,
-  BundleAnalyzerConfig,
-  SizeLimitConfig,
-  WebVitalsConfig,
-  PerformanceConfig,
-  Environment,
-  getCurrentEnvironment,
-  isTestEnvironment,
-  isDevelopmentEnvironment,
-  isProductionEnvironment,
-  generateEnvironmentConfig,
-  validateConfig,
-} from './performance-monitoring-types';
-export {
-  PerformanceConfigManager,
-  createConfigManager,
-  getDefaultConfig,
-  validatePerformanceConfig,
-  PerformanceMetricsManager,
-  createMetricsManager,
-  PerformanceReport,
-  PerformanceReportGenerator,
-  createReportGenerator,
-  ToolConflictResult,
-  PerformanceToolConflictChecker,
-  createConflictChecker,
-  quickConflictCheck,
-  PerformanceMonitoringCore,
-  PerformanceCoordinator,
+  createConfigManager, createConflictChecker, createMetricsManager, createReportGenerator, getDefaultConfig, PerformanceConfigManager, PerformanceCoordinator, PerformanceMetricsManager, PerformanceMonitoringCore, PerformanceReport,
+  PerformanceReportGenerator, PerformanceToolConflictChecker, quickConflictCheck, ToolConflictResult, validatePerformanceConfig
 } from './performance-monitoring-core';
 export {
-  ReactScanIntegration,
-  useReactScanIntegration,
-  validateReactScanConfig,
-  ReactScanAnalyzer,
-  ReactScanUtils,
-  WebEvalAgentIntegration,
-  useWebEvalAgentIntegration,
-  validateWebEvalAgentConfig,
-  WebEvalAgentAnalyzer,
-  BundleAnalyzerIntegration,
-  useBundleAnalyzerIntegration,
-  validateBundleAnalyzerConfig,
-  BundleAnalyzerAnalyzer,
-  BundleAnalyzerUtils,
-  WebVitalsIntegration,
-  useWebVitalsIntegration,
-  EnvironmentCompatibilityResult,
-  checkEnvironmentCompatibility,
-  performHealthCheck,
-  validateWebVitalsConfig,
-  WebVitalsAnalyzer,
-  ReactScan,
-  WebEvalAgent,
-  BundleAnalyzer,
-  WebVitals,
-  EnvironmentCheck,
+  BundleAnalyzer, BundleAnalyzerAnalyzer, BundleAnalyzerIntegration, BundleAnalyzerUtils, checkEnvironmentCompatibility, EnvironmentCheck, EnvironmentCompatibilityResult, performHealthCheck, ReactScan, ReactScanAnalyzer, ReactScanIntegration, ReactScanUtils, useBundleAnalyzerIntegration, useReactScanIntegration, useWebEvalAgentIntegration, useWebVitalsIntegration, validateBundleAnalyzerConfig, validateReactScanConfig, validateWebEvalAgentConfig, validateWebVitalsConfig, WebEvalAgent, WebEvalAgentAnalyzer, WebEvalAgentIntegration, WebVitals, WebVitalsAnalyzer, WebVitalsIntegration
 } from './performance-monitoring-integrations';
+export {
+  BundleAnalyzerConfig, Environment, generateEnvironmentConfig, getCurrentEnvironment, isDevelopmentEnvironment,
+  isProductionEnvironment, isTestEnvironment, PerformanceConfig, PerformanceMetrics, PerformanceMetricSource,
+  PerformanceMetricType, ReactScanConfig, SizeLimitConfig, validateConfig, WebEvalAgentConfig, WebVitalsConfig
+} from './performance-monitoring-types';
 
 /**
  * 性能监控协调器 - 向后兼容的主类
@@ -225,7 +175,7 @@ export function checkEnvironmentCompatibility(): {
   }
 
   return {
-    isCompatible: issues.length === 0,
+    isCompatible: issues.length === ZERO,
     issues,
     recommendations,
   };

@@ -1,11 +1,7 @@
-import { useMemo } from 'react';
-import { MAGIC_0_8, MAGIC_0_5 } from '@/constants/magic-numbers';
-
-import { Languages } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import type { Locale } from '@/types/i18n';
-import { useClientLocaleDetection } from '@/lib/locale-detection';
-import { useLocaleStorage } from '@/lib/locale-storage';
+import type { EnhancedLocaleSwitcherProps } from '@/components/i18n/locale-switcher/config';
+import { LANGUAGE_CONFIG, SOURCE_ICONS } from '@/components/i18n/locale-switcher/config';
+import { LanguageItem } from '@/components/i18n/locale-switcher/language-item';
+import { useLanguageSwitch } from '@/components/i18n/locale-switcher/use-language-switch';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,11 +11,14 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { MAGIC_0_5, MAGIC_0_8, PERCENTAGE_FULL } from "@/constants/magic-numbers";
 import { usePathname } from '@/i18n/routing';
-import type { EnhancedLocaleSwitcherProps } from '@/components/i18n/locale-switcher/config';
-import { LANGUAGE_CONFIG, SOURCE_ICONS } from '@/components/i18n/locale-switcher/config';
-import { LanguageItem } from '@/components/i18n/locale-switcher/language-item';
-import { useLanguageSwitch } from '@/components/i18n/locale-switcher/use-language-switch';
+import { useClientLocaleDetection } from '@/lib/locale-detection';
+import { useLocaleStorage } from '@/lib/locale-storage';
+import type { Locale } from '@/types/i18n';
+import { Languages } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { useMemo } from 'react';
 
 export const EnhancedLocaleSwitcherComponent = ({
   showDetectionInfo = false,
@@ -87,7 +86,7 @@ export const EnhancedLocaleSwitcherComponent = ({
                     : 'border-red-500 text-red-700'
               }`}
             >
-              {Math.round(detectionInfo.confidence * 100)}%
+              {Math.round(detectionInfo.confidence * PERCENTAGE_FULL)}%
             </Badge>
           </div>
           {detectionInfo.isUserOverride && (

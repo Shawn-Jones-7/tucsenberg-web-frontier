@@ -4,8 +4,9 @@
  * 提供浏览器检测、地理位置检测、时区检测等基础检测方法
  */
 
-import type { Locale } from '@/types/i18n';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
+import type { Locale } from '@/types/i18n';
 import {
   COUNTRY_CODE_TO_LOCALE_MAP,
   DETECTION_TIMEOUTS,
@@ -89,7 +90,7 @@ export class BaseLocaleDetector {
         }
 
         // 尝试提取主要语言代码 (例如: 'zh-CN' -> 'zh')
-        const primaryLang = normalizedLang.split('-')[0];
+        const primaryLang = normalizedLang.split('-')[ZERO];
         const primaryLocale = this.getLocaleFromLanguageCode(primaryLang!);
 
         if (primaryLocale) {
@@ -149,7 +150,7 @@ export class BaseLocaleDetector {
           {
             timeout: DETECTION_TIMEOUTS.GEOLOCATION,
             enableHighAccuracy: false,
-            maximumAge: 10 * 60 * 1000, // 10分钟缓存
+            maximumAge: COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 10分钟缓存
           },
         );
       });

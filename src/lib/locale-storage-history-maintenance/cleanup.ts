@@ -6,14 +6,13 @@
 'use client';
 
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
+import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import {
   createDefaultHistory,
   getDetectionHistory,
   HistoryCacheManager,
 } from '../locale-storage-history-core';
-import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionRecord,
   StorageOperationResult,
@@ -24,7 +23,7 @@ import type {
  * Cleanup expired detection records
  */
 export function cleanupExpiredDetections(
-  maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000,
+  maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
 ): StorageOperationResult<number> {
   const startTime = Date.now();
 
@@ -52,7 +51,7 @@ export function cleanupExpiredDetections(
 
     const removedCount = originalCount - history.history.length;
 
-    if (removedCount > 0) {
+    if (removedCount > ZERO) {
       // 更新时间戳
       history.lastUpdated = Date.now();
 
@@ -73,7 +72,7 @@ export function cleanupExpiredDetections(
     }
     return {
       success: true,
-      data: 0,
+      data: ZERO,
       source: 'localStorage',
       timestamp: Date.now(),
       responseTime: Date.now() - startTime,
@@ -128,7 +127,7 @@ export function cleanupDuplicateDetections(): StorageOperationResult<number> {
 
     const removedCount = originalCount - uniqueRecords.length;
 
-    if (removedCount > 0) {
+    if (removedCount > ZERO) {
       history.history = uniqueRecords;
       history.lastUpdated = Date.now();
 
@@ -147,7 +146,7 @@ export function cleanupDuplicateDetections(): StorageOperationResult<number> {
     }
     return {
       success: true,
-      data: 0,
+      data: ZERO,
       source: 'localStorage',
       timestamp: Date.now(),
       responseTime: Date.now() - startTime,
@@ -168,7 +167,7 @@ export function cleanupDuplicateDetections(): StorageOperationResult<number> {
  * Limit history record count
  */
 export function limitHistorySize(
-  maxRecords: number = CACHE_LIMITS.MAX_DETECTION_HISTORY || 100,
+  maxRecords: number = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL,
 ): StorageOperationResult<number> {
   const startTime = Date.now();
 
@@ -190,7 +189,7 @@ export function limitHistorySize(
 
     if (originalCount > maxRecords) {
       // 保留最新的记录
-      history.history = history.history.slice(0, maxRecords);
+      history.history = history.history.slice(ZERO, maxRecords);
       history.lastUpdated = Date.now();
 
       LocalStorageManager.set('locale_detection_history', history);
@@ -209,7 +208,7 @@ export function limitHistorySize(
     }
     return {
       success: true,
-      data: 0,
+      data: ZERO,
       source: 'localStorage',
       timestamp: Date.now(),
       responseTime: Date.now() - startTime,

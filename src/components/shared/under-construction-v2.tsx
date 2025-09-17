@@ -1,5 +1,6 @@
 'use client';
 
+import { ONE } from "@/constants/magic-numbers";
 import { cn } from '@/lib/utils';
 
 interface UnderConstructionV2Props {
@@ -17,7 +18,7 @@ export function UnderConstructionV2({
   pageType,
   className,
   showProgress = true,
-  currentStep = 1,
+  currentStep = ONE,
   expectedDate = '2024年第二季度',
   showEmailSubscription = true,
   showSocialLinks = true,

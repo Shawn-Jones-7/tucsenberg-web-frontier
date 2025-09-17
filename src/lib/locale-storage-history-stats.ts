@@ -7,9 +7,13 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
-import type {} from '@/lib/locale-storage-types';
+import { MAGIC_6 } from "@/constants/count";
+import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_8 } from "@/constants/decimal";
+import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { DAYS_PER_WEEK } from "@/constants/time";
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
+import type { } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 import {
   getLocaleGroupStats,
   getSourceGroupStats,
@@ -44,42 +48,42 @@ export function getDetectionStats(): {
 
   if (!historyResult.success || !historyResult.data) {
     return {
-      totalDetections: 0,
-      uniqueLocales: 0,
-      uniqueSources: 0,
-      averageConfidence: 0,
+      totalDetections: ZERO,
+      uniqueLocales: ZERO,
+      uniqueSources: ZERO,
+      averageConfidence: ZERO,
       mostDetectedLocale: null,
       mostUsedSource: null,
-      detectionFrequency: 0,
-      confidenceDistribution: { high: 0, medium: 0, low: 0 },
-      timeSpan: { oldest: 0, newest: 0, spanDays: 0 },
+      detectionFrequency: ZERO,
+      confidenceDistribution: { high: ZERO, medium: ZERO, low: ZERO },
+      timeSpan: { oldest: ZERO, newest: ZERO, spanDays: ZERO },
     };
   }
 
   const records = historyResult.data.history;
   const totalDetections = records.length;
 
-  if (totalDetections === 0) {
+  if (totalDetections === ZERO) {
     return {
-      totalDetections: 0,
-      uniqueLocales: 0,
-      uniqueSources: 0,
-      averageConfidence: 0,
+      totalDetections: ZERO,
+      uniqueLocales: ZERO,
+      uniqueSources: ZERO,
+      averageConfidence: ZERO,
       mostDetectedLocale: null,
       mostUsedSource: null,
-      detectionFrequency: 0,
-      confidenceDistribution: { high: 0, medium: 0, low: 0 },
-      timeSpan: { oldest: 0, newest: 0, spanDays: 0 },
+      detectionFrequency: ZERO,
+      confidenceDistribution: { high: ZERO, medium: ZERO, low: ZERO },
+      timeSpan: { oldest: ZERO, newest: ZERO, spanDays: ZERO },
     };
   }
 
   // 基础统计
   const locales = new Set<Locale>();
   const sources = new Set<string>();
-  let totalConfidence = 0;
-  let highConfidence = 0;
-  let mediumConfidence = 0;
-  let lowConfidence = 0;
+  let totalConfidence = ZERO;
+  let highConfidence = ZERO;
+  let mediumConfidence = ZERO;
+  let lowConfidence = ZERO;
 
   const localeCounts = new Map<Locale, number>();
   const sourceCounts = new Map<string, number>();
@@ -90,17 +94,17 @@ export function getDetectionStats(): {
     totalConfidence += record.confidence;
 
     // 置信度分布
-    if (record.confidence > 0.8) {
-      highConfidence += 1;
-    } else if (record.confidence >= 0.5) {
-      mediumConfidence += 1;
+    if (record.confidence > MAGIC_0_8) {
+      highConfidence += ONE;
+    } else if (record.confidence >= MAGIC_0_5) {
+      mediumConfidence += ONE;
     } else {
-      lowConfidence += 1;
+      lowConfidence += ONE;
     }
 
     // 计数统计
-    localeCounts.set(record.locale, (localeCounts.get(record.locale) || 0) + 1);
-    sourceCounts.set(record.source, (sourceCounts.get(record.source) || 0) + 1);
+    localeCounts.set(record.locale, (localeCounts.get(record.locale) || ZERO) + ONE);
+    sourceCounts.set(record.source, (sourceCounts.get(record.source) || ZERO) + ONE);
   });
 
   // 最常检测的语言
@@ -124,10 +128,10 @@ export function getDetectionStats(): {
   const oldest = Math.min(...timestamps);
   const newest = Math.max(...timestamps);
   const spanMs = newest - oldest;
-  const spanDays = spanMs / (24 * 60 * 60 * 1000);
+  const spanDays = spanMs / (HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
 
   // 检测频率（每天）
-  const detectionFrequency = spanDays > 0 ? totalDetections / spanDays : 0;
+  const detectionFrequency = spanDays > ZERO ? totalDetections / spanDays : ZERO;
 
   return {
     totalDetections,
@@ -156,7 +160,7 @@ export function getDetectionStats(): {
  * 获取检测趋势
  * Get detection trends
  */
-export function getDetectionTrends(days: number = 7): {
+export function getDetectionTrends(days: number = DAYS_PER_WEEK): {
   dailyDetections: Array<{
     date: string;
     count: number;
@@ -172,8 +176,8 @@ export function getDetectionTrends(days: number = 7): {
   if (!historyResult.success || !historyResult.data) {
     return {
       dailyDetections: [],
-      weeklyGrowth: 0,
-      monthlyGrowth: 0,
+      weeklyGrowth: ZERO,
+      monthlyGrowth: ZERO,
       trendDirection: 'stable',
       predictions: [],
     };
@@ -181,7 +185,7 @@ export function getDetectionTrends(days: number = 7): {
 
   const records = historyResult.data.history;
   const now = Date.now();
-  const startTime = now - days * 24 * 60 * 60 * 1000;
+  const startTime = now - days * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
 
   // 过滤指定时间范围内的记录
   const recentRecords = records.filter(
@@ -195,20 +199,20 @@ export function getDetectionTrends(days: number = 7): {
   >();
 
   // 初始化所有日期
-  for (let i = 0; i < days; i++) {
-    const date = new Date(now - i * 24 * 60 * 60 * 1000);
-    const dateStr = date.toISOString().split('T')[0] || date.toISOString();
-    dailyData.set(dateStr, { count: 0, totalConfidence: 0 });
+  for (let i = ZERO; i < days; i++) {
+    const date = new Date(now - i * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
+    dailyData.set(dateStr, { count: ZERO, totalConfidence: ZERO });
   }
 
   // 填充实际数据
   recentRecords.forEach((record) => {
     const date = new Date(record.timestamp);
-    const dateStr = date.toISOString().split('T')[0] || date.toISOString();
+    const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
     const existing = dailyData.get(dateStr);
 
     if (existing) {
-      existing.count += 1;
+      existing.count += ONE;
       existing.totalConfidence += record.confidence;
     }
   });
@@ -218,19 +222,19 @@ export function getDetectionTrends(days: number = 7): {
     .map(([date, data]) => ({
       date,
       count: data.count,
-      avgConfidence: data.count > 0 ? data.totalConfidence / data.count : 0,
+      avgConfidence: data.count > ZERO ? data.totalConfidence / data.count : ZERO,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
   // 计算增长率
-  const weeklyGrowth = calculateGrowthRate(dailyDetections, 7);
-  const monthlyGrowth = calculateGrowthRate(dailyDetections, 30);
+  const weeklyGrowth = calculateGrowthRate(dailyDetections, DAYS_PER_WEEK);
+  const monthlyGrowth = calculateGrowthRate(dailyDetections, DAYS_PER_MONTH);
 
   // 确定趋势方向
   const trendDirection = determineTrendDirection(dailyDetections);
 
   // 生成预测
-  const predictions = generatePredictions(dailyDetections, 3);
+  const predictions = generatePredictions(dailyDetections, COUNT_TRIPLE);
 
   return {
     dailyDetections,
@@ -249,19 +253,19 @@ function calculateGrowthRate(
   dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
   period: number,
 ): number {
-  if (dailyData.length < period) return 0;
+  if (dailyData.length < period) return ZERO;
 
   const recent = dailyData.slice(-period);
-  const previous = dailyData.slice(-period * 2, -period);
+  const previous = dailyData.slice(-period * COUNT_PAIR, -period);
 
-  if (previous.length === 0) return 0;
+  if (previous.length === ZERO) return ZERO;
 
   const recentAvg =
-    recent.reduce((sum, day) => sum + day.count, 0) / recent.length;
+    recent.reduce((sum, day) => sum + day.count, ZERO) / recent.length;
   const previousAvg =
-    previous.reduce((sum, day) => sum + day.count, 0) / previous.length;
+    previous.reduce((sum, day) => sum + day.count, ZERO) / previous.length;
 
-  return previousAvg > 0 ? ((recentAvg - previousAvg) / previousAvg) * 100 : 0;
+  return previousAvg > ZERO ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL : ZERO;
 }
 
 /**
@@ -271,22 +275,22 @@ function calculateGrowthRate(
 function determineTrendDirection(
   dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
 ): 'increasing' | 'decreasing' | 'stable' {
-  if (dailyData.length < 3) return 'stable';
+  if (dailyData.length < COUNT_TRIPLE) return 'stable';
 
-  const recent = dailyData.slice(-3);
+  const recent = dailyData.slice(-COUNT_TRIPLE);
   const counts = recent.map((d) => d.count);
 
   // 简单的线性回归斜率
   const n = counts.length;
-  const sumX = (n * (n - 1)) / 2;
-  const sumY = counts.reduce((sum, count) => sum + count, 0);
-  const sumXY = counts.reduce((sum, count, index) => sum + index * count, 0);
-  const sumX2 = (n * (n - 1) * (2 * n - 1)) / 6;
+  const sumX = (n * (n - ONE)) / COUNT_PAIR;
+  const sumY = counts.reduce((sum, count) => sum + count, ZERO);
+  const sumXY = counts.reduce((sum, count, index) => sum + index * count, ZERO);
+  const sumX2 = (n * (n - ONE) * (COUNT_PAIR * n - ONE)) / MAGIC_6;
 
   const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
 
-  if (slope > 0.1) return 'increasing';
-  if (slope < -0.1) return 'decreasing';
+  if (slope > MAGIC_0_1) return 'increasing';
+  if (slope < -MAGIC_0_1) return 'decreasing';
   return 'stable';
 }
 
@@ -298,29 +302,29 @@ function generatePredictions(
   dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
   futureDays: number,
 ): Array<{ date: string; predictedCount: number }> {
-  if (dailyData.length < 3) return [];
+  if (dailyData.length < COUNT_TRIPLE) return [];
 
   // 使用最近7天的数据进行预测
-  const recent = dailyData.slice(-Math.min(7, dailyData.length));
+  const recent = dailyData.slice(-Math.min(DAYS_PER_WEEK, dailyData.length));
   const avgCount =
-    recent.reduce((sum, day) => sum + day.count, 0) / recent.length;
+    recent.reduce((sum, day) => sum + day.count, ZERO) / recent.length;
 
   // 简单的趋势预测
   const trend =
-    recent.length > 1
-      ? (recent[recent.length - 1]!.count - recent[0]!.count) /
-        (recent.length - 1)
-      : 0;
+    recent.length > ONE
+      ? (recent[recent.length - ONE]!.count - recent[ZERO]!.count) /
+        (recent.length - ONE)
+      : ZERO;
 
   const predictions: Array<{ date: string; predictedCount: number }> = [];
 
-  for (let i = 1; i <= futureDays; i++) {
+  for (let i = ONE; i <= futureDays; i++) {
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + i);
     const dateStr =
-      futureDate.toISOString().split('T')[0] || futureDate.toISOString();
+      futureDate.toISOString().split('T')[ZERO] || futureDate.toISOString();
 
-    const predictedCount = Math.max(0, Math.round(avgCount + trend * i));
+    const predictedCount = Math.max(ZERO, Math.round(avgCount + trend * i));
 
     predictions.push({
       date: dateStr,
@@ -353,11 +357,11 @@ export function generateHistoryInsights(): {
   const alerts: string[] = [];
 
   // 基础洞察
-  if (stats.totalDetections > 0) {
+  if (stats.totalDetections > ZERO) {
     insights.push(`总共记录了 ${stats.totalDetections} 次语言检测`);
     insights.push(`检测到 ${stats.uniqueLocales} 种不同的语言`);
     insights.push(
-      `平均置信度为 ${(stats.averageConfidence * 100).toFixed(1)}%`,
+      `平均置信度为 ${(stats.averageConfidence * PERCENTAGE_FULL).toFixed(ONE)}%`,
     );
   }
 
@@ -365,8 +369,8 @@ export function generateHistoryInsights(): {
   if (stats.mostDetectedLocale) {
     const percentage = (
       (stats.mostDetectedLocale.count / stats.totalDetections) *
-      100
-    ).toFixed(1);
+      PERCENTAGE_FULL
+    ).toFixed(ONE);
     insights.push(
       `最常检测的语言是 ${stats.mostDetectedLocale.locale} (${percentage}%)`,
     );
@@ -376,8 +380,8 @@ export function generateHistoryInsights(): {
   if (stats.mostUsedSource) {
     const percentage = (
       (stats.mostUsedSource.count / stats.totalDetections) *
-      100
-    ).toFixed(1);
+      PERCENTAGE_FULL
+    ).toFixed(ONE);
     insights.push(
       `最常用的检测来源是 ${stats.mostUsedSource.source} (${percentage}%)`,
     );
@@ -385,8 +389,8 @@ export function generateHistoryInsights(): {
 
   // 置信度分析
   const { high, medium, low } = stats.confidenceDistribution;
-  const highPercentage = ((high / stats.totalDetections) * 100).toFixed(1);
-  const lowPercentage = ((low / stats.totalDetections) * 100).toFixed(1);
+  const highPercentage = ((high / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
+  const lowPercentage = ((low / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
 
   if (high > medium + low) {
     insights.push(`检测质量优秀，${highPercentage}% 的检测具有高置信度`);
@@ -404,24 +408,24 @@ export function generateHistoryInsights(): {
   }
 
   // 频率分析
-  if (stats.detectionFrequency > 10) {
+  if (stats.detectionFrequency > COUNT_TEN) {
     insights.push('用户语言检测活动频繁，表明多语言需求较高');
-  } else if (stats.detectionFrequency < 1) {
+  } else if (stats.detectionFrequency < ONE) {
     recommendations.push('考虑增加语言检测的触发场景');
   }
 
   // 多样性分析
-  if (stats.uniqueLocales > 5) {
+  if (stats.uniqueLocales > COUNT_FIVE) {
     insights.push('用户群体语言多样性较高');
     recommendations.push('确保所有检测到的语言都有良好的本地化支持');
   }
 
   // 数据质量检查
-  if (stats.totalDetections > 1000) {
+  if (stats.totalDetections > ANIMATION_DURATION_VERY_SLOW) {
     recommendations.push('历史记录较多，建议定期清理过期数据');
   }
 
-  if (stats.timeSpan.spanDays > 90) {
+  if (stats.timeSpan.spanDays > ANGLE_90_DEG) {
     recommendations.push('数据跨度较长，可以进行长期趋势分析');
   }
 
@@ -447,37 +451,37 @@ export function getPerformanceMetrics(): {
 
   if (!historyResult.success || !historyResult.data) {
     return {
-      averageConfidence: 0,
-      confidenceStability: 0,
+      averageConfidence: ZERO,
+      confidenceStability: ZERO,
       sourceReliability: {},
-      detectionAccuracy: 0,
-      responseConsistency: 0,
+      detectionAccuracy: ZERO,
+      responseConsistency: ZERO,
     };
   }
 
   const records = historyResult.data.history;
 
-  if (records.length === 0) {
+  if (records.length === ZERO) {
     return {
-      averageConfidence: 0,
-      confidenceStability: 0,
+      averageConfidence: ZERO,
+      confidenceStability: ZERO,
       sourceReliability: {},
-      detectionAccuracy: 0,
-      responseConsistency: 0,
+      detectionAccuracy: ZERO,
+      responseConsistency: ZERO,
     };
   }
 
   // 平均置信度
   const averageConfidence =
-    records.reduce((sum, r) => sum + r.confidence, 0) / records.length;
+    records.reduce((sum, r) => sum + r.confidence, ZERO) / records.length;
 
   // 置信度稳定性（标准差的倒数）
   const confidenceVariance =
     records.reduce((sum, r) => {
       const diff = r.confidence - averageConfidence;
       return sum + diff * diff;
-    }, 0) / records.length;
-  const confidenceStability = 1 / (1 + Math.sqrt(confidenceVariance));
+    }, ZERO) / records.length;
+  const confidenceStability = ONE / (ONE + Math.sqrt(confidenceVariance));
 
   // 来源可靠性
   const sourceStats = getSourceGroupStats();
@@ -487,7 +491,7 @@ export function getPerformanceMetrics(): {
   });
 
   // 检测准确性（高置信度检测的比例）
-  const highConfidenceCount = records.filter((r) => r.confidence > 0.8).length;
+  const highConfidenceCount = records.filter((r) => r.confidence > MAGIC_0_8).length;
   const detectionAccuracy = highConfidenceCount / records.length;
 
   // 响应一致性（相同语言检测结果的一致性）
@@ -499,24 +503,24 @@ export function getPerformanceMetrics(): {
     localeConsistency.get(record.locale)!.push(record.confidence);
   });
 
-  let totalConsistency = 0;
-  let localeCount = 0;
+  let totalConsistency = ZERO;
+  let localeCount = ZERO;
 
   for (const [_locale, confidences] of localeConsistency.entries()) {
-    if (confidences.length > 1) {
+    if (confidences.length > ONE) {
       const avg =
-        confidences.reduce((sum, c) => sum + c, 0) / confidences.length;
+        confidences.reduce((sum, c) => sum + c, ZERO) / confidences.length;
       const variance =
-        confidences.reduce((sum, c) => sum + (c - avg) ** 2, 0) /
+        confidences.reduce((sum, c) => sum + (c - avg) ** COUNT_PAIR, ZERO) /
         confidences.length;
-      const consistency = 1 / (1 + Math.sqrt(variance));
+      const consistency = ONE / (ONE + Math.sqrt(variance));
       totalConsistency += consistency;
-      localeCount += 1;
+      localeCount += ONE;
     }
   }
 
   const responseConsistency =
-    localeCount > 0 ? totalConsistency / localeCount : 1;
+    localeCount > ZERO ? totalConsistency / localeCount : ONE;
 
   return {
     averageConfidence,

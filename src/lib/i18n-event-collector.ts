@@ -3,8 +3,9 @@
  * 负责收集、记录和发送监控事件
  */
 
-import { logger } from '@/lib/logger';
 import { MONITORING_CONFIG } from '@/constants/i18n-constants';
+import { ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
 import type {
   ErrorLevel,
   MonitoringConfig,
@@ -19,7 +20,7 @@ export class EventCollector {
   constructor(config: MonitoringConfig) {
     this.config = config;
 
-    if (config.enabled && config.flushInterval > 0) {
+    if (config.enabled && config.flushInterval > ZERO) {
       setInterval(() => this.flush(), config.flushInterval);
     }
   }
@@ -111,7 +112,7 @@ export class EventCollector {
   }
 
   async flush(): Promise<void> {
-    if (this.events.length === 0) return;
+    if (this.events.length === ZERO) return;
 
     const eventsToSend = [...this.events];
     this.events = [];

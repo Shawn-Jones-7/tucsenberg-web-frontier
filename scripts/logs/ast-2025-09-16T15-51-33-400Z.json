@@ -1,0 +1,130 @@
+{
+  "timestamp": "2025-09-16T15:51:33.402Z",
+  "options": {
+    "write": true,
+    "dryRun": true,
+    "files": "src/components/ui/animated-counter.tsx",
+    "limit": 1
+  },
+  "summary": {
+    "filesProcessed": 1,
+    "filesModified": 1,
+    "totalReplacements": 14
+  },
+  "logs": [
+    {
+      "file": "src/components/ui/animated-counter.tsx",
+      "changes": [
+        {
+          "start": 651,
+          "end": 652,
+          "raw": "3",
+          "constant": "COUNT_TRIPLE",
+          "negated": false
+        },
+        {
+          "start": 692,
+          "end": 695,
+          "raw": "0.5",
+          "constant": "POINT_FIVE",
+          "negated": false
+        },
+        {
+          "start": 732,
+          "end": 733,
+          "raw": "4",
+          "constant": "COUNT_QUAD",
+          "negated": false
+        },
+        {
+          "start": 769,
+          "end": 770,
+          "raw": "-2",
+          "constant": "COUNT_PAIR",
+          "negated": true
+        },
+        {
+          "start": 806,
+          "end": 807,
+          "raw": "2",
+          "constant": "COUNT_PAIR",
+          "negated": false
+        },
+        {
+          "start": 918,
+          "end": 919,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 925,
+          "end": 926,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 1170,
+          "end": 1171,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 1761,
+          "end": 1762,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 4339,
+          "end": 4340,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 4512,
+          "end": 4513,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 4931,
+          "end": 4932,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5344,
+          "end": 5345,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5557,
+          "end": 5558,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [],
+        "aliased": {
+          "COUNT_TRIPLE": "COUNT_TRIPLE_CONST",
+          "POINT_FIVE": "POINT_FIVE_CONST",
+          "COUNT_QUAD": "COUNT_QUAD_CONST",
+          "COUNT_PAIR": "COUNT_PAIR_CONST",
+          "ONE": "ONE_CONST",
+          "ZERO": "ZERO_CONST"
+        }
+      }
+    }
+  ]
+}

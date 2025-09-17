@@ -3,6 +3,8 @@
  * Locale Storage System Default Configuration Constants
  */
 
+import { MAGIC_16 } from "@/constants/count";
+import { COUNT_TEN, COUNT_TRIPLE, PERCENTAGE_FULL, TEN_SECONDS_MS } from "@/constants/magic-numbers";
 import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
 import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
 
@@ -27,8 +29,8 @@ export const DEFAULT_STORAGE_CONFIG: StorageConfig = {
   performance: {
     maxEntries: STORAGE_CONSTANTS.MAX_HISTORY_ENTRIES,
     maxSize: STORAGE_CONSTANTS.MAX_LOCALSTORAGE_SIZE,
-    batchSize: 10,
-    throttleDelay: 100,
+    batchSize: COUNT_TEN,
+    throttleDelay: PERCENTAGE_FULL,
   },
 
   compression: {
@@ -42,8 +44,8 @@ export const DEFAULT_STORAGE_CONFIG: StorageConfig = {
     algorithm: 'none',
     keyDerivation: 'pbkdf2',
     keyLength: STORAGE_CONSTANTS.ENCRYPTION_KEY_LENGTH,
-    saltLength: 16,
-    iterations: 10000,
+    saltLength: MAGIC_16,
+    iterations: TEN_SECONDS_MS,
   },
 
   sync: {
@@ -58,7 +60,7 @@ export const DEFAULT_STORAGE_CONFIG: StorageConfig = {
     enabled: true,
     interval: STORAGE_CONSTANTS.HEALTH_CHECK_INTERVAL,
     timeout: STORAGE_CONSTANTS.HEALTH_CHECK_TIMEOUT,
-    retryAttempts: 3,
+    retryAttempts: COUNT_TRIPLE,
   },
 
   errorHandling: {

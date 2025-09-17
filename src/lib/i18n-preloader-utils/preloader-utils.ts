@@ -3,9 +3,9 @@
  * Preloader Utility Functions
  */
 
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, FIVE_SECONDS_MS, HOURS_PER_DAY, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import type { Locale, Messages } from '@/types/i18n';
-import { COUNT_TEN, COUNT_FIVE, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8, COUNT_PAIR, PERCENTAGE_HALF, BYTES_PER_KB, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
 import type {
   IPreloader,
   PreloaderConfig,
@@ -23,13 +23,13 @@ export const PreloaderUtils = {
    * Validate preload configuration
    */
   validateConfig(config: Partial<PreloaderConfig>): boolean {
-    if (config.batchSize && config.batchSize <= 0) {
+    if (config.batchSize && config.batchSize <= ZERO) {
       return false;
     }
-    if (config.timeout && config.timeout <= 0) {
+    if (config.timeout && config.timeout <= ZERO) {
       return false;
     }
-    if (config.retryCount && config.retryCount < 0) {
+    if (config.retryCount && config.retryCount < ZERO) {
       return false;
     }
     return true;
@@ -71,7 +71,7 @@ export const PreloaderUtils = {
     // 根据错误率调整
     const errorPenalty = metrics.failedPreloads * MAGIC_0_2;
 
-    return Math.max(basePriority + usageBonus - errorPenalty, 1);
+    return Math.max(basePriority + usageBonus - errorPenalty, ONE);
   },
 
   /**
@@ -103,9 +103,9 @@ export const PreloaderUtils = {
     const failed = total - successful;
     const cacheHits = results.filter((r) => r.fromCache).length;
 
-    const totalTime = results.reduce((sum, r) => sum + r.loadTime, 0);
-    const averageTime = total > 0 ? totalTime / total : 0;
-    const cacheHitRate = total > 0 ? cacheHits / total : 0;
+    const totalTime = results.reduce((sum, r) => sum + r.loadTime, ZERO);
+    const averageTime = total > ZERO ? totalTime / total : ZERO;
+    const cacheHitRate = total > ZERO ? cacheHits / total : ZERO;
 
     const details = results.map((result) =>
       PreloaderUtils.formatResult(result),
@@ -136,12 +136,12 @@ export const PreloaderUtils = {
 
     // 检查成功率
     if (stats.successRate < MAGIC_0_8) {
-      issues.push(`Low success rate: ${(stats.successRate * 100).toFixed(1)}%`);
+      issues.push(`Low success rate: ${(stats.successRate * PERCENTAGE_FULL).toFixed(ONE)}%`);
       recommendations.push('Check network connectivity and API endpoints');
     }
 
     // 检查平均加载时间
-    if (stats.averageLoadTime > 5000) {
+    if (stats.averageLoadTime > FIVE_SECONDS_MS) {
       issues.push(`High average load time: ${stats.averageLoadTime}ms`);
       recommendations.push(
         'Consider optimizing network requests or reducing payload size',
@@ -157,7 +157,7 @@ export const PreloaderUtils = {
     }
 
     const status =
-      issues.length === 0
+      issues.length === ZERO
         ? 'healthy'
         : issues.length <= COUNT_PAIR
           ? 'warning'
@@ -174,12 +174,12 @@ export const PreloaderUtils = {
     return {
       enablePreload: true,
       preloadLocales: ['en', 'zh'],
-      batchSize: 3,
-      delayBetweenBatches: 100,
+      batchSize: COUNT_TRIPLE,
+      delayBetweenBatches: PERCENTAGE_FULL,
       maxConcurrency: COUNT_FIVE,
-      timeout: 10000,
-      retryCount: 3,
-      retryDelay: 1000,
+      timeout: TEN_SECONDS_MS,
+      retryCount: COUNT_TRIPLE,
+      retryDelay: ANIMATION_DURATION_VERY_SLOW,
       smartPreload: {
         enabled: true,
         maxLocales: COUNT_FIVE,
@@ -192,10 +192,10 @@ export const PreloaderUtils = {
       networkThrottling: false,
       priorityQueue: true,
       cacheStrategy: 'adaptive',
-      cacheTTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // HOURS_PER_DAY hours
-      maxCacheSize: 100,
+      cacheTTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY hours
+      maxCacheSize: PERCENTAGE_FULL,
       enableMetrics: true,
-      metricsInterval: 60000, // 1 minute
+      metricsInterval: MINUTE_MS, // 1 minute
       enableLogging: true,
       logLevel: 'info',
     };

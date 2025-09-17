@@ -1,3 +1,5 @@
+import { MAGIC_15 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { z } from 'zod';
 
 /**
@@ -6,34 +8,34 @@ import { z } from 'zod';
  */
 const VALIDATION_CONSTANTS = {
   // Name field constraints
-  NAME_MIN_LENGTH: 2,
-  NAME_MAX_LENGTH: 50,
+  NAME_MIN_LENGTH: COUNT_PAIR,
+  NAME_MAX_LENGTH: PERCENTAGE_HALF,
 
   // Email constraints
-  EMAIL_MAX_LENGTH: 100,
+  EMAIL_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Company constraints
-  COMPANY_MIN_LENGTH: 2,
-  COMPANY_MAX_LENGTH: 100,
+  COMPANY_MIN_LENGTH: COUNT_PAIR,
+  COMPANY_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Message constraints
-  MESSAGE_MIN_LENGTH: 10,
-  MESSAGE_MAX_LENGTH: 1000,
+  MESSAGE_MIN_LENGTH: COUNT_TEN,
+  MESSAGE_MAX_LENGTH: ANIMATION_DURATION_VERY_SLOW,
 
   // Subject constraints
-  SUBJECT_MIN_LENGTH: 5,
-  SUBJECT_MAX_LENGTH: 100,
+  SUBJECT_MIN_LENGTH: COUNT_FIVE,
+  SUBJECT_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Phone constraints
-  PHONE_MAX_DIGITS: 15,
+  PHONE_MAX_DIGITS: MAGIC_15,
 
   // Honeypot constraint
-  HONEYPOT_MAX_LENGTH: 0,
+  HONEYPOT_MAX_LENGTH: ZERO,
 
   // Rate limiting
-  DEFAULT_COOLDOWN_MINUTES: 5,
-  COOLDOWN_TO_MS_MULTIPLIER: 60,
-  MS_PER_SECOND: 1000,
+  DEFAULT_COOLDOWN_MINUTES: COUNT_FIVE,
+  COOLDOWN_TO_MS_MULTIPLIER: SECONDS_PER_MINUTE,
+  MS_PER_SECOND: ANIMATION_DURATION_VERY_SLOW,
 } as const;
 
 /**
@@ -232,9 +234,9 @@ export const validationHelpers = {
    * Validate if email domain is in allowed list
    */
   isEmailDomainAllowed: (email: string, allowedDomains?: string[]): boolean => {
-    if (!allowedDomains || allowedDomains.length === 0) return true;
+    if (!allowedDomains || allowedDomains.length === ZERO) return true;
 
-    const domain = email.split('@')[1]?.toLowerCase();
+    const domain = email.split('@')[ONE]?.toLowerCase();
     return allowedDomains.some((allowed) => domain === allowed.toLowerCase());
   },
 
@@ -297,8 +299,8 @@ export const validationHelpers = {
  */
 export const validationConfig = {
   // Rate limiting
-  submissionCooldownMinutes: 5,
-  maxSubmissionsPerHour: 10,
+  submissionCooldownMinutes: COUNT_FIVE,
+  maxSubmissionsPerHour: COUNT_TEN,
 
   // Content filtering
   enableSpamDetection: true,

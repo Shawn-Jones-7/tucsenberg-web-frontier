@@ -1,8 +1,5 @@
 'use client';
 
-import { memo, useState, useTransition } from 'react';
-import { Check, Languages, Loader2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,9 +7,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { MAGIC_2000 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW } from "@/constants/magic-numbers";
 import { Link, usePathname } from '@/i18n/routing';
+import { Check, Languages, Loader2 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { memo, useState, useTransition } from 'react';
 
-const TRANSITION_TIMEOUT = 1000; // 1 second timeout for language switch
+const TRANSITION_TIMEOUT = ANIMATION_DURATION_VERY_SLOW; // 1 second timeout for language switch
 
 // Custom hook for language switching logic
 const useLanguageSwitch = () => {
@@ -30,7 +32,7 @@ const useLanguageSwitch = () => {
         setSwitchingTo(null);
         setSwitchSuccess(true);
         // Hide success indicator after 2 seconds
-        setTimeout(() => setSwitchSuccess(false), 2000);
+        setTimeout(() => setSwitchSuccess(false), MAGIC_2000);
       }, TRANSITION_TIMEOUT);
     });
   };

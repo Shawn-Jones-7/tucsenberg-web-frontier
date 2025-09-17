@@ -3,7 +3,7 @@
  * 包含透明度、角度、屏幕尺寸、内容限制等UI相关常量
  */
 
-import { TEST_BASE_NUMBERS } from '@/constants/test-base-constants';
+import { TEST_BASE_NUMBERS } from './test-base-constants';
 
 // ==================== 测试UI常量 ====================
 

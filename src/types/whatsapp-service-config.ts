@@ -1,4 +1,5 @@
-import { COUNT_TEN, MAGIC_300000 } from '@/constants/magic-numbers';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, MAGIC_300000, PERCENTAGE_FULL, TEN_SECONDS_MS, THIRTY_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 
 /**
  * WhatsApp Service Configuration Types
@@ -254,16 +255,16 @@ export type LogLevel = 'debug' | 'info' | 'warn' | 'error';
  * Sensible defaults for WhatsApp service configuration
  */
 export const DEFAULT_SERVICE_OPTIONS: Required<WhatsAppServiceOptions> = {
-  timeout: 30000,
-  retries: 3,
-  retryDelay: 1000,
-  maxRetryDelay: 10000,
-  retryMultiplier: 2,
+  timeout: THIRTY_SECONDS_MS,
+  retries: COUNT_TRIPLE,
+  retryDelay: ANIMATION_DURATION_VERY_SLOW,
+  maxRetryDelay: TEN_SECONDS_MS,
+  retryMultiplier: COUNT_PAIR,
   enableLogging: true,
   logLevel: 'info',
   validateMessages: true,
   rateLimitStrategy: 'exponential',
-  rateLimitMaxAttempts: 5,
+  rateLimitMaxAttempts: COUNT_FIVE,
 };
 
 /**
@@ -271,10 +272,10 @@ export const DEFAULT_SERVICE_OPTIONS: Required<WhatsAppServiceOptions> = {
  * Sensible defaults for retry logic
  */
 export const DEFAULT_RETRY_CONFIG: RetryConfig = {
-  maxAttempts: 3,
-  baseDelay: 1000,
-  maxDelay: 10000,
-  multiplier: 2,
+  maxAttempts: COUNT_TRIPLE,
+  baseDelay: ANIMATION_DURATION_VERY_SLOW,
+  maxDelay: TEN_SECONDS_MS,
+  multiplier: COUNT_PAIR,
   jitter: true,
 };
 
@@ -283,9 +284,9 @@ export const DEFAULT_RETRY_CONFIG: RetryConfig = {
  * Sensible defaults for circuit breaker pattern
  */
 export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerConfig = {
-  failureThreshold: 5,
-  recoveryTimeout: 60000,
-  monitoringPeriod: 10000,
+  failureThreshold: COUNT_FIVE,
+  recoveryTimeout: MINUTE_MS,
+  monitoringPeriod: TEN_SECONDS_MS,
   expectedErrors: ['WhatsAppRateLimitError', 'WhatsAppNetworkError'],
 };
 
@@ -295,7 +296,7 @@ export const DEFAULT_CIRCUIT_BREAKER_CONFIG: CircuitBreakerConfig = {
  */
 export const DEFAULT_CACHE_CONFIG: CacheConfig = {
   ttl: MAGIC_300000, // 5 minutes
-  maxSize: 1000,
+  maxSize: ANIMATION_DURATION_VERY_SLOW,
   strategy: 'lru',
 };
 
@@ -323,15 +324,15 @@ export function validateWhatsAppConfig(
 export function validateServiceOptions(
   options: WhatsAppServiceOptions,
 ): boolean {
-  if (options.timeout && (options.timeout < 1000 || options.timeout > MAGIC_300000)) {
+  if (options.timeout && (options.timeout < ANIMATION_DURATION_VERY_SLOW || options.timeout > MAGIC_300000)) {
     return false; // Timeout should be between 1s and 5min
   }
 
-  if (options.retries && (options.retries < 0 || options.retries > COUNT_TEN)) {
+  if (options.retries && (options.retries < ZERO || options.retries > COUNT_TEN)) {
     return false; // Retries should be between 0 and COUNT_TEN
   }
 
-  if (options.retryDelay && options.retryDelay < 100) {
+  if (options.retryDelay && options.retryDelay < PERCENTAGE_FULL) {
     return false; // Retry delay should be at least 100ms
   }
 

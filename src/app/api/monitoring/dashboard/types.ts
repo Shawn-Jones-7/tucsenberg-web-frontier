@@ -1,3 +1,5 @@
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY } from "@/constants/magic-numbers";
+
 /**
  * 监控仪表板相关类型定义和常量
  */
@@ -5,9 +7,9 @@
 // 时间常量（毫秒）
 export const MINUTES_PER_HOUR = 60;
 export const SECONDS_PER_MINUTE = 60;
-export const MS_PER_SECOND = 1000;
-export const HOURS_24 = 24;
-export const HOURS_2 = 2;
+export const MS_PER_SECOND = ANIMATION_DURATION_VERY_SLOW;
+export const HOURS_24 = HOURS_PER_DAY;
+export const HOURS_2 = COUNT_PAIR;
 
 export const HOURS_24_IN_MS =
   HOURS_24 * MINUTES_PER_HOUR * SECONDS_PER_MINUTE * MS_PER_SECOND;

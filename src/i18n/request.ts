@@ -1,11 +1,12 @@
-import { headers } from 'next/headers';
-import { getRequestConfig } from 'next-intl/server';
+import { COUNT_FIVE, ONE } from "@/constants/magic-numbers";
+import { routing } from '@/i18n/routing';
 import {
   getCachedMessages,
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { routing } from '@/i18n/routing';
+import { getRequestConfig } from 'next-intl/server';
+import { headers } from 'next/headers';
 
 // 辅助函数：获取格式配置
 function getFormats(locale: string) {
@@ -25,7 +26,7 @@ function getFormats(locale: string) {
     },
     number: {
       precise: {
-        maximumFractionDigits: 5,
+        maximumFractionDigits: COUNT_FIVE,
       },
       currency: {
         style: 'currency' as const,
@@ -33,7 +34,7 @@ function getFormats(locale: string) {
       },
       percentage: {
         style: 'percent' as const,
-        minimumFractionDigits: 1,
+        minimumFractionDigits: ONE,
       },
     },
     list: {

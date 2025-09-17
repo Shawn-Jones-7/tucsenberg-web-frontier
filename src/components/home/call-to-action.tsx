@@ -1,21 +1,23 @@
 'use client';
 
-import { ArrowRight, ExternalLink, Github, Star } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { ActionCards } from '@/components/home/cta/action-cards';
 import { CommunitySection } from '@/components/home/cta/community-section';
 import { getCallToActionData } from '@/components/home/cta/data';
 import { StatsDisplay } from '@/components/home/cta/stats-display';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { COUNT_700 } from "@/constants/count";
+import { MAGIC_0_2 } from "@/constants/decimal";
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
+import { ArrowRight, ExternalLink, Github, Star } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // UI常量
 const UI_CONSTANTS = {
   /** 长动画持续时间: 700ms */
-  LONG_ANIMATION_DURATION: 700,
+  LONG_ANIMATION_DURATION: COUNT_700,
   /** 交叉观察器阈值 */
-  INTERSECTION_THRESHOLD: 0.2,
+  INTERSECTION_THRESHOLD: MAGIC_0_2,
 } as const;
 
 export function CallToAction() {

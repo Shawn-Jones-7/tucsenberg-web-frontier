@@ -8,6 +8,7 @@ import { LOCALES_CONFIG } from '@/config/paths/locales-config';
 import { PATHS_CONFIG } from '@/config/paths/paths-config';
 import { SITE_CONFIG } from '@/config/paths/site-config';
 import type { Locale, LocalizedPath, PageType } from '@/config/paths/types';
+import { ZERO } from "@/constants/magic-numbers";
 
 /**
  * 获取本地化路径
@@ -140,7 +141,7 @@ export function validatePathsConfig(): { isValid: boolean; errors: string[] } {
   });
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
   };
 }

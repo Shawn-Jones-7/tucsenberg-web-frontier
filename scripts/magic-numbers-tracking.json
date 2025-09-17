@@ -1,0 +1,59 @@
+{
+  "metadata": {
+    "created": "2024-01-16",
+    "purpose": "跟踪剩余魔法数字修复进度",
+    "total_errors": 29,
+    "status": "pending"
+  },
+  "constants_needed": {
+    "decimals": {
+      "0.5": "MAGIC_0_5",
+      "0.9": "MAGIC_0_9", 
+      "1.5": "MAGIC_1_5"
+    },
+    "whatsapp_error_codes": {
+      "131": "MAGIC_131",
+      "132": "MAGIC_132", 
+      "133": "MAGIC_133",
+      "136": "MAGIC_136",
+      "190": "MAGIC_190",
+      "368": "MAGIC_368",
+      "131000": "MAGIC_131000",
+      "131005": "MAGIC_131005",
+      "131008": "MAGIC_131008", 
+      "131009": "MAGIC_131009",
+      "131014": "MAGIC_131014",
+      "131016": "MAGIC_131016",
+      "131021": "MAGIC_131021",
+      "131026": "MAGIC_131026",
+      "131047": "MAGIC_131047",
+      "131051": "MAGIC_131051",
+      "131052": "MAGIC_131052",
+      "131053": "MAGIC_131053"
+    }
+  },
+  "batch_plan": [
+    {
+      "batch_id": 1,
+      "description": "补充所有缺失常量定义",
+      "files": ["src/constants/magic-numbers.ts"],
+      "status": "pending"
+    },
+    {
+      "batch_id": 2, 
+      "description": "修复小数常量使用（3个文件）",
+      "numbers": ["0.5", "0.9", "1.5"],
+      "status": "pending"
+    },
+    {
+      "batch_id": 3,
+      "description": "修复WhatsApp错误码常量（剩余文件）", 
+      "numbers": ["131", "132", "133", "136", "190", "368", "131000", "131005", "131008", "131009", "131014", "131016", "131021", "131026", "131047", "131051", "131052", "131053"],
+      "status": "pending"
+    }
+  ],
+  "validation_checkpoints": [
+    "pnpm run type-check",
+    "pnpm run lint:check | grep no-magic-numbers | wc -l"
+  ]
+}

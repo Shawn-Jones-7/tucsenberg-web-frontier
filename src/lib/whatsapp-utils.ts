@@ -1,4 +1,5 @@
-import { BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, MAGIC_20, MAGIC_256, MAGIC_36, MAGIC_72, MAGIC_9 } from '@/constants/magic-numbers';
+import { MAGIC_4096 } from "@/constants/count";
+import { BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, HTTP_OK, MAGIC_20, MAGIC_256, MAGIC_36, MAGIC_72, MAGIC_9, ZERO } from "@/constants/magic-numbers";
 
 /**
  * WhatsApp Business API 工具函数
@@ -30,7 +31,7 @@ export class WhatsAppUtils {
    */
   static validateMessageLength(
     message: string,
-    maxLength: number = 4096,
+    maxLength: number = MAGIC_4096,
   ): boolean {
     return message.length <= maxLength;
   }
@@ -41,7 +42,7 @@ export class WhatsAppUtils {
   static validateTemplateParameters(parameters: string[]): boolean {
     return parameters.every(
       (param) =>
-        typeof param === 'string' && param.length > 0 && param.length <= BYTES_PER_KB,
+        typeof param === 'string' && param.length > ZERO && param.length <= BYTES_PER_KB,
     );
   }
 
@@ -51,7 +52,7 @@ export class WhatsAppUtils {
   static validateButtons(
     buttons: Array<{ id: string; title: string }>,
   ): boolean {
-    if (buttons.length === 0 || buttons.length > COUNT_TRIPLE) {
+    if (buttons.length === ZERO || buttons.length > COUNT_TRIPLE) {
       return false;
     }
 
@@ -59,9 +60,9 @@ export class WhatsAppUtils {
       (button) =>
         typeof button.id === 'string' &&
         typeof button.title === 'string' &&
-        button.id.length > 0 &&
+        button.id.length > ZERO &&
         button.id.length <= MAGIC_256 &&
-        button.title.length > 0 &&
+        button.title.length > ZERO &&
         button.title.length <= MAGIC_20,
     );
   }
@@ -72,7 +73,7 @@ export class WhatsAppUtils {
   static validateListRows(
     rows: Array<{ id: string; title: string; description?: string }>,
   ): boolean {
-    if (rows.length === 0 || rows.length > COUNT_TEN) {
+    if (rows.length === ZERO || rows.length > COUNT_TEN) {
       return false;
     }
 
@@ -80,12 +81,12 @@ export class WhatsAppUtils {
       (row) =>
         typeof row.id === 'string' &&
         typeof row.title === 'string' &&
-        row.id.length > 0 &&
-        row.id.length <= 200 &&
-        row.title.length > 0 &&
+        row.id.length > ZERO &&
+        row.id.length <= HTTP_OK &&
+        row.title.length > ZERO &&
         row.title.length <= HOURS_PER_DAY &&
         (!row.description ||
-          (row.description.length > 0 && row.description.length <= MAGIC_72)),
+          (row.description.length > ZERO && row.description.length <= MAGIC_72)),
     );
   }
 

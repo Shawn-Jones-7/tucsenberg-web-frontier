@@ -11,7 +11,7 @@ import {
   commonErrorScenarios,
   ErrorRecoveryTester,
   NetworkErrorSimulator,
-} from './setup';
+} from '@/tests/error-scenarios/setup';
 
 describe('Error Handling Framework Validation', () => {
   let networkSimulator: NetworkErrorSimulator;

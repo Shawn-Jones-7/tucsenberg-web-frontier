@@ -1,5 +1,6 @@
-import type { QualityIssue } from '@/types/translation-manager';
 import { QUALITY_CHECK_THRESHOLDS } from '@/constants/i18n-constants';
+import { COUNT_FIVE, HTTP_OK, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import type { QualityIssue } from '@/types/translation-manager';
 
 /**
  * 翻译工具函数集合
@@ -19,7 +20,7 @@ function safeSetProperty(
   }
 
   // 限制键名长度
-  if (key.length > 200) {
+  if (key.length > HTTP_OK) {
     return;
   }
 
@@ -42,7 +43,7 @@ function safeGetProperty(obj: Record<string, unknown>, key: string): unknown {
   }
 
   // 限制键名长度
-  if (key.length > 100) {
+  if (key.length > PERCENTAGE_FULL) {
     return undefined;
   }
 
@@ -59,7 +60,7 @@ function safeGetProperty(obj: Record<string, unknown>, key: string): unknown {
  */
 export function extractPlaceholders(text: string): string[] {
   const matches = text.match(/\{[^}]+\}/g) || [];
-  return matches.map((match) => match.slice(1, -1));
+  return matches.map((match) => match.slice(ONE, -ONE));
 }
 
 /**
@@ -124,7 +125,7 @@ export function calculateConfidence(issues: QualityIssue[]): number {
     criticalIssues * QUALITY_CHECK_THRESHOLDS.HIGH_QUALITY +
     highIssues * QUALITY_CHECK_THRESHOLDS.MEDIUM_QUALITY +
     mediumIssues * QUALITY_CHECK_THRESHOLDS.LOW_QUALITY;
-  return Math.max(0, 100 - penalty);
+  return Math.max(ZERO, PERCENTAGE_FULL - penalty);
 }
 
 /**
@@ -149,7 +150,7 @@ export function generateSuggestions(issues: QualityIssue[]): string[] {
     suggestions.push('Review terminology usage and maintain consistency');
   }
 
-  if (suggestions.length === 0) {
+  if (suggestions.length === ZERO) {
     suggestions.push('Translation quality is good');
   }
 
@@ -167,11 +168,11 @@ export function generateRecommendations(issues: QualityIssue[]): string[] {
   );
   const highIssues = issues.filter((issue) => issue.severity === 'high');
 
-  if (criticalIssues.length > 0) {
+  if (criticalIssues.length > ZERO) {
     recommendations.push('Address critical issues immediately');
   }
 
-  if (highIssues.length > 0) {
+  if (highIssues.length > ZERO) {
     recommendations.push('Review and fix high-priority issues');
   }
 
@@ -182,7 +183,7 @@ export function generateRecommendations(issues: QualityIssue[]): string[] {
   const placeholderIssues = issues.filter(
     (issue) => issue.type === 'placeholder',
   );
-  if (placeholderIssues.length > 0) {
+  if (placeholderIssues.length > ZERO) {
     recommendations.push('Implement automated placeholder validation');
   }
 
@@ -199,7 +200,7 @@ export function checkTerminologyConsistency(
 ): Promise<QualityIssue[]> {
   const issues: QualityIssue[] = [];
 
-  if (!terminologyMap || terminologyMap.size === 0) {
+  if (!terminologyMap || terminologyMap.size === ZERO) {
     return Promise.resolve(issues);
   }
 
@@ -225,7 +226,7 @@ export function calculateQualityTrend(
   currentScore: number,
   previousScore: number,
 ): 'improving' | 'declining' | 'stable' {
-  const TREND_THRESHOLD = 5;
+  const TREND_THRESHOLD = COUNT_FIVE;
   const difference = currentScore - previousScore;
 
   if (difference > TREND_THRESHOLD) {
@@ -260,7 +261,7 @@ export function isEmptyTranslation(translation: unknown): boolean {
   if (typeof translation !== 'string') {
     return true;
   }
-  return translation.trim().length === 0;
+  return translation.trim().length === ZERO;
 }
 
 /**

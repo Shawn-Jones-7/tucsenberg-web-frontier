@@ -4,18 +4,20 @@
  * 提供综合检测逻辑、置信度计算、结果分析等智能检测功能
  */
 
-import type { Locale } from '@/types/i18n';
-import { logger } from '@/lib/logger';
+import { DEC_0_05, MAGIC_0_1, MAGIC_0_8 } from "@/constants/decimal";
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
 import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
 import { BaseLocaleDetector } from '@/lib/locale-detector-base';
 import type { DetectionSource } from '@/lib/locale-detector-constants';
+import { LocaleStorageManager } from '@/lib/locale-storage';
+import { logger } from '@/lib/logger';
+import type { Locale } from '@/types/i18n';
 import {
   CONFIDENCE_WEIGHTS,
   DETECTION_SOURCES,
   QUALITY_THRESHOLDS,
 } from './locale-detector-constants';
-import { LocaleStorageManager } from '@/lib/locale-storage';
 
 /**
  * 检测结果接口
@@ -65,7 +67,7 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
     const detectionResults = await this.collectAllDetectionResults();
 
     // 4. 如果没有任何检测结果，返回默认语言
-    if (detectionResults.length === 0) {
+    if (detectionResults.length === ZERO) {
       return {
         locale: DEFAULT_LOCALE,
         source: DETECTION_SOURCES.DEFAULT,
@@ -202,8 +204,8 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
         results.push({
           locale: ipLocale.value,
           source: DETECTION_SOURCES.GEO, // IP检测归类为地理位置检测
-          weight: CONFIDENCE_WEIGHTS.GEOLOCATION * 0.8, // IP检测权重略低于GPS
-          confidence: CONFIDENCE_WEIGHTS.GEOLOCATION * 0.8,
+          weight: CONFIDENCE_WEIGHTS.GEOLOCATION * MAGIC_0_8, // IP检测权重略低于GPS
+          confidence: CONFIDENCE_WEIGHTS.GEOLOCATION * MAGIC_0_8,
         });
       }
     } catch (error) {
@@ -233,13 +235,13 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
 
     for (const result of detectionResults) {
       const current = localeStats.get(result.locale) || {
-        count: 0,
-        totalWeight: 0,
+        count: ZERO,
+        totalWeight: ZERO,
         sources: [],
-        maxConfidence: 0,
+        maxConfidence: ZERO,
       };
 
-      current.count += 1;
+      current.count += ONE;
       current.totalWeight += result.weight;
       current.sources.push(result.source);
       current.maxConfidence = Math.max(
@@ -252,14 +254,14 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
 
     // 计算每种语言的综合得分
     let bestLocale = DEFAULT_LOCALE;
-    let bestScore = 0;
+    let bestScore = ZERO;
     let bestSources: DetectionSource[] = [];
     let bestConfidence: number = CONFIDENCE_WEIGHTS.DEFAULT_FALLBACK;
 
     for (const [locale, stats] of localeStats.entries()) {
       // 综合得分 = 权重总和 + 一致性奖励
       const consistencyBonus =
-        stats.count > 1 ? QUALITY_THRESHOLDS.CONSISTENCY_BONUS : 0;
+        stats.count > ONE ? QUALITY_THRESHOLDS.CONSISTENCY_BONUS : ZERO;
       const score = stats.totalWeight + consistencyBonus;
 
       if (score > bestScore) {
@@ -272,7 +274,7 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
           stats.totalWeight / detectionResults.length,
           QUALITY_THRESHOLDS.HIGH_CONFIDENCE,
         );
-        bestConfidence = Math.min(baseConfidence + consistencyBonus, 1.0);
+        bestConfidence = Math.min(baseConfidence + consistencyBonus, ONE);
       }
     }
 
@@ -291,7 +293,7 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
     // 添加统计信息
     details.detectionStats = JSON.stringify({
       totalSources: detectionResults.length,
-      consistentSources: localeStats.get(bestLocale)?.count || 0,
+      consistentSources: localeStats.get(bestLocale)?.count || ZERO,
       score: bestScore,
     });
 
@@ -300,7 +302,7 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
       source:
         bestSources.length > QUALITY_THRESHOLDS.MIN_SOURCES_FOR_COMBINED
           ? DETECTION_SOURCES.COMBINED
-          : bestSources[0] || DETECTION_SOURCES.DEFAULT,
+          : bestSources[ZERO] || DETECTION_SOURCES.DEFAULT,
       confidence: bestConfidence,
       details,
     };
@@ -378,12 +380,12 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
     // 计算可靠性
     let reliability = confidence;
     if (source === DETECTION_SOURCES.COMBINED) {
-      reliability += 0.1; // 组合检测更可靠
+      reliability += MAGIC_0_1; // 组合检测更可靠
     }
-    if ((details?.detectionStats?.consistentSources ?? 0) > 1) {
-      reliability += 0.05; // 一致性检测更可靠
+    if ((details?.detectionStats?.consistentSources ?? ZERO) > ONE) {
+      reliability += DEC_0_05; // 一致性检测更可靠
     }
-    reliability = Math.min(reliability, 1.0);
+    reliability = Math.min(reliability, ONE);
 
     // 生成建议
     if (quality === 'low') {

@@ -3,8 +3,9 @@
  * Security headers and configuration utilities
  */
 
-import { logger } from '@/lib/logger';
 import { env } from '@/../env.mjs';
+import { ONE, ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
 
 /**
  * Security headers for API responses
@@ -63,7 +64,7 @@ export function generateCSP(nonce?: string): string {
   if (nonce) {
     // Replace 'unsafe-inline' with nonce for scripts
     const scriptIndex = policies.findIndex((p) => p.startsWith('script-src'));
-    if (scriptIndex !== -1) {
+    if (scriptIndex !== -ONE) {
       policies[scriptIndex] =
         `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`;
     }
@@ -184,7 +185,7 @@ export function checkSecurityConfig(testMode = false): {
   }
 
   return {
-    configured: issues.length === 0,
+    configured: issues.length === ZERO,
     issues,
     recommendations,
   };
@@ -282,7 +283,7 @@ export function validateSecurityHeaders(headers: Record<string, string>): {
   );
 
   return {
-    valid: missing.length === 0,
+    valid: missing.length === ZERO,
     missing,
     recommendations,
   };

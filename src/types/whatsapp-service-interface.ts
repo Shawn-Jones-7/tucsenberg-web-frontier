@@ -5,6 +5,8 @@
  * utility types, and common type aliases for the WhatsApp service.
  */
 
+import { PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import type { WhatsAppError } from '@/types/whatsapp-service-errors';
 import type {
   LogLevel,
   MessageStatus,
@@ -12,14 +14,13 @@ import type {
   ServiceEnvironment,
   WhatsAppConfig,
   WhatsAppServiceOptions,
-} from './whatsapp-service-config';
-import type { WhatsAppError } from '@/types/whatsapp-service-errors';
+} from '@/types/whatsapp-service-config';
 import type {
   ServiceHealth,
   ServiceMetrics,
   ServiceStatus,
   WhatsAppServiceEvent,
-} from './whatsapp-service-monitoring';
+} from '@/types/whatsapp-service-monitoring';
 
 // ==================== Main Service Interface ====================
 
@@ -297,14 +298,9 @@ export interface WebhookConfig {
  * Shorter type aliases for commonly used types
  */
 export type {
-  WhatsAppConfig as Config,
-  WhatsAppServiceOptions as ServiceOptions,
-  ServiceStatus as Status,
-  ServiceHealth as Health,
-  ServiceMetrics as Metrics,
-  WhatsAppServiceInterface as ServiceInterface,
-  WhatsAppServiceEvent as ServiceEvent,
-  WhatsAppError as ServiceError,
+  WhatsAppConfig as Config, ServiceHealth as Health,
+  ServiceMetrics as Metrics, WhatsAppError as ServiceError, WhatsAppServiceEvent as ServiceEvent, WhatsAppServiceInterface as ServiceInterface, WhatsAppServiceOptions as ServiceOptions,
+  ServiceStatus as Status
 };
 
 // ==================== Factory Types ====================
@@ -402,9 +398,9 @@ export function createDefaultServiceStatus(): ServiceStatus {
     health: {
       status: 'healthy',
       lastCheck: Date.now(),
-      responseTime: 0,
-      errorRate: 0,
-      uptime: 100,
+      responseTime: ZERO,
+      errorRate: ZERO,
+      uptime: PERCENTAGE_FULL,
       details: {
         api: 'available',
         webhook: 'not_configured',
@@ -412,14 +408,14 @@ export function createDefaultServiceStatus(): ServiceStatus {
       },
     },
     metrics: {
-      messagesSent: 0,
-      messagesDelivered: 0,
-      messagesRead: 0,
-      messagesFailed: 0,
-      apiCalls: 0,
-      apiErrors: 0,
-      averageResponseTime: 0,
-      uptime: 100,
+      messagesSent: ZERO,
+      messagesDelivered: ZERO,
+      messagesRead: ZERO,
+      messagesFailed: ZERO,
+      apiCalls: ZERO,
+      apiErrors: ZERO,
+      averageResponseTime: ZERO,
+      uptime: PERCENTAGE_FULL,
       lastReset: Date.now(),
     },
     config: {

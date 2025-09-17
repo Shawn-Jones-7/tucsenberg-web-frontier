@@ -1,4 +1,6 @@
-import { COUNT_PAIR } from '@/constants/magic-numbers';
+import { MAGIC_20 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 
 /**
  * 速率限制工具
@@ -9,11 +11,11 @@ import { COUNT_PAIR } from '@/constants/magic-numbers';
  * Rate limiting constants
  */
 const RATE_LIMIT_CONSTANTS = {
-  DEFAULT_MAX_REQUESTS: 10,
-  DEFAULT_WINDOW_MS: 60000, // 1 minute
-  CLEANUP_INTERVAL_MINUTES: 5,
-  MINUTES_TO_MS: 60,
-  SECONDS_TO_MS: 1000,
+  DEFAULT_MAX_REQUESTS: COUNT_TEN,
+  DEFAULT_WINDOW_MS: MINUTE_MS, // 1 minute
+  CLEANUP_INTERVAL_MINUTES: COUNT_FIVE,
+  MINUTES_TO_MS: SECONDS_PER_MINUTE,
+  SECONDS_TO_MS: ANIMATION_DURATION_VERY_SLOW,
 } as const;
 
 /**
@@ -43,7 +45,7 @@ export function rateLimit(
   if (!entry || now > entry.resetTime) {
     // First request or window expired
     rateLimitStore.set(identifier, {
-      count: 1,
+      count: ONE,
       resetTime: now + windowMs,
     });
     return true;
@@ -55,7 +57,7 @@ export function rateLimit(
   }
 
   // Increment count
-  entry.count += 1;
+  entry.count += ONE;
   rateLimitStore.set(identifier, entry);
   return true;
 }
@@ -73,20 +75,20 @@ export function getRateLimitStatus(identifier: string): {
 
   if (!entry || now > entry.resetTime) {
     return {
-      remaining: RATE_LIMIT_CONSTANTS.DEFAULT_MAX_REQUESTS - 1,
+      remaining: RATE_LIMIT_CONSTANTS.DEFAULT_MAX_REQUESTS - ONE,
       resetTime: now + RATE_LIMIT_CONSTANTS.DEFAULT_WINDOW_MS,
       isLimited: false,
     };
   }
 
   const remaining = Math.max(
-    0,
+    ZERO,
     RATE_LIMIT_CONSTANTS.DEFAULT_MAX_REQUESTS - entry.count,
   );
   return {
     remaining,
     resetTime: entry.resetTime,
-    isLimited: remaining === 0,
+    isLimited: remaining === ZERO,
   };
 }
 
@@ -133,7 +135,7 @@ export function getActiveLimits(): Array<{
         count: entry.count,
         resetTime: entry.resetTime,
         remaining: Math.max(
-          0,
+          ZERO,
           RATE_LIMIT_CONSTANTS.DEFAULT_MAX_REQUESTS - entry.count,
         ),
       });
@@ -155,23 +157,23 @@ export interface RateLimitTier {
 const defaultTiers: Record<string, RateLimitTier> = {
   strict: {
     name: 'strict',
-    maxRequests: 5,
-    windowMs: 60000, // 1 minute
+    maxRequests: COUNT_FIVE,
+    windowMs: MINUTE_MS, // 1 minute
   },
   normal: {
     name: 'normal',
-    maxRequests: 10,
-    windowMs: 60000, // 1 minute
+    maxRequests: COUNT_TEN,
+    windowMs: MINUTE_MS, // 1 minute
   },
   relaxed: {
     name: 'relaxed',
-    maxRequests: 20,
-    windowMs: 60000, // 1 minute
+    maxRequests: MAGIC_20,
+    windowMs: MINUTE_MS, // 1 minute
   },
   premium: {
     name: 'premium',
-    maxRequests: 100,
-    windowMs: 60000, // 1 minute
+    maxRequests: PERCENTAGE_FULL,
+    windowMs: MINUTE_MS, // 1 minute
   },
 };
 

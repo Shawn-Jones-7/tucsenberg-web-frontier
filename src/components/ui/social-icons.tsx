@@ -5,6 +5,7 @@
  * Based on the reference design with clean, minimal styling.
  */
 
+import { MAGIC_16, MAGIC_20 } from "@/constants/count";
 import type { FC } from 'react';
 import React from 'react';
 
@@ -17,7 +18,7 @@ interface SocialIconProps {
 // Twitter/X Icon
 export const TwitterIcon: FC<SocialIconProps> = ({
   className = '',
-  size = 20,
+  size = MAGIC_20,
   'data-testid': dataTestId,
 }) => (
   <svg
@@ -36,7 +37,7 @@ export const TwitterIcon: FC<SocialIconProps> = ({
 // LinkedIn Icon
 export const LinkedInIcon: FC<SocialIconProps> = ({
   className = '',
-  size = 20,
+  size = MAGIC_20,
   'data-testid': dataTestId,
 }) => (
   <svg
@@ -55,7 +56,7 @@ export const LinkedInIcon: FC<SocialIconProps> = ({
 // External Link Icon (for external links)
 export const ExternalLinkIcon: FC<SocialIconProps> = ({
   className = '',
-  size = 16,
+  size = MAGIC_16,
   'data-testid': dataTestId,
 }) => (
   <svg
@@ -142,7 +143,7 @@ export const SocialIconLink: FC<SocialIconLinkProps> = (props) => {
       label,
       ariaLabel,
       className = '',
-      iconSize = 20,
+      iconSize = MAGIC_20,
       'data-testid': dataTestId,
     } = props as SocialIconLinkPropsV1;
 
@@ -170,7 +171,7 @@ export const SocialIconLink: FC<SocialIconLinkProps> = (props) => {
       platform,
       'aria-label': ariaLabel,
       className = '',
-      iconSize = 20,
+      iconSize = MAGIC_20,
       'data-testid': dataTestId,
       children,
     } = props as SocialIconLinkPropsV2;

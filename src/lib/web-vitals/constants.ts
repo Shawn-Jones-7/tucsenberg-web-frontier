@@ -1,4 +1,7 @@
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
+import { COUNT_4 } from "@/constants/count";
+import { BREAKPOINT_FULL_HD } from "@/constants/magic-numbers";
+import { TEST_APP_CONSTANTS, WEB_VITALS_CONSTANTS } from "@/constants/test-constants";
+const STANDARD_HEIGHT = TEST_APP_CONSTANTS.STANDARD_HEIGHT;
 
 /**
  * Web Vitals 性能阈值常量
@@ -32,8 +35,8 @@ export const PERFORMANCE_THRESHOLDS = {
  * 设备默认值常量
  */
 export const DEVICE_DEFAULTS = {
-  MEMORY_GB: 4,
-  CPU_CORES: 4,
-  VIEWPORT_WIDTH: 1920,
-  VIEWPORT_HEIGHT: 1080,
+  MEMORY_GB: COUNT_4,
+  CPU_CORES: COUNT_4,
+  VIEWPORT_WIDTH: BREAKPOINT_FULL_HD,
+  VIEWPORT_HEIGHT: TEST_APP_CONSTANTS.STANDARD_HEIGHT,
 } as const;

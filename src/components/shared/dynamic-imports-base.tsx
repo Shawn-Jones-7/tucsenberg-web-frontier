@@ -5,9 +5,10 @@
  *
  * 提供加载状态组件、高阶组件包装器等基础功能
  */
-import React, { Suspense } from 'react';
-import { logger } from '@/lib/logger';
 import { LoadingSpinner } from '@/components/loading-spinner';
+import { PERCENTAGE_FULL } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
+import React, { Suspense } from 'react';
 
 // ==================== 加载状态组件 ====================
 
@@ -114,7 +115,7 @@ export function withConditionalDynamic<T extends object>(
  */
 export function withDelayedDynamic<T extends object>(
   DynamicComponent: React.ComponentType<T>,
-  delayMs: number = 100,
+  delayMs: number = PERCENTAGE_FULL,
 ) {
   return function DelayedComponent(props: T) {
     const [shouldLoad, setShouldLoad] = React.useState(false);

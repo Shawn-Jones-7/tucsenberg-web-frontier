@@ -1,6 +1,7 @@
-import React from 'react';
+import { BREAKPOINT_MD, BYTES_PER_KB, COUNT_PAIR, PERCENTAGE_FULL } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import { recordThemeSwitch } from '@/lib/theme-analytics';
+import React from 'react';
 import type {
   ThemeTransitionConfig,
   ThemeTransitionRecord,
@@ -10,9 +11,9 @@ import type {
  * 默认屏幕尺寸常量（用于 SSR 环境）
  */
 export const DEFAULT_SCREEN_DIMENSIONS = {
-  WIDTH: 1024,
-  HEIGHT: 768,
-  CENTER_DIVISOR: 2,
+  WIDTH: BYTES_PER_KB,
+  HEIGHT: BREAKPOINT_MD,
+  CENTER_DIVISOR: COUNT_PAIR,
 } as const;
 
 /**
@@ -21,7 +22,7 @@ export const DEFAULT_SCREEN_DIMENSIONS = {
 export const DEFAULT_CONFIG: ThemeTransitionConfig = {
   animationDuration: 400,
   easing: 'ease-in-out',
-  debounceDelay: 100,
+  debounceDelay: PERCENTAGE_FULL,
 } as const;
 
 /**

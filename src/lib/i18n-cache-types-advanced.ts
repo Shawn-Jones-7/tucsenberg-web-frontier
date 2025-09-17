@@ -5,6 +5,11 @@
  * 提供缓存系统的高级配置选项、策略和扩展功能
  */
 
+import { COUNT_14, COUNT_256, MAGIC_16, MAGIC_32, MAGIC_512, MAGIC_6 } from "@/constants/count";
+import { DEC_0_05, MAGIC_0_8 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
+import { DAYS_PER_WEEK } from "@/constants/time";
 import type { Locale } from '@/types/i18n';
 import type {
   CacheBackupConfig,
@@ -257,8 +262,8 @@ export interface CacheEnvironmentConfig {
  */
 export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   // 基础配置
-  maxSize: 1000,
-  ttl: 5 * 60 * 1000,
+  maxSize: ANIMATION_DURATION_VERY_SLOW,
+  ttl: COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   enablePersistence: true,
   storageKey: 'i18n_cache',
 
@@ -266,8 +271,8 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   compression: {
     enableCompression: false,
     algorithm: 'gzip',
-    threshold: 1024,
-    level: 6,
+    threshold: BYTES_PER_KB,
+    level: MAGIC_6,
   },
 
   // 加密配置
@@ -275,25 +280,25 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
     enableEncryption: false,
     algorithm: 'aes-256-gcm',
     keyDerivation: 'pbkdf2',
-    saltLength: 16,
+    saltLength: MAGIC_16,
   },
 
   // 监控配置
   monitoring: {
     enableMonitoring: true,
-    metricsInterval: 60000,
+    metricsInterval: MINUTE_MS,
     alertThresholds: {
-      hitRateBelow: 0.8,
-      errorRateAbove: 0.05,
-      loadTimeAbove: 1000,
+      hitRateBelow: MAGIC_0_8,
+      errorRateAbove: DEC_0_05,
+      loadTimeAbove: ANIMATION_DURATION_VERY_SLOW,
     },
   },
 
   // 备份配置
   backup: {
     enableBackup: false,
-    backupInterval: 24 * 60 * 60 * 1000,
-    maxBackups: 7,
+    backupInterval: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+    maxBackups: DAYS_PER_WEEK,
     backupLocation: './cache-backups',
     compressionEnabled: true,
   },
@@ -301,19 +306,19 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   // 性能配置
   performance: {
     enableLazyLoading: true,
-    prefetchThreshold: 0.8,
-    maxConcurrentLoads: 5,
-    loadTimeout: 10000,
-    retryAttempts: 3,
-    retryDelay: 1000,
+    prefetchThreshold: MAGIC_0_8,
+    maxConcurrentLoads: COUNT_FIVE,
+    loadTimeout: TEN_SECONDS_MS,
+    retryAttempts: COUNT_TRIPLE,
+    retryDelay: ANIMATION_DURATION_VERY_SLOW,
   },
 
   // 安全配置
   security: {
     enableAccessControl: false,
     allowedOrigins: [],
-    maxKeyLength: 256,
-    maxValueSize: 1024 * 1024,
+    maxKeyLength: COUNT_256,
+    maxValueSize: BYTES_PER_KB * BYTES_PER_KB,
     sanitizeKeys: true,
     validateValues: true,
   },
@@ -321,15 +326,15 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   // 分区配置
   partitioning: {
     enablePartitioning: false,
-    partitionKey: (key: string) => key.split(':')[0] || key,
-    maxPartitions: 10,
+    partitionKey: (key: string) => key.split(':')[ZERO] || key,
+    maxPartitions: COUNT_TEN,
     partitionStrategy: 'hash',
   },
 
   // 同步配置
   sync: {
     enableSync: false,
-    syncInterval: 30000,
+    syncInterval: THIRTY_SECONDS_MS,
     conflictResolution: 'local',
   },
 
@@ -340,10 +345,10 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   preload: {
     enabled: true,
     locales: ['en', 'zh'],
-    batchSize: 5,
-    delayBetweenBatches: 100,
+    batchSize: COUNT_FIVE,
+    delayBetweenBatches: PERCENTAGE_FULL,
     warmupOnInit: false,
-    prefetchThreshold: 0.8,
+    prefetchThreshold: MAGIC_0_8,
   },
 
   // 调试配置
@@ -375,7 +380,7 @@ export class CacheConfigFactory {
       },
       monitoring: {
         ...DEFAULT_ADVANCED_CACHE_CONFIG.monitoring,
-        metricsInterval: 10000,
+        metricsInterval: TEN_SECONDS_MS,
       },
     };
   }
@@ -390,19 +395,19 @@ export class CacheConfigFactory {
       compression: {
         enableCompression: true,
         algorithm: 'gzip',
-        threshold: 512,
-        level: 6,
+        threshold: MAGIC_512,
+        level: MAGIC_6,
       },
       encryption: {
         enableEncryption: true,
         algorithm: 'aes-256-gcm',
         keyDerivation: 'pbkdf2',
-        saltLength: 32,
+        saltLength: MAGIC_32,
       },
       backup: {
         enableBackup: true,
-        backupInterval: 6 * 60 * 60 * 1000, // 6 hours
-        maxBackups: 14,
+        backupInterval: MAGIC_6 * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 6 hours
+        maxBackups: COUNT_14,
         backupLocation: './cache-backups',
         compressionEnabled: true,
       },
@@ -422,8 +427,8 @@ export class CacheConfigFactory {
   static createTestConfig(): AdvancedCacheConfig {
     return {
       ...DEFAULT_ADVANCED_CACHE_CONFIG,
-      maxSize: 100,
-      ttl: 1000,
+      maxSize: PERCENTAGE_FULL,
+      ttl: ANIMATION_DURATION_VERY_SLOW,
       enablePersistence: false,
       monitoring: {
         ...DEFAULT_ADVANCED_CACHE_CONFIG.monitoring,

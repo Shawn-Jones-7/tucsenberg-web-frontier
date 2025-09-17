@@ -1,3 +1,4 @@
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import type {
   DetailedWebVitals,
@@ -134,7 +135,7 @@ export class PerformanceRegressionDetector {
     });
 
     return {
-      hasRegression: regressions.length > 0,
+      hasRegression: regressions.length > ZERO,
       regressions,
       summary: {
         totalRegressions: regressions.length,
@@ -155,7 +156,7 @@ export class PerformanceRegressionDetector {
    */
   private isMetricRegression(_metric: string, change: number): boolean {
     // 对于所有Web Vitals指标，数值增加都是回归（性能变差）
-    return change > 0;
+    return change > ZERO;
   }
 
   /**
@@ -212,12 +213,12 @@ export class PerformanceRegressionDetector {
   private calculateOverallSeverity(
     regressions: RegressionDetectionResult['regressions'],
   ): 'none' | 'warning' | 'critical' {
-    if (regressions.length === 0) return 'none';
+    if (regressions.length === ZERO) return 'none';
 
     const criticalCount = regressions.filter(
       (r) => r.severity === 'critical',
     ).length;
-    if (criticalCount > 0) return 'critical';
+    if (criticalCount > ZERO) return 'critical';
 
     return 'warning';
   }
@@ -237,12 +238,12 @@ export class PerformanceRegressionDetector {
       `🚨 回归数量: ${result.summary.totalRegressions} (关键: ${result.summary.criticalRegressions})`,
     );
 
-    if (result.regressions.length > 0) {
+    if (result.regressions.length > ZERO) {
       lines.push('\n🔴 发现的回归:');
       result.regressions.forEach((regression, index) => {
         const icon = this.getSeverityEmoji(regression.severity);
         lines.push(
-          `${index + 1}. ${icon} ${regression.metric.toUpperCase()}: ` +
+          `${index + ONE}. ${icon} ${regression.metric.toUpperCase()}: ` +
             `${regression.baseline.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES_TWO)} → ${regression.current.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES_TWO)} ` +
             `(+${regression.changePercent.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES_ONE)}%)`,
         );

@@ -1,4 +1,6 @@
-import { BYTES_PER_KB, PERCENTAGE_QUARTER } from '@/constants/magic-numbers';
+import { MAGIC_20, MAGIC_40, MAGIC_512, MAGIC_8, MAGIC_80 } from "@/constants/count";
+import { DEC_0_4, MAGIC_0_2, MAGIC_0_5, MAGIC_0_6, MAGIC_0_8, MAGIC_1_5 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, PERCENTAGE_QUARTER, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 性能监控常量定义
@@ -12,10 +14,10 @@ import { BYTES_PER_KB, PERCENTAGE_QUARTER } from '@/constants/magic-numbers';
  * Base numeric constants
  */
 const BASE_CONSTANTS = {
-  SECONDS_IN_MINUTE: 60,
-  MS_IN_SECOND: 1000,
+  SECONDS_IN_MINUTE: SECONDS_PER_MINUTE,
+  MS_IN_SECOND: ANIMATION_DURATION_VERY_SLOW,
   BYTES_IN_KB: BYTES_PER_KB,
-  MB_MULTIPLIER: 5,
+  MB_MULTIPLIER: COUNT_FIVE,
 } as const;
 
 /**
@@ -38,9 +40,9 @@ export const PERFORMANCE_THRESHOLDS = {
   /** 组件渲染时间阈值 (毫秒) */
   COMPONENT: {
     /** 默认渲染时间阈值 */
-    DEFAULT_RENDER_TIME: 100,
+    DEFAULT_RENDER_TIME: PERCENTAGE_FULL,
     /** 良好渲染时间阈值 */
-    GOOD_RENDER_TIME: 50,
+    GOOD_RENDER_TIME: PERCENTAGE_HALF,
   },
   /** 网络请求阈值 (毫秒) */
   NETWORK: {
@@ -67,37 +69,37 @@ export const PERFORMANCE_THRESHOLDS = {
  */
 export const SCORING_CONSTANTS = {
   /** 完美评分 */
-  PERFECT_SCORE: 100,
+  PERFECT_SCORE: PERCENTAGE_FULL,
   /** 优秀评分 */
-  EXCELLENT_SCORE: 80,
+  EXCELLENT_SCORE: MAGIC_80,
   /** 良好评分 */
-  GOOD_SCORE: 60,
+  GOOD_SCORE: SECONDS_PER_MINUTE,
   /** 一般评分 */
-  FAIR_SCORE: 40,
+  FAIR_SCORE: MAGIC_40,
   /** 差评分 */
-  POOR_SCORE: 20,
+  POOR_SCORE: MAGIC_20,
 
   /** 评分权重 */
   WEIGHTS: {
-    COMPONENT: 0.4,
-    NETWORK: 0.4,
-    BUNDLE: 0.2,
+    COMPONENT: DEC_0_4,
+    NETWORK: DEC_0_4,
+    BUNDLE: MAGIC_0_2,
   },
 
   /** 性能倍数阈值 */
   MULTIPLIERS: {
     /** 0.5倍阈值 - 优秀 */
-    EXCELLENT_MULTIPLIER: 0.5,
+    EXCELLENT_MULTIPLIER: MAGIC_0_5,
     /** 0.6倍阈值 - 良好 */
-    GOOD_MULTIPLIER: 0.6,
+    GOOD_MULTIPLIER: MAGIC_0_6,
     /** 1.0倍阈值 - 及格 */
-    PASSING_MULTIPLIER: 1.0,
+    PASSING_MULTIPLIER: ONE,
     /** 1.5倍阈值 - 一般 */
-    FAIR_MULTIPLIER: 1.5,
+    FAIR_MULTIPLIER: MAGIC_1_5,
     /** 2.0倍阈值 - 差 */
-    POOR_MULTIPLIER: 2.0,
+    POOR_MULTIPLIER: COUNT_PAIR,
     /** 3.0倍阈值 - 很差 */
-    VERY_POOR_MULTIPLIER: 3.0,
+    VERY_POOR_MULTIPLIER: COUNT_TRIPLE,
   },
 } as const;
 
@@ -107,13 +109,13 @@ export const SCORING_CONSTANTS = {
  */
 export const ANALYSIS_CONSTANTS = {
   /** 最小数据点数量 */
-  MIN_DATA_POINTS: 2,
+  MIN_DATA_POINTS: COUNT_PAIR,
   /** 趋势变化阈值 (百分比) */
-  TREND_CHANGE_THRESHOLD: 5,
+  TREND_CHANGE_THRESHOLD: COUNT_FIVE,
   /** 最大显示项目数量 */
-  MAX_DISPLAY_ITEMS: 5,
+  MAX_DISPLAY_ITEMS: COUNT_FIVE,
   /** 大量指标阈值 */
-  HIGH_METRICS_THRESHOLD: 100,
+  HIGH_METRICS_THRESHOLD: PERCENTAGE_FULL,
 } as const;
 
 /**
@@ -122,23 +124,23 @@ export const ANALYSIS_CONSTANTS = {
  */
 export const BUNDLE_CONSTANTS = {
   /** 显示项目数量 */
-  TOP_ITEMS_COUNT: 10,
+  TOP_ITEMS_COUNT: COUNT_TEN,
   /** 最大显示项目数量 */
-  MAX_DISPLAY_ITEMS: 5,
+  MAX_DISPLAY_ITEMS: COUNT_FIVE,
   /** 小文件阈值 (512 bytes) */
-  SMALL_FILE_THRESHOLD: 512,
+  SMALL_FILE_THRESHOLD: MAGIC_512,
   /** 压缩比例阈值 */
-  COMPRESSION_RATIO_THRESHOLD: 0.8,
+  COMPRESSION_RATIO_THRESHOLD: MAGIC_0_8,
   /** 分割倍数 */
-  SPLIT_MULTIPLIER: 2,
+  SPLIT_MULTIPLIER: COUNT_PAIR,
   /** 大文件百分比阈值 */
-  LARGE_FILE_PERCENTAGE: 50,
+  LARGE_FILE_PERCENTAGE: PERCENTAGE_HALF,
   /** 超大文件阈值倍数 */
   HUGE_FILE_MULTIPLIER: PERCENTAGE_QUARTER,
   /** 字节转换基数 */
-  BYTE_CONVERSION_BASE: 8,
+  BYTE_CONVERSION_BASE: MAGIC_8,
   /** 模块大小估算值 */
-  ESTIMATED_MODULE_SIZE: 1000,
+  ESTIMATED_MODULE_SIZE: ANIMATION_DURATION_VERY_SLOW,
 } as const;
 
 /**
@@ -147,7 +149,7 @@ export const BUNDLE_CONSTANTS = {
  */
 export const DEFAULT_VALUES = {
   /** 默认数值 */
-  ZERO: 0 as number,
+  ZERO: ZERO as number,
   /** 默认评分 */
-  DEFAULT_SCORE: 100 as number,
+  DEFAULT_SCORE: PERCENTAGE_FULL as number,
 } as const;

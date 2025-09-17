@@ -1,14 +1,16 @@
 'use client';
 
 /* eslint-disable no-case-declarations */
-import { useEffect } from 'react';
-import { useLocale } from 'next-intl';
+import { MAGIC_2000 } from "@/constants/count";
+import { ANGLE_90_DEG, COUNT_FIVE, HTTP_OK, PERCENTAGE_FULL } from "@/constants/magic-numbers";
+import { MINUTE_MS } from '@/constants/units';
 import {
   I18nPerformanceMonitor,
   preloadTranslations,
 } from '@/lib/i18n-performance';
 import { logger } from '@/lib/logger';
-import { MINUTE_MS } from '@/constants/units';
+import { useLocale } from 'next-intl';
+import { useEffect } from 'react';
 
 interface TranslationPreloaderProps {
   /**
@@ -66,7 +68,7 @@ export function TranslationPreloader({
               // 回退到setTimeout
               setTimeout(async () => {
                 await preloadTranslations(targetLocales);
-              }, 100);
+              }, PERCENTAGE_FULL);
             }
             break;
 
@@ -182,7 +184,7 @@ async function performSmartPreload(currentLocale: string) {
 function scheduleSmartPreload(preloadFn: () => Promise<void>) {
   // 在浏览器空闲时执行智能预加载
   if ('requestIdleCallback' in window) {
-    requestIdleCallback(preloadFn, { timeout: 2000 });
+    requestIdleCallback(preloadFn, { timeout: MAGIC_2000 });
   } else {
     setTimeout(preloadFn, 500);
   }
@@ -234,18 +236,18 @@ export function PerformanceMonitoringPreloader() {
       // 这里可以添加缓存清理逻辑
 
       logger.debug('Translation cache cleanup performed');
-    }, 5 * MINUTE_MS); // 每5分钟清理一次
+    }, COUNT_FIVE * MINUTE_MS); // 每5分钟清理一次
 
     // 定期报告性能指标
     const reportingInterval = setInterval(() => {
       const metrics = I18nPerformanceMonitor.getMetrics();
 
       // 如果性能指标异常，记录警告
-      if (metrics.averageLoadTime > 200) {
+      if (metrics.averageLoadTime > HTTP_OK) {
         logger.warn('Translation load time exceeds target', { metrics });
       }
 
-      if (metrics.cacheHitRate < 90) {
+      if (metrics.cacheHitRate < ANGLE_90_DEG) {
         logger.warn('Translation cache hit rate below target', { metrics });
       }
     }, MINUTE_MS); // 每分钟检查一次

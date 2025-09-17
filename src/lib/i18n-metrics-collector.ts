@@ -4,8 +4,12 @@
  * 负责收集和管理 i18n 系统的性能指标，包括缓存命中率、加载时间、错误率等
  */
 
-import type { I18nMetrics, Locale } from '@/types/i18n';
+import { COUNT_35, MAGIC_20, MAGIC_40, MAGIC_70, MAGIC_80, MAGIC_95 } from "@/constants/count";
+import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_9, MAGIC_0_95, MAGIC_0_99 } from "@/constants/decimal";
+import { ANGLE_90_DEG, COUNT_PAIR, COUNT_TEN, DAYS_PER_MONTH, HTTP_OK, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, PERCENTAGE_QUARTER, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import { logger } from '@/lib/logger';
+import type { I18nMetrics, Locale } from '@/types/i18n';
 import type {
   CacheEvent,
   CacheEventListener,
@@ -15,16 +19,16 @@ import type {
 // 性能指标收集器实现
 export class I18nMetricsCollector implements MetricsCollector {
   private metrics: I18nMetrics = {
-    loadTime: 0,
-    cacheHitRate: 0,
-    errorRate: 0,
-    translationCoverage: 0,
-    localeUsage: { en: 0, zh: 0 },
+    loadTime: ZERO,
+    cacheHitRate: ZERO,
+    errorRate: ZERO,
+    translationCoverage: ZERO,
+    localeUsage: { en: ZERO, zh: ZERO },
   };
 
-  private totalRequests = 0;
-  private cacheHits = 0;
-  private errors = 0;
+  private totalRequests = ZERO;
+  private cacheHits = ZERO;
+  private errors = ZERO;
   private loadTimes: number[] = [];
   private localeUsageCount: Record<string, number> = {};
   private eventListeners: Map<string, CacheEventListener[]> = new Map();
@@ -35,12 +39,12 @@ export class I18nMetricsCollector implements MetricsCollector {
     this.loadTimes.push(time);
 
     // 保持最近 100 次记录以计算平均值
-    if (this.loadTimes.length > 100) {
-      this.loadTimes = this.loadTimes.slice(-100);
+    if (this.loadTimes.length > PERCENTAGE_FULL) {
+      this.loadTimes = this.loadTimes.slice(-PERCENTAGE_FULL);
     }
 
     this.metrics.loadTime =
-      this.loadTimes.reduce((a, b) => a + b, 0) / this.loadTimes.length;
+      this.loadTimes.reduce((a, b) => a + b, ZERO) / this.loadTimes.length;
 
     this.emitEvent({
       type: 'hit',
@@ -51,8 +55,8 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 记录缓存命中
   recordCacheHit(): void {
-    this.cacheHits += 1;
-    this.totalRequests += 1;
+    this.cacheHits += ONE;
+    this.totalRequests += ONE;
     this.updateCacheHitRate();
 
     this.emitEvent({
@@ -68,7 +72,7 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 记录缓存未命中
   recordCacheMiss(): void {
-    this.totalRequests += 1;
+    this.totalRequests += ONE;
     this.updateCacheHitRate();
 
     this.emitEvent({
@@ -83,7 +87,7 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 记录错误
   recordError(): void {
-    this.errors += 1;
+    this.errors += ONE;
     this.updateErrorRate();
 
     this.emitEvent({
@@ -98,7 +102,7 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 记录语言使用情况
   recordLocaleUsage(locale: Locale): void {
-    this.localeUsageCount[locale] = (this.localeUsageCount[locale] || 0) + 1;
+    this.localeUsageCount[locale] = (this.localeUsageCount[locale] || ZERO) + ONE;
     this.updateLocaleUsage();
 
     this.emitEvent({
@@ -120,16 +124,16 @@ export class I18nMetricsCollector implements MetricsCollector {
   // 重置指标
   reset(): void {
     this.metrics = {
-      loadTime: 0,
-      cacheHitRate: 0,
-      errorRate: 0,
-      translationCoverage: 0,
-      localeUsage: { en: 0, zh: 0 },
+      loadTime: ZERO,
+      cacheHitRate: ZERO,
+      errorRate: ZERO,
+      translationCoverage: ZERO,
+      localeUsage: { en: ZERO, zh: ZERO },
     };
 
-    this.totalRequests = 0;
-    this.cacheHits = 0;
-    this.errors = 0;
+    this.totalRequests = ZERO;
+    this.cacheHits = ZERO;
+    this.errors = ZERO;
     this.loadTimes = [];
     this.localeUsageCount = {};
     this.startTime = Date.now();
@@ -145,7 +149,7 @@ export class I18nMetricsCollector implements MetricsCollector {
   getDetailedStats() {
     const uptime = Date.now() - this.startTime;
     const requestsPerMinute =
-      this.totalRequests > 0 ? this.totalRequests / (uptime / 60000) : 0;
+      this.totalRequests > ZERO ? this.totalRequests / (uptime / MINUTE_MS) : ZERO;
 
     return {
       uptime,
@@ -174,8 +178,8 @@ export class I18nMetricsCollector implements MetricsCollector {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
-      if (index > -1) {
-        listeners.splice(index, 1);
+      if (index > -ONE) {
+        listeners.splice(index, ONE);
       }
     }
   }
@@ -209,23 +213,23 @@ export class I18nMetricsCollector implements MetricsCollector {
   // 更新缓存命中率
   private updateCacheHitRate(): void {
     this.metrics.cacheHitRate =
-      this.totalRequests > 0 ? (this.cacheHits / this.totalRequests) * 100 : 0;
+      this.totalRequests > ZERO ? (this.cacheHits / this.totalRequests) * PERCENTAGE_FULL : ZERO;
   }
 
   // 更新错误率
   private updateErrorRate(): void {
     this.metrics.errorRate =
-      this.totalRequests > 0 ? (this.errors / this.totalRequests) * 100 : 0;
+      this.totalRequests > ZERO ? (this.errors / this.totalRequests) * PERCENTAGE_FULL : ZERO;
   }
 
   // 更新语言使用情况
   private updateLocaleUsage(): void {
     const total = this.getTotalLocaleUsage();
-    if (total > 0) {
+    if (total > ZERO) {
       this.metrics.localeUsage = Object.keys(this.localeUsageCount).reduce(
         (acc, locale) => {
           acc[locale as Locale] =
-            ((this.localeUsageCount[locale] ?? 0) / total) * 100;
+            ((this.localeUsageCount[locale] ?? ZERO) / total) * PERCENTAGE_FULL;
           return acc;
         },
         {} as Record<Locale, number>,
@@ -237,24 +241,24 @@ export class I18nMetricsCollector implements MetricsCollector {
   private getTotalLocaleUsage(): number {
     return Object.values(this.localeUsageCount).reduce(
       (sum, count) => sum + count,
-      0,
+      ZERO,
     );
   }
 
   // 计算加载时间百分位数
   private calculateLoadTimePercentiles() {
-    if (this.loadTimes.length === 0) {
-      return { p50: 0, p90: 0, p95: 0, p99: 0 };
+    if (this.loadTimes.length === ZERO) {
+      return { p50: ZERO, p90: ZERO, p95: ZERO, p99: ZERO };
     }
 
     const sorted = [...this.loadTimes].sort((a, b) => a - b);
     const len = sorted.length;
 
     return {
-      p50: sorted[Math.floor(len * 0.5)],
-      p90: sorted[Math.floor(len * 0.9)],
-      p95: sorted[Math.floor(len * 0.95)],
-      p99: sorted[Math.floor(len * 0.99)],
+      p50: sorted[Math.floor(len * MAGIC_0_5)],
+      p90: sorted[Math.floor(len * MAGIC_0_9)],
+      p95: sorted[Math.floor(len * MAGIC_0_95)],
+      p99: sorted[Math.floor(len * MAGIC_0_99)],
     };
   }
 
@@ -264,7 +268,7 @@ export class I18nMetricsCollector implements MetricsCollector {
     return Object.entries(this.localeUsageCount).map(([locale, count]) => ({
       locale,
       count,
-      percentage: total > 0 ? (count / total) * 100 : 0,
+      percentage: total > ZERO ? (count / total) * PERCENTAGE_FULL : ZERO,
     }));
   }
 
@@ -275,34 +279,34 @@ export class I18nMetricsCollector implements MetricsCollector {
     const avgLoadTime = this.metrics.loadTime;
 
     // 基于多个指标计算综合评分
-    let score = 0;
+    let score = ZERO;
 
     // 缓存命中率评分 (40%)
-    if (hitRate >= 95) score += 40;
-    else if (hitRate >= 90) score += 35;
-    else if (hitRate >= 80) score += 30;
-    else if (hitRate >= 70) score += 20;
-    else score += 10;
+    if (hitRate >= MAGIC_95) score += MAGIC_40;
+    else if (hitRate >= ANGLE_90_DEG) score += COUNT_35;
+    else if (hitRate >= MAGIC_80) score += DAYS_PER_MONTH;
+    else if (hitRate >= MAGIC_70) score += MAGIC_20;
+    else score += COUNT_TEN;
 
     // 错误率评分 (30%)
-    if (errorRate <= 0.1) score += 30;
-    else if (errorRate <= 0.5) score += 25;
-    else if (errorRate <= 1) score += 20;
-    else if (errorRate <= 2) score += 10;
-    else score += 0;
+    if (errorRate <= MAGIC_0_1) score += DAYS_PER_MONTH;
+    else if (errorRate <= MAGIC_0_5) score += PERCENTAGE_QUARTER;
+    else if (errorRate <= ONE) score += MAGIC_20;
+    else if (errorRate <= COUNT_PAIR) score += COUNT_TEN;
+    else score += ZERO;
 
     // 平均加载时间评分 (30%)
-    if (avgLoadTime <= 10) score += 30;
-    else if (avgLoadTime <= 50) score += 25;
-    else if (avgLoadTime <= 100) score += 20;
-    else if (avgLoadTime <= 200) score += 10;
-    else score += 0;
+    if (avgLoadTime <= COUNT_TEN) score += DAYS_PER_MONTH;
+    else if (avgLoadTime <= PERCENTAGE_HALF) score += PERCENTAGE_QUARTER;
+    else if (avgLoadTime <= PERCENTAGE_FULL) score += MAGIC_20;
+    else if (avgLoadTime <= HTTP_OK) score += COUNT_TEN;
+    else score += ZERO;
 
     // 根据总分确定等级
-    if (score >= 90) return 'A';
-    if (score >= 80) return 'B';
-    if (score >= 70) return 'C';
-    if (score >= 60) return 'D';
+    if (score >= ANGLE_90_DEG) return 'A';
+    if (score >= MAGIC_80) return 'B';
+    if (score >= MAGIC_70) return 'C';
+    if (score >= SECONDS_PER_MINUTE) return 'D';
     return 'F';
   }
 
@@ -345,23 +349,23 @@ export class I18nMetricsCollector implements MetricsCollector {
   ): string[] {
     const recommendations: string[] = [];
 
-    if (this.metrics.cacheHitRate < 80) {
+    if (this.metrics.cacheHitRate < MAGIC_80) {
       recommendations.push('考虑增加缓存大小或调整 TTL 以提高缓存命中率');
     }
 
-    if (this.metrics.errorRate > 1) {
+    if (this.metrics.errorRate > ONE) {
       recommendations.push('错误率较高，建议检查网络连接和翻译文件完整性');
     }
 
-    if (this.metrics.loadTime > 100) {
+    if (this.metrics.loadTime > PERCENTAGE_FULL) {
       recommendations.push(
         '平均加载时间较长，考虑启用预加载或优化翻译文件大小',
       );
     }
 
     const requestsPerMinute =
-      typeof stats.requestsPerMinute === 'number' ? stats.requestsPerMinute : 0;
-    if (requestsPerMinute > 100) {
+      typeof stats.requestsPerMinute === 'number' ? stats.requestsPerMinute : ZERO;
+    if (requestsPerMinute > PERCENTAGE_FULL) {
       recommendations.push('请求频率较高，建议增加缓存容量');
     }
 
@@ -383,12 +387,12 @@ export function createMetricsCollector(): I18nMetricsCollector {
 
 export function formatMetrics(metrics: I18nMetrics): string {
   return `
-缓存命中率: ${metrics.cacheHitRate.toFixed(2)}%
-平均加载时间: ${metrics.loadTime.toFixed(2)}ms
-错误率: ${metrics.errorRate.toFixed(2)}%
-翻译覆盖率: ${metrics.translationCoverage.toFixed(2)}%
+缓存命中率: ${metrics.cacheHitRate.toFixed(COUNT_PAIR)}%
+平均加载时间: ${metrics.loadTime.toFixed(COUNT_PAIR)}ms
+错误率: ${metrics.errorRate.toFixed(COUNT_PAIR)}%
+翻译覆盖率: ${metrics.translationCoverage.toFixed(COUNT_PAIR)}%
 语言使用分布: ${Object.entries(metrics.localeUsage)
-    .map(([locale, usage]) => `${locale}: ${usage.toFixed(1)}%`)
+    .map(([locale, usage]) => `${locale}: ${usage.toFixed(ONE)}%`)
     .join(', ')}
   `.trim();
 }

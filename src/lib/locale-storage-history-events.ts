@@ -7,6 +7,7 @@
 
 'use client';
 
+import { COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import type {
   StorageEvent,
@@ -23,7 +24,7 @@ export class HistoryEventManager {
   private static eventListeners: Map<string, StorageEventListener[]> =
     new Map();
   private static eventHistory: StorageEvent[] = [];
-  private static readonly MAX_EVENT_HISTORY = 100;
+  private static readonly MAX_EVENT_HISTORY = PERCENTAGE_FULL;
 
   /**
    * 添加事件监听器
@@ -50,8 +51,8 @@ export class HistoryEventManager {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
-      if (index > -1) {
-        listeners.splice(index, 1);
+      if (index > -ONE) {
+        listeners.splice(index, ONE);
       }
     }
   }
@@ -114,7 +115,7 @@ export class HistoryEventManager {
 
     // 限制事件历史长度
     if (this.eventHistory.length > this.MAX_EVENT_HISTORY) {
-      this.eventHistory = this.eventHistory.slice(0, this.MAX_EVENT_HISTORY);
+      this.eventHistory = this.eventHistory.slice(ZERO, this.MAX_EVENT_HISTORY);
     }
   }
 
@@ -123,7 +124,7 @@ export class HistoryEventManager {
    * Get event history
    */
   static getEventHistory(limit?: number): StorageEvent[] {
-    return limit ? this.eventHistory.slice(0, limit) : [...this.eventHistory];
+    return limit ? this.eventHistory.slice(ZERO, limit) : [...this.eventHistory];
   }
 
   /**
@@ -143,7 +144,7 @@ export class HistoryEventManager {
     eventTypes: string[];
     listenersByType: Record<string, number>;
   } {
-    let totalListeners = 0;
+    let totalListeners = ZERO;
     const listenersByType: Record<string, number> = {};
 
     for (const [eventType, listeners] of this.eventListeners.entries()) {
@@ -298,19 +299,19 @@ export function createStatsListener(): {
   };
 } {
   const stats = {
-    totalEvents: 0,
+    totalEvents: ZERO,
     eventsByType: {} as Record<string, number>,
     recentEvents: [] as StorageEvent[],
   };
 
   const listener: StorageEventListener = (event: StorageEvent) => {
-    stats.totalEvents += 1;
-    stats.eventsByType[event.type] = (stats.eventsByType[event.type] || 0) + 1;
+    stats.totalEvents += ONE;
+    stats.eventsByType[event.type] = (stats.eventsByType[event.type] || ZERO) + ONE;
 
     // 保留最近10个事件
     stats.recentEvents.unshift(event);
-    if (stats.recentEvents.length > 10) {
-      stats.recentEvents = stats.recentEvents.slice(0, 10);
+    if (stats.recentEvents.length > COUNT_TEN) {
+      stats.recentEvents = stats.recentEvents.slice(ZERO, COUNT_TEN);
     }
   };
 
@@ -386,7 +387,7 @@ export const performanceListener: StorageEventListener = (
       removedCount: number;
     };
 
-    if (removedCount > 100) {
+    if (removedCount > PERCENTAGE_FULL) {
       logger.warn('大量历史记录清理', { cleanupType, removedCount });
     }
   }
@@ -466,12 +467,12 @@ export function getEventSystemStatus(): {
   lastEventTime: number | null;
 } {
   const listenerStats = HistoryEventManager.getListenerStats();
-  const eventHistory = HistoryEventManager.getEventHistory(1);
+  const eventHistory = HistoryEventManager.getEventHistory(ONE);
 
   return {
-    isActive: listenerStats.totalListeners > 0,
+    isActive: listenerStats.totalListeners > ZERO,
     listenerStats,
     eventHistoryCount: HistoryEventManager.getEventHistory().length,
-    lastEventTime: eventHistory.length > 0 ? eventHistory[0]!.timestamp : null,
+    lastEventTime: eventHistory.length > ZERO ? eventHistory[ZERO]!.timestamp : null,
   };
 }

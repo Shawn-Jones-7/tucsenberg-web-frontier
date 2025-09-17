@@ -1,9 +1,10 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import { ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
 import { Analytics } from '@vercel/analytics/react';
 import { useLocale } from 'next-intl';
-import { logger } from '@/lib/logger';
+import React, { useEffect } from 'react';
 
 /**
  * 使用全局 logger（开发环境输出，生产环境静默）
@@ -142,7 +143,7 @@ function initPerformanceMonitoring(locale: string): void {
     setTimeout(() => {
       const navigation = performance.getEntriesByType(
         'navigation',
-      )[0] as PerformanceNavigationTiming;
+      )[ZERO] as PerformanceNavigationTiming;
 
       if (navigation) {
         const metrics = {
@@ -169,7 +170,7 @@ function initPerformanceMonitoring(locale: string): void {
           }
         }
       }
-    }, 0);
+    }, ZERO);
   });
 
   // 监控资源加载

@@ -3,12 +3,13 @@
  * Resend email service core class
  */
 
-import { Resend } from 'resend';
 import { env } from '@/../env.mjs';
+import { ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import { ResendTemplates } from '@/lib/resend-templates';
 import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
 import type { EmailTemplateData } from '@/lib/validations';
+import { Resend } from 'resend';
 
 /**
  * Resend邮件服务配置
@@ -181,10 +182,10 @@ export class ResendService {
     // Note: Resend doesn't provide built-in analytics API
     // This would need to be implemented with webhook tracking
     return {
-      sent: 0,
-      delivered: 0,
-      bounced: 0,
-      complained: 0,
+      sent: ZERO,
+      delivered: ZERO,
+      bounced: ZERO,
+      complained: ZERO,
     };
   }
 

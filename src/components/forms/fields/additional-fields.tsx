@@ -1,9 +1,9 @@
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import type { ContactFormData } from '@/lib/validations';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { MAGIC_6 } from "@/constants/count";
+import type { ContactFormData } from '@/lib/validations';
+import { useForm } from 'react-hook-form';
 
 /**
  * Additional fields component
@@ -86,7 +86,7 @@ export function AdditionalFields({
           id='message'
           placeholder={t('messagePlaceholder')}
           disabled={isSubmitting}
-          rows={6}
+          rows={MAGIC_6}
           className={
             errors.message ? 'border-red-500 focus:border-red-500' : ''
           }

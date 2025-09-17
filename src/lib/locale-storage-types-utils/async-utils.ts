@@ -3,6 +3,7 @@
  * Locale Storage System Async Utility Functions
  */
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
 
 /**
@@ -14,7 +15,7 @@ export function throttle<T extends (...args: unknown[]) => unknown>(
   delay: number,
 ): (...args: Parameters<T>) => void {
   let timeoutId: NodeJS.Timeout | null = null;
-  let lastExecTime = 0;
+  let lastExecTime = ZERO;
 
   return (...args: Parameters<T>) => {
     const currentTime = Date.now();
@@ -66,7 +67,7 @@ export async function retry<T>(
 ): Promise<T> {
   let lastError: Error;
 
-  for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+  for (let attempt = ONE; attempt <= maxAttempts; attempt++) {
     try {
       return await func();
     } catch (error) {

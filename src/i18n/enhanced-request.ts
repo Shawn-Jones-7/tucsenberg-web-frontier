@@ -1,10 +1,11 @@
-import { getRequestConfig } from 'next-intl/server';
+import { COUNT_FIVE, ONE } from "@/constants/magic-numbers";
+import { routing } from '@/i18n/routing';
 import {
   getCachedMessages,
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { routing } from '@/i18n/routing';
+import { getRequestConfig } from 'next-intl/server';
 
 // 重用 request.ts 中的辅助函数
 function getEnhancedFormats(locale: string) {
@@ -24,7 +25,7 @@ function getEnhancedFormats(locale: string) {
     },
     number: {
       precise: {
-        maximumFractionDigits: 5,
+        maximumFractionDigits: COUNT_FIVE,
       },
       currency: {
         style: 'currency' as const,
@@ -32,7 +33,7 @@ function getEnhancedFormats(locale: string) {
       },
       percentage: {
         style: 'percent' as const,
-        minimumFractionDigits: 1,
+        minimumFractionDigits: ONE,
       },
     },
     list: {

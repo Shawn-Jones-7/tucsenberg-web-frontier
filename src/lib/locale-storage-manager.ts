@@ -10,11 +10,12 @@
 // 重新导出所有模块的类型和功能
 // 导出常量和枚举
 // 导入主要功能类
-import type { Locale } from '@/types/i18n';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
 import { LocaleStorageAnalytics as LocaleAnalyticsManager } from '@/lib/locale-storage-analytics';
 import { LocaleHistoryManager } from '@/lib/locale-storage-history';
 import { LocaleMaintenanceManager } from '@/lib/locale-storage-maintenance';
 import { LocalePreferenceManager } from '@/lib/locale-storage-preference';
+import type { Locale } from '@/types/i18n';
 import type {
   LocaleDetectionHistory,
   MaintenanceOptions,
@@ -22,172 +23,42 @@ import type {
 } from './locale-storage-types';
 
 export {
-  STORAGE_KEYS,
-  STORAGE_CONSTANTS,
-  STORAGE_TYPES,
-  COMPRESSION_ALGORITHMS,
-  ENCRYPTION_ALGORITHMS,
-  SYNC_STATUS,
-  MIGRATION_STATUS,
-  HEALTH_STATUS,
-  ERROR_TYPES,
-  PRIORITY_LEVELS,
-  ENVIRONMENT_TYPES,
-  BROWSER_TYPES,
-  DEVICE_TYPES,
-  OS_TYPES,
-  DEFAULT_STORAGE_CONFIG,
-  CONFIG_PRESETS,
-  CONFIG_VALIDATION_RULES,
-  CONFIG_MIGRATIONS,
+  BROWSER_TYPES, COMPRESSION_ALGORITHMS, CONFIG_MIGRATIONS, CONFIG_PRESETS,
+  CONFIG_VALIDATION_RULES, DEFAULT_STORAGE_CONFIG, DEVICE_TYPES, ENCRYPTION_ALGORITHMS, ENVIRONMENT_TYPES, ERROR_TYPES, HEALTH_STATUS, MIGRATION_STATUS, OS_TYPES, PRIORITY_LEVELS, STORAGE_CONSTANTS, STORAGE_KEYS, STORAGE_TYPES, SYNC_STATUS
 } from './locale-storage-types';
 // 导出工具函数
 export {
-  isUserLocalePreference,
-  isLocaleDetectionHistory,
-  isStorageSyncConfig,
-  validatePreference,
-  validateDetectionHistory,
-  createStorageKey,
-  parseStorageKey,
-  estimateStorageSize,
-  generateChecksum,
-  deepClone,
-  mergeObjects,
-  compareObjects,
-  formatByteSize,
-  formatDuration,
-  generateUniqueId,
-  throttle,
-  debounce,
-  retry,
+  compareObjects, createStorageKey, debounce, deepClone, estimateStorageSize, formatByteSize,
+  formatDuration, generateChecksum, generateUniqueId, isLocaleDetectionHistory,
+  isStorageSyncConfig, isUserLocalePreference, mergeObjects, parseStorageKey, retry,
   safeJsonParse,
-  safeJsonStringify,
+  safeJsonStringify, throttle, validateDetectionHistory, validatePreference
 } from './locale-storage-types';
 // 导出类型定义
 export type {
-  StorageKey,
-  LocaleSource,
-  StorageEventType,
-  StorageType,
-  CompressionAlgorithm,
-  EncryptionAlgorithm,
-  SyncStatus,
-  MigrationStatus,
-  HealthStatus,
-  ErrorType,
-  PriorityLevel,
-  EnvironmentType,
-  BrowserType,
-  DeviceType,
-  OSType,
-  VersionInfo,
-  TimestampUtils,
-  BaseValidators,
-  UserLocalePreference,
-  LocaleDetectionRecord,
-  LocaleDetectionHistory,
-  StorageStats,
-  StorageOperationResult,
-  StorageEvent,
-  StorageEventListener,
-  StorageHealthCheck,
-  ValidationResult,
-  StorageBackupData,
-  StorageMigrationConfig,
-  StorageCompressionConfig,
-  StorageEncryptionConfig,
-  StorageSyncConfig,
-  DeviceInfo,
-  NetworkInfo,
-  GeolocationInfo,
-  SessionInfo,
-  PerformanceMetrics,
-  ErrorInfo,
-  AuditLogEntry,
-  ConfigSnapshot,
-  DataExport,
-  DataImportResult,
-  StorageConfig,
-  EnvironmentConfig,
-  ConfigValidationRules,
-  ConfigMigration,
-  ConfigFactory,
-  Source,
-  EventType,
-  Preference,
-  DetectionRecord,
-  DetectionHistory,
-  OperationResult,
-  Event,
-  EventListener,
-  Config,
-  DefaultConfig,
-  Validation,
+  AuditLogEntry, BaseValidators, BrowserType, CompressionAlgorithm, Config, ConfigFactory, ConfigMigration, ConfigSnapshot, ConfigValidationRules, DataExport,
+  DataImportResult, DefaultConfig, DetectionHistory, DetectionRecord, DeviceInfo, DeviceType, EncryptionAlgorithm, EnvironmentConfig, EnvironmentType, ErrorInfo, ErrorType, Event,
+  EventListener, EventType, GeolocationInfo, HealthStatus, LocaleDetectionHistory, LocaleDetectionRecord, LocaleSource, MigrationStatus, NetworkInfo, OperationResult, OSType, PerformanceMetrics, Preference, PriorityLevel, SessionInfo, Source, StorageBackupData, StorageCompressionConfig, StorageConfig, StorageEncryptionConfig, StorageEvent,
+  StorageEventListener, StorageEventType, StorageHealthCheck, StorageKey, StorageMigrationConfig, StorageOperationResult, StorageStats, StorageSyncConfig, StorageType, SyncStatus, TimestampUtils, UserLocalePreference, Validation, ValidationResult, VersionInfo
 } from './locale-storage-types';
 // 导出偏好管理功能
 export {
-  validatePreferenceData,
-  createDefaultPreference,
-  normalizePreference,
-  saveUserPreference,
-  getUserPreference,
-  updatePreferenceConfidence,
-  hasUserPreference,
-  getPreferenceSourcePriority,
-  comparePreferences,
-  getPreferenceSummary,
-  clearUserPreference,
-  setUserOverride,
-  getUserOverride,
-  clearUserOverride,
-  hasUserOverride,
-  getOverrideHistory,
-  recordOverrideOperation,
-  getOverrideStats,
-  clearOverrideHistory,
-  exportOverrideData,
-  importOverrideData,
-  PreferenceCacheManager,
-  syncPreferenceData,
-  checkDataConsistency,
-  fixDataInconsistency,
-  getStorageUsage,
-  optimizeStoragePerformance,
-  PreferenceEventManager,
-  createPreferenceSavedEvent,
-  createPreferenceLoadedEvent,
-  createOverrideSetEvent,
-  createOverrideClearedEvent,
-  createSyncEvent,
-  createPreferenceErrorEvent,
-  getPreferenceHistory,
-  recordPreferenceHistory,
-  clearPreferenceHistory,
-  getPreferenceChangeStats,
-  consoleLogListener,
-  historyRecordingListener,
-  setupDefaultListeners,
-  cleanupEventSystem,
-  getEventSystemStatus,
-  LocalePreferenceManager,
-  type PreferenceManager,
+  checkDataConsistency, cleanupEventSystem, clearOverrideHistory, clearPreferenceHistory, clearUserOverride, clearUserPreference, comparePreferences, consoleLogListener, createDefaultPreference, createOverrideClearedEvent, createOverrideSetEvent, createPreferenceErrorEvent, createPreferenceLoadedEvent, createPreferenceSavedEvent, createSyncEvent, exportOverrideData, fixDataInconsistency, getEventSystemStatus, getOverrideHistory, getOverrideStats, getPreferenceChangeStats, getPreferenceHistory, getPreferenceSourcePriority, getPreferenceSummary, getStorageUsage, getUserOverride, getUserPreference, hasUserOverride, hasUserPreference, historyRecordingListener, importOverrideData, LocalePreferenceManager, normalizePreference, optimizeStoragePerformance, PreferenceCacheManager, PreferenceEventManager, recordOverrideOperation, recordPreferenceHistory, saveUserPreference, setupDefaultListeners, setUserOverride, syncPreferenceData, updatePreferenceConfidence, validatePreferenceData, type PreferenceManager
 } from './locale-storage-preference';
 // 导出历史管理功能
+export type { QueryConditions } from '@/lib/locale-storage-history';
 export {
   LocaleHistoryManager,
-  type HistoryManager,
+  type HistoryManager
 } from './locale-storage-history';
-export type { QueryConditions } from '@/lib/locale-storage-history';
 // 导出分析功能
 export {
   LocaleStorageAnalytics,
-  type Analytics,
+  type Analytics
 } from './locale-storage-analytics';
 export type {
-  UsagePatterns,
-  UsageTrends,
-  ExportData,
+  ExportData, UsagePatterns,
+  UsageTrends
 } from './locale-storage-analytics';
 // 导出维护功能
 export { LocaleMaintenanceManager } from '@/lib/locale-storage-maintenance';
@@ -282,7 +153,7 @@ export class LocaleStorageManager {
    * 获取最近的检测记录
    * Get recent detection records
    */
-  static getRecentDetections(limit: number = 5): Array<{
+  static getRecentDetections(limit: number = COUNT_FIVE): Array<{
     locale: Locale;
     source: string;
     timestamp: number;
@@ -322,7 +193,7 @@ export class LocaleStorageManager {
    * Clean up expired detection records
    */
   static cleanupExpiredDetections(
-    maxAgeMs: number = 30 * 24 * 60 * 60 * 1000,
+    maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   ): void {
     const result = LocaleMaintenanceManager.cleanupExpiredDetections(maxAgeMs);
     // 忽略返回值，保持向后兼容的void返回类型

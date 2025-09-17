@@ -1,11 +1,12 @@
 'use client';
 
-import { useTranslations } from 'next-intl';
-import { cn } from '@/lib/utils';
-import { Button } from '@/components/ui/button';
-import { Link } from '@/i18n/routing';
 import { AnimatedIcon } from '@/components/shared/animated-icon';
 import { ProgressIndicator } from '@/components/shared/progress-indicator';
+import { Button } from '@/components/ui/button';
+import { ONE } from "@/constants/magic-numbers";
+import { Link } from '@/i18n/routing';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
 
 interface UnderConstructionProps {
   pageType: 'products' | 'blog' | 'about' | 'contact';
@@ -19,7 +20,7 @@ export function UnderConstruction({
   pageType,
   className,
   showProgress = true,
-  currentStep = 1,
+  currentStep = ONE,
   expectedDate = '2024年第二季度',
 }: UnderConstructionProps) {
   const t = useTranslations('underConstruction');

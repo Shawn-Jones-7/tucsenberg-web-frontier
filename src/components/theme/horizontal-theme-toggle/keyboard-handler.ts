@@ -1,4 +1,5 @@
 import { THEME_OPTIONS } from '@/components/theme/horizontal-theme-toggle/theme-config';
+import { ONE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 处理键盘导航
@@ -25,7 +26,7 @@ export const createKeyboardHandler = (
       case 'ArrowUp': {
         event.preventDefault();
         nextIndex =
-          currentIndex > 0 ? currentIndex - 1 : THEME_OPTIONS.length - 1;
+          currentIndex > ZERO ? currentIndex - ONE : THEME_OPTIONS.length - ONE;
         const prevOption = THEME_OPTIONS[nextIndex];
         if (prevOption) {
           handleThemeChange(prevOption.value, buttonElement);
@@ -36,7 +37,7 @@ export const createKeyboardHandler = (
       case 'ArrowDown': {
         event.preventDefault();
         nextIndex =
-          currentIndex < THEME_OPTIONS.length - 1 ? currentIndex + 1 : 0;
+          currentIndex < THEME_OPTIONS.length - ONE ? currentIndex + ONE : ZERO;
         const nextOption = THEME_OPTIONS[nextIndex];
         if (nextOption) {
           handleThemeChange(nextOption.value, buttonElement);
@@ -45,7 +46,7 @@ export const createKeyboardHandler = (
       }
       case 'Home': {
         event.preventDefault();
-        const firstOption = THEME_OPTIONS[0];
+        const firstOption = THEME_OPTIONS[ZERO];
         if (firstOption) {
           handleThemeChange(firstOption.value, buttonElement);
         }
@@ -53,7 +54,7 @@ export const createKeyboardHandler = (
       }
       case 'End': {
         event.preventDefault();
-        const lastOption = THEME_OPTIONS[THEME_OPTIONS.length - 1];
+        const lastOption = THEME_OPTIONS[THEME_OPTIONS.length - ONE];
         if (lastOption) {
           handleThemeChange(lastOption.value, buttonElement);
         }

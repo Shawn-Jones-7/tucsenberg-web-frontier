@@ -6,8 +6,7 @@
 'use client';
 
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { MAGIC_1_5, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
+import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, MAGIC_1_5, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
 import type { StorageOperationResult } from '@/lib/locale-storage-types';
 import {
@@ -35,15 +34,15 @@ export function performMaintenance(options: {
   const startTime = Date.now();
 
   try {
-    let expiredRemoved = 0;
-    let duplicatesRemoved = 0;
-    let sizeReduced = 0;
+    let expiredRemoved = ZERO;
+    let duplicatesRemoved = ZERO;
+    let sizeReduced = ZERO;
 
     // 清理过期记录
     if (options.cleanupExpired !== false) {
       const expiredResult = cleanupExpiredDetections(options.maxAge);
       if (expiredResult.success) {
-        expiredRemoved = expiredResult.data || 0;
+        expiredRemoved = expiredResult.data || ZERO;
       }
     }
 
@@ -51,7 +50,7 @@ export function performMaintenance(options: {
     if (options.removeDuplicates !== false) {
       const duplicateResult = cleanupDuplicateDetections();
       if (duplicateResult.success) {
-        duplicatesRemoved = duplicateResult.data || 0;
+        duplicatesRemoved = duplicateResult.data || ZERO;
       }
     }
 
@@ -59,7 +58,7 @@ export function performMaintenance(options: {
     if (options.limitSize !== false) {
       const limitResult = limitHistorySize(options.maxRecords);
       if (limitResult.success) {
-        sizeReduced = limitResult.data || 0;
+        sizeReduced = limitResult.data || ZERO;
       }
     }
 
@@ -67,7 +66,7 @@ export function performMaintenance(options: {
     const historyResult = getDetectionHistory();
     const finalCount = historyResult.success
       ? historyResult.data!.history.length
-      : 0;
+      : ZERO;
 
     return {
       success: true,
@@ -117,7 +116,7 @@ export function getMaintenanceRecommendations(): {
   let urgency: 'low' | 'medium' | 'high' = 'low';
 
   // 检查记录数量
-  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || 100;
+  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL;
   if (records.length > maxRecords * MAGIC_1_5) {
     recommendations.push(`历史记录过多 (${records.length})，建议清理`);
     urgency = 'high';
@@ -127,30 +126,30 @@ export function getMaintenanceRecommendations(): {
   }
 
   // 检查过期记录
-  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000;
+  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
   const expiredCount = records.filter(
     (r) => r.timestamp < thirtyDaysAgo,
   ).length;
 
-  if (expiredCount > 0) {
+  if (expiredCount > ZERO) {
     recommendations.push(`发现 ${expiredCount} 条过期记录，建议清理`);
     urgency = urgency === 'low' ? 'medium' : urgency;
   }
 
   // 检查重复记录
   const uniqueKeys = new Set();
-  let duplicateCount = 0;
+  let duplicateCount = ZERO;
 
   records.forEach((record) => {
     const key = `${record.locale}-${record.source}-${record.timestamp}`;
     if (uniqueKeys.has(key)) {
-      duplicateCount += 1;
+      duplicateCount += ONE;
     } else {
       uniqueKeys.add(key);
     }
   });
 
-  if (duplicateCount > 0) {
+  if (duplicateCount > ZERO) {
     recommendations.push(`发现 ${duplicateCount} 条重复记录，建议清理`);
   }
 
@@ -160,16 +159,16 @@ export function getMaintenanceRecommendations(): {
       !record.locale ||
       !record.source ||
       !record.timestamp ||
-      record.confidence < 0 ||
-      record.confidence > 1,
+      record.confidence < ZERO ||
+      record.confidence > ONE,
   );
 
-  if (invalidRecords.length > 0) {
+  if (invalidRecords.length > ZERO) {
     recommendations.push(`发现 ${invalidRecords.length} 条无效记录，建议清理`);
     urgency = 'high';
   }
 
-  if (recommendations.length === 0) {
+  if (recommendations.length === ZERO) {
     recommendations.push('历史记录状态良好，无需维护');
   }
 

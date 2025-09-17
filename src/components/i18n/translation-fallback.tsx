@@ -1,8 +1,10 @@
 'use client';
 
-import { memo, useEffect, useState } from 'react';
+import { MAGIC_0_1 } from "@/constants/decimal";
+import { PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { AlertTriangle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
+import { memo, useEffect, useState } from 'react';
 
 // import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -127,7 +129,7 @@ export const TranslationStatus = memo(
   ({ className }: TranslationStatusProps) => {
     const locale = useLocale();
     const t = useTranslations('language');
-    const [missingCount, setMissingCount] = useState(0);
+    const [missingCount, setMissingCount] = useState(ZERO);
 
     useEffect(() => {
       // In a real application, you would check translation coverage
@@ -136,7 +138,7 @@ export const TranslationStatus = memo(
         // Simulate checking translation coverage
         const coverage = Math.random() * 100;
         if (coverage < 95) {
-          setMissingCount(Math.floor((100 - coverage) * 0.1));
+          setMissingCount(Math.floor((PERCENTAGE_FULL - coverage) * MAGIC_0_1));
         }
       };
 
@@ -164,7 +166,7 @@ export function useTranslationStatus() {
   const [status, setStatus] = useState({
     isComplete: true,
     missingKeys: [] as string[],
-    coverage: 100,
+    coverage: PERCENTAGE_FULL,
   });
 
   useEffect(() => {
@@ -185,7 +187,7 @@ export function useTranslationStatus() {
         setStatus({
           isComplete: true,
           missingKeys: [],
-          coverage: 100,
+          coverage: PERCENTAGE_FULL,
         });
       }
     };

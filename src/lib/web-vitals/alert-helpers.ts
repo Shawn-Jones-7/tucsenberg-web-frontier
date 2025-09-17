@@ -1,3 +1,4 @@
+import { COUNT_TEN, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import {
   TEST_APP_CONSTANTS,
   WEB_VITALS_CONSTANTS,
@@ -30,15 +31,15 @@ export function formatMetricValue(metric: string, value: number): string {
  */
 export function extractCoreMetrics(metrics: Record<string, number>) {
   return {
-    cls: metrics.cls || 0,
-    fid: metrics.fid || 0,
-    lcp: metrics.lcp || 0,
-    fcp: metrics.fcp || 0,
-    ttfb: metrics.ttfb || 0,
-    inp: metrics.inp || 0,
-    domContentLoaded: metrics.domContentLoaded || 0,
-    loadComplete: metrics.loadComplete || 0,
-    firstPaint: metrics.firstPaint || 0,
+    cls: metrics.cls || ZERO,
+    fid: metrics.fid || ZERO,
+    lcp: metrics.lcp || ZERO,
+    fcp: metrics.fcp || ZERO,
+    ttfb: metrics.ttfb || ZERO,
+    inp: metrics.inp || ZERO,
+    domContentLoaded: metrics.domContentLoaded || ZERO,
+    loadComplete: metrics.loadComplete || ZERO,
+    firstPaint: metrics.firstPaint || ZERO,
   };
 }
 
@@ -47,10 +48,10 @@ export function extractCoreMetrics(metrics: Record<string, number>) {
  */
 export function getDefaultResourceTiming() {
   return {
-    totalResources: 0,
+    totalResources: ZERO,
     slowResources: [],
-    totalSize: 0,
-    totalDuration: 0,
+    totalSize: ZERO,
+    totalDuration: ZERO,
   };
 }
 
@@ -60,8 +61,8 @@ export function getDefaultResourceTiming() {
 export function getDefaultConnection() {
   return {
     effectiveType: '4g',
-    downlink: 10,
-    rtt: 100,
+    downlink: COUNT_TEN,
+    rtt: PERCENTAGE_FULL,
     saveData: false,
   };
 }

@@ -3,7 +3,12 @@
  * Translation Preloader Strategy Configurations
  */
 
+import { COUNT_12000, COUNT_15000, COUNT_4, COUNT_7000, COUNT_800, COUNT_8000, COUNT_9000 } from "@/constants/count";
+import { DEC_0_15, MAGIC_0_1, MAGIC_0_2, MAGIC_0_25, MAGIC_0_3, MAGIC_0_5, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, FIVE_SECONDS_MS, ONE, PERCENTAGE_FULL, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import type { PreloadStrategyConfig } from '@/lib/i18n-preloader-types';
+import { WEB_VITALS_CONSTANTS } from "@/constants/test-web-vitals-constants";
+const TEST_DOM_INTERACTIVE = WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE;
 
 /**
  * 预加载策略配置
@@ -13,146 +18,146 @@ export const strategyConfigs: Record<string, PreloadStrategyConfig> = {
   immediate: {
     name: 'immediate',
     description: '立即预加载所有语言',
-    priority: 1,
+    priority: ONE,
     conditions: {
-      minCacheHitRate: 0.8,
-      maxErrorRate: 0.1,
+      minCacheHitRate: MAGIC_0_8,
+      maxErrorRate: MAGIC_0_1,
       networkCondition: 'fast',
     },
     parameters: {
-      batchSize: 5,
-      delayBetweenBatches: 0,
-      maxConcurrency: 10,
-      timeout: 5000,
+      batchSize: COUNT_FIVE,
+      delayBetweenBatches: ZERO,
+      maxConcurrency: COUNT_TEN,
+      timeout: FIVE_SECONDS_MS,
     },
   },
   smart: {
     name: 'smart',
     description: '基于使用模式的智能预加载',
-    priority: 2,
+    priority: COUNT_PAIR,
     conditions: {
-      minCacheHitRate: 0.6,
-      maxErrorRate: 0.2,
+      minCacheHitRate: MAGIC_0_6,
+      maxErrorRate: MAGIC_0_2,
     },
     parameters: {
-      batchSize: 3,
-      delayBetweenBatches: 100,
-      maxConcurrency: 5,
-      timeout: 8000,
+      batchSize: COUNT_TRIPLE,
+      delayBetweenBatches: PERCENTAGE_FULL,
+      maxConcurrency: COUNT_FIVE,
+      timeout: COUNT_8000,
     },
   },
   progressive: {
     name: 'progressive',
     description: '渐进式预加载',
-    priority: 3,
+    priority: COUNT_TRIPLE,
     conditions: {
-      maxErrorRate: 0.3,
+      maxErrorRate: MAGIC_0_3,
     },
     parameters: {
-      batchSize: 1,
+      batchSize: ONE,
       delayBetweenBatches: 500,
-      maxConcurrency: 2,
-      timeout: 10000,
+      maxConcurrency: COUNT_PAIR,
+      timeout: TEN_SECONDS_MS,
     },
   },
   priority: {
     name: 'priority',
     description: '优先级预加载',
-    priority: 2,
+    priority: COUNT_PAIR,
     conditions: {
-      minCacheHitRate: 0.7,
-      maxErrorRate: 0.15,
+      minCacheHitRate: MAGIC_0_7,
+      maxErrorRate: DEC_0_15,
     },
     parameters: {
-      batchSize: 2,
+      batchSize: COUNT_PAIR,
       delayBetweenBatches: 200,
-      maxConcurrency: 3,
-      timeout: 7000,
+      maxConcurrency: COUNT_TRIPLE,
+      timeout: COUNT_7000,
     },
   },
   lazy: {
     name: 'lazy',
     description: '懒加载策略',
-    priority: 4,
+    priority: COUNT_4,
     conditions: {
       networkCondition: 'slow',
     },
     parameters: {
-      batchSize: 1,
-      delayBetweenBatches: 1000,
-      maxConcurrency: 1,
-      timeout: 15000,
+      batchSize: ONE,
+      delayBetweenBatches: ANIMATION_DURATION_VERY_SLOW,
+      maxConcurrency: ONE,
+      timeout: COUNT_15000,
     },
   },
   batch: {
     name: 'batch',
     description: '批量预加载策略',
-    priority: 3,
+    priority: COUNT_TRIPLE,
     conditions: {
-      maxErrorRate: 0.25,
+      maxErrorRate: MAGIC_0_25,
     },
     parameters: {
-      batchSize: 2,
-      delayBetweenBatches: 1000,
-      maxConcurrency: 2,
-      timeout: 12000,
+      batchSize: COUNT_PAIR,
+      delayBetweenBatches: ANIMATION_DURATION_VERY_SLOW,
+      maxConcurrency: COUNT_PAIR,
+      timeout: COUNT_12000,
     },
   },
   adaptive: {
     name: 'adaptive',
     description: '自适应预加载策略',
-    priority: 2,
+    priority: COUNT_PAIR,
     conditions: {
-      minCacheHitRate: 0.5,
-      maxErrorRate: 0.3,
+      minCacheHitRate: MAGIC_0_5,
+      maxErrorRate: MAGIC_0_3,
     },
     parameters: {
-      batchSize: 3,
-      delayBetweenBatches: 300,
-      maxConcurrency: 4,
-      timeout: 9000,
+      batchSize: COUNT_TRIPLE,
+      delayBetweenBatches: ANIMATION_DURATION_NORMAL,
+      maxConcurrency: COUNT_4,
+      timeout: COUNT_9000,
     },
   },
   networkAware: {
     name: 'networkAware',
     description: '网络感知预加载策略',
-    priority: 2,
+    priority: COUNT_PAIR,
     conditions: {
-      maxErrorRate: 0.2,
+      maxErrorRate: MAGIC_0_2,
     },
     parameters: {
-      batchSize: 2,
+      batchSize: COUNT_PAIR,
       delayBetweenBatches: 400,
-      maxConcurrency: 3,
-      timeout: 8000,
+      maxConcurrency: COUNT_TRIPLE,
+      timeout: COUNT_8000,
     },
   },
   timeAware: {
     name: 'timeAware',
     description: '时间感知预加载策略',
-    priority: 3,
+    priority: COUNT_TRIPLE,
     conditions: {
-      maxErrorRate: 0.25,
+      maxErrorRate: MAGIC_0_25,
     },
     parameters: {
-      batchSize: 2,
-      delayBetweenBatches: 600,
-      maxConcurrency: 3,
-      timeout: 10000,
+      batchSize: COUNT_PAIR,
+      delayBetweenBatches: WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE,
+      maxConcurrency: COUNT_TRIPLE,
+      timeout: TEN_SECONDS_MS,
     },
   },
   memoryAware: {
     name: 'memoryAware',
     description: '内存感知预加载策略',
-    priority: 3,
+    priority: COUNT_TRIPLE,
     conditions: {
-      maxErrorRate: 0.3,
+      maxErrorRate: MAGIC_0_3,
     },
     parameters: {
-      batchSize: 1,
-      delayBetweenBatches: 800,
-      maxConcurrency: 2,
-      timeout: 12000,
+      batchSize: ONE,
+      delayBetweenBatches: COUNT_800,
+      maxConcurrency: COUNT_PAIR,
+      timeout: COUNT_12000,
     },
   },
 };

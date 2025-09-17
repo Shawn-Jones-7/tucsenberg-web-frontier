@@ -1,13 +1,16 @@
 'use client';
 
+import { MAGIC_4096 } from "@/constants/count";
+import { MAGIC_0_8 } from "@/constants/decimal";
 import { CACHE_DURATIONS } from '@/constants/i18n-constants';
+import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * Cookie 配置常量
  * Cookie configuration constants
  */
 export const COOKIE_CONFIG = {
-  maxAge: CACHE_DURATIONS.COOKIE_MAX_AGE / 1000, // 转换为秒
+  maxAge: CACHE_DURATIONS.COOKIE_MAX_AGE / ANIMATION_DURATION_VERY_SLOW, // 转换为秒
   sameSite: 'lax' as const,
   secure:
     typeof window !== 'undefined' && window.location.protocol === 'https:',
@@ -140,7 +143,7 @@ export class CookieManager {
     options: Partial<typeof COOKIE_CONFIG> = {},
   ): void {
     const expiryDate = new Date();
-    expiryDate.setTime(expiryDate.getTime() + expiryDays * 24 * 60 * 60 * 1000);
+    expiryDate.setTime(expiryDate.getTime() + expiryDays * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
 
     const cookieOptions = {
       ...COOKIE_CONFIG,
@@ -206,7 +209,7 @@ export class CookieManager {
    */
   static getSize(name: string): number {
     const value = this.get(name);
-    if (!value) return 0;
+    if (!value) return ZERO;
 
     // 计算 Cookie 的总大小（名称 + 值 + 分隔符）
     return new Blob([`${name}=${value}`]).size;
@@ -217,7 +220,7 @@ export class CookieManager {
    * Get total size of all cookies
    */
   static getTotalSize(): number {
-    if (typeof document === 'undefined') return 0;
+    if (typeof document === 'undefined') return ZERO;
 
     return new Blob([document.cookie]).size;
   }
@@ -226,8 +229,8 @@ export class CookieManager {
    * 检查是否接近 Cookie 大小限制
    * Check if approaching cookie size limit
    */
-  static isNearLimit(threshold: number = 0.8): boolean {
-    const maxSize = 4096; // 标准 Cookie 大小限制
+  static isNearLimit(threshold: number = MAGIC_0_8): boolean {
+    const maxSize = MAGIC_4096; // 标准 Cookie 大小限制
     const currentSize = this.getTotalSize();
 
     return currentSize / maxSize > threshold;

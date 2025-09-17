@@ -4,11 +4,13 @@
  * This module provides validation functions for content metadata,
  * ensuring data integrity and type safety.
  */
+import { COUNT_160 } from "@/constants/count";
+import { SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import type { ContentType, ContentValidationResult } from '@/types/content';
 
 // SEO validation constants
-const MAX_SEO_TITLE_LENGTH = 60;
-const MAX_SEO_DESCRIPTION_LENGTH = 160;
+const MAX_SEO_TITLE_LENGTH = SECONDS_PER_MINUTE;
+const MAX_SEO_DESCRIPTION_LENGTH = COUNT_160;
 
 /**
  * Validate required fields in content metadata
@@ -65,7 +67,7 @@ function validateTypeSpecific(
     }
     if (
       !metadata['tags'] ||
-      (Array.isArray(metadata['tags']) && metadata['tags'].length === 0)
+      (Array.isArray(metadata['tags']) && metadata['tags'].length === ZERO)
     ) {
       warnings.push('Blog posts should have tags for better categorization');
     }
@@ -128,7 +130,7 @@ export function validateContentMetadata(
   const warnings = [...typeWarnings, ...seoWarnings];
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };

@@ -1,5 +1,6 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { HTTP_BAD_REQUEST } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * DELETE /api/monitoring/dashboard
@@ -19,7 +20,7 @@ export function handleDeleteRequest(request: NextRequest) {
           error: 'Confirmation required',
           message: 'Please add confirm=true parameter to confirm deletion',
         },
-        { status: 400 },
+        { status: HTTP_BAD_REQUEST },
       );
     }
 

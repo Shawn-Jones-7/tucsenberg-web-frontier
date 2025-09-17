@@ -7,19 +7,18 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
-import { logger } from '@/lib/logger';
+import { COUNT_FIVE, COUNT_PAIR, ONE, ZERO } from "@/constants/magic-numbers";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
+import type { Locale } from '@/types/i18n';
 import type {
-  DataExport,
-  DataImportResult,
   LocaleDetectionHistory,
   StorageOperationResult,
-  UserLocalePreference,
+  UserLocalePreference
 } from './locale-storage-types';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 导出数据接口
@@ -89,7 +88,7 @@ export class LocaleImportExportManager {
    */
   static importData(data: ImportData): StorageOperationResult {
     try {
-      let importedItems = 0;
+      let importedItems = ZERO;
       const errors: string[] = [];
 
       // 验证导入数据版本
@@ -112,7 +111,7 @@ export class LocaleImportExportManager {
             STORAGE_KEYS.LOCALE_PREFERENCE,
             JSON.stringify(data.preference),
           );
-          importedItems += 1;
+          importedItems += ONE;
         } else {
           errors.push('用户偏好数据格式无效');
         }
@@ -126,7 +125,7 @@ export class LocaleImportExportManager {
             data.override,
           );
           CookieManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, data.override);
-          importedItems += 1;
+          importedItems += ONE;
         } else {
           errors.push('用户覆盖设置格式无效');
         }
@@ -139,17 +138,17 @@ export class LocaleImportExportManager {
             STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
             data.history,
           );
-          importedItems += 1;
+          importedItems += ONE;
         } else {
           errors.push('检测历史数据格式无效');
         }
       }
 
       return {
-        success: errors.length === 0,
+        success: errors.length === ZERO,
         timestamp: Date.now(),
         data: { importedItems, errors },
-        ...(errors.length > 0 && {
+        ...(errors.length > ZERO && {
           error: `导入完成，但有 ${errors.length} 个错误`,
         }),
       };
@@ -168,7 +167,7 @@ export class LocaleImportExportManager {
    */
   static exportAsJson(): string {
     const data = this.exportData();
-    return JSON.stringify(data, null, 2);
+    return JSON.stringify(data, null, COUNT_PAIR);
   }
 
   /**
@@ -268,7 +267,7 @@ export class LocaleImportExportManager {
     try {
       // 遍历localStorage查找备份
       if (typeof localStorage !== 'undefined') {
-        for (let i = 0; i < localStorage.length; i++) {
+        for (let i = ZERO; i < localStorage.length; i++) {
           const key = localStorage.key(i);
           if (key && key.startsWith('locale_backup_')) {
             try {
@@ -277,7 +276,7 @@ export class LocaleImportExportManager {
                 const parsed = JSON.parse(data) as ExportData;
                 backups.push({
                   key,
-                  timestamp: parsed.timestamp || 0,
+                  timestamp: parsed.timestamp || ZERO,
                   size: data.length,
                   isValid: this.validateExportData(parsed),
                 });
@@ -286,8 +285,8 @@ export class LocaleImportExportManager {
               // 忽略无效的备份数据
               backups.push({
                 key,
-                timestamp: 0,
-                size: 0,
+                timestamp: ZERO,
+                size: ZERO,
                 isValid: false,
               });
             }
@@ -336,7 +335,7 @@ export class LocaleImportExportManager {
    * 清理旧备份
    * Clean up old backups
    */
-  static cleanupOldBackups(maxBackups: number = 5): StorageOperationResult {
+  static cleanupOldBackups(maxBackups: number = COUNT_FIVE): StorageOperationResult {
     try {
       const backups = this.listBackups();
 
@@ -350,12 +349,12 @@ export class LocaleImportExportManager {
       }
 
       const backupsToDelete = backups.slice(maxBackups);
-      let deletedCount = 0;
+      let deletedCount = ZERO;
 
       backupsToDelete.forEach((backup) => {
         try {
           LocalStorageManager.remove(backup.key);
-          deletedCount += 1;
+          deletedCount += ONE;
         } catch {
           // 忽略删除失败的备份
         }
@@ -432,10 +431,10 @@ export class LocaleImportExportManager {
       const dataString = JSON.stringify({ preference, override, history });
 
       // 简单的校验和计算（实际应用中可能需要更强的算法）
-      let hash = 0;
-      for (let i = 0; i < dataString.length; i++) {
+      let hash = ZERO;
+      for (let i = ZERO; i < dataString.length; i++) {
         const char = dataString.charCodeAt(i);
-        hash = (hash << 5) - hash + char;
+        hash = (hash << COUNT_FIVE) - hash + char;
         hash = hash & hash; // 转换为32位整数
       }
 
@@ -471,7 +470,7 @@ export class LocaleImportExportManager {
     const exportData = this.exportData();
     const dataSize = JSON.stringify(exportData).length;
 
-    let lastModified = 0;
+    let lastModified = ZERO;
     if (preference?.timestamp)
       lastModified = Math.max(lastModified, preference.timestamp);
     if (history?.lastUpdated)
@@ -482,7 +481,7 @@ export class LocaleImportExportManager {
       hasPreference: Boolean(preference),
       hasOverride: Boolean(override),
       hasHistory: Boolean(history),
-      historyRecords: history?.detections?.length || 0,
+      historyRecords: history?.detections?.length || ZERO,
       dataSize,
       lastModified,
     };

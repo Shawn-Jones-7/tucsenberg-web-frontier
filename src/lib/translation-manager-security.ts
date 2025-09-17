@@ -1,6 +1,7 @@
+import { HTTP_OK, ZERO } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
 import type { Locale } from '@/types/i18n';
 import type { QualityScore } from '@/types/translation-manager';
-import { logger } from '@/lib/logger';
 
 /**
  * 翻译管理器安全工具类
@@ -86,7 +87,7 @@ export class TranslationManagerSecurity {
     }
 
     // 验证键名长度
-    if (key.length > 200) {
+    if (key.length > HTTP_OK) {
       logger.warn(`Translation key too long: ${key}`);
       return;
     }
@@ -109,7 +110,7 @@ export class TranslationManagerSecurity {
     }
 
     // 验证键名长度
-    if (key.length > 200) {
+    if (key.length > HTTP_OK) {
       logger.warn(`Translation key too long: ${key}`);
       return undefined;
     }
@@ -132,12 +133,12 @@ export class TranslationManagerSecurity {
     }
 
     // 检查长度
-    if (key.length > 200) {
+    if (key.length > HTTP_OK) {
       return false;
     }
 
     // 检查是否为空
-    if (key.trim().length === 0) {
+    if (key.trim().length === ZERO) {
       return false;
     }
 

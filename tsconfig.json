@@ -1,10 +1,15 @@
 {
   "compilerOptions": {
     "target": "ES2022",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "types": ["node"],
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "types": [
+      "node"
+    ],
     "skipLibCheck": true,
-
     // 最严格的类型检查
     "strict": true,
     "noImplicitAny": true,
@@ -17,7 +22,6 @@
     "strictBindCallApply": true,
     "strictPropertyInitialization": true,
     "alwaysStrict": true,
-
     // 最严格的代码质量检查 - 未使用变量检查交由ESLint统一处理
     "noUnusedLocals": false,
     "noUnusedParameters": false,
@@ -26,10 +30,8 @@
     "noPropertyAccessFromIndexSignature": false, // Allow dot notation for better DX (changed from true)
     "allowUnusedLabels": false,
     "allowUnreachableCode": false,
-
     // 完全禁止any类型 - 零容忍策略
     // noImplicitAny已在strict模式中启用，这里注释说明策略
-
     // 模块解析
     "noEmit": true,
     "esModuleInterop": true,
@@ -39,22 +41,22 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-
     // 严格模块语法 - 配合import type转换优化构建输出
     "verbatimModuleSyntax": true,
-
     // 路径映射 - 统一使用单一别名符合规则要求
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": [
+        "./src/*"
+      ]
     },
-
     // Next.js插件
     "plugins": [
       {
         "name": "next"
       }
-    ]
+    ],
+    "allowJs": true
   },
   "include": [
     "next-env.d.ts",
@@ -65,10 +67,8 @@
   ],
   "exclude": [
     "node_modules",
-
     // === 备份文件排除 - 避免备份文件被TypeScript检查 ===
     "backups/**/*",
-
     // === 开发工具豁免 - 仅开发环境使用，不影响生产代码质量 ===
     // 开发者工具面板和调试插件
     "src/components/dev-tools/**/*.ts",
@@ -82,7 +82,6 @@
     "src/lib/dev-tools-positioning.ts",
     "src/lib/performance-monitoring-coordinator.ts",
     "src/lib/react-scan-config.ts",
-
     // 测试文件和测试工具
     "**/__tests__/**/*.ts",
     "**/__tests__/**/*.tsx",
@@ -105,7 +104,6 @@
     "src/**/*.test.tsx",
     "src/**/*.spec.ts",
     "src/**/*.spec.tsx",
-
     // 构建脚本和配置文件
     "scripts/**/*.ts",
     "scripts/**/*.js",
@@ -115,7 +113,6 @@
     "*.config.js",
     "*.config.mjs",
     "instrumentation*.ts",
-
     // 开发环境特定常量
     "src/constants/dev-tools.ts",
     "src/constants/test-*.ts"

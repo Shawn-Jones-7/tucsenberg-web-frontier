@@ -1,6 +1,7 @@
+import { UnderConstruction } from '@/components/shared/under-construction';
+import { COUNT_PAIR } from "@/constants/magic-numbers";
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
-import { UnderConstruction } from '@/components/shared/under-construction';
 
 interface AboutPageProps {
   params: Promise<{
@@ -27,7 +28,7 @@ export default function AboutPage() {
   return (
     <UnderConstruction
       pageType='about'
-      currentStep={2}
+      currentStep={COUNT_PAIR}
       expectedDate='2024年第二季度'
       showProgress={true}
     />

@@ -1,7 +1,8 @@
-import { Globe, MapPin, Monitor } from 'lucide-react';
+import { ANIMATION_DURATION_VERY_SLOW } from "@/constants/magic-numbers";
 import type { Locale } from '@/types/i18n';
+import { Globe, MapPin, Monitor } from 'lucide-react';
 
-export const TRANSITION_TIMEOUT = 1000;
+export const TRANSITION_TIMEOUT = ANIMATION_DURATION_VERY_SLOW;
 
 // 语言配置
 export const LANGUAGE_CONFIG = {

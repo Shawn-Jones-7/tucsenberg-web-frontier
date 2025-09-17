@@ -5,9 +5,7 @@
 
 'use client';
 
-import { DEVICE_DEFAULTS } from '@/lib/web-vitals/constants';
-import { COUNT_TEN } from '@/constants/magic-numbers';
-
+import { COUNT_TEN, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { WebVitalsObservers } from '@/lib/web-vitals/observers';
 import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 
@@ -86,7 +84,7 @@ export class WebVitalsCollectorBase {
   protected collectNavigationTiming() {
     const navigation = performance.getEntriesByType(
       'navigation',
-    )[0] as PerformanceNavigationTiming;
+    )[ZERO] as PerformanceNavigationTiming;
     if (navigation) {
       // 使用 startTime 作为基准时间点（相当于 navigationStart）
       this.metrics.fcp = navigation.responseEnd - navigation.startTime;
@@ -104,21 +102,21 @@ export class WebVitalsCollectorBase {
     ) as PerformanceResourceTiming[];
 
     const slowResources = resources
-      .filter((resource) => resource.duration > 100) // 超过100ms的资源
+      .filter((resource) => resource.duration > PERCENTAGE_FULL) // 超过100ms的资源
       .map((resource) => ({
         name: resource.name,
         duration: resource.duration,
-        size: resource.transferSize || 0,
+        size: resource.transferSize || ZERO,
         type: this.getResourceType(resource.name),
       }))
       .sort((a, b) => b.duration - a.duration)
-      .slice(0, COUNT_TEN); // 只保留前COUNT_TEN个最慢的资源
+      .slice(ZERO, COUNT_TEN); // 只保留前COUNT_TEN个最慢的资源
 
     this.metrics.resourceTiming = {
       totalResources: resources.length,
       slowResources,
-      totalSize: resources.reduce((sum, r) => sum + (r.transferSize || 0), 0),
-      totalDuration: resources.reduce((sum, r) => sum + r.duration, 0),
+      totalSize: resources.reduce((sum, r) => sum + (r.transferSize || ZERO), ZERO),
+      totalDuration: resources.reduce((sum, r) => sum + r.duration, ZERO),
     };
   }
 
@@ -141,10 +139,10 @@ export class WebVitalsCollectorBase {
    */
   protected getDefaultResourceTiming() {
     return {
-      totalResources: 0,
+      totalResources: ZERO,
       slowResources: [],
-      totalSize: 0,
-      totalDuration: 0,
+      totalSize: ZERO,
+      totalDuration: ZERO,
     };
   }
 
@@ -154,8 +152,8 @@ export class WebVitalsCollectorBase {
   protected getDefaultConnection() {
     return {
       effectiveType: 'unknown' as const,
-      downlink: 0,
-      rtt: 0,
+      downlink: ZERO,
+      rtt: ZERO,
       saveData: false,
     };
   }
@@ -172,8 +170,8 @@ export class WebVitalsCollectorBase {
       ...(hardwareConcurrency !== undefined && { cores: hardwareConcurrency }),
       userAgent: navigator.userAgent,
       viewport: {
-        width: window?.innerWidth || 0,
-        height: window?.innerHeight || 0,
+        width: window?.innerWidth || ZERO,
+        height: window?.innerHeight || ZERO,
       },
     };
   }
@@ -193,14 +191,14 @@ export class WebVitalsCollectorBase {
   public getDetailedMetrics(): DetailedWebVitals {
     // 确保所有必需的字段都有默认值
     return {
-      cls: this.metrics.cls || 0,
-      fid: this.metrics.fid || 0,
-      lcp: this.metrics.lcp || 0,
-      fcp: this.metrics.fcp || 0,
-      firstPaint: this.metrics.firstPaint || 0,
-      ttfb: this.metrics.ttfb || 0,
-      domContentLoaded: this.metrics.domContentLoaded || 0,
-      loadComplete: this.metrics.loadComplete || 0,
+      cls: this.metrics.cls || ZERO,
+      fid: this.metrics.fid || ZERO,
+      lcp: this.metrics.lcp || ZERO,
+      fcp: this.metrics.fcp || ZERO,
+      firstPaint: this.metrics.firstPaint || ZERO,
+      ttfb: this.metrics.ttfb || ZERO,
+      domContentLoaded: this.metrics.domContentLoaded || ZERO,
+      loadComplete: this.metrics.loadComplete || ZERO,
       page: this.metrics.page || this.getDefaultPage(),
       device: this.metrics.device || this.getDefaultDevice(),
       connection: this.metrics.connection || this.getDefaultConnection(),

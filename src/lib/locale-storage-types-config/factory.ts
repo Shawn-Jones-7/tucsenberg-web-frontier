@@ -3,12 +3,13 @@
  * Locale Storage System Configuration Factory
  */
 
+import { ZERO } from "@/constants/magic-numbers";
 import type { EnvironmentType } from '@/lib/locale-storage-types-base';
-import type { ValidationResult } from '@/lib/locale-storage-types-data';
 import { DEFAULT_STORAGE_CONFIG } from '@/lib/locale-storage-types-config/defaults';
 import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
 import { CONFIG_PRESETS } from '@/lib/locale-storage-types-config/presets';
 import { CONFIG_VALIDATION_RULES } from '@/lib/locale-storage-types-config/validation';
+import type { ValidationResult } from '@/lib/locale-storage-types-data';
 
 /**
  * 配置工厂函数
@@ -127,7 +128,7 @@ export const ConfigFactory = {
     }
 
     return {
-      isValid: errors.length === 0,
+      isValid: errors.length === ZERO,
       errors,
       warnings,
     };

@@ -1,3 +1,5 @@
+import { ZERO } from "@/constants/magic-numbers";
+
 /**
  * WhatsApp Template Message Type Definitions
  *
@@ -270,7 +272,7 @@ export function validateTemplateParameter(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -315,7 +317,7 @@ export function validateTemplateComponent(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -362,7 +364,7 @@ export function validateTemplateMessage(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };
@@ -410,8 +412,5 @@ export function createMediaParameter(
 
 // Export commonly used types with shorter names
 export type {
-  TemplateMessage as Template,
-  TemplateComponent as Component,
-  TemplateParameter as Parameter,
-  TemplateLanguage as Language,
+  TemplateComponent as Component, TemplateLanguage as Language, TemplateParameter as Parameter, TemplateMessage as Template
 };

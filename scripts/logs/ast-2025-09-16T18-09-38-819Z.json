@@ -1,0 +1,210 @@
+{
+  "timestamp": "2025-09-16T18:09:38.820Z",
+  "options": {
+    "write": false,
+    "dryRun": true,
+    "files": "src/lib/web-vitals-monitor.ts",
+    "limit": 1
+  },
+  "summary": {
+    "filesProcessed": 1,
+    "filesModified": 1,
+    "totalReplacements": 23
+  },
+  "logs": [
+    {
+      "file": "src/lib/web-vitals-monitor.ts",
+      "changes": [
+        {
+          "start": 1255,
+          "end": 1258,
+          "raw": "0.1",
+          "constant": "MAGIC_0_1",
+          "negated": false
+        },
+        {
+          "start": 1272,
+          "end": 1276,
+          "raw": "0.25",
+          "constant": "MAGIC_0_25",
+          "negated": false
+        },
+        {
+          "start": 1303,
+          "end": 1306,
+          "raw": "100",
+          "constant": "PERCENTAGE_FULL",
+          "negated": false
+        },
+        {
+          "start": 1326,
+          "end": 1329,
+          "raw": "300",
+          "constant": "ANIMATION_DURATION_NORMAL",
+          "negated": false
+        },
+        {
+          "start": 1372,
+          "end": 1376,
+          "raw": "2500",
+          "constant": "MAGIC_2500",
+          "negated": false
+        },
+        {
+          "start": 1390,
+          "end": 1394,
+          "raw": "4000",
+          "constant": "MAGIC_4000",
+          "negated": false
+        },
+        {
+          "start": 1421,
+          "end": 1425,
+          "raw": "1800",
+          "constant": "MAGIC_1800",
+          "negated": false
+        },
+        {
+          "start": 1439,
+          "end": 1443,
+          "raw": "3000",
+          "constant": "THREE_SECONDS_MS",
+          "negated": false
+        },
+        {
+          "start": 1477,
+          "end": 1480,
+          "raw": "800",
+          "constant": "COUNT_800",
+          "negated": false
+        },
+        {
+          "start": 1494,
+          "end": 1498,
+          "raw": "1800",
+          "constant": "MAGIC_1800",
+          "negated": false
+        },
+        {
+          "start": 1525,
+          "end": 1528,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 1540,
+          "end": 1543,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 2538,
+          "end": 2539,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 3331,
+          "end": 3332,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 5330,
+          "end": 5331,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5662,
+          "end": 5663,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5786,
+          "end": 5787,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 6792,
+          "end": 6793,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 6804,
+          "end": 6805,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7307,
+          "end": 7308,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7344,
+          "end": 7345,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7381,
+          "end": 7382,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 8169,
+          "end": 8172,
+          "raw": "100",
+          "constant": "PERCENTAGE_FULL",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "MAGIC_0_1",
+          "MAGIC_0_25",
+          "PERCENTAGE_FULL",
+          "ANIMATION_DURATION_NORMAL",
+          "THREE_SECONDS_MS",
+          "HTTP_OK",
+          "ANIMATION_DURATION_SLOW",
+          "ZERO",
+          "ONE",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "PERCENTAGE_FULL",
+          "MAGIC_2500",
+          "MAGIC_4000",
+          "MAGIC_1800",
+          "COUNT_800",
+          "MAGIC_1800"
+        ],
+        "aliased": {}
+      }
+    }
+  ]
+}

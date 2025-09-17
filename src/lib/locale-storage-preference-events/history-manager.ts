@@ -5,9 +5,11 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
+import { MAGIC_20 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW } from "@/constants/magic-numbers";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type { UserLocalePreference } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
 
 /**
  * 偏好历史管理
@@ -64,14 +66,14 @@ export function recordPreferenceHistory(
       (p) =>
         p.locale === preference.locale &&
         p.source === preference.source &&
-        Math.abs(p.timestamp - preference.timestamp) < 1000,
+        Math.abs(p.timestamp - preference.timestamp) < ANIMATION_DURATION_VERY_SLOW,
     );
 
     if (!exists) {
       history.unshift(preference);
 
       // 限制历史记录数量
-      const maxHistory = 20;
+      const maxHistory = MAGIC_20;
       if (history.length > maxHistory) {
         history.splice(maxHistory);
       }

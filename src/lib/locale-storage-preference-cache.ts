@@ -7,9 +7,11 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
+import { MAGIC_0_5, MAGIC_0_6, MAGIC_0_7 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import type { Locale } from '@/types/i18n';
 import {
   getUserPreference,
   saveUserPreference,
@@ -28,8 +30,8 @@ import type {
  */
 export class PreferenceCacheManager {
   private static cache: Map<string, UserLocalePreference> = new Map();
-  private static cacheTimestamp = 0;
-  private static readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private static cacheTimestamp = ZERO;
+  private static readonly CACHE_TTL = COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
 
   /**
    * 获取缓存的偏好
@@ -62,7 +64,7 @@ export class PreferenceCacheManager {
       this.cache.delete(key);
     } else {
       this.cache.clear();
-      this.cacheTimestamp = 0;
+      this.cacheTimestamp = ZERO;
     }
   }
 
@@ -135,7 +137,7 @@ export function syncPreferenceData(): StorageOperationResult<{
       primaryPreference = {
         locale: cookieLocale as Locale,
         source: 'browser',
-        confidence: 0.7,
+        confidence: MAGIC_0_7,
         timestamp: Date.now(),
         metadata: { syncedFrom: 'cookies' },
       };
@@ -220,7 +222,7 @@ export function checkDataConsistency(): {
     if (cachedPreference && localPreference) {
       if (
         cachedPreference.locale !== localPreference.locale ||
-        Math.abs(cachedPreference.timestamp - localPreference.timestamp) > 1000
+        Math.abs(cachedPreference.timestamp - localPreference.timestamp) > ANIMATION_DURATION_VERY_SLOW
       ) {
         issues.push('Cache data is inconsistent with localStorage');
         recommendations.push('Clear and refresh cache');
@@ -228,7 +230,7 @@ export function checkDataConsistency(): {
     }
 
     return {
-      isConsistent: issues.length === 0,
+      isConsistent: issues.length === ZERO,
       issues,
       recommendations,
     };
@@ -288,7 +290,7 @@ export function fixDataInconsistency(): StorageOperationResult<{
       authoritative = {
         locale: cookieLocale as Locale,
         source: 'browser',
-        confidence: 0.6,
+        confidence: MAGIC_0_6,
         timestamp: Date.now(),
         metadata: { recoveredFrom: 'cookies' },
       };
@@ -298,7 +300,7 @@ export function fixDataInconsistency(): StorageOperationResult<{
       authoritative = {
         locale: 'en',
         source: 'default',
-        confidence: 0.5,
+        confidence: MAGIC_0_5,
         timestamp: Date.now(),
         metadata: { createdBy: 'recovery' },
       };
@@ -356,17 +358,17 @@ export function getStorageUsage(): {
   const usage = {
     localStorage: {
       available: false,
-      size: 0,
-      quota: 0,
+      size: ZERO,
+      quota: ZERO,
     },
     cookies: {
       available: false,
-      size: 0,
-      count: 0,
+      size: ZERO,
+      count: ZERO,
     },
     cache: {
-      size: 0,
-      age: 0,
+      size: ZERO,
+      age: ZERO,
       isExpired: false,
     },
   };
@@ -377,7 +379,7 @@ export function getStorageUsage(): {
       usage.localStorage.available = true;
 
       // 估算使用大小
-      let totalSize = 0;
+      let totalSize = ZERO;
       for (const key in localStorage) {
         if (localStorage.hasOwnProperty(key)) {
           totalSize += localStorage[key].length + key.length;
@@ -390,7 +392,7 @@ export function getStorageUsage(): {
         navigator.storage
           .estimate()
           .then((estimate) => {
-            usage.localStorage.quota = estimate.quota || 0;
+            usage.localStorage.quota = estimate.quota || ZERO;
           })
           .catch(() => {
             // 忽略错误
@@ -465,7 +467,7 @@ export function optimizeStoragePerformance(): StorageOperationResult<{
     return {
       success: true,
       data: {
-        optimized: actions.length > 0,
+        optimized: actions.length > ZERO,
         actions,
         performance: {
           before: beforeTime,

@@ -3,15 +3,16 @@
  * 负责监控翻译性能、缓存命中率和错误率
  */
 
-import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
+import { COUNT_PAIR, ONE, ZERO } from "@/constants/magic-numbers";
 import type { EventCollector } from '@/lib/i18n-event-collector';
+import { ErrorLevel } from '@/lib/i18n-monitoring-types';
+import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
 import type {
   MonitoringConfig,
   MonitoringEventType,
   PerformanceData,
 } from './i18n-monitoring-types';
-import { ErrorLevel } from '@/lib/i18n-monitoring-types';
 
 // 性能监控器
 export class PerformanceMonitor {
@@ -19,10 +20,10 @@ export class PerformanceMonitor {
   private eventCollector: EventCollector;
   private performanceData: PerformanceData = {
     loadTimes: [],
-    cacheHits: 0,
-    cacheMisses: 0,
-    errors: 0,
-    totalRequests: 0,
+    cacheHits: ZERO,
+    cacheMisses: ZERO,
+    errors: ZERO,
+    totalRequests: ZERO,
   };
 
   constructor(config: MonitoringConfig, eventCollector: EventCollector) {
@@ -34,7 +35,7 @@ export class PerformanceMonitor {
     if (!this.config.enablePerformanceTracking) return;
 
     this.performanceData.loadTimes.push(time);
-    this.performanceData.totalRequests += 1;
+    this.performanceData.totalRequests += ONE;
 
     // Check if load time exceeds threshold
     if (time > this.config.performanceThresholds.translationLoadTime) {
@@ -52,14 +53,14 @@ export class PerformanceMonitor {
   }
 
   recordCacheHit(locale: Locale): void {
-    this.performanceData.cacheHits += 1;
-    this.performanceData.totalRequests += 1;
+    this.performanceData.cacheHits += ONE;
+    this.performanceData.totalRequests += ONE;
     this.checkCacheHitRate(locale);
   }
 
   recordCacheMiss(locale: Locale): void {
-    this.performanceData.cacheMisses += 1;
-    this.performanceData.totalRequests += 1;
+    this.performanceData.cacheMisses += ONE;
+    this.performanceData.totalRequests += ONE;
     this.checkCacheHitRate(locale);
 
     this.eventCollector.addEvent({
@@ -75,8 +76,8 @@ export class PerformanceMonitor {
   }
 
   recordError(error: TranslationError, locale: Locale): void {
-    this.performanceData.errors += 1;
-    this.performanceData.totalRequests += 1;
+    this.performanceData.errors += ONE;
+    this.performanceData.totalRequests += ONE;
 
     const level: ErrorLevel =
       error.code === 'MISSING_KEY' ? ErrorLevel.WARNING : ErrorLevel.ERROR;
@@ -102,7 +103,7 @@ export class PerformanceMonitor {
         type: 'performance_issue' as MonitoringEventType,
         level: 'warning' as ErrorLevel,
         locale,
-        message: `Cache hit rate below threshold: ${hitRate.toFixed(2)}%`,
+        message: `Cache hit rate below threshold: ${hitRate.toFixed(COUNT_PAIR)}%`,
         metadata: {
           cacheHitRate: hitRate,
           threshold: this.config.performanceThresholds.cacheHitRate,
@@ -114,32 +115,32 @@ export class PerformanceMonitor {
   private getCacheHitRate(): number {
     const total =
       this.performanceData.cacheHits + this.performanceData.cacheMisses;
-    return total > 0
+    return total > ZERO
       ? (this.performanceData.cacheHits / total) *
           CACHE_LIMITS.MAX_CACHE_ENTRIES
-      : 0;
+      : ZERO;
   }
 
   private getErrorRate(): number {
-    return this.performanceData.totalRequests > 0
+    return this.performanceData.totalRequests > ZERO
       ? (this.performanceData.errors / this.performanceData.totalRequests) *
           CACHE_LIMITS.MAX_CACHE_ENTRIES
-      : 0;
+      : ZERO;
   }
 
   getMetrics(): I18nMetrics {
     const avgLoadTime =
-      this.performanceData.loadTimes.length > 0
-        ? this.performanceData.loadTimes.reduce((a, b) => a + b, 0) /
+      this.performanceData.loadTimes.length > ZERO
+        ? this.performanceData.loadTimes.reduce((a, b) => a + b, ZERO) /
           this.performanceData.loadTimes.length
-        : 0;
+        : ZERO;
 
     return {
       loadTime: avgLoadTime,
       cacheHitRate: this.getCacheHitRate(),
       errorRate: this.getErrorRate(),
-      translationCoverage: 0, // To be calculated by quality monitor
-      localeUsage: { en: 0, zh: 0 }, // To be calculated by usage tracker
+      translationCoverage: ZERO, // To be calculated by quality monitor
+      localeUsage: { en: ZERO, zh: ZERO }, // To be calculated by usage tracker
     };
   }
 
@@ -154,10 +155,10 @@ export class PerformanceMonitor {
   reset(): void {
     this.performanceData = {
       loadTimes: [],
-      cacheHits: 0,
-      cacheMisses: 0,
-      errors: 0,
-      totalRequests: 0,
+      cacheHits: ZERO,
+      cacheMisses: ZERO,
+      errors: ZERO,
+      totalRequests: ZERO,
     };
   }
 }

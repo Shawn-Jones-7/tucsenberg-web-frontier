@@ -10,7 +10,7 @@ export type {
   EnvironmentConfig,
   WebhookConfig,
   ClientConfig,
-} from './whatsapp-api-config/interfaces';
+} from '@/types/whatsapp-api-config/interfaces';
 
 // 重新导出类型定义
 export type {
@@ -26,7 +26,7 @@ export type {
   AnalyticsGranularity,
   AnalyticsMetricType,
   ErrorCode,
-} from './whatsapp-api-config/types';
+} from '@/types/whatsapp-api-config/types';
 
 // 重新导出常量定义
 export {
@@ -41,14 +41,14 @@ export {
   THROUGHPUT_LEVELS,
   ANALYTICS_GRANULARITIES,
   ANALYTICS_METRIC_TYPES,
-} from './whatsapp-api-config/constants';
+} from '@/types/whatsapp-api-config/constants';
 
 // 重新导出默认配置
 export {
   DEFAULT_API_CONFIG,
   DEFAULT_WEBHOOK_CONFIG,
   DEFAULT_REQUEST_OPTIONS,
-} from './whatsapp-api-config/defaults';
+} from '@/types/whatsapp-api-config/defaults';
 
 // 重新导出错误处理
 export {
@@ -56,7 +56,7 @@ export {
   RETRYABLE_ERROR_CODES,
   validateApiConfig,
   validateWebhookConfig,
-} from './whatsapp-api-config/errors';
+} from '@/types/whatsapp-api-config/errors';
 
 // 重新导出工具函数
 export { ConfigUtils } from '@/types/whatsapp-api-config/utils';

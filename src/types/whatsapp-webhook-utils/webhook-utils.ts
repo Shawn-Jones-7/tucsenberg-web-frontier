@@ -3,21 +3,20 @@
  * WhatsApp Webhook Utility Class
  */
 
+import { MAGIC_0_95, MAGIC_0_99, ONE, ZERO } from "@/constants/magic-numbers";
 import type { WebhookEntry, WebhookPayload } from '@/types/whatsapp-webhook-base';
-import { MAGIC_0_95, MAGIC_0_99 } from '@/constants/magic-numbers';
-
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
   EventFilter,
   EventStatistics,
   MessageReceivedEvent,
   WebhookEvent,
-} from '../whatsapp-webhook-events';
-import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
+} from '@/types/whatsapp-webhook-events';
 import type {
   SignatureVerificationConfig,
   WebhookParsingResult,
   WebhookValidationResult,
-} from './interfaces';
+} from '@/types/whatsapp-webhook-utils/interfaces';
 
 /**
  * Webhook工具函数
@@ -53,7 +52,7 @@ export class WebhookUtils {
       }
 
       return {
-        success: errors.length === 0,
+        success: errors.length === ZERO,
         events,
         errors,
         metadata: {
@@ -77,9 +76,9 @@ export class WebhookUtils {
           },
         ],
         metadata: {
-          total_entries: payload.entry?.length || 0,
-          parsed_entries: 0,
-          total_events: 0,
+          total_entries: payload.entry?.length || ZERO,
+          parsed_entries: ZERO,
+          total_events: ZERO,
           parsing_time_ms: Date.now() - startTime,
         },
       };
@@ -202,10 +201,10 @@ export class WebhookUtils {
     }
 
     return {
-      is_valid: errors.length === 0,
+      is_valid: errors.length === ZERO,
       errors,
       warnings,
-      payload_valid: errors.length === 0,
+      payload_valid: errors.length === ZERO,
     };
   }
 
@@ -325,19 +324,19 @@ export class WebhookUtils {
       events_by_type: eventsByType,
       processing_times: {
         average_ms:
-          processingTimes.reduce((a, b) => a + b, 0) / processingTimes.length ||
-          0,
-        min_ms: processingTimes[0] || 0,
-        max_ms: processingTimes[processingTimes.length - 1] || 0,
-        p95_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] || 0,
-        p99_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] || 0,
+          processingTimes.reduce((a, b) => a + b, ZERO) / processingTimes.length ||
+          ZERO,
+        min_ms: processingTimes[ZERO] || ZERO,
+        max_ms: processingTimes[processingTimes.length - ONE] || ZERO,
+        p95_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] || ZERO,
+        p99_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] || ZERO,
       },
-      error_rate: 0, // 应该基于实际错误计算
-      success_rate: 1, // 应该基于实际成功率计算
+      error_rate: ZERO, // 应该基于实际错误计算
+      success_rate: ONE, // 应该基于实际成功率计算
     };
 
     // 只有当有事件时才设置可选属性
-    if (events.length > 0) {
+    if (events.length > ZERO) {
       result.last_processed_at = new Date().toISOString();
     }
 

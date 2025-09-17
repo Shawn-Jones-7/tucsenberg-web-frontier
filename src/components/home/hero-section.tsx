@@ -1,10 +1,11 @@
 'use client';
 
-import { ArrowRight, ExternalLink, Github } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { MAGIC_0_3 } from "@/constants/decimal";
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
+import { ArrowRight, ExternalLink, Github } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 
 // Hero Badge Component
 function HeroBadge({
@@ -171,19 +172,19 @@ export function HeroSection() {
   // 动画Hook
   const { ref: badgeRef, isVisible: badgeVisible } =
     useIntersectionObserver<HTMLDivElement>({
-      threshold: 0.3,
+      threshold: MAGIC_0_3,
       triggerOnce: true,
     });
 
   const { ref: titleRef, isVisible: titleVisible } =
     useIntersectionObserver<HTMLHeadingElement>({
-      threshold: 0.3,
+      threshold: MAGIC_0_3,
       triggerOnce: true,
     });
 
   const { ref: buttonsRef, isVisible: buttonsVisible } =
     useIntersectionObserver<HTMLDivElement>({
-      threshold: 0.3,
+      threshold: MAGIC_0_3,
       triggerOnce: true,
     });
 

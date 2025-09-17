@@ -33,7 +33,7 @@ export type {
   StatusUpdate,
   Location,
   ContactInfo,
-} from './whatsapp-base-types';
+} from '@/types/whatsapp-base-types';
 
 export {
   isTextMessage,
@@ -50,7 +50,7 @@ export {
   isValidMessageType,
   isValidMessageStatus,
   isValidMediaType,
-} from './whatsapp-base-types';
+} from '@/types/whatsapp-base-types';
 
 // 模板消息类型 - Template Types
 export {
@@ -94,7 +94,7 @@ export {
   type Component,
   type Parameter,
   type Language,
-} from './whatsapp-template-types';
+} from '@/types/whatsapp-template-types';
 
 // 特定消息类型 - Message Types
 export {
@@ -148,7 +148,7 @@ export {
   type Image,
   type Interactive,
   type Template as TemplateRequest,
-} from './whatsapp-message-types';
+} from '@/types/whatsapp-message-types';
 
 // API 请求和响应类型 - API Types
 export {
@@ -195,7 +195,7 @@ export {
   type ApiError,
   type UploadRequest,
   type UploadResponse,
-} from './whatsapp-api-types';
+} from '@/types/whatsapp-api-types';
 
 // Webhook 类型 - Webhook Types
 export {
@@ -237,7 +237,7 @@ export {
   type MessageEvent,
   type StatusEvent,
   type Processor,
-} from './whatsapp-webhook-types';
+} from '@/types/whatsapp-webhook-types';
 
 // 服务配置和错误类型 - Service Types
 export {
@@ -285,7 +285,7 @@ export {
   type Health,
   type Metrics,
   type ServiceInterface,
-} from './whatsapp-service-types';
+} from '@/types/whatsapp-service-types';
 
 // 向后兼容的通用别名 - Backward Compatibility Aliases
 // 注意：所有类型已在上面的模块中导出

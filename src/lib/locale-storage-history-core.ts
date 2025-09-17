@@ -7,16 +7,17 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
 import { CACHE_LIMITS } from '@/constants/i18n-constants';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { isLocaleDetectionHistory } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 import type {
   LocaleDetectionHistory,
   LocaleDetectionRecord,
   LocaleSource,
   StorageOperationResult,
 } from './locale-storage-types';
-import { isLocaleDetectionHistory } from '@/lib/locale-storage-types';
 
 // ==================== 缓存管理 ====================
 
@@ -26,8 +27,8 @@ import { isLocaleDetectionHistory } from '@/lib/locale-storage-types';
  */
 export class HistoryCacheManager {
   private static cache: LocaleDetectionHistory | null = null;
-  private static cacheTimestamp = 0;
-  private static readonly CACHE_TTL = 10 * 60 * 1000; // 10 minutes
+  private static cacheTimestamp = ZERO;
+  private static readonly CACHE_TTL = COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 10 minutes
 
   /**
    * 获取缓存的历史记录
@@ -56,7 +57,7 @@ export class HistoryCacheManager {
    */
   static clearCache(): void {
     this.cache = null;
-    this.cacheTimestamp = 0;
+    this.cacheTimestamp = ZERO;
   }
 
   /**
@@ -71,7 +72,7 @@ export class HistoryCacheManager {
     const isCached =
       this.cache !== null && Date.now() - this.cacheTimestamp <= this.CACHE_TTL;
     const cacheAge = Date.now() - this.cacheTimestamp;
-    const cacheSize = this.cache ? JSON.stringify(this.cache).length : 0;
+    const cacheSize = this.cache ? JSON.stringify(this.cache).length : ZERO;
 
     return {
       isCached,
@@ -100,7 +101,7 @@ export function addDetectionRecord(
       locale,
       source,
       timestamp: Date.now(),
-      confidence: Math.max(0, Math.min(1, confidence)),
+      confidence: Math.max(ZERO, Math.min(ONE, confidence)),
       metadata: metadata || {},
     };
 
@@ -157,7 +158,7 @@ export function getDetectionHistory(): StorageOperationResult<LocaleDetectionHis
         detections: [],
         history: [],
         lastUpdated: Date.now(),
-        totalDetections: 0,
+        totalDetections: ZERO,
       };
 
       try {
@@ -239,9 +240,9 @@ export function updateDetectionHistory(
   history.history.unshift(detection);
 
   // 限制历史记录数量
-  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || 100;
+  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL;
   if (history.history.length > maxRecords) {
-    history.history = history.history.slice(0, maxRecords);
+    history.history = history.history.slice(ZERO, maxRecords);
   }
 
   // 更新时间戳
@@ -299,7 +300,7 @@ export function createDefaultHistory(): LocaleDetectionHistory {
     detections: [],
     history: [],
     lastUpdated: Date.now(),
-    totalDetections: 0,
+    totalDetections: ZERO,
   };
 }
 
@@ -318,10 +319,10 @@ export function getHistorySummary(): {
 
   if (!historyResult.success || !historyResult.data) {
     return {
-      totalRecords: 0,
-      lastUpdated: 0,
-      oldestRecord: 0,
-      newestRecord: 0,
+      totalRecords: ZERO,
+      lastUpdated: ZERO,
+      oldestRecord: ZERO,
+      newestRecord: ZERO,
       cacheStatus: HistoryCacheManager.getCacheStatus(),
     };
   }
@@ -333,8 +334,8 @@ export function getHistorySummary(): {
     totalRecords: records.length,
     lastUpdated: history.lastUpdated,
     oldestRecord:
-      records.length > 0 ? records[records.length - 1]!.timestamp : 0,
-    newestRecord: records.length > 0 ? records[0]!.timestamp : 0,
+      records.length > ZERO ? records[records.length - ONE]!.timestamp : ZERO,
+    newestRecord: records.length > ZERO ? records[ZERO]!.timestamp : ZERO,
     cacheStatus: HistoryCacheManager.getCacheStatus(),
   };
 }
@@ -343,7 +344,7 @@ export function getHistorySummary(): {
  * 检查历史记录是否需要清理
  * Check if history needs cleanup
  */
-export function needsCleanup(maxAge: number = 30 * 24 * 60 * 60 * 1000): {
+export function needsCleanup(maxAge: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): {
   needsCleanup: boolean;
   expiredCount: number;
   totalCount: number;
@@ -354,8 +355,8 @@ export function needsCleanup(maxAge: number = 30 * 24 * 60 * 60 * 1000): {
   if (!historyResult.success || !historyResult.data) {
     return {
       needsCleanup: false,
-      expiredCount: 0,
-      totalCount: 0,
+      expiredCount: ZERO,
+      totalCount: ZERO,
       recommendations: ['无法获取历史记录'],
     };
   }
@@ -370,25 +371,25 @@ export function needsCleanup(maxAge: number = 30 * 24 * 60 * 60 * 1000): {
 
   const recommendations: string[] = [];
 
-  if (expiredCount > 0) {
+  if (expiredCount > ZERO) {
     recommendations.push(`发现 ${expiredCount} 条过期记录，建议清理`);
   }
 
-  if (totalCount > 100) {
+  if (totalCount > PERCENTAGE_FULL) {
     recommendations.push(`历史记录过多 (${totalCount} 条)，建议清理旧记录`);
   }
 
-  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || 100;
+  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL;
   if (totalCount > maxRecords) {
     recommendations.push(`超出最大记录限制 (${maxRecords})，将自动截断`);
   }
 
-  if (recommendations.length === 0) {
+  if (recommendations.length === ZERO) {
     recommendations.push('历史记录状态良好，无需清理');
   }
 
   return {
-    needsCleanup: expiredCount > 0 || totalCount > maxRecords,
+    needsCleanup: expiredCount > ZERO || totalCount > maxRecords,
     expiredCount,
     totalCount,
     recommendations,

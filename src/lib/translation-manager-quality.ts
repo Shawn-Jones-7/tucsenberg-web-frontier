@@ -1,3 +1,8 @@
+import { MAGIC_0_8 } from "@/constants/decimal";
+import { QUALITY_SCORING } from '@/constants/i18n-constants';
+import { COUNT_FIVE, COUNT_TRIPLE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
+import { TranslationQualityChecker } from '@/lib/translation-quality-checker';
 import type { Locale } from '@/types/i18n';
 import type {
   LocaleQualityReport,
@@ -8,9 +13,6 @@ import type {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
-import { QUALITY_SCORING } from '@/constants/i18n-constants';
-import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
-import { TranslationQualityChecker } from '@/lib/translation-quality-checker';
 import {
   calculateConfidence,
   flattenTranslations,
@@ -114,10 +116,10 @@ export class TranslationQualityManager {
     }
 
     const overallScore =
-      issues.length === 0 ? 100 : Math.max(0, 100 - issues.length * 5);
+      issues.length === ZERO ? PERCENTAGE_FULL : Math.max(ZERO, PERCENTAGE_FULL - issues.length * COUNT_FIVE);
 
     return {
-      isValid: issues.length === 0,
+      isValid: issues.length === ZERO,
       score: overallScore,
       issues,
       recommendations: generateRecommendations(issues),
@@ -146,7 +148,7 @@ export class TranslationQualityManager {
     // 计算整体质量分数
     const overall: QualityScore = {
       score: validation.score,
-      confidence: 0.8,
+      confidence: MAGIC_0_8,
       issues: validation.issues,
       suggestions: generateSuggestions(validation.issues),
     };
@@ -260,19 +262,19 @@ export class TranslationQualityManager {
       return value && !isEmptyTranslation(value);
     }).length;
 
-    const completeness = totalKeys > 0 ? (translatedKeys / totalKeys) * 100 : 0;
+    const completeness = totalKeys > ZERO ? (translatedKeys / totalKeys) * PERCENTAGE_FULL : ZERO;
     const accuracy = this.calculateAccuracy(qualityIssues);
     const consistency = this.calculateConsistency(flatTranslations);
 
-    const overall = (completeness + accuracy + consistency) / 3;
+    const overall = (completeness + accuracy + consistency) / COUNT_TRIPLE;
 
     return {
-      score: Math.round(overall * 100) / 100,
+      score: Math.round(overall * PERCENTAGE_FULL) / PERCENTAGE_FULL,
       confidence: calculateConfidence(qualityIssues),
       issues: qualityIssues,
       suggestions: generateSuggestions(qualityIssues),
-      grammar: Math.round(accuracy * 100) / 100,
-      consistency: Math.round(consistency * 100) / 100,
+      grammar: Math.round(accuracy * PERCENTAGE_FULL) / PERCENTAGE_FULL,
+      consistency: Math.round(consistency * PERCENTAGE_FULL) / PERCENTAGE_FULL,
     };
   }
 
@@ -288,13 +290,13 @@ export class TranslationQualityManager {
     ).length;
 
     // 基础分数
-    let score = 100;
+    let score = PERCENTAGE_FULL;
 
     // 扣分规则
     score -= criticalIssues * QUALITY_SCORING.CRITICAL_PENALTY;
     score -= warningIssues * QUALITY_SCORING.WARNING_PENALTY;
 
-    return Math.max(0, score);
+    return Math.max(ZERO, score);
   }
 
   /**
@@ -311,7 +313,7 @@ export class TranslationQualityManager {
     // 如果有重复的翻译值，可能存在一致性问题
     const duplicateRatio = (values.length - uniqueValues.size) / values.length;
 
-    return Math.max(0, 100 - duplicateRatio * 50);
+    return Math.max(ZERO, PERCENTAGE_FULL - duplicateRatio * PERCENTAGE_HALF);
   }
 
   /**

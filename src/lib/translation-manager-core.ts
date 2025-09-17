@@ -1,3 +1,8 @@
+import { MAGIC_85 } from "@/constants/count";
+import { MAGIC_0_8 } from "@/constants/decimal";
+import { logger } from '@/lib/logger';
+import { TranslationQualityManager } from '@/lib/translation-manager-quality';
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
 import type { Locale } from '@/types/i18n';
 import type {
   QualityReport,
@@ -6,9 +11,6 @@ import type {
   TranslationQualityCheck,
   ValidationReport,
 } from '@/types/translation-manager';
-import { logger } from '@/lib/logger';
-import { TranslationQualityManager } from '@/lib/translation-manager-quality';
-import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
 
 /**
  * 翻译管理器核心类
@@ -105,8 +107,8 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     // 委托给质量管理器
     // 简单的质量检查实现
     return {
-      score: 85,
-      confidence: 0.8,
+      score: MAGIC_85,
+      confidence: MAGIC_0_8,
       issues: [],
       suggestions: [],
     };

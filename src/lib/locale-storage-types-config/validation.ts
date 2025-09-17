@@ -1,4 +1,5 @@
-import { BYTES_PER_KB, COUNT_TEN, DAYS_PER_YEAR, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+import { MAGIC_16, MAGIC_64 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_TEN, DAYS_PER_YEAR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 语言存储系统配置验证规则
@@ -47,11 +48,11 @@ export const CONFIG_VALIDATION_RULES: ConfigValidationRules = {
   },
 
   ranges: {
-    'retention.preferences': { min: 0, max: DAYS_PER_YEAR * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000 },
-    'performance.maxEntries': { min: 1, max: 10000 },
-    'performance.maxSize': { min: BYTES_PER_KB, max: 100 * BYTES_PER_KB * BYTES_PER_KB },
-    'encryption.keyLength': { min: 16, max: 64 },
-    'compression.threshold': { min: 0, max: COUNT_TEN * BYTES_PER_KB * BYTES_PER_KB },
+    'retention.preferences': { min: ZERO, max: DAYS_PER_YEAR * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW },
+    'performance.maxEntries': { min: ONE, max: TEN_SECONDS_MS },
+    'performance.maxSize': { min: BYTES_PER_KB, max: PERCENTAGE_FULL * BYTES_PER_KB * BYTES_PER_KB },
+    'encryption.keyLength': { min: MAGIC_16, max: MAGIC_64 },
+    'compression.threshold': { min: ZERO, max: COUNT_TEN * BYTES_PER_KB * BYTES_PER_KB },
   },
 
   enums: {
@@ -63,10 +64,10 @@ export const CONFIG_VALIDATION_RULES: ConfigValidationRules = {
 
   custom: {
     'retention.preferences': (value: unknown) => {
-      return typeof value === 'number' && value >= 0;
+      return typeof value === 'number' && value >= ZERO;
     },
     'performance.maxEntries': (value: unknown) => {
-      return typeof value === 'number' && value > 0 && Number.isInteger(value);
+      return typeof value === 'number' && value > ZERO && Number.isInteger(value);
     },
   },
 };

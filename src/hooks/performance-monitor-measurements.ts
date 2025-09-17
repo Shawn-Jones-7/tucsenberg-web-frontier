@@ -1,14 +1,13 @@
-import React from 'react';
-import { MAGIC_10000 } from '@/constants/magic-numbers';
-
+import { FIVE_SECONDS_MS, MAGIC_10000, ONE, ZERO } from "@/constants/magic-numbers";
+import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
 import { logger } from '@/lib/logger';
+import React from 'react';
 import type {
   PerformanceAlert,
   PerformanceAlertThresholds,
   PerformanceMeasurements,
   PerformanceMetrics,
 } from './performance-monitor-types';
-import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
 
 /**
  * 创建性能测量函数的辅助函数
@@ -25,12 +24,12 @@ export function usePerformanceMeasurements(
       if (typeof window !== 'undefined' && window.performance) {
         const navigation = performance.getEntriesByType(
           'navigation',
-        )[0] as PerformanceNavigationTiming;
+        )[ZERO] as PerformanceNavigationTiming;
         if (navigation) {
           const loadTime = navigation.loadEventEnd - navigation.startTime;
 
           setMetrics((prev) => ({
-            renderTime: 0,
+            renderTime: ZERO,
             ...(prev || {}),
             loadTime,
           }));
@@ -55,7 +54,7 @@ export function usePerformanceMeasurements(
         const renderTime = performance.now() - startTime.current;
 
         setMetrics((prev) => ({
-          loadTime: 0,
+          loadTime: ZERO,
           ...(prev || {}),
           renderTime,
         }));
@@ -85,8 +84,8 @@ export function usePerformanceMeasurements(
         const memoryUsage = window.performance.memory.usedJSHeapSize;
 
         setMetrics((prev) => ({
-          loadTime: 0,
-          renderTime: 0,
+          loadTime: ZERO,
+          renderTime: ZERO,
           ...(prev || {}),
           memoryUsage,
         }));
@@ -171,7 +170,7 @@ export const measureLargestContentfulPaint = (): Promise<number | null> => {
       if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const lastEntry = entries[entries.length - 1];
+          const lastEntry = entries[entries.length - ONE];
           resolve(lastEntry ? lastEntry.startTime : null);
           observer.disconnect();
         });
@@ -182,7 +181,7 @@ export const measureLargestContentfulPaint = (): Promise<number | null> => {
         setTimeout(() => {
           observer.disconnect();
           resolve(null);
-        }, 5000);
+        }, FIVE_SECONDS_MS);
       } else {
         resolve(null);
       }
@@ -200,7 +199,7 @@ export const measureCumulativeLayoutShift = (): Promise<number | null> => {
   return new Promise((resolve) => {
     try {
       if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
-        let clsValue = 0;
+        let clsValue = ZERO;
 
         const observer = new PerformanceObserver((list) => {
           for (const entry of list.getEntries()) {
@@ -258,7 +257,7 @@ export const measureFirstInputDelay = (): Promise<number | null> => {
       if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const firstEntry = entries[0];
+          const firstEntry = entries[ZERO];
           if (firstEntry) {
             const firstInputEntry = firstEntry as unknown as {
               processingStart: number;
@@ -303,7 +302,7 @@ export const measureComprehensivePerformance = async (): Promise<
       // 加载时间
       const navigation = performance.getEntriesByType(
         'navigation',
-      )[0] as PerformanceNavigationTiming;
+      )[ZERO] as PerformanceNavigationTiming;
       if (navigation) {
         metrics.loadTime = navigation.loadEventEnd - navigation.startTime;
       }

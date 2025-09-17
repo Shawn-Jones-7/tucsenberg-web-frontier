@@ -1,6 +1,6 @@
+import { MAGIC_16 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_36, MAGIC_9, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, THREE_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import React from 'react';
-import { MAGIC_36, COUNT_PAIR, MAGIC_9 } from '@/constants/magic-numbers';
-
 import type {
   MonitoringControls,
   PerformanceAlert,
@@ -16,7 +16,7 @@ import type {
  * 性能监控常量
  */
 export const PERFORMANCE_CONSTANTS = {
-  MEMORY_THRESHOLD_MB: 50,
+  MEMORY_THRESHOLD_MB: PERCENTAGE_HALF,
   MEMORY_BYTES_PER_MB: 1048576, // 1024 * 1024
   TIME_CALCULATION_FACTOR: MAGIC_36,
   CALCULATION_DIVISOR: COUNT_PAIR,
@@ -27,8 +27,8 @@ export const PERFORMANCE_CONSTANTS = {
  * 默认性能警告阈值
  */
 export const DEFAULT_ALERT_THRESHOLDS: Required<PerformanceAlertThresholds> = {
-  loadTime: 3000, // 3秒
-  renderTime: 16, // 16毫秒 (60fps)
+  loadTime: THREE_SECONDS_MS, // 3秒
+  renderTime: MAGIC_16, // 16毫秒 (60fps)
   memoryUsage:
     PERFORMANCE_CONSTANTS.MEMORY_THRESHOLD_MB *
     PERFORMANCE_CONSTANTS.MEMORY_BYTES_PER_MB,
@@ -149,13 +149,13 @@ export const validateAndSanitizeOptions = (
   const {
     enableAlerts = false,
     alertThresholds = {},
-    monitoringInterval = 1000,
+    monitoringInterval = ANIMATION_DURATION_VERY_SLOW,
     enableMemoryMonitoring = true,
     enableNetworkMonitoring = false,
     enableRenderTimeMonitoring = true,
     enableLoadTimeMonitoring = true,
     enableAutoBaseline = false,
-    maxAlerts = 100,
+    maxAlerts = PERCENTAGE_FULL,
   } = safeOptions;
 
   // Validate alertThresholds with proper fallbacks
@@ -163,32 +163,32 @@ export const validateAndSanitizeOptions = (
   const validatedAlertThresholds: Required<PerformanceAlertThresholds> = {
     loadTime:
       typeof safeAlertThresholds.loadTime === 'number' &&
-      safeAlertThresholds.loadTime > 0
+      safeAlertThresholds.loadTime > ZERO
         ? safeAlertThresholds.loadTime
         : DEFAULT_ALERT_THRESHOLDS.loadTime,
     renderTime:
       typeof safeAlertThresholds.renderTime === 'number' &&
-      safeAlertThresholds.renderTime > 0
+      safeAlertThresholds.renderTime > ZERO
         ? safeAlertThresholds.renderTime
         : DEFAULT_ALERT_THRESHOLDS.renderTime,
     memoryUsage:
       typeof safeAlertThresholds.memoryUsage === 'number' &&
-      safeAlertThresholds.memoryUsage > 0
+      safeAlertThresholds.memoryUsage > ZERO
         ? safeAlertThresholds.memoryUsage
         : DEFAULT_ALERT_THRESHOLDS.memoryUsage,
   };
 
   // Validate monitoringInterval
   const validMonitoringInterval =
-    typeof monitoringInterval === 'number' && monitoringInterval > 0
-      ? Math.max(100, monitoringInterval) // Minimum 100ms
-      : 1000;
+    typeof monitoringInterval === 'number' && monitoringInterval > ZERO
+      ? Math.max(PERCENTAGE_FULL, monitoringInterval) // Minimum 100ms
+      : ANIMATION_DURATION_VERY_SLOW;
 
   // Validate maxAlerts
   const validMaxAlerts =
-    typeof maxAlerts === 'number' && maxAlerts > 0
-      ? Math.min(1000, Math.max(1, maxAlerts)) // Between 1 and 1000
-      : 100;
+    typeof maxAlerts === 'number' && maxAlerts > ZERO
+      ? Math.min(ANIMATION_DURATION_VERY_SLOW, Math.max(ONE, maxAlerts)) // Between 1 and 1000
+      : PERCENTAGE_FULL;
 
   return {
     enableAlerts: Boolean(enableAlerts),
@@ -222,10 +222,10 @@ export const formatMemoryUsage = (bytes: number): string => {
  * 格式化时间的辅助函数
  */
 export const formatTime = (milliseconds: number): string => {
-  if (milliseconds < 1000) {
+  if (milliseconds < ANIMATION_DURATION_VERY_SLOW) {
     return `${milliseconds.toFixed(COUNT_PAIR)}ms`;
   }
-  return `${(milliseconds / 1000).toFixed(COUNT_PAIR)}s`;
+  return `${(milliseconds / ANIMATION_DURATION_VERY_SLOW).toFixed(COUNT_PAIR)}s`;
 };
 
 /**

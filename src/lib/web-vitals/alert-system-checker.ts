@@ -3,6 +3,7 @@
  * Performance Alert System - Metrics Checker
  */
 
+import { ZERO } from "@/constants/magic-numbers";
 import {
   extractCoreMetrics,
   formatMetricValue,
@@ -87,13 +88,13 @@ export class AlertSystemChecker {
     regressionResult: RegressionDetectionResult,
     alerts: AlertInfo[],
   ): void {
-    if (regressionResult.summary.criticalRegressions > 0) {
+    if (regressionResult.summary.criticalRegressions > ZERO) {
       alerts.push({
         type: 'regression',
         severity: 'critical',
         message: `🚨 检测到 ${regressionResult.summary.criticalRegressions} 个关键性能回归`,
       });
-    } else if (regressionResult.summary.totalRegressions > 0) {
+    } else if (regressionResult.summary.totalRegressions > ZERO) {
       alerts.push({
         type: 'regression',
         severity: 'warning',

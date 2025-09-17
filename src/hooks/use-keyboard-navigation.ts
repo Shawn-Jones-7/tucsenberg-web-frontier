@@ -1,5 +1,6 @@
 'use client';
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 export interface KeyboardNavigationOptions {
@@ -93,8 +94,8 @@ function handleTabKey(
   const elements = getFocusableElements();
   const currentIndex = getCurrentFocusIndex();
   const targetElement = event.shiftKey
-    ? elements[currentIndex - 1]
-    : elements[currentIndex + 1];
+    ? elements[currentIndex - ONE]
+    : elements[currentIndex + ONE];
 
   if (targetElement) {
     config.onNavigate(targetElement, direction);
@@ -127,7 +128,7 @@ function useFocusManagement(
     (index: number): void => {
       const elements = getFocusableElements();
       // 安全的数组访问，避免对象注入
-      if (index >= 0 && index < elements.length && Array.isArray(elements)) {
+      if (index >= ZERO && index < elements.length && Array.isArray(elements)) {
         const element = elements.at(index);
         if (element) {
           element.focus();
@@ -155,21 +156,21 @@ function useNavigationActions(
   config: KeyboardNavigationConfig,
 ) {
   const focusFirst = useCallback((): void => {
-    setFocusIndex(0);
+    setFocusIndex(ZERO);
   }, [setFocusIndex]);
 
   const focusLast = useCallback((): void => {
     const elements = getFocusableElements();
-    setFocusIndex(elements.length - 1);
+    setFocusIndex(elements.length - ONE);
   }, [getFocusableElements, setFocusIndex]);
 
   const focusNext = useCallback((): void => {
     const elements = getFocusableElements();
     const currentIndex = getCurrentFocusIndex();
-    let nextIndex = currentIndex + 1;
+    let nextIndex = currentIndex + ONE;
 
     if (nextIndex >= elements.length) {
-      nextIndex = config.loop ? 0 : elements.length - 1;
+      nextIndex = config.loop ? ZERO : elements.length - ONE;
     }
 
     setFocusIndex(nextIndex);
@@ -178,10 +179,10 @@ function useNavigationActions(
   const focusPrevious = useCallback((): void => {
     const elements = getFocusableElements();
     const currentIndex = getCurrentFocusIndex();
-    let prevIndex = currentIndex - 1;
+    let prevIndex = currentIndex - ONE;
 
-    if (prevIndex < 0) {
-      prevIndex = config.loop ? elements.length - 1 : 0;
+    if (prevIndex < ZERO) {
+      prevIndex = config.loop ? elements.length - ONE : ZERO;
     }
 
     setFocusIndex(prevIndex);

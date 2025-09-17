@@ -4,7 +4,7 @@ import {
   removeInterferingElements,
   setupTestEnvironment,
   waitForStablePage,
-} from './test-environment-setup';
+} from '@/tests/e2e/test-environment-setup';
 
 async function globalSetup(config: FullConfig) {
   console.log('🚀 Starting global setup for Playwright tests...');

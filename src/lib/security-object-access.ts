@@ -1,3 +1,5 @@
+import { ZERO } from "@/constants/magic-numbers";
+
 /**
  * 安全对象访问工具库
  * Security Object Access Utilities
@@ -157,7 +159,7 @@ export function safeGetArrayItem<T>(
   array: readonly T[],
   index: number,
 ): T | undefined {
-  if (Array.isArray(array) && index >= 0 && index < array.length) {
+  if (Array.isArray(array) && index >= ZERO && index < array.length) {
     // 使用 Object.getOwnPropertyDescriptor 进行安全访问
     const descriptor = Object.getOwnPropertyDescriptor(array, index);
     return descriptor ? descriptor.value : undefined;

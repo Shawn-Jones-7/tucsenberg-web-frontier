@@ -1,10 +1,12 @@
 'use client';
 
-import { useState } from 'react';
-import { useTranslations } from 'next-intl';
-import { PROJECT_STATS } from '@/lib/site-config';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { MAGIC_0_2 } from "@/constants/decimal";
+import { ONE } from "@/constants/magic-numbers";
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
+import { PROJECT_STATS } from '@/lib/site-config';
+import { useTranslations } from 'next-intl';
+import { useState } from 'react';
 import {
   BadgeShowcase,
   ButtonShowcase,
@@ -23,13 +25,13 @@ export function ComponentShowcase() {
 
   // 动画Hook
   const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({
-    threshold: 0.2,
+    threshold: MAGIC_0_2,
     triggerOnce: true,
   });
 
   const handleLike = () => {
     setIsLiked(!isLiked);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
+    setLikeCount((prev) => (isLiked ? prev - ONE : prev + ONE));
   };
 
   return (

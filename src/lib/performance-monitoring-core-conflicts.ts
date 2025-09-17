@@ -1,4 +1,4 @@
-import { COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, PERCENTAGE_HALF } from '@/constants/magic-numbers';
+import { COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 性能监控核心工具冲突检查
@@ -85,7 +85,7 @@ export class PerformanceToolConflictChecker {
     this.generateRecommendations(detectedTools, conflicts, recommendations);
 
     return {
-      hasConflicts: conflicts.length > 0,
+      hasConflicts: conflicts.length > ZERO,
       conflicts,
       warnings,
       recommendations,
@@ -191,7 +191,7 @@ export class PerformanceToolConflictChecker {
     const userTimingMarks = performance.getEntriesByType('mark').length;
     const userTimingMeasures = performance.getEntriesByType('measure').length;
 
-    if (userTimingMarks > 100) {
+    if (userTimingMarks > PERCENTAGE_FULL) {
       warnings.push(`检测到 ${userTimingMarks} 个性能标记，建议定期清理`);
     }
 
@@ -219,23 +219,23 @@ export class PerformanceToolConflictChecker {
     const isDevelopment = process.env.NODE_ENV === 'development';
 
     if (isDevelopment) {
-      let devToolsCount = 0;
+      let devToolsCount = ZERO;
 
       if (
         (window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
           .__REACT_DEVTOOLS_GLOBAL_HOOK__
       )
-        devToolsCount += 1;
+        devToolsCount += ONE;
       if (
         (window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
           .__REDUX_DEVTOOLS_EXTENSION__
       )
-        devToolsCount += 1;
+        devToolsCount += ONE;
       if (
         (window as { __VUE_DEVTOOLS_GLOBAL_HOOK__?: unknown })
           .__VUE_DEVTOOLS_GLOBAL_HOOK__
       )
-        devToolsCount += 1;
+        devToolsCount += ONE;
 
       if (devToolsCount > COUNT_PAIR) {
         warnings.push(
@@ -259,7 +259,7 @@ export class PerformanceToolConflictChecker {
       )
         prodDevTools.push('Redux DevTools');
 
-      if (prodDevTools.length > 0) {
+      if (prodDevTools.length > ZERO) {
         conflicts.push(`生产环境中检测到开发工具: ${prodDevTools.join(', ')}`);
       }
     }
@@ -323,7 +323,7 @@ export class PerformanceToolConflictChecker {
       ['New Relic', 'DataDog', 'AppDynamics', 'Dynatrace'].includes(tool),
     );
 
-    if (performanceTools.length > 1) {
+    if (performanceTools.length > ONE) {
       conflicts.push(`多个APM工具可能冲突: ${performanceTools.join(', ')}`);
     }
   }
@@ -337,7 +337,7 @@ export class PerformanceToolConflictChecker {
     conflicts: string[],
     recommendations: string[],
   ): void {
-    if (conflicts.length > 0) {
+    if (conflicts.length > ZERO) {
       recommendations.push('建议审查和整合监控工具，避免功能重复');
       recommendations.push('考虑使用统一的监控平台来减少工具冲突');
     }
@@ -355,7 +355,7 @@ export class PerformanceToolConflictChecker {
       recommendations.push('生产环境中应移除开发者工具以提高性能');
     }
 
-    if (detectedTools.length === 0) {
+    if (detectedTools.length === ZERO) {
       recommendations.push('未检测到明显的工具冲突，当前配置良好');
     }
   }
@@ -366,13 +366,13 @@ export class PerformanceToolConflictChecker {
    */
   private countPerformanceObservers(): number {
     // 这是一个估算，实际实现可能需要更复杂的检测逻辑
-    if (typeof window === 'undefined' || !window.PerformanceObserver) return 0;
+    if (typeof window === 'undefined' || !window.PerformanceObserver) return ZERO;
 
     // 检查常见的性能监控库是否在使用PerformanceObserver
-    let count = 0;
+    let count = ZERO;
 
     // 检查Web Vitals
-    if ((window as { webVitals?: unknown }).webVitals) count += 1;
+    if ((window as { webVitals?: unknown }).webVitals) count += ONE;
 
     // 检查其他可能的监控工具
     if (
@@ -406,7 +406,7 @@ export class PerformanceToolConflictChecker {
    */
   private getEventListenerCount(eventType: string): number {
     // 这是一个简化的实现，实际可能需要更复杂的检测
-    if (typeof window === 'undefined') return 0;
+    if (typeof window === 'undefined') return ZERO;
 
     try {
       // 尝试获取事件监听器信息（仅在开发环境中可用）
@@ -415,9 +415,9 @@ export class PerformanceToolConflictChecker {
           getEventListeners?: (target: unknown) => Record<string, unknown[]>;
         }
       ).getEventListeners?.(window)?.[eventType];
-      return listeners ? listeners.length : 0;
+      return listeners ? listeners.length : ZERO;
     } catch {
-      return 0;
+      return ZERO;
     }
   }
 

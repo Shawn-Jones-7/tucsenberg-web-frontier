@@ -1,4 +1,9 @@
-import { BYTES_PER_KB, MAGIC_1048576, MAGIC_3600000, MAGIC_60000 } from '@/constants/magic-numbers';
+// 直接定义基础常量，避免循环依赖
+const ANIMATION_DURATION_VERY_SLOW = 1000 as const;
+const BYTES_PER_KB = 1024 as const;
+const MAGIC_1048576 = 1048576 as const; // 1MB in bytes
+const MAGIC_3600000 = 3600000 as const; // 1 hour in milliseconds
+const MAGIC_60000 = 60000 as const; // 1 minute in milliseconds
 
 /**
  * 通用时间与容量单位常量

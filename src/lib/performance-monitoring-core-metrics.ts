@@ -5,10 +5,9 @@
  * 负责性能指标的记录、存储、清理和实时分析功能
  */
 
-import { logger } from '@/lib/logger';
-import { COUNT_FIVE, SECONDS_PER_MINUTE, MAGIC_36, COUNT_PAIR, MAGIC_9, MAGIC_1_1 } from '@/constants/magic-numbers';
-
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, MAGIC_1_1, MAGIC_36, MAGIC_9, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { MB } from '@/constants/units';
+import { logger } from '@/lib/logger';
 import type {
   BundlePerformanceData,
   ComponentPerformanceData,
@@ -39,7 +38,7 @@ export class PerformanceMetricsManager {
    */
   private setupPeriodicCleanup(): void {
     const cleanupInterval =
-      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * 1000; // COUNT_FIVE分钟
+      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // COUNT_FIVE分钟
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupOldMetrics();
@@ -53,8 +52,8 @@ export class PerformanceMetricsManager {
   private cleanupOldMetrics(): void {
     const now = Date.now();
     const retentionTime =
-      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * 1000;
-    const maxMetrics = this.config.global?.maxMetrics || 1000;
+      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+    const maxMetrics = this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
 
     // 按时间清理
     this.metrics = this.metrics.filter(
@@ -65,7 +64,7 @@ export class PerformanceMetricsManager {
     if (this.metrics.length > maxMetrics) {
       this.metrics = this.metrics
         .sort((a, b) => b.timestamp - a.timestamp)
-        .slice(0, maxMetrics);
+        .slice(ZERO, maxMetrics);
     }
   }
 
@@ -104,7 +103,7 @@ export class PerformanceMetricsManager {
     this.analyzeRealtimeMetric(fullMetric);
 
     // 立即清理如果超出限制
-    const maxMetrics = this.config.global?.maxMetrics || 1000;
+    const maxMetrics = this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
     if (this.metrics.length > maxMetrics * MAGIC_1_1) {
       // 10%缓冲
       this.cleanupOldMetrics();
@@ -159,7 +158,7 @@ export class PerformanceMetricsManager {
   private analyzeRealtimeMetric(metric: PerformanceMetrics): void {
     // 检查是否有性能问题需要立即关注
     let isSlowPerformance = false;
-    let threshold = 0;
+    let threshold = ZERO;
 
     switch (metric.type) {
       case 'component':
@@ -167,8 +166,8 @@ export class PerformanceMetricsManager {
           this.isComponentData(metric.data) &&
           this.config.component?.thresholds
         ) {
-          threshold = this.config.component.thresholds.renderTime || 100;
-          isSlowPerformance = (Number(metric.data.renderTime) || 0) > threshold;
+          threshold = this.config.component.thresholds.renderTime || PERCENTAGE_FULL;
+          isSlowPerformance = (Number(metric.data.renderTime) || ZERO) > threshold;
         }
         break;
       case 'network':
@@ -178,13 +177,13 @@ export class PerformanceMetricsManager {
         ) {
           threshold = this.config.network.thresholds.responseTime || 1000;
           isSlowPerformance =
-            (Number(metric.data.responseTime) || 0) > threshold;
+            (Number(metric.data.responseTime) || ZERO) > threshold;
         }
         break;
       case 'bundle':
         if (this.isBundleData(metric.data) && this.config.bundle?.thresholds) {
           threshold = this.config.bundle.thresholds.size || MB; // 1MB
-          isSlowPerformance = (Number(metric.data.size) || 0) > threshold;
+          isSlowPerformance = (Number(metric.data.size) || ZERO) > threshold;
         }
         break;
     }
@@ -204,7 +203,7 @@ export class PerformanceMetricsManager {
         `Performance warning: ${metric.type} metric exceeded threshold`,
         {
           metric: metric.id || metric.type,
-          value: value || 0,
+          value: value || ZERO,
           threshold,
           source: metric.source,
         },
@@ -267,21 +266,21 @@ export class PerformanceMetricsManager {
       byType: {} as Record<PerformanceMetricType, number>,
       bySource: {} as Record<PerformanceMetricSource, number>,
       timeRange: {
-        oldest: 0,
-        newest: 0,
-        span: 0,
+        oldest: ZERO,
+        newest: ZERO,
+        span: ZERO,
       },
-      averageValue: 0,
+      averageValue: ZERO,
     };
 
-    if (this.metrics.length === 0) {
+    if (this.metrics.length === ZERO) {
       return stats;
     }
 
     // 统计类型分布
     this.metrics.forEach((metric) => {
-      stats.byType[metric.type] = (stats.byType[metric.type] || 0) + 1;
-      stats.bySource[metric.source] = (stats.bySource[metric.source] || 0) + 1;
+      stats.byType[metric.type] = (stats.byType[metric.type] || ZERO) + ONE;
+      stats.bySource[metric.source] = (stats.bySource[metric.source] || ZERO) + ONE;
     });
 
     // 计算时间范围
@@ -292,16 +291,16 @@ export class PerformanceMetricsManager {
 
     // 计算平均值
     const totalValue = this.metrics.reduce((sum, metric) => {
-      let value = 0;
+      let value = ZERO;
       if (this.isComponentData(metric.data)) {
-        value = Number(metric.data.renderTime) || 0;
+        value = Number(metric.data.renderTime) || ZERO;
       } else if (this.isNetworkData(metric.data)) {
-        value = Number(metric.data.responseTime) || 0;
+        value = Number(metric.data.responseTime) || ZERO;
       } else if (this.isBundleData(metric.data)) {
-        value = Number(metric.data.size) || 0;
+        value = Number(metric.data.size) || ZERO;
       }
       return sum + value;
-    }, 0);
+    }, ZERO);
     stats.averageValue = totalValue / this.metrics.length;
 
     return stats;
@@ -312,24 +311,24 @@ export class PerformanceMetricsManager {
    * Calculate average metrics per minute
    */
   calculateAverageMetricsPerMinute(): number {
-    if (this.metrics.length === 0) {
-      return 0;
+    if (this.metrics.length === ZERO) {
+      return ZERO;
     }
 
     const stats = this.getMetricsStats();
-    const timeSpanMinutes = stats.timeRange.span / (SECONDS_PER_MINUTE * 1000);
+    const timeSpanMinutes = stats.timeRange.span / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
 
-    return timeSpanMinutes > 0 ? this.metrics.length / timeSpanMinutes : 0;
+    return timeSpanMinutes > ZERO ? this.metrics.length / timeSpanMinutes : ZERO;
   }
 
   /**
    * 获取最近的指标
    * Get recent metrics
    */
-  getRecentMetrics(count = 10): PerformanceMetrics[] {
+  getRecentMetrics(count = COUNT_TEN): PerformanceMetrics[] {
     return this.metrics
       .sort((a, b) => b.timestamp - a.timestamp)
-      .slice(0, count);
+      .slice(ZERO, count);
   }
 
   /**
@@ -346,8 +345,8 @@ export class PerformanceMetricsManager {
    */
   removeMetric(id: string): boolean {
     const index = this.metrics.findIndex((metric) => metric.id === id);
-    if (index > -1) {
-      this.metrics.splice(index, 1);
+    if (index > -ONE) {
+      this.metrics.splice(index, ONE);
       return true;
     }
     return false;
@@ -400,12 +399,12 @@ export class PerformanceMetricsManager {
       this.metrics = [];
     }
 
-    let importedCount = 0;
+    let importedCount = ZERO;
     data.forEach((metric) => {
       // 验证指标数据
       if (this.isValidMetric(metric)) {
         this.metrics.push(metric);
-        importedCount += 1;
+        importedCount += ONE;
       }
     });
 
@@ -428,7 +427,7 @@ export class PerformanceMetricsManager {
     return Boolean(m.type &&
       m.source &&
       typeof m.timestamp === 'number' &&
-      m.timestamp > 0 &&
+      m.timestamp > ZERO &&
       m.data &&
       typeof m.data === 'object');
   }

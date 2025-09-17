@@ -1,4 +1,5 @@
-import { COUNT_PAIR, HEX_MASK_6_BITS, HEX_MASK_BIT_6, HEX_MASK_HIGH_BIT, HEX_MASK_LOW_NIBBLE, MAGIC_12, MAGIC_16, MAGIC_20, MAGIC_32, MAGIC_48, MAGIC_64, MAGIC_8, MAGIC_HEX_3, MAGIC_HEX_8, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+import { MAGIC_6 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HEX_MASK_6_BITS, HEX_MASK_BIT_6, HEX_MASK_HIGH_BIT, HEX_MASK_LOW_NIBBLE, MAGIC_12, MAGIC_16, MAGIC_20, MAGIC_32, MAGIC_48, MAGIC_64, MAGIC_8, MAGIC_HEX_3, MAGIC_HEX_8, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 安全令牌生成工具
@@ -32,14 +33,14 @@ export function generateSecureToken(
         .toString(TOKEN_CONSTANTS.HEX_BASE)
         .padStart(TOKEN_CONSTANTS.HEX_PAD_LENGTH, '0'),
     ).join('');
-    return hex.substring(0, length);
+    return hex.substring(ZERO, length);
   }
 
   // Fallback for environments without crypto.getRandomValues
   const chars =
     'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let result = '';
-  for (let i = 0; i < length; i++) {
+  for (let i = ZERO; i < length; i++) {
     result += chars.charAt(Math.floor(Math.random() * chars.length));
   }
   return result;
@@ -54,7 +55,7 @@ export function generateUUID(): string {
     crypto.getRandomValues(array);
 
     // Set version (4) and variant bits
-    array[6] = (array[6]! & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6;
+    array[MAGIC_6] = (array[MAGIC_6]! & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6;
     array[MAGIC_8] = (array[MAGIC_8]! & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT;
 
     const hex = Array.from(array, (byte) =>
@@ -62,7 +63,7 @@ export function generateUUID(): string {
     ).join('');
 
     return [
-      hex.substring(0, MAGIC_8),
+      hex.substring(ZERO, MAGIC_8),
       hex.substring(MAGIC_8, MAGIC_12),
       hex.substring(MAGIC_12, MAGIC_16),
       hex.substring(MAGIC_16, MAGIC_20),
@@ -110,7 +111,7 @@ export function generateNonce(): string {
 /**
  * Generate a secure one-time password (OTP)
  */
-export function generateOTP(length: number = 6): string {
+export function generateOTP(length: number = MAGIC_6): string {
   const digits = '0123456789';
   let result = '';
 
@@ -118,12 +119,12 @@ export function generateOTP(length: number = 6): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
 
-    for (let i = 0; i < length; i++) {
+    for (let i = ZERO; i < length; i++) {
       result += digits[array[i]! % digits.length];
     }
   } else {
     // Fallback
-    for (let i = 0; i < length; i++) {
+    for (let i = ZERO; i < length; i++) {
       result += digits[Math.floor(Math.random() * digits.length)];
     }
   }
@@ -142,12 +143,12 @@ export function generateVerificationCode(length: number = MAGIC_8): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
 
-    for (let i = 0; i < length; i++) {
+    for (let i = ZERO; i < length; i++) {
       result += chars[array[i]! % chars.length];
     }
   } else {
     // Fallback
-    for (let i = 0; i < length; i++) {
+    for (let i = ZERO; i < length; i++) {
       result += chars[Math.floor(Math.random() * chars.length)];
     }
   }
@@ -159,7 +160,7 @@ export function generateVerificationCode(length: number = MAGIC_8): string {
  * Validate token format
  */
 export function isValidToken(token: string, expectedLength?: number): boolean {
-  if (typeof token !== 'string' || token.length === 0) {
+  if (typeof token !== 'string' || token.length === ZERO) {
     return false;
   }
 
@@ -210,7 +211,7 @@ export function createTokenWithExpiry(
 ): TokenWithExpiry {
   return {
     token: generateSecureToken(tokenLength),
-    expiresAt: Date.now() + expiryMinutes * SECONDS_PER_MINUTE * 1000,
+    expiresAt: Date.now() + expiryMinutes * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   };
 }
 

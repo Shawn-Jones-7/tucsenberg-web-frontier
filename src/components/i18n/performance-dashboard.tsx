@@ -1,11 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { MAGIC_80 } from "@/constants/count";
+import { FIVE_SECONDS_MS, ONE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+import { useI18nPerformance } from '@/hooks/use-enhanced-translations';
 import {
   evaluatePerformance,
   PERFORMANCE_TARGETS,
 } from '@/lib/i18n-performance';
-import { useI18nPerformance } from '@/hooks/use-enhanced-translations';
+import { useEffect, useState } from 'react';
 
 interface PerformanceMetrics {
   averageLoadTime: number;
@@ -42,7 +44,7 @@ export function I18nPerformanceDashboard() {
     updateMetrics();
 
     // 定期更新指标
-    const interval = setInterval(updateMetrics, 5000); // 每5秒更新
+    const interval = setInterval(updateMetrics, FIVE_SECONDS_MS); // 每5秒更新
 
     return () => clearInterval(interval);
   }, [getMetrics]);
@@ -79,7 +81,7 @@ export function I18nPerformanceDashboard() {
       <div className='space-y-2 text-xs'>
         <MetricRow
           label='Load Time'
-          value={`${metrics.averageLoadTime.toFixed(1)}ms`}
+          value={`${metrics.averageLoadTime.toFixed(ONE)}ms`}
           target={PERFORMANCE_TARGETS.TRANSLATION_LOAD_TIME.excellent}
           current={metrics.averageLoadTime}
           isLowerBetter={true}
@@ -87,7 +89,7 @@ export function I18nPerformanceDashboard() {
 
         <MetricRow
           label='Cache Hit Rate'
-          value={`${metrics.cacheHitRate.toFixed(1)}%`}
+          value={`${metrics.cacheHitRate.toFixed(ONE)}%`}
           target={PERFORMANCE_TARGETS.CACHE_HIT_RATE.excellent}
           current={metrics.cacheHitRate}
           isLowerBetter={false}
@@ -103,7 +105,7 @@ export function I18nPerformanceDashboard() {
         <MetricRow
           label='Errors'
           value={metrics.totalErrors.toString()}
-          target={0}
+          target={ZERO}
           current={metrics.totalErrors}
           isLowerBetter={true}
         />
@@ -203,7 +205,7 @@ export function I18nPerformanceIndicator() {
     };
 
     updateMetrics();
-    const interval = setInterval(updateMetrics, 10000); // 每10秒更新
+    const interval = setInterval(updateMetrics, TEN_SECONDS_MS); // 每10秒更新
 
     return () => clearInterval(interval);
   }, [getMetrics]);
@@ -211,7 +213,7 @@ export function I18nPerformanceIndicator() {
   if (!metrics) return null;
 
   const evaluation = evaluatePerformance(metrics);
-  const hasIssues = evaluation.overallScore < 80;
+  const hasIssues = evaluation.overallScore < MAGIC_80;
 
   // 只在有性能问题时显示
   if (!hasIssues && !showDetails) return null;
@@ -232,8 +234,8 @@ export function I18nPerformanceIndicator() {
       {showDetails && (
         <div className='absolute bottom-full left-0 mb-2 min-w-48 rounded-lg border border-gray-200 bg-white p-3 shadow-lg dark:border-gray-700 dark:bg-gray-800'>
           <div className='space-y-1 text-xs'>
-            <div>Load: {metrics.averageLoadTime.toFixed(1)}ms</div>
-            <div>Cache: {metrics.cacheHitRate.toFixed(1)}%</div>
+            <div>Load: {metrics.averageLoadTime.toFixed(ONE)}ms</div>
+            <div>Cache: {metrics.cacheHitRate.toFixed(ONE)}%</div>
             <div>Errors: {metrics.totalErrors}</div>
           </div>
         </div>

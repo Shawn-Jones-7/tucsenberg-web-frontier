@@ -1,14 +1,15 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import type { Locale } from '@/types/i18n';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
+import { LocaleStorageManager } from '@/lib/locale-storage-manager';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
+import type { Locale } from '@/types/i18n';
+import { useCallback, useEffect, useState } from 'react';
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,
 } from './locale-storage-manager';
-import { LocaleStorageManager } from '@/lib/locale-storage-manager';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * React Hook: 使用语言偏好存储
@@ -150,7 +151,7 @@ export function useDetectionHistory() {
     [],
   );
 
-  const getRecentDetections = useCallback((limit: number = 5) => {
+  const getRecentDetections = useCallback((limit: number = COUNT_FIVE) => {
     return LocaleStorageManager.getRecentDetections(limit);
   }, []);
 
@@ -281,8 +282,8 @@ export function useAutoCleanup(
 ) {
   const {
     enabled = true,
-    intervalMs = 60 * 60 * 1000, // 1 hour
-    maxAgeMs = 30 * 24 * 60 * 60 * 1000, // 30 days
+    intervalMs = SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 1 hour
+    maxAgeMs = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 30 days
   } = options;
 
   useEffect(() => {

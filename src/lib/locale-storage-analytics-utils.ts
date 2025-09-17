@@ -7,17 +7,19 @@
 
 'use client';
 
+import { MAGIC_0_1 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { AccessLogger, ErrorLogger } from '@/lib/locale-storage-analytics-events';
+import type { StorageHealthCheck, StorageStats } from '@/lib/locale-storage-types';
 import {
   getStorageStats,
   performHealthCheck,
 } from './locale-storage-analytics-core';
-import { AccessLogger, ErrorLogger } from '@/lib/locale-storage-analytics-events';
 import {
   getPerformanceMetrics,
   getUsagePatterns,
   getUsageTrends,
 } from './locale-storage-analytics-performance';
-import type { StorageHealthCheck, StorageStats } from '@/lib/locale-storage-types';
 
 // ==================== 缓存管理 ====================
 
@@ -36,7 +38,7 @@ interface CacheEntry {
  */
 export class CacheManager {
   private static metricsCache: Map<string, CacheEntry> = new Map();
-  private static readonly CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+  private static readonly CACHE_TTL = COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
 
   /**
    * 获取缓存的指标
@@ -98,24 +100,24 @@ export class CacheManager {
     memoryUsage: number;
   } {
     const now = Date.now();
-    let validEntries = 0;
-    let expiredEntries = 0;
-    let memoryUsage = 0;
+    let validEntries = ZERO;
+    let expiredEntries = ZERO;
+    let memoryUsage = ZERO;
 
     for (const [_key, entry] of this.metricsCache.entries()) {
       if (now - entry.timestamp < this.CACHE_TTL) {
-        validEntries += 1;
+        validEntries += ONE;
       } else {
-        expiredEntries += 1;
+        expiredEntries += ONE;
       }
 
       // 估算内存使用量
-      memoryUsage += JSON.stringify(entry).length * 2; // 粗略估算
+      memoryUsage += JSON.stringify(entry).length * COUNT_PAIR; // 粗略估算
     }
 
     // 简单的命中率计算（基于有效条目比例）
     const totalEntries = validEntries + expiredEntries;
-    const hitRate = totalEntries > 0 ? (validEntries / totalEntries) * 100 : 0;
+    const hitRate = totalEntries > ZERO ? (validEntries / totalEntries) * PERCENTAGE_FULL : ZERO;
 
     return {
       totalEntries,
@@ -156,8 +158,8 @@ export function exportAnalyticsData(): ExportData {
     usagePatterns: getUsagePatterns(),
     performanceMetrics: getPerformanceMetrics(),
     usageTrends: getUsageTrends(),
-    accessLog: AccessLogger.getAccessLog(100), // 限制为最近100条
-    errorLog: ErrorLogger.getErrorLog(50), // 限制为最近50条
+    accessLog: AccessLogger.getAccessLog(PERCENTAGE_FULL), // 限制为最近100条
+    errorLog: ErrorLogger.getErrorLog(PERCENTAGE_HALF), // 限制为最近50条
     exportTimestamp: Date.now(),
     exportVersion: '1.0.0',
   };
@@ -169,7 +171,7 @@ export function exportAnalyticsData(): ExportData {
  */
 export function exportAnalyticsDataAsJson(): string {
   const data = exportAnalyticsData();
-  return JSON.stringify(data, null, 2);
+  return JSON.stringify(data, null, COUNT_PAIR);
 }
 
 /**
@@ -253,24 +255,24 @@ export function validateAnalyticsData(): {
     const accessLog = AccessLogger.getAccessLog();
     const errorLog = ErrorLogger.getErrorLog();
 
-    if (accessLog.length === 0) {
+    if (accessLog.length === ZERO) {
       issues.push('访问日志为空');
       recommendations.push('开始记录存储操作以收集分析数据');
     }
 
-    if (errorLog.length > accessLog.length * 0.1) {
+    if (errorLog.length > accessLog.length * MAGIC_0_1) {
       issues.push('错误率过高');
       recommendations.push('检查存储操作逻辑，减少错误发生');
     }
 
     // 检查数据时效性
     const now = Date.now();
-    const oneHourAgo = now - 60 * 60 * 1000;
+    const oneHourAgo = now - SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
     const recentAccess = accessLog.filter(
       (entry) => entry.timestamp > oneHourAgo,
     );
 
-    if (recentAccess.length === 0 && accessLog.length > 0) {
+    if (recentAccess.length === ZERO && accessLog.length > ZERO) {
       issues.push('最近一小时无活动记录');
       recommendations.push('检查应用是否正常运行');
     }
@@ -287,7 +289,7 @@ export function validateAnalyticsData(): {
   }
 
   return {
-    isValid: issues.length === 0,
+    isValid: issues.length === ZERO,
     issues,
     recommendations,
   };
@@ -313,7 +315,7 @@ export function compressAnalyticsData(): {
   const compressedSize = compressedData.length;
 
   const compressionRatio =
-    originalSize > 0 ? (1 - compressedSize / originalSize) * 100 : 0;
+    originalSize > ZERO ? (ONE - compressedSize / originalSize) * PERCENTAGE_FULL : ZERO;
 
   return {
     originalSize,
@@ -360,8 +362,8 @@ export function optimizeAnalyticsStorage(): {
   results.push('清理了过期缓存');
 
   // 2. 压缩访问日志（保留最近1000条）
-  if (beforeAccessLog.length > 1000) {
-    const recentAccessLog = beforeAccessLog.slice(0, 1000);
+  if (beforeAccessLog.length > ANIMATION_DURATION_VERY_SLOW) {
+    const recentAccessLog = beforeAccessLog.slice(ZERO, ANIMATION_DURATION_VERY_SLOW);
     AccessLogger.clearAccessLog();
     recentAccessLog.forEach((entry) => {
       AccessLogger.logAccess(
@@ -377,7 +379,7 @@ export function optimizeAnalyticsStorage(): {
 
   // 3. 压缩错误日志（保留最近500条）
   if (beforeErrorLog.length > 500) {
-    const recentErrorLog = beforeErrorLog.slice(0, 500);
+    const recentErrorLog = beforeErrorLog.slice(ZERO, 500);
     ErrorLogger.clearErrorLog();
     recentErrorLog.forEach((entry) => {
       ErrorLogger.logError(
@@ -401,7 +403,7 @@ export function optimizeAnalyticsStorage(): {
     cacheSize: afterCacheStats.totalEntries,
   };
 
-  if (results.length === 0) {
+  if (results.length === ZERO) {
     results.push('无需优化，数据已处于最佳状态');
   }
 
@@ -421,14 +423,14 @@ export function optimizeAnalyticsStorage(): {
 export function formatByteSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
-  let unitIndex = 0;
+  let unitIndex = ZERO;
 
-  while (size >= 1024 && unitIndex < units.length - 1) {
-    size /= 1024;
-    unitIndex += 1;
+  while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
+    size /= BYTES_PER_KB;
+    unitIndex += ONE;
   }
 
-  return `${size.toFixed(2)} ${units[unitIndex]}`;
+  return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
 }
 
 /**
@@ -436,19 +438,19 @@ export function formatByteSize(bytes: number): string {
  * Format duration
  */
 export function formatDuration(milliseconds: number): string {
-  const seconds = Math.floor(milliseconds / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const seconds = Math.floor(milliseconds / ANIMATION_DURATION_VERY_SLOW);
+  const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
+  const hours = Math.floor(minutes / SECONDS_PER_MINUTE);
+  const days = Math.floor(hours / HOURS_PER_DAY);
 
-  if (days > 0) {
-    return `${days}天 ${hours % 24}小时`;
+  if (days > ZERO) {
+    return `${days}天 ${hours % HOURS_PER_DAY}小时`;
   }
-  if (hours > 0) {
-    return `${hours}小时 ${minutes % 60}分钟`;
+  if (hours > ZERO) {
+    return `${hours}小时 ${minutes % SECONDS_PER_MINUTE}分钟`;
   }
-  if (minutes > 0) {
-    return `${minutes}分钟 ${seconds % 60}秒`;
+  if (minutes > ZERO) {
+    return `${minutes}分钟 ${seconds % SECONDS_PER_MINUTE}秒`;
   }
   return `${seconds}秒`;
 }
@@ -457,7 +459,7 @@ export function formatDuration(milliseconds: number): string {
  * 格式化百分比
  * Format percentage
  */
-export function formatPercentage(value: number, decimals: number = 1): string {
+export function formatPercentage(value: number, decimals: number = ONE): string {
   return `${value.toFixed(decimals)}%`;
 }
 

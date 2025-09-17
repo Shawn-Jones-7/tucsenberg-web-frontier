@@ -1,3 +1,6 @@
+import { MAGIC_0_8 } from "@/constants/decimal";
+import { BYTES_PER_KB, COUNT_FIVE, ZERO } from "@/constants/magic-numbers";
+
 'use client';
 
 /**
@@ -81,7 +84,7 @@ export class LocalStorageManager {
     const items: Record<string, unknown> = {};
 
     try {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key) {
           const value = this.get(key);
@@ -119,12 +122,12 @@ export class LocalStorageManager {
    * Get localStorage usage size in bytes
    */
   static getUsageSize(): number {
-    if (typeof window === 'undefined') return 0;
+    if (typeof window === 'undefined') return ZERO;
 
-    let totalSize = 0;
+    let totalSize = ZERO;
 
     try {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key) {
           const value = localStorage.getItem(key);
@@ -147,15 +150,15 @@ export class LocalStorageManager {
    * Get size of specific item in bytes
    */
   static getItemSize(key: string): number {
-    if (typeof window === 'undefined') return 0;
+    if (typeof window === 'undefined') return ZERO;
 
     try {
       const value = localStorage.getItem(key);
-      if (!value) return 0;
+      if (!value) return ZERO;
 
       return new Blob([key + value]).size;
     } catch {
-      return 0;
+      return ZERO;
     }
   }
 
@@ -185,22 +188,22 @@ export class LocalStorageManager {
    * Get estimated remaining localStorage space
    */
   static getRemainingSpace(): number {
-    if (!this.isAvailable()) return 0;
+    if (!this.isAvailable()) return ZERO;
 
-    const maxSize = 5 * 1024 * 1024; // 5MB 估算限制
+    const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB 估算限制
     const usedSize = this.getUsageSize();
 
-    return Math.max(0, maxSize - usedSize);
+    return Math.max(ZERO, maxSize - usedSize);
   }
 
   /**
    * 检查是否接近存储限制
    * Check if approaching storage limit
    */
-  static isNearLimit(threshold: number = 0.8): boolean {
+  static isNearLimit(threshold: number = MAGIC_0_8): boolean {
     if (!this.isAvailable()) return true;
 
-    const maxSize = 5 * 1024 * 1024; // 5MB 估算限制
+    const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB 估算限制
     const usedSize = this.getUsageSize();
 
     return usedSize / maxSize > threshold;
@@ -281,7 +284,7 @@ export class LocalStorageManager {
     if (typeof window === 'undefined') return items;
 
     try {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith(prefix)) {
           const value = this.get<T>(key);
@@ -309,7 +312,7 @@ export class LocalStorageManager {
     const keysToRemove: string[] = [];
 
     try {
-      for (let i = 0; i < localStorage.length; i++) {
+      for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
         if (key && key.startsWith(prefix)) {
           keysToRemove.push(key);

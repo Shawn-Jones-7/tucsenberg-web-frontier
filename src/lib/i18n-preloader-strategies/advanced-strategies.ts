@@ -4,14 +4,13 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import { MAGIC_0_9, MAGIC_0_7, COUNT_PAIR, MAGIC_0_5, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, MAGIC_0_8 } from '@/constants/magic-numbers';
-
 import type {
   IPreloader,
   PreloadOptions,
   PreloadStrategy,
 } from '../i18n-preloader-types';
 // 导入基础策略以便复用
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_0_5, MAGIC_0_7, MAGIC_0_8, MAGIC_0_9, MAGIC_17, MAGIC_18, MAGIC_22, MAGIC_9, ZERO } from "@/constants/magic-numbers";
 import {
   immediateStrategy,
   lazyStrategy,
@@ -30,14 +29,14 @@ export const batchStrategy: PreloadStrategy = async (
   const batchSize = COUNT_PAIR;
   const batches: Locale[][] = [];
 
-  for (let i = 0; i < locales.length; i += batchSize) {
+  for (let i = ZERO; i < locales.length; i += batchSize) {
     batches.push(locales.slice(i, i + batchSize));
   }
 
   for (const batch of batches) {
     await preloader.preloadMultipleLocales(batch, options);
     // 批次间延迟
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, ANIMATION_DURATION_VERY_SLOW));
   }
 };
 
@@ -53,7 +52,7 @@ export const adaptiveStrategy: PreloadStrategy = async (
   const stats = preloader.getPreloadStats();
 
   // 根据当前性能选择策略
-  if (stats.successRate > MAGIC_0_9 && stats.averageLoadTime < 1000) {
+  if (stats.successRate > MAGIC_0_9 && stats.averageLoadTime < ANIMATION_DURATION_VERY_SLOW) {
     // 性能良好，使用立即策略
     await immediateStrategy(preloader, locales, options);
   } else if (stats.successRate > MAGIC_0_7) {
@@ -86,10 +85,10 @@ export const networkAwareStrategy: PreloadStrategy = async (
   if (connection) {
     const { effectiveType, downlink } = connection;
 
-    if (effectiveType === '4g' && (downlink ?? 0) > COUNT_PAIR) {
+    if (effectiveType === '4g' && (downlink ?? ZERO) > COUNT_PAIR) {
       // 快速网络，使用立即策略
       await immediateStrategy(preloader, locales, options);
-    } else if (effectiveType === '3g' || (downlink ?? 0) > MAGIC_0_5) {
+    } else if (effectiveType === '3g' || (downlink ?? ZERO) > MAGIC_0_5) {
       // 中等网络，使用渐进式策略
       await progressiveStrategy(preloader, locales, options);
     } else {

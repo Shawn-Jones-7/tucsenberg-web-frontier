@@ -34,7 +34,7 @@ import type {
   THROUGHPUT_LEVELS,
   ThroughputLevel,
   WebhookConfig,
-} from './whatsapp-api-config';
+} from '@/types/whatsapp-api-config';
 import type {
   AuthenticationError,
   BusinessLogicError,
@@ -52,7 +52,7 @@ import type {
   ServerError,
   ValidationError,
   WhatsAppError,
-} from './whatsapp-api-errors';
+} from '@/types/whatsapp-api-errors';
 import type {
   AnalyticsRequest,
   ApiRequest,
@@ -61,7 +61,7 @@ import type {
   MediaUploadRequest,
   RequestBuilders,
   SendMessageRequest,
-} from './whatsapp-api-requests';
+} from '@/types/whatsapp-api-requests';
 import type {
   AccountInfoResponse,
   AnalyticsDataPoint,
@@ -91,12 +91,12 @@ import type {
   WhatsAppApiResponse,
   WhatsAppApiResponseType,
   WhatsAppServiceResponse,
-} from './whatsapp-api-responses';
+} from '@/types/whatsapp-api-responses';
 import type {
   ContactData,
   LocationData,
   WhatsAppContact,
-} from './whatsapp-base-types';
+} from '@/types/whatsapp-base-types';
 
 /**
  * WhatsApp API 类型定义 - 主入口
@@ -129,7 +129,7 @@ export type {
   ApiRequestOptions,
   ApiRequest,
   WhatsAppApiRequest,
-} from './whatsapp-api-requests';
+} from '@/types/whatsapp-api-requests';
 
 // 函数导出
 export {
@@ -137,7 +137,7 @@ export {
   isMediaUploadRequest,
   isAnalyticsRequest,
   isBatchRequest,
-} from './whatsapp-api-requests';
+} from '@/types/whatsapp-api-requests';
 
 export type {
   SendMessageResponse,
@@ -165,14 +165,14 @@ export type {
   PaginationInfo,
   PaginatedResponse,
   WhatsAppApiResponseType,
-} from './whatsapp-api-responses';
+} from '@/types/whatsapp-api-responses';
 
 export {
   isSendMessageResponse,
   isMediaUploadResponse,
   isSuccessResponse,
   isErrorResponse,
-} from './whatsapp-api-responses';
+} from '@/types/whatsapp-api-responses';
 
 export type {
   ApiConfig,
@@ -191,12 +191,12 @@ export type {
   AnalyticsGranularity,
   AnalyticsMetricType,
   ErrorCode,
-} from './whatsapp-api-config';
+} from '@/types/whatsapp-api-config';
 
 export {
   validateApiConfig,
   validateWebhookConfig,
-} from './whatsapp-api-config';
+} from '@/types/whatsapp-api-config';
 
 export type {
   WhatsAppApiErrorResponse,
@@ -216,7 +216,7 @@ export type {
   ErrorStatistics,
   ErrorReport,
   ErrorHandlingConfig,
-} from './whatsapp-api-errors';
+} from '@/types/whatsapp-api-errors';
 
 export {
   isWhatsAppApiError as isApiError,
@@ -226,7 +226,7 @@ export {
   isRateLimitError,
   isBusinessLogicError,
   isServerError,
-} from './whatsapp-api-errors';
+} from '@/types/whatsapp-api-errors';
 
 // ==================== 向后兼容的类型别名 ====================
 

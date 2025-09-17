@@ -3,6 +3,7 @@
  * 负责生成各种性能监控报告
  */
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import { MonitoringUtils } from '@/lib/web-vitals/monitoring-utils';
 import { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
@@ -91,9 +92,9 @@ export class MonitoringReportGenerator {
         const change = current - baselineValue;
         const changePercent =
           (change / baselineValue) * WEB_VITALS_CONSTANTS.PERFECT_SCORE;
-        const trend = change > 0 ? '📈' : change < 0 ? '📉' : '➡️';
+        const trend = change > ZERO ? '📈' : change < ZERO ? '📉' : '➡️';
         lines.push(
-          `  ${metric.toUpperCase()}: ${trend} ${changePercent > 0 ? '+' : ''}${changePercent.toFixed(1)}%`,
+          `  ${metric.toUpperCase()}: ${trend} ${changePercent > ZERO ? '+' : ''}${changePercent.toFixed(ONE)}%`,
         );
       }
     });
@@ -108,13 +109,13 @@ export class MonitoringReportGenerator {
   generateSlowResourcesSection(metrics: DetailedWebVitals): string[] {
     const lines: string[] = [];
 
-    if (metrics.resourceTiming.slowResources.length > 0) {
+    if (metrics.resourceTiming.slowResources.length > ZERO) {
       lines.push('🐌 慢速资源:');
       metrics.resourceTiming.slowResources
-        .slice(0, WEB_VITALS_CONSTANTS.SCORE_MULTIPLIER_POOR)
+        .slice(ZERO, WEB_VITALS_CONSTANTS.SCORE_MULTIPLIER_POOR)
         .forEach((resource, index) => {
           lines.push(
-            `  ${index + 1}. ${resource.type}: ${resource.duration}ms - ${resource.name.split('/').pop()}`,
+            `  ${index + ONE}. ${resource.type}: ${resource.duration}ms - ${resource.name.split('/').pop()}`,
           );
         });
       lines.push('');

@@ -7,9 +7,11 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
+import { MAGIC_0_8 } from "@/constants/decimal";
+import { ONE, PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import type { Locale } from '@/types/i18n';
 import {
   getUserPreference,
   saveUserPreference,
@@ -32,7 +34,7 @@ export function setUserOverride(
   const preference: UserLocalePreference = {
     locale,
     source: 'user',
-    confidence: 1.0, // 用户手动选择，置信度最高
+    confidence: ONE, // 用户手动选择，置信度最高
     timestamp: Date.now(),
     metadata: {
       ...metadata,
@@ -150,7 +152,7 @@ export function clearUserOverride(): StorageOperationResult<void> {
       const newPreference: UserLocalePreference = {
         ...preferenceResult.data,
         source: 'auto',
-        confidence: 0.8,
+        confidence: MAGIC_0_8,
         timestamp: Date.now(),
         metadata: {
           ...preferenceResult.data.metadata,
@@ -254,7 +256,7 @@ export function recordOverrideOperation(
   history.unshift(newEntry);
 
   // 限制历史记录数量
-  const maxHistory = 50;
+  const maxHistory = PERCENTAGE_HALF;
   if (history.length > maxHistory) {
     history.splice(maxHistory);
   }
@@ -277,7 +279,7 @@ export function getOverrideStats(): {
   const currentOverride = getUserOverride();
 
   const stats = {
-    totalOverrides: 0,
+    totalOverrides: ZERO,
     currentOverride:
       currentOverride.success && currentOverride.data
         ? currentOverride.data
@@ -287,7 +289,7 @@ export function getOverrideStats(): {
     overrideFrequency: {} as Record<Locale, number>,
   };
 
-  if (history.length === 0) {
+  if (history.length === ZERO) {
     return stats;
   }
 
@@ -295,17 +297,17 @@ export function getOverrideStats(): {
   const setOperations = history.filter((entry) => entry.action === 'set');
   stats.totalOverrides = setOperations.length;
 
-  if (setOperations.length > 0) {
-    stats.lastOverrideTime = setOperations[0]?.timestamp || null;
+  if (setOperations.length > ZERO) {
+    stats.lastOverrideTime = setOperations[ZERO]?.timestamp || null;
 
     // 统计语言使用频率
     setOperations.forEach((entry) => {
       stats.overrideFrequency[entry.locale] =
-        (stats.overrideFrequency[entry.locale] || 0) + 1;
+        (stats.overrideFrequency[entry.locale] || ZERO) + ONE;
     });
 
     // 找出最常用的语言
-    let maxCount = 0;
+    let maxCount = ZERO;
     for (const [locale, count] of Object.entries(stats.overrideFrequency)) {
       if (count > maxCount) {
         maxCount = count;

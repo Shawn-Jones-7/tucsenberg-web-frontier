@@ -3,6 +3,7 @@
  * 提供通用的工具方法和辅助函数
  */
 
+import { ONE, ZERO } from "@/constants/magic-numbers";
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
@@ -88,7 +89,7 @@ export class MonitoringUtils {
    * 验证指标数据有效性
    */
   static isValidMetrics(metrics: DetailedWebVitals): boolean {
-    return metrics.lcp > 0 && metrics.fcp > 0 && metrics.ttfb > 0;
+    return metrics.lcp > ZERO && metrics.fcp > ZERO && metrics.ttfb > ZERO;
   }
 
   /**
@@ -108,7 +109,7 @@ export class MonitoringUtils {
    */
   static extractLocale(url: string): string {
     const match = url.match(/\/([a-z]{2})(?:\/|$)/);
-    return match?.[1] ?? 'en';
+    return match?.[ONE] ?? 'en';
   }
 
   /**

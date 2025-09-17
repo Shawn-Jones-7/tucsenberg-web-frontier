@@ -6,14 +6,6 @@
  */
 'use client';
 
-import { usePathname } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import {
-  isActivePath,
-  mainNavigation,
-  NAVIGATION_ARIA,
-} from '@/lib/navigation';
-import { cn } from '@/lib/utils';
 import {
   NavigationMenu,
   NavigationMenuItem,
@@ -21,7 +13,17 @@ import {
   NavigationMenuList,
   navigationMenuTriggerStyle,
 } from '@/components/ui/navigation-menu';
+import { COUNT_4 } from "@/constants/count";
+import { ZERO } from "@/constants/magic-numbers";
 import { Link } from '@/i18n/routing';
+import {
+  isActivePath,
+  mainNavigation,
+  NAVIGATION_ARIA,
+} from '@/lib/navigation';
+import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
 
 // Component implementation
 
@@ -41,7 +43,7 @@ export function MainNavigation({
 
   // Get navigation items (limit if specified)
   const navItems = maxItems
-    ? mainNavigation.slice(0, maxItems)
+    ? mainNavigation.slice(ZERO, maxItems)
     : mainNavigation;
 
   // Render compact variant
@@ -125,7 +127,7 @@ export function MainNavigationCompact({ className }: { className?: string }) {
   return (
     <MainNavigation
       variant='compact'
-      maxItems={4}
+      maxItems={COUNT_4}
       {...(className && { className })}
     />
   );

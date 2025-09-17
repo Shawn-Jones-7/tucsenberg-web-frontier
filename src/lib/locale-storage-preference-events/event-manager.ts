@@ -5,6 +5,7 @@
 
 'use client';
 
+import { ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import type {
   StorageEvent,
@@ -19,7 +20,7 @@ export class PreferenceEventManager {
   private static eventListeners: Map<string, StorageEventListener[]> =
     new Map();
   private static eventHistory: StorageEvent[] = [];
-  private static readonly MAX_EVENT_HISTORY = 100;
+  private static readonly MAX_EVENT_HISTORY = PERCENTAGE_FULL;
 
   /**
    * 添加事件监听器
@@ -46,8 +47,8 @@ export class PreferenceEventManager {
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
-      if (index > -1) {
-        listeners.splice(index, 1);
+      if (index > -ONE) {
+        listeners.splice(index, ONE);
       }
     }
   }
@@ -110,7 +111,7 @@ export class PreferenceEventManager {
 
     // 限制事件历史长度
     if (this.eventHistory.length > this.MAX_EVENT_HISTORY) {
-      this.eventHistory = this.eventHistory.slice(0, this.MAX_EVENT_HISTORY);
+      this.eventHistory = this.eventHistory.slice(ZERO, this.MAX_EVENT_HISTORY);
     }
   }
 
@@ -119,7 +120,7 @@ export class PreferenceEventManager {
    * Get event history
    */
   static getEventHistory(limit?: number): StorageEvent[] {
-    return limit ? this.eventHistory.slice(0, limit) : [...this.eventHistory];
+    return limit ? this.eventHistory.slice(ZERO, limit) : [...this.eventHistory];
   }
 
   /**
@@ -139,7 +140,7 @@ export class PreferenceEventManager {
     eventTypes: string[];
     listenersByType: Record<string, number>;
   } {
-    let totalListeners = 0;
+    let totalListeners = ZERO;
     const listenersByType: Record<string, number> = {};
 
     for (const [eventType, listeners] of this.eventListeners.entries()) {

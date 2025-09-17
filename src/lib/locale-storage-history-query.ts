@@ -7,9 +7,10 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
 import type { LocaleDetectionRecord } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 
 // ==================== 基础查询功能 ====================
 
@@ -18,7 +19,7 @@ import type { LocaleDetectionRecord } from '@/lib/locale-storage-types';
  * Get recent detections
  */
 export function getRecentDetections(
-  limit: number = 10,
+  limit: number = COUNT_TEN,
 ): LocaleDetectionRecord[] {
   const historyResult = getDetectionHistory();
 
@@ -26,7 +27,7 @@ export function getRecentDetections(
     return [];
   }
 
-  return historyResult.data.history.slice(0, limit);
+  return historyResult.data.history.slice(ZERO, limit);
 }
 
 /**
@@ -86,7 +87,7 @@ export function getDetectionsByTimeRange(
  */
 export function getDetectionsByConfidence(
   minConfidence: number,
-  maxConfidence: number = 1.0,
+  maxConfidence: number = ONE,
 ): LocaleDetectionRecord[] {
   const historyResult = getDetectionHistory();
 
@@ -133,7 +134,7 @@ export function queryDetections(conditions: QueryConditions): {
   if (!historyResult.success || !historyResult.data) {
     return {
       records: [],
-      totalCount: 0,
+      totalCount: ZERO,
       hasMore: false,
     };
   }
@@ -197,23 +198,23 @@ export function queryDetections(conditions: QueryConditions): {
           bValue = b.source;
           break;
         default:
-          return 0;
+          return ZERO;
       }
 
       if (aValue < bValue) {
-        return conditions.sortOrder === 'desc' ? 1 : -1;
+        return conditions.sortOrder === 'desc' ? ONE : -ONE;
       }
       if (aValue > bValue) {
-        return conditions.sortOrder === 'desc' ? -1 : 1;
+        return conditions.sortOrder === 'desc' ? -ONE : ONE;
       }
-      return 0;
+      return ZERO;
     });
   }
 
   const totalCount = records.length;
 
   // 应用分页
-  const offset = conditions.offset || 0;
+  const offset = conditions.offset || ZERO;
   const limit = conditions.limit || totalCount;
   const paginatedRecords = records.slice(offset, offset + limit);
   const hasMore = offset + limit < totalCount;
@@ -321,7 +322,7 @@ export function getLocaleGroupStats(): Array<{
   const records = historyResult.data.history;
   const totalRecords = records.length;
 
-  if (totalRecords === 0) {
+  if (totalRecords === ZERO) {
     return [];
   }
 
@@ -336,12 +337,12 @@ export function getLocaleGroupStats(): Array<{
 
   records.forEach((record) => {
     const existing = localeStats.get(record.locale) || {
-      count: 0,
-      totalConfidence: 0,
-      lastDetection: 0,
+      count: ZERO,
+      totalConfidence: ZERO,
+      lastDetection: ZERO,
     };
 
-    existing.count += 1;
+    existing.count += ONE;
     existing.totalConfidence += record.confidence;
     existing.lastDetection = Math.max(existing.lastDetection, record.timestamp);
 
@@ -352,7 +353,7 @@ export function getLocaleGroupStats(): Array<{
     .map(([locale, stats]) => ({
       locale,
       count: stats.count,
-      percentage: (stats.count / totalRecords) * 100,
+      percentage: (stats.count / totalRecords) * PERCENTAGE_FULL,
       avgConfidence: stats.totalConfidence / stats.count,
       lastDetection: stats.lastDetection,
     }))
@@ -379,7 +380,7 @@ export function getSourceGroupStats(): Array<{
   const records = historyResult.data.history;
   const totalRecords = records.length;
 
-  if (totalRecords === 0) {
+  if (totalRecords === ZERO) {
     return [];
   }
 
@@ -394,12 +395,12 @@ export function getSourceGroupStats(): Array<{
 
   records.forEach((record) => {
     const existing = sourceStats.get(record.source) || {
-      count: 0,
-      totalConfidence: 0,
-      lastDetection: 0,
+      count: ZERO,
+      totalConfidence: ZERO,
+      lastDetection: ZERO,
     };
 
-    existing.count += 1;
+    existing.count += ONE;
     existing.totalConfidence += record.confidence;
     existing.lastDetection = Math.max(existing.lastDetection, record.timestamp);
 
@@ -410,7 +411,7 @@ export function getSourceGroupStats(): Array<{
     .map(([source, stats]) => ({
       source,
       count: stats.count,
-      percentage: (stats.count / totalRecords) * 100,
+      percentage: (stats.count / totalRecords) * PERCENTAGE_FULL,
       avgConfidence: stats.totalConfidence / stats.count,
       lastDetection: stats.lastDetection,
     }))
@@ -422,7 +423,7 @@ export function getSourceGroupStats(): Array<{
  * Get time distribution statistics
  */
 export function getTimeDistributionStats(
-  bucketSize: number = 24 * 60 * 60 * 1000,
+  bucketSize: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
 ): Array<{
   startTime: number;
   endTime: number;
@@ -437,7 +438,7 @@ export function getTimeDistributionStats(
 
   const records = historyResult.data.history;
 
-  if (records.length === 0) {
+  if (records.length === ZERO) {
     return [];
   }
 
@@ -461,11 +462,11 @@ export function getTimeDistributionStats(
       Math.floor((record.timestamp - minTime) / bucketSize) * bucketSize +
       minTime;
     const existing = buckets.get(bucketStart) || {
-      count: 0,
-      totalConfidence: 0,
+      count: ZERO,
+      totalConfidence: ZERO,
     };
 
-    existing.count += 1;
+    existing.count += ONE;
     existing.totalConfidence += record.confidence;
 
     buckets.set(bucketStart, existing);

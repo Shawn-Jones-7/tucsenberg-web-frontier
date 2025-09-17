@@ -3,6 +3,8 @@
  * Performance Alert System - Core Class
  */
 
+import { MAGIC_70 } from "@/constants/count";
+import { PERCENTAGE_HALF, ZERO } from "@/constants/magic-numbers";
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import { AlertSystemChecker, type AlertInfo } from '@/lib/web-vitals/alert-system-checker';
 import {
@@ -43,7 +45,7 @@ export class PerformanceAlertSystem {
         warning: WEB_VITALS_CONSTANTS.TTFB_GOOD_THRESHOLD,
         critical: WEB_VITALS_CONSTANTS.TTFB_NEEDS_IMPROVEMENT_THRESHOLD,
       },
-      score: { warning: 70, critical: 50 },
+      score: { warning: MAGIC_70, critical: PERCENTAGE_HALF },
     },
     channels: {
       console: true,
@@ -116,7 +118,7 @@ export class PerformanceAlertSystem {
     }
 
     // 发送预警
-    if (alerts.length > 0) {
+    if (alerts.length > ZERO) {
       this.sender.sendAlerts(alerts, this.config);
     }
   }
@@ -129,7 +131,7 @@ export class PerformanceAlertSystem {
 
     const alerts = AlertSystemChecker.checkMetrics(metrics, this.config);
 
-    if (alerts.length > 0) {
+    if (alerts.length > ZERO) {
       this.sender.sendAlerts(alerts, this.config);
     }
   }

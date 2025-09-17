@@ -15,7 +15,7 @@ export type {
   WebhookHealthCheck,
   WebhookDebugInfo,
   EventAggregationResult,
-} from './whatsapp-webhook-utils/interfaces';
+} from '@/types/whatsapp-webhook-utils/interfaces';
 
 // 重新导出工具类
 export { WebhookUtils } from '@/types/whatsapp-webhook-utils/webhook-utils';
@@ -27,4 +27,4 @@ export {
   createWebhookError,
   isRetryableError,
   isTimestampValid,
-} from './whatsapp-webhook-utils/functions';
+} from '@/types/whatsapp-webhook-utils/functions';

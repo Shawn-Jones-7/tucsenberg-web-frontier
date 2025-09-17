@@ -1,13 +1,16 @@
+import { COUNT_4, MAGIC_16 } from "@/constants/count";
+import { MAGIC_0_5 } from "@/constants/decimal";
+import { COUNT_PAIR, ONE, ZERO } from "@/constants/magic-numbers";
 import * as React from 'react';
 
 /**
  * Animation constants to avoid magic numbers
  */
 const ANIMATION_CONSTANTS = {
-  HALF_POINT: 0.5,
-  DOUBLE_MULTIPLIER: 2,
-  CUBIC_MULTIPLIER: 4,
-  EASE_ADJUSTMENT: 2,
+  HALF_POINT: MAGIC_0_5,
+  DOUBLE_MULTIPLIER: COUNT_PAIR,
+  CUBIC_MULTIPLIER: COUNT_4,
+  EASE_ADJUSTMENT: COUNT_PAIR,
 } as const;
 
 /**
@@ -28,7 +31,7 @@ export const easingFunctions = {
   easeInOut: (t: number) =>
     t < ANIMATION_CONSTANTS.HALF_POINT
       ? ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER * t * t
-      : -1 +
+      : -ONE +
         (ANIMATION_CONSTANTS.CUBIC_MULTIPLIER -
           ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER * t) *
           t,
@@ -36,18 +39,18 @@ export const easingFunctions = {
   easeIn: (t: number) => t * t,
   easeInCubic: (t: number) => t * t * t,
   easeOutCubic: (t: number) => {
-    const adjustedT = t - 1;
-    return adjustedT * adjustedT * adjustedT + 1;
+    const adjustedT = t - ONE;
+    return adjustedT * adjustedT * adjustedT + ONE;
   },
   easeInOutCubic: (t: number) =>
     t < ANIMATION_CONSTANTS.HALF_POINT
       ? ANIMATION_CONSTANTS.CUBIC_MULTIPLIER * t * t * t
-      : (t - 1) *
+      : (t - ONE) *
           (ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER * t -
             ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER) *
           (ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER * t -
             ANIMATION_CONSTANTS.DOUBLE_MULTIPLIER) +
-        1,
+        ONE,
 };
 
 /**
@@ -62,15 +65,15 @@ export function formatNumber(
     suffix?: string;
   } = {},
 ): string {
-  const { decimals = 0, separator = ',', prefix = '', suffix = '' } = options;
+  const { decimals = ZERO, separator = ',', prefix = '', suffix = '' } = options;
 
   const formattedValue = value.toFixed(decimals);
   const parts = formattedValue.split('.');
 
   // Add thousand separators - using safe static regex pattern
-  if (parts[0]) {
+  if (parts[ZERO]) {
     // eslint-disable-next-line security/detect-unsafe-regex
-    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+    parts[ZERO] = parts[ZERO].replace(/\B(?=(\d{3})+(?!\d))/g, separator);
   }
 
   return prefix + parts.join('.') + suffix;
@@ -92,7 +95,7 @@ export const animationUtils = {
       return requestAnimationFrame(callback);
     }
     // Fallback to setTimeout for environments without requestAnimationFrame
-    const FRAME_DURATION = 16; // 16ms for 60fps
+    const FRAME_DURATION = MAGIC_16; // 16ms for 60fps
     return setTimeout(
       () => callback(animationUtils.getTime()),
       FRAME_DURATION,
@@ -115,10 +118,10 @@ export function useCounterAnimation(
   targetValue: number,
   config: AnimationConfig,
 ) {
-  const [currentValue, setCurrentValue] = React.useState(0);
+  const [currentValue, setCurrentValue] = React.useState(ZERO);
   const animationRef = React.useRef<number | null>(null);
   const startTimeRef = React.useRef<number | null>(null);
-  const startValueRef = React.useRef(0);
+  const startValueRef = React.useRef(ZERO);
 
   const animate = React.useCallback(
     (timestamp: number) => {
@@ -128,7 +131,7 @@ export function useCounterAnimation(
       }
 
       const elapsed = timestamp - startTimeRef.current;
-      const progress = Math.min(elapsed / config.duration, 1);
+      const progress = Math.min(elapsed / config.duration, ONE);
       const easedProgress = config.easing(progress);
 
       const newValue =
@@ -138,7 +141,7 @@ export function useCounterAnimation(
       setCurrentValue(newValue);
       config.onUpdate?.(newValue);
 
-      if (progress < 1) {
+      if (progress < ONE) {
         animationRef.current = requestAnimationFrame(animate);
       } else {
         config.onComplete?.();
@@ -187,7 +190,7 @@ export function scheduleAnimationFrame(
     return requestAnimationFrame(callback);
   }
   // Fallback to setTimeout for environments without requestAnimationFrame
-  const FRAME_DURATION = 16; // 16ms for 60fps
+  const FRAME_DURATION = MAGIC_16; // 16ms for 60fps
   return setTimeout(
     () => callback(getCurrentTime()),
     FRAME_DURATION,

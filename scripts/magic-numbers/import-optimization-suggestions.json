@@ -1,0 +1,101 @@
+{
+  "_comment": "导入优化建议",
+  "_description": "按模块分组的常量使用情况，用于优化导入语句",
+  "_generated": "2025-09-16T16:52:11.365Z",
+  "moduleUsage": {
+    "@/constants/magic-numbers": [
+      "ZERO (0)",
+      "ONE (1)",
+      "COUNT_PAIR (2)",
+      "COUNT_TRIPLE (3)",
+      "COUNT_FIVE (5)",
+      "COUNT_TEN (10)",
+      "HOURS_PER_DAY (24)",
+      "PERCENTAGE_QUARTER (25)",
+      "DAYS_PER_MONTH (30)",
+      "PERCENTAGE_HALF (50)",
+      "SECONDS_PER_MINUTE (60)",
+      "ANGLE_90_DEG (90)",
+      "PERCENTAGE_FULL (100)",
+      "HTTP_OK (200)",
+      "ANIMATION_DURATION_NORMAL (300)",
+      "ANGLE_360_DEG (360)",
+      "HTTP_BAD_REQUEST (400)",
+      "HTTP_UNAUTHORIZED (401)",
+      "ANIMATION_DURATION_SLOW (500)",
+      "BREAKPOINT_SM (640)",
+      "BREAKPOINT_MD (768)",
+      "ANIMATION_DURATION_VERY_SLOW (1000)",
+      "BYTES_PER_KB (1024)",
+      "BREAKPOINT_XL (1280)",
+      "BREAKPOINT_FULL_HD (1920)",
+      "THREE_SECONDS_MS (3000)",
+      "FIVE_SECONDS_MS (5000)",
+      "TEN_SECONDS_MS (10000)",
+      "THIRTY_SECONDS_MS (30000)",
+      "MINUTE_MS (60000)"
+    ],
+    "@/constants/performance-constants": [
+      "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE (36)"
+    ],
+    "@/constants/performance": [
+      "PERFORMANCE_CONSTANTS.FRAMEWORK_BUNDLE (130)"
+    ],
+    "@/constants/security-constants": [
+      "INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH (254)",
+      "FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH (255)"
+    ],
+    "@/constants/test-web-vitals-constants": [
+      "WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE (600)"
+    ],
+    "@/constants/app-constants": [
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_OFFSET (1005)",
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_SMALL (1010)",
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_MEDIUM (1020)",
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_XXXL (1300)",
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_HUGE (1400)",
+      "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_MASSIVE (1450)",
+      "PERFORMANCE_CONSTANTS.LARGE_NUMBER_OFFSET (200100)"
+    ],
+    "@/constants/test-constants": [
+      "TEST_APP_CONSTANTS.STANDARD_HEIGHT (1080)"
+    ]
+  },
+  "importStatements": [
+    {
+      "module": "@/constants/magic-numbers",
+      "constantCount": 30,
+      "suggestedImport": "import { ZERO, ONE, COUNT_PAIR, COUNT_TRIPLE, COUNT_FIVE, COUNT_TEN, HOURS_PER_DAY, PERCENTAGE_QUARTER, DAYS_PER_MONTH, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ANGLE_90_DEG, PERCENTAGE_FULL, HTTP_OK, ANIMATION_DURATION_NORMAL, ANGLE_360_DEG, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, ANIMATION_DURATION_SLOW, BREAKPOINT_SM, BREAKPOINT_MD, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, BREAKPOINT_XL, BREAKPOINT_FULL_HD, THREE_SECONDS_MS, FIVE_SECONDS_MS, TEN_SECONDS_MS, THIRTY_SECONDS_MS, MINUTE_MS } from '@/constants/magic-numbers';"
+    },
+    {
+      "module": "@/constants/performance-constants",
+      "constantCount": 1,
+      "suggestedImport": "import { ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE } from '@/constants/performance-constants';"
+    },
+    {
+      "module": "@/constants/performance",
+      "constantCount": 1,
+      "suggestedImport": "import { PERFORMANCE_CONSTANTS.FRAMEWORK_BUNDLE } from '@/constants/performance';"
+    },
+    {
+      "module": "@/constants/security-constants",
+      "constantCount": 2,
+      "suggestedImport": "import { INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH, FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH } from '@/constants/security-constants';"
+    },
+    {
+      "module": "@/constants/test-web-vitals-constants",
+      "constantCount": 1,
+      "suggestedImport": "import { WEB_VITALS_CONSTANTS.TEST_DOM_INTERACTIVE } from '@/constants/test-web-vitals-constants';"
+    },
+    {
+      "module": "@/constants/app-constants",
+      "constantCount": 7,
+      "suggestedImport": "import { PERFORMANCE_CONSTANTS.TIMESTAMP_OFFSET, PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_SMALL, PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_MEDIUM, PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_XXXL, PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_HUGE, PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_MASSIVE, PERFORMANCE_CONSTANTS.LARGE_NUMBER_OFFSET } from '@/constants/app-constants';"
+    },
+    {
+      "module": "@/constants/test-constants",
+      "constantCount": 1,
+      "suggestedImport": "import { TEST_APP_CONSTANTS.STANDARD_HEIGHT } from '@/constants/test-constants';"
+    }
+  ]
+}

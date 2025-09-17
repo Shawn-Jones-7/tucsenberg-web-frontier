@@ -3,14 +3,15 @@
  * Performance Alert System - Alert Sender
  */
 
+import { ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
+import type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
+import type { PerformanceAlert, PerformanceAlertConfig } from '@/lib/web-vitals/types';
 import {
   sendConsoleAlerts,
   sendWebhookNotification,
   storeAlerts,
 } from './alert-notifications';
-import type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
-import type { PerformanceAlert, PerformanceAlertConfig } from '@/lib/web-vitals/types';
 
 /**
  * 预警历史记录接口
@@ -176,8 +177,8 @@ export class AlertSystemSender {
    * 限制历史记录大小
    */
   private limitHistorySize(): void {
-    if (this.alertHistory.length > 100) {
-      this.alertHistory.splice(0, this.alertHistory.length - 100);
+    if (this.alertHistory.length > PERCENTAGE_FULL) {
+      this.alertHistory.splice(ZERO, this.alertHistory.length - PERCENTAGE_FULL);
     }
   }
 
@@ -196,7 +197,7 @@ export class AlertSystemSender {
     const criticals = this.alertHistory.filter(
       (alert) => alert.severity === 'critical',
     ).length;
-    const lastAlert = this.alertHistory[this.alertHistory.length - 1];
+    const lastAlert = this.alertHistory[this.alertHistory.length - ONE];
 
     return {
       total: this.alertHistory.length,

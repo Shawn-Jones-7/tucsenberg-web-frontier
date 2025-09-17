@@ -1,0 +1,194 @@
+{
+  "timestamp": "2025-09-16T17:47:11.552Z",
+  "options": {
+    "write": false,
+    "dryRun": true,
+    "files": "../../src/lib/web-vitals-monitor.ts",
+    "limit": 1
+  },
+  "summary": {
+    "filesProcessed": 1,
+    "filesModified": 1,
+    "totalReplacements": 21
+  },
+  "logs": [
+    {
+      "file": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals-monitor.ts",
+      "changes": [
+        {
+          "start": 1255,
+          "end": 1258,
+          "raw": "0.1",
+          "constant": "MAGIC_0_1",
+          "negated": false
+        },
+        {
+          "start": 1297,
+          "end": 1300,
+          "raw": "100",
+          "constant": "PERCENTAGE_FULL",
+          "negated": false
+        },
+        {
+          "start": 1320,
+          "end": 1323,
+          "raw": "300",
+          "constant": "ANIMATION_DURATION_NORMAL",
+          "negated": false
+        },
+        {
+          "start": 1366,
+          "end": 1370,
+          "raw": "2500",
+          "constant": "MAGIC_2500",
+          "negated": false
+        },
+        {
+          "start": 1384,
+          "end": 1388,
+          "raw": "4000",
+          "constant": "MAGIC_4000",
+          "negated": false
+        },
+        {
+          "start": 1415,
+          "end": 1419,
+          "raw": "1800",
+          "constant": "MAGIC_1800",
+          "negated": false
+        },
+        {
+          "start": 1433,
+          "end": 1437,
+          "raw": "3000",
+          "constant": "THREE_SECONDS_MS",
+          "negated": false
+        },
+        {
+          "start": 1482,
+          "end": 1486,
+          "raw": "1800",
+          "constant": "MAGIC_1800",
+          "negated": false
+        },
+        {
+          "start": 1513,
+          "end": 1516,
+          "raw": "200",
+          "constant": "HTTP_OK",
+          "negated": false
+        },
+        {
+          "start": 1528,
+          "end": 1531,
+          "raw": "500",
+          "constant": "ANIMATION_DURATION_SLOW",
+          "negated": false
+        },
+        {
+          "start": 2526,
+          "end": 2527,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 3319,
+          "end": 3320,
+          "raw": "1",
+          "constant": "ONE",
+          "negated": false
+        },
+        {
+          "start": 5318,
+          "end": 5319,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5650,
+          "end": 5651,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 5774,
+          "end": 5775,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 6780,
+          "end": 6781,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 6792,
+          "end": 6793,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7295,
+          "end": 7296,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7332,
+          "end": 7333,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 7369,
+          "end": 7370,
+          "raw": "0",
+          "constant": "ZERO",
+          "negated": false
+        },
+        {
+          "start": 8157,
+          "end": 8160,
+          "raw": "100",
+          "constant": "PERCENTAGE_FULL",
+          "negated": false
+        }
+      ],
+      "imports": {
+        "added": [
+          "MAGIC_0_1",
+          "PERCENTAGE_FULL",
+          "ANIMATION_DURATION_NORMAL",
+          "THREE_SECONDS_MS",
+          "HTTP_OK",
+          "ANIMATION_DURATION_SLOW",
+          "ZERO",
+          "ONE",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "ZERO",
+          "PERCENTAGE_FULL",
+          "MAGIC_2500",
+          "MAGIC_4000",
+          "MAGIC_1800",
+          "MAGIC_1800"
+        ],
+        "aliased": {}
+      }
+    }
+  ]
+}

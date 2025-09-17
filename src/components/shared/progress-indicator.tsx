@@ -1,8 +1,9 @@
 'use client';
 
-import React from 'react';
-import { useTranslations } from 'next-intl';
+import { COUNT_PAIR, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { cn } from '@/lib/utils';
+import { useTranslations } from 'next-intl';
+import React from 'react';
 
 interface ProgressStep {
   key: 'planning' | 'development' | 'testing' | 'launch';
@@ -17,15 +18,15 @@ interface ProgressIndicatorProps {
 
 const ProgressIndicatorComponent = ({
   className,
-  currentStep = 1,
+  currentStep = ONE,
 }: ProgressIndicatorProps) => {
   const t = useTranslations('underConstruction.progress');
 
   // 步骤索引常量
-  const PLANNING_STEP = 0;
-  const DEVELOPMENT_STEP = 1;
-  const TESTING_STEP = 2;
-  const LAUNCH_STEP = 3;
+  const PLANNING_STEP = ZERO;
+  const DEVELOPMENT_STEP = ONE;
+  const TESTING_STEP = COUNT_PAIR;
+  const LAUNCH_STEP = COUNT_TRIPLE;
 
   const steps: ProgressStep[] = [
     {
@@ -81,12 +82,12 @@ const ProgressIndicatorComponent = ({
                   <path
                     strokeLinecap='round'
                     strokeLinejoin='round'
-                    strokeWidth={2}
+                    strokeWidth={COUNT_PAIR}
                     d='M5 13l4 4L19 7'
                   />
                 </svg>
               ) : (
-                <span>{index + 1}</span>
+                <span>{index + ONE}</span>
               )}
             </div>
 
@@ -112,7 +113,7 @@ const ProgressIndicatorComponent = ({
           <div
             className='bg-primary h-full transition-all duration-500 ease-out'
             style={{
-              width: `${(currentStep / (steps.length - 1)) * 100}%`,
+              width: `${(currentStep / (steps.length - ONE)) * PERCENTAGE_FULL}%`,
             }}
           />
         </div>
@@ -121,10 +122,10 @@ const ProgressIndicatorComponent = ({
       {/* 进度百分比 */}
       <div className='text-center'>
         <div className='text-primary text-2xl font-bold'>
-          {Math.round((currentStep / (steps.length - 1)) * 100)}%
+          {Math.round((currentStep / (steps.length - ONE)) * PERCENTAGE_FULL)}%
         </div>
         <div className='text-muted-foreground text-sm'>
-          {currentStep < steps.length - 1 ? t('status') : t('nearCompletion')}
+          {currentStep < steps.length - ONE ? t('status') : t('nearCompletion')}
         </div>
       </div>
     </div>

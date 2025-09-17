@@ -1,5 +1,7 @@
 'use client';
 
+import { COUNT_1536 } from "@/constants/count";
+import { BREAKPOINT_MD, BREAKPOINT_SM, BREAKPOINT_XL, BYTES_PER_KB, ONE, ZERO } from "@/constants/magic-numbers";
 import { useEffect, useState } from 'react';
 
 export type Breakpoint = 'sm' | 'md' | 'lg' | 'xl' | '2xl';
@@ -13,11 +15,11 @@ export interface BreakpointConfig {
 }
 
 const defaultBreakpoints: BreakpointConfig = {
-  'sm': 640,
-  'md': 768,
-  'lg': 1024,
-  'xl': 1280,
-  '2xl': 1536,
+  'sm': BREAKPOINT_SM,
+  'md': BREAKPOINT_MD,
+  'lg': BYTES_PER_KB,
+  'xl': BREAKPOINT_XL,
+  '2xl': COUNT_1536,
 };
 
 export interface UseBreakpointReturn {
@@ -36,7 +38,7 @@ export function useBreakpoint(
     if (typeof window !== 'undefined') {
       return window.innerWidth;
     }
-    return 0;
+    return ZERO;
   });
 
   useEffect(() => {
@@ -81,13 +83,13 @@ export function useBreakpoint(
     const breakpointKeys: Breakpoint[] = ['sm', 'md', 'lg', 'xl', '2xl'];
     const currentIndex = breakpointKeys.indexOf(breakpoint);
 
-    if (currentIndex === -1) return false;
+    if (currentIndex === -ONE) return false;
 
     const safeBreakpoints = new Map(Object.entries(breakpoints));
     const currentValue = safeBreakpoints.get(breakpoint);
     if (currentValue === undefined) return false;
 
-    const nextBreakpoint = breakpointKeys[currentIndex + 1];
+    const nextBreakpoint = breakpointKeys[currentIndex + ONE];
     const nextValue = nextBreakpoint
       ? safeBreakpoints.get(nextBreakpoint) || Infinity
       : Infinity;

@@ -1,3 +1,7 @@
+import { INPUT_VALIDATION_CONSTANTS } from "@/constants/security-constants";
+const EMAIL_MAX_LENGTH = INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH;
+import { ANIMATION_DURATION_VERY_SLOW, ZERO } from "@/constants/magic-numbers";
+
 /**
  * 安全验证工具
  * Security validation utilities
@@ -8,7 +12,7 @@
  */
 const VALIDATION_CONSTANTS = {
   // Email validation
-  MAX_EMAIL_LENGTH: 254,
+  MAX_EMAIL_LENGTH: INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH,
 } as const;
 
 /**
@@ -74,8 +78,8 @@ export function sanitizeFilePath(filePath: string): string {
  */
 export function validateInputLength(
   input: string,
-  minLength: number = 0,
-  maxLength: number = 1000,
+  minLength: number = ZERO,
+  maxLength: number = ANIMATION_DURATION_VERY_SLOW,
 ): { valid: boolean; error?: string } {
   if (typeof input !== 'string') {
     return { valid: false, error: 'Input must be a string' };

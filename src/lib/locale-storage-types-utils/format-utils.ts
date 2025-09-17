@@ -1,4 +1,4 @@
-import { BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, ONE, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 语言存储系统格式化工具函数
@@ -12,11 +12,11 @@ import { BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, SECONDS_PER
 export function formatByteSize(bytes: number): string {
   const units = ['B', 'KB', 'MB', 'GB', 'TB'];
   let size = bytes;
-  let unitIndex = 0;
+  let unitIndex = ZERO;
 
-  while (size >= BYTES_PER_KB && unitIndex < units.length - 1) {
+  while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
     size /= BYTES_PER_KB;
-    unitIndex += 1;
+    unitIndex += ONE;
   }
 
   return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
@@ -27,18 +27,18 @@ export function formatByteSize(bytes: number): string {
  * Format time duration
  */
 export function formatDuration(milliseconds: number): string {
-  const seconds = Math.floor(milliseconds / 1000);
+  const seconds = Math.floor(milliseconds / ANIMATION_DURATION_VERY_SLOW);
   const minutes = Math.floor(seconds / SECONDS_PER_MINUTE);
   const hours = Math.floor(minutes / SECONDS_PER_MINUTE);
   const days = Math.floor(hours / HOURS_PER_DAY);
 
-  if (days > 0) {
+  if (days > ZERO) {
     return `${days}d ${hours % HOURS_PER_DAY}h`;
   }
-  if (hours > 0) {
+  if (hours > ZERO) {
     return `${hours}h ${minutes % SECONDS_PER_MINUTE}m`;
   }
-  if (minutes > 0) {
+  if (minutes > ZERO) {
     return `${minutes}m ${seconds % SECONDS_PER_MINUTE}s`;
   }
   return `${seconds}s`;

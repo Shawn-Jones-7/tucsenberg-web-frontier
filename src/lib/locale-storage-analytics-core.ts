@@ -7,7 +7,11 @@
 
 'use client';
 
+import { DEC_0_4, MAGIC_0_1, MAGIC_0_2, MAGIC_0_3, MAGIC_0_5, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
+import { DAYS_PER_WEEK } from "@/constants/time";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { estimateStorageSize } from '@/lib/locale-storage-types';
 import type {
   ErrorType,
   LocaleDetectionHistory,
@@ -16,7 +20,6 @@ import type {
   StorageOperationResult,
   StorageStats,
 } from './locale-storage-types';
-import { estimateStorageSize } from '@/lib/locale-storage-types';
 
 // ==================== 核心统计功能 ====================
 
@@ -33,7 +36,7 @@ export function calculateStorageStats(): StorageStats {
   ) as any;
   const detectionHistory = (LocalStorageManager.get(
     'locale-detection-history',
-  ) || { history: [], lastUpdated: 0 }) as any;
+  ) || { history: [], lastUpdated: ZERO }) as any;
   const fallbackLocale = (LocalStorageManager.get('fallback-locale') ||
     'en') as any;
 
@@ -44,41 +47,41 @@ export function calculateStorageStats(): StorageStats {
   const totalSize = userPreferenceSize + historySize + fallbackSize;
 
   // 计算历史记录统计
-  const historyCount = detectionHistory?.history?.length || 0;
+  const historyCount = detectionHistory?.history?.length || ZERO;
   const uniqueLocales = new Set(
     detectionHistory?.history?.map((h: any) => h.detectedLocale) || [],
   ).size;
 
   // 计算最近活动
   const lastActivity = Math.max(
-    userPreference?.lastUpdated || 0,
-    detectionHistory?.lastUpdated || 0,
-    fallbackLocale?.lastUpdated || 0,
+    userPreference?.lastUpdated || ZERO,
+    detectionHistory?.lastUpdated || ZERO,
+    fallbackLocale?.lastUpdated || ZERO,
   );
 
   // 计算数据新鲜度 (0-1, 1表示最新)
-  const maxAge = 7 * 24 * 60 * 60 * 1000; // 7天
+  const maxAge = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 7天
   const dataAge = now - lastActivity;
-  const freshness = Math.max(0, 1 - dataAge / maxAge);
+  const freshness = Math.max(ZERO, ONE - dataAge / maxAge);
 
   return {
     totalEntries:
-      (userPreference ? 1 : 0) +
-      (detectionHistory ? 1 : 0) +
-      (fallbackLocale ? 1 : 0),
+      (userPreference ? ONE : ZERO) +
+      (detectionHistory ? ONE : ZERO) +
+      (fallbackLocale ? ONE : ZERO),
     totalSize,
     lastAccessed: lastActivity,
     lastModified: lastActivity,
-    accessCount: 0, // 需要从其他地方获取
-    errorCount: 0, // 需要从其他地方获取
+    accessCount: ZERO, // 需要从其他地方获取
+    errorCount: ZERO, // 需要从其他地方获取
     freshness,
     hasOverride: userPreference?.source === 'user_override' || false,
     historyStats: {
       totalEntries: historyCount,
       uniqueLocales,
       oldestEntry:
-        detectionHistory?.history?.[historyCount - 1]?.timestamp || 0,
-      newestEntry: detectionHistory?.history?.[0]?.timestamp || 0,
+        detectionHistory?.history?.[historyCount - ONE]?.timestamp || ZERO,
+      newestEntry: detectionHistory?.history?.[ZERO]?.timestamp || ZERO,
     },
   };
 }
@@ -99,7 +102,7 @@ function calculateLocaleDistribution(
   for (const entry of detectionHistory.history) {
     const locale =
       (entry as any).detectedLocale || (entry as any).locale || 'unknown';
-    distribution[locale] = (distribution[locale] || 0) + 1;
+    distribution[locale] = (distribution[locale] || ZERO) + ONE;
   }
 
   return distribution;
@@ -144,7 +147,7 @@ export function calculateHealthCheck(): StorageHealthCheck {
   const availability = checkStorageAvailability();
 
   // 计算健康分数 (0-1)
-  let healthScore = 1.0;
+  let healthScore = ONE;
   const issues: Array<{
     type: ErrorType;
     severity: PriorityLevel;
@@ -154,7 +157,7 @@ export function calculateHealthCheck(): StorageHealthCheck {
 
   // 检查存储可用性
   if (!availability.localStorageAvailable) {
-    healthScore -= 0.4;
+    healthScore -= DEC_0_4;
     issues.push({
       type: 'access_denied',
       severity: 'high',
@@ -164,7 +167,7 @@ export function calculateHealthCheck(): StorageHealthCheck {
   }
 
   if (!availability.cookiesAvailable) {
-    healthScore -= 0.2;
+    healthScore -= MAGIC_0_2;
     issues.push({
       type: 'access_denied',
       severity: 'medium',
@@ -174,8 +177,8 @@ export function calculateHealthCheck(): StorageHealthCheck {
   }
 
   // 检查数据新鲜度
-  if (stats.freshness < 0.5) {
-    healthScore -= 0.2;
+  if (stats.freshness < MAGIC_0_5) {
+    healthScore -= MAGIC_0_2;
     issues.push({
       type: 'validation_error',
       severity: 'medium',
@@ -185,9 +188,9 @@ export function calculateHealthCheck(): StorageHealthCheck {
   }
 
   // 检查存储大小
-  const maxSize = 5 * 1024 * 1024; // 5MB
-  if (stats.totalSize > maxSize * 0.8) {
-    healthScore -= 0.1;
+  const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB
+  if (stats.totalSize > maxSize * MAGIC_0_8) {
+    healthScore -= MAGIC_0_1;
     issues.push({
       type: 'storage_full',
       severity: 'medium',
@@ -197,8 +200,8 @@ export function calculateHealthCheck(): StorageHealthCheck {
   }
 
   // 检查历史记录数量
-  if (stats.historyStats.totalEntries > 1000) {
-    healthScore -= 0.1;
+  if (stats.historyStats.totalEntries > ANIMATION_DURATION_VERY_SLOW) {
+    healthScore -= MAGIC_0_1;
     issues.push({
       type: 'validation_error',
       severity: 'low',
@@ -209,29 +212,29 @@ export function calculateHealthCheck(): StorageHealthCheck {
 
   // 确定健康状态
   let status: 'healthy' | 'warning' | 'error';
-  if (healthScore >= 0.8) {
+  if (healthScore >= MAGIC_0_8) {
     status = 'healthy';
-  } else if (healthScore >= 0.5) {
+  } else if (healthScore >= MAGIC_0_5) {
     status = 'warning';
   } else {
     status = 'error';
   }
 
   return {
-    isHealthy: healthScore >= 0.8,
+    isHealthy: healthScore >= MAGIC_0_8,
     status,
     issues,
     performance: {
-      readLatency: 0, // 需要实际测量
-      writeLatency: 0, // 需要实际测量
-      errorRate: 0, // 需要从错误统计中获取
-      availability: availability.localStorageAvailable ? 1 : 0,
+      readLatency: ZERO, // 需要实际测量
+      writeLatency: ZERO, // 需要实际测量
+      errorRate: ZERO, // 需要从错误统计中获取
+      availability: availability.localStorageAvailable ? ONE : ZERO,
     },
     storage: {
       used: stats.totalSize,
-      available: 5 * 1024 * 1024 - stats.totalSize, // 假设5MB限制
-      quota: 5 * 1024 * 1024,
-      utilization: stats.totalSize / (5 * 1024 * 1024),
+      available: COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB - stats.totalSize, // 假设5MB限制
+      quota: COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB,
+      utilization: stats.totalSize / (COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB),
     },
     lastCheck: Date.now(),
   };
@@ -310,7 +313,7 @@ function generateHealthRecommendations(
 ): string[] {
   const recommendations: string[] = [];
 
-  if (healthScore < 0.5) {
+  if (healthScore < MAGIC_0_5) {
     recommendations.push('建议立即检查存储系统配置');
   }
 
@@ -334,7 +337,7 @@ function generateHealthRecommendations(
     recommendations.push('定期清理旧的检测历史记录');
   }
 
-  if (recommendations.length === 0) {
+  if (recommendations.length === ZERO) {
     recommendations.push('系统运行正常，建议定期监控');
   }
 
@@ -377,26 +380,26 @@ export function performHealthCheck(): StorageOperationResult<StorageHealthCheck>
  */
 export function calculateStorageEfficiency(stats: StorageStats): number {
   // 基于多个因素计算效率分数 (0-1)
-  let efficiency = 1.0;
+  let efficiency = ONE;
 
   // 数据新鲜度权重 40%
-  efficiency *= 0.6 + 0.4 * stats.freshness;
+  efficiency *= MAGIC_0_6 + DEC_0_4 * stats.freshness;
 
   // 存储利用率权重 30%
-  const maxReasonableSize = 1024 * 1024; // 1MB
+  const maxReasonableSize = BYTES_PER_KB * BYTES_PER_KB; // 1MB
   const sizeEfficiency = Math.min(
-    1,
-    maxReasonableSize / Math.max(stats.totalSize, 1),
+    ONE,
+    maxReasonableSize / Math.max(stats.totalSize, ONE),
   );
-  efficiency *= 0.7 + 0.3 * sizeEfficiency;
+  efficiency *= MAGIC_0_7 + MAGIC_0_3 * sizeEfficiency;
 
   // 历史记录质量权重 30%
-  const maxReasonableEntries = 100;
+  const maxReasonableEntries = PERCENTAGE_FULL;
   const historyEfficiency = Math.min(
-    1,
-    maxReasonableEntries / Math.max(stats.historyStats.totalEntries, 1),
+    ONE,
+    maxReasonableEntries / Math.max(stats.historyStats.totalEntries, ONE),
   );
-  efficiency *= 0.7 + 0.3 * historyEfficiency;
+  efficiency *= MAGIC_0_7 + MAGIC_0_3 * historyEfficiency;
 
-  return Math.max(0, Math.min(1, efficiency));
+  return Math.max(ZERO, Math.min(ONE, efficiency));
 }

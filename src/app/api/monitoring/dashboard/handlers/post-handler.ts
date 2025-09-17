@@ -1,6 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
 import { validateMonitoringData } from '@/app/api/monitoring/dashboard/types';
+import { HTTP_BAD_REQUEST } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
+import { NextRequest, NextResponse } from 'next/server';
 
 /**
  * POST /api/monitoring/dashboard
@@ -18,7 +19,7 @@ export async function handlePostRequest(request: NextRequest) {
           error: 'Invalid monitoring data format',
           message: 'Required fields: source, metrics, timestamp',
         },
-        { status: 400 },
+        { status: HTTP_BAD_REQUEST },
       );
     }
 

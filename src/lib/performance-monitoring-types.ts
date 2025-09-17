@@ -4,9 +4,10 @@
  * 包含性能监控相关的接口定义、配置类型和环境配置逻辑
  */
 
+import { MAGIC_2500 } from "@/constants/count";
+import { MAGIC_0_9 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, MAGIC_0_1, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS, THREE_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
-import { MAGIC_0_1, PERCENTAGE_HALF, BYTES_PER_KB, COUNT_FIVE, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
 
 // ==================== 基础类型定义 ====================
 
@@ -381,8 +382,8 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       trackUnnecessaryRenders: isDevelopment,
       showRenderTime: isDevelopment,
       showComponentNames: isDevelopment,
-      maxTrackedComponents: 100,
-      renderThreshold: 100, // 100ms
+      maxTrackedComponents: PERCENTAGE_FULL,
+      renderThreshold: PERCENTAGE_FULL, // 100ms
     },
     webEvalAgent: {
       enabled:
@@ -391,7 +392,7 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       captureLogs: true,
       captureScreenshots: isTest,
       capturePerformance: true,
-      timeout: 30000,
+      timeout: THIRTY_SECONDS_MS,
       maxInteractionsPerSession: PERCENTAGE_HALF,
     },
     bundleAnalyzer: {
@@ -416,43 +417,43 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       },
       gzip: true,
       brotli: true,
-      warningThreshold: 0.9, // 90%
+      warningThreshold: MAGIC_0_9, // 90%
     },
     webVitals: {
       enabled: true,
       reportToAnalytics: isProduction,
-      sampleRate: isProduction ? MAGIC_0_1 : 1.0, // 生产环境10%采样
+      sampleRate: isProduction ? MAGIC_0_1 : ONE, // 生产环境10%采样
       debug: isDevelopment,
       reportAllChanges: isDevelopment,
       thresholds: {
         cls: MAGIC_0_1,
-        fid: 100,
-        lcp: 2500,
+        fid: PERCENTAGE_FULL,
+        lcp: MAGIC_2500,
       },
     },
     component: {
       enabled: isDevelopment,
       thresholds: {
-        renderTime: 100, // 100ms
+        renderTime: PERCENTAGE_FULL, // 100ms
         memoryUsage: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
       },
       trackRerenders: isDevelopment,
-      maxTrackedComponents: 100,
+      maxTrackedComponents: PERCENTAGE_FULL,
     },
     network: {
       enabled: true,
       thresholds: {
         responseTime: 1000, // 1s
-        timeout: 10000, // 10s
+        timeout: TEN_SECONDS_MS, // 10s
       },
       monitorAllRequests: isDevelopment,
-      sampleRate: isProduction ? MAGIC_0_1 : 1.0,
+      sampleRate: isProduction ? MAGIC_0_1 : ONE,
     },
     bundle: {
       enabled: true,
       thresholds: {
         size: BYTES_PER_KB * BYTES_PER_KB, // 1MB
-        loadTime: 3000, // 3s
+        loadTime: THREE_SECONDS_MS, // 3s
       },
       analyzeDependencies: isDevelopment,
       generateReports: !isProduction,
@@ -460,8 +461,8 @@ export function generateEnvironmentConfig(): PerformanceConfig {
     debug: isDevelopment,
     global: {
       enabled: true,
-      dataRetentionTime: COUNT_FIVE * SECONDS_PER_MINUTE * 1000, // COUNT_FIVE分钟
-      maxMetrics: 1000,
+      dataRetentionTime: COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // COUNT_FIVE分钟
+      maxMetrics: ANIMATION_DURATION_VERY_SLOW,
       enableInProduction: false,
     },
   };
@@ -484,7 +485,7 @@ export function validateConfig(config: PerformanceConfig): {
   // 验证 Size Limit 配置
   if (config.sizeLimit.enabled) {
     Object.entries(config.sizeLimit.limits).forEach(([key, limit]) => {
-      if (typeof limit !== 'number' || limit <= 0) {
+      if (typeof limit !== 'number' || limit <= ZERO) {
         errors.push(`Size limit for "${key}" must be a positive number`);
       }
     });
@@ -494,7 +495,7 @@ export function validateConfig(config: PerformanceConfig): {
   if (config.webVitals?.enabled) {
     if (
       config.webVitals.sampleRate &&
-      (config.webVitals.sampleRate < 0 || config.webVitals.sampleRate > 1)
+      (config.webVitals.sampleRate < ZERO || config.webVitals.sampleRate > ONE)
     ) {
       errors.push('Web Vitals sample rate must be between 0 and 1');
     }
@@ -502,10 +503,10 @@ export function validateConfig(config: PerformanceConfig): {
 
   // 验证全局配置
   if (config.global?.enabled) {
-    if (config.global.dataRetentionTime <= 0) {
+    if (config.global.dataRetentionTime <= ZERO) {
       errors.push('Data retention time must be positive');
     }
-    if (config.global.maxMetrics <= 0) {
+    if (config.global.maxMetrics <= ZERO) {
       errors.push('Max metrics must be positive');
     }
   }
@@ -524,7 +525,7 @@ export function validateConfig(config: PerformanceConfig): {
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };

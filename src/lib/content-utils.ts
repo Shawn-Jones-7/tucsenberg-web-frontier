@@ -4,11 +4,13 @@
  * This module provides utility functions for content management,
  * including path validation, configuration, and constants.
  */
-import fs from 'fs';
-import path from 'path';
+import { COUNT_160 } from "@/constants/count";
+import { COUNT_TEN } from "@/constants/magic-numbers";
+import { logger } from '@/lib/logger';
 import type { ContentConfig } from '@/types/content';
 import { ContentError } from '@/types/content';
-import { logger } from '@/lib/logger';
+import fs from 'fs';
+import path from 'path';
 
 // Content directory paths
 export const CONTENT_DIR = path.join(process.cwd(), 'content');
@@ -23,12 +25,12 @@ export const ALLOWED_EXTENSIONS = ['.md', '.mdx', '.json'];
 const DEFAULT_CONFIG: ContentConfig = {
   defaultLocale: 'en',
   supportedLocales: ['en', 'zh'],
-  postsPerPage: 10,
+  postsPerPage: COUNT_TEN,
   enableDrafts: process.env.NODE_ENV === 'development',
   enableSearch: true,
   enableComments: false,
   autoGenerateExcerpt: true,
-  excerptLength: 160,
+  excerptLength: COUNT_160,
   dateFormat: 'YYYY-MM-DD',
   timeZone: 'UTC',
 };

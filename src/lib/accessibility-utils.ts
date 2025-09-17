@@ -4,13 +4,15 @@
  */
 
 import { OPACITY_CONSTANTS } from '@/constants/app-constants';
+import { MAGIC_6 } from "@/constants/count";
+import { COUNT_TRIPLE, ONE, ZERO } from "@/constants/magic-numbers";
+import { checkContrastCompliance, type OKLCHColor } from '@/lib/colors';
+import { logger } from '@/lib/logger';
 import {
   KEYBOARD_KEYS,
   type ColorSchemePreference,
   type WCAGLevel,
 } from './accessibility-types';
-import { checkContrastCompliance, type OKLCHColor } from '@/lib/colors';
-import { logger } from '@/lib/logger';
 
 /**
  * 无障碍性工具类
@@ -164,14 +166,14 @@ export class AccessibilityUtils {
    * 解析OKLCH格式的颜色字符串
    */
   private static parseOKLCHString(trimmed: string): OKLCHColor | null {
-    const OKLCH_PREFIX_LENGTH = 6; // 'oklch('.length
-    const MIN_OKLCH_PARTS = 3;
+    const OKLCH_PREFIX_LENGTH = MAGIC_6; // 'oklch('.length
+    const MIN_OKLCH_PARTS = COUNT_TRIPLE;
 
     if (!trimmed.startsWith('oklch(') || !trimmed.endsWith(')')) {
       return null;
     }
 
-    const content = trimmed.slice(OKLCH_PREFIX_LENGTH, -1); // 移除 'oklch(' 和 ')'
+    const content = trimmed.slice(OKLCH_PREFIX_LENGTH, -ONE); // 移除 'oklch(' 和 ')'
     // Use safe string splitting instead of regex to avoid ReDoS attacks
     const parts = content.split(' ').filter((part) => part.trim() !== '');
 
@@ -183,13 +185,13 @@ export class AccessibilityUtils {
     // 安全地获取alpha值，使用at方法避免对象注入
     const alphaPart = parts.at(MIN_OKLCH_PARTS);
     const alphaValue =
-      alphaPart && alphaPart.startsWith('/') ? alphaPart.slice(1) : undefined;
+      alphaPart && alphaPart.startsWith('/') ? alphaPart.slice(ONE) : undefined;
 
     return {
-      l: lValue ? parseFloat(lValue) : 0,
-      c: cValue ? parseFloat(cValue) : 0,
-      h: hValue ? parseFloat(hValue) : 0,
-      alpha: alphaValue ? parseFloat(alphaValue) : 1,
+      l: lValue ? parseFloat(lValue) : ZERO,
+      c: cValue ? parseFloat(cValue) : ZERO,
+      h: hValue ? parseFloat(hValue) : ZERO,
+      alpha: alphaValue ? parseFloat(alphaValue) : ONE,
     };
   }
 
@@ -211,12 +213,12 @@ export class AccessibilityUtils {
 
     // 处理常见的命名颜色和简单情况
     const colorMap: Record<string, OKLCHColor> = {
-      'white': { l: 1, c: 0, h: 0 },
-      'black': { l: 0, c: 0, h: 0 },
-      '#ffffff': { l: 1, c: 0, h: 0 },
-      '#000000': { l: 0, c: 0, h: 0 },
-      '#fff': { l: 1, c: 0, h: 0 },
-      '#000': { l: 0, c: 0, h: 0 },
+      'white': { l: ONE, c: ZERO, h: ZERO },
+      'black': { l: ZERO, c: ZERO, h: ZERO },
+      '#ffffff': { l: ONE, c: ZERO, h: ZERO },
+      '#000000': { l: ZERO, c: ZERO, h: ZERO },
+      '#fff': { l: ONE, c: ZERO, h: ZERO },
+      '#000': { l: ZERO, c: ZERO, h: ZERO },
     };
 
     // Safe property access using Object.prototype.hasOwnProperty
@@ -228,7 +230,7 @@ export class AccessibilityUtils {
     }
 
     // 默认返回中等灰色
-    return { l: OPACITY_CONSTANTS.MEDIUM_OPACITY, c: 0, h: 0 };
+    return { l: OPACITY_CONSTANTS.MEDIUM_OPACITY, c: ZERO, h: ZERO };
   }
 
   /**

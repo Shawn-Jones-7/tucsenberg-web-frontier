@@ -7,17 +7,17 @@
 
 'use client';
 
-import { CookieManager } from '@/lib/locale-storage-cookie';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, HTTP_OK, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from "@/constants/magic-numbers";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import { LocaleCleanupManager } from '@/lib/locale-storage-maintenance-cleanup';
 import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 import type {
   LocaleDetectionHistory,
   MaintenanceOptions,
   StorageOperationResult,
   UserLocalePreference,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 语言存储维护操作管理器
@@ -33,7 +33,7 @@ export class LocaleMaintenanceOperationsManager {
   ): StorageOperationResult {
     const {
       cleanupExpired = true,
-      maxDetectionAge = 30 * 24 * 60 * 60 * 1000, // 30天
+      maxDetectionAge = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 30天
       validateData = true,
       compactStorage = true,
       fixSyncIssues = true,
@@ -43,18 +43,18 @@ export class LocaleMaintenanceOperationsManager {
 
     try {
       const results: string[] = [];
-      let totalOperations = 0;
-      let successfulOperations = 0;
+      let totalOperations = ZERO;
+      let successfulOperations = ZERO;
 
       // 清理过期检测记录
       if (cleanupExpired) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const cleanupResult =
           LocaleCleanupManager.cleanupExpiredDetections(maxDetectionAge);
         if (cleanupResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(
-            `清理过期记录成功，删除了 ${cleanupResult.data || 0} 条记录`,
+            `清理过期记录成功，删除了 ${cleanupResult.data || ZERO} 条记录`,
           );
         } else {
           results.push(
@@ -65,13 +65,13 @@ export class LocaleMaintenanceOperationsManager {
 
       // 清理重复记录
       if (cleanupDuplicates) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const duplicateResult =
           LocaleCleanupManager.cleanupDuplicateDetections();
         if (duplicateResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(
-            `清理重复记录成功，删除了 ${duplicateResult.data || 0} 条记录`,
+            `清理重复记录成功，删除了 ${duplicateResult.data || ZERO} 条记录`,
           );
         } else {
           results.push(
@@ -82,12 +82,12 @@ export class LocaleMaintenanceOperationsManager {
 
       // 清理无效数据
       if (cleanupInvalid) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const invalidResult = LocaleCleanupManager.cleanupInvalidPreferences();
         if (invalidResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(
-            `清理无效数据成功，删除了 ${invalidResult.data || 0} 条记录`,
+            `清理无效数据成功，删除了 ${invalidResult.data || ZERO} 条记录`,
           );
         } else {
           results.push(
@@ -98,11 +98,11 @@ export class LocaleMaintenanceOperationsManager {
 
       // 验证数据完整性
       if (validateData) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const validationResult =
           LocaleValidationManager.validateStorageIntegrity();
         if (validationResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(`数据验证成功`);
         } else {
           results.push(`数据验证失败: ${validationResult.error || '未知错误'}`);
@@ -111,10 +111,10 @@ export class LocaleMaintenanceOperationsManager {
 
       // 修复同步问题
       if (fixSyncIssues) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const syncResult = LocaleValidationManager.fixSyncIssues();
         if (syncResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(`修复同步问题成功`);
         } else {
           results.push(`修复同步问题失败: ${syncResult.error || '未知错误'}`);
@@ -123,10 +123,10 @@ export class LocaleMaintenanceOperationsManager {
 
       // 压缩存储空间
       if (compactStorage) {
-        totalOperations += 1;
+        totalOperations += ONE;
         const compactResult = this.compactStorage();
         if (compactResult.success) {
-          successfulOperations += 1;
+          successfulOperations += ONE;
           results.push(`压缩存储成功`);
         } else {
           results.push(`压缩存储失败: ${compactResult.error || '未知错误'}`);
@@ -159,7 +159,7 @@ export class LocaleMaintenanceOperationsManager {
    */
   static compactStorage(): StorageOperationResult {
     try {
-      let compactedItems = 0;
+      let compactedItems = ZERO;
 
       // 重新序列化所有数据以移除多余空格
       Object.values(STORAGE_KEYS).forEach((key) => {
@@ -167,7 +167,7 @@ export class LocaleMaintenanceOperationsManager {
         if (data !== null) {
           // 重新设置数据，这会触发重新序列化
           LocalStorageManager.set(key, data);
-          compactedItems += 1;
+          compactedItems += ONE;
         }
       });
 
@@ -212,12 +212,12 @@ export class LocaleMaintenanceOperationsManager {
       );
 
       // 保留最近的100条记录
-      const maxRecords = 100;
-      const optimizedDetections = sortedDetections.slice(0, maxRecords);
+      const maxRecords = PERCENTAGE_FULL;
+      const optimizedDetections = sortedDetections.slice(ZERO, maxRecords);
 
       const removedCount = originalCount - optimizedDetections.length;
 
-      if (removedCount > 0) {
+      if (removedCount > ZERO) {
         const updatedHistory: LocaleDetectionHistory = {
           detections: optimizedDetections,
           history: optimizedDetections,
@@ -242,7 +242,7 @@ export class LocaleMaintenanceOperationsManager {
         success: true,
         error: '检测历史数据已是最优状态',
         timestamp: Date.now(),
-        data: { removedCount: 0, remainingCount: originalCount },
+        data: { removedCount: ZERO, remainingCount: originalCount },
       };
     } catch (error) {
       return {
@@ -259,7 +259,7 @@ export class LocaleMaintenanceOperationsManager {
    */
   static rebuildStorageIndex(): StorageOperationResult {
     try {
-      let rebuiltItems = 0;
+      let rebuiltItems = ZERO;
       const actions: string[] = [];
 
       // 重建偏好数据索引
@@ -280,7 +280,7 @@ export class LocaleMaintenanceOperationsManager {
           STORAGE_KEYS.LOCALE_PREFERENCE,
           rebuiltPreference,
         );
-        rebuiltItems += 1;
+        rebuiltItems += ONE;
         actions.push('重建偏好数据索引');
       }
 
@@ -307,7 +307,7 @@ export class LocaleMaintenanceOperationsManager {
           STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
           rebuiltHistory,
         );
-        rebuiltItems += 1;
+        rebuiltItems += ONE;
         actions.push('重建历史数据索引');
       }
 
@@ -333,11 +333,11 @@ export class LocaleMaintenanceOperationsManager {
   static performDeepMaintenance(): StorageOperationResult {
     try {
       const results: string[] = [];
-      let totalOperations = 0;
-      let successfulOperations = 0;
+      let totalOperations = ZERO;
+      let successfulOperations = ZERO;
 
       // 执行标准维护
-      totalOperations += 1;
+      totalOperations += ONE;
       const standardResult = this.performMaintenance({
         cleanupExpired: true,
         validateData: true,
@@ -347,27 +347,27 @@ export class LocaleMaintenanceOperationsManager {
         cleanupInvalid: true,
       });
       if (standardResult.success) {
-        successfulOperations += 1;
+        successfulOperations += ONE;
         results.push('标准维护完成');
       } else {
         results.push(`标准维护失败: ${standardResult.error || '未知错误'}`);
       }
 
       // 优化检测历史
-      totalOperations += 1;
+      totalOperations += ONE;
       const optimizeResult = this.optimizeDetectionHistory();
       if (optimizeResult.success) {
-        successfulOperations += 1;
+        successfulOperations += ONE;
         results.push(`优化历史成功`);
       } else {
         results.push(`优化历史失败: ${optimizeResult.error || '未知错误'}`);
       }
 
       // 重建存储索引
-      totalOperations += 1;
+      totalOperations += ONE;
       const rebuildResult = this.rebuildStorageIndex();
       if (rebuildResult.success) {
-        successfulOperations += 1;
+        successfulOperations += ONE;
         results.push(`重建索引成功`);
       } else {
         results.push(`重建索引失败: ${rebuildResult.error || '未知错误'}`);
@@ -408,21 +408,21 @@ export class LocaleMaintenanceOperationsManager {
       // 检查清理统计
       const cleanupStats = LocaleCleanupManager.getCleanupStats();
 
-      if (cleanupStats.expiredDetections > 50) {
+      if (cleanupStats.expiredDetections > PERCENTAGE_HALF) {
         recommendations.push(
           `清理 ${cleanupStats.expiredDetections} 条过期检测记录`,
         );
         priority = 'medium';
       }
 
-      if (cleanupStats.duplicateDetections > 10) {
+      if (cleanupStats.duplicateDetections > COUNT_TEN) {
         recommendations.push(
           `清理 ${cleanupStats.duplicateDetections} 条重复检测记录`,
         );
         priority = 'medium';
       }
 
-      if (cleanupStats.invalidPreferences > 0) {
+      if (cleanupStats.invalidPreferences > ZERO) {
         recommendations.push(
           `修复 ${cleanupStats.invalidPreferences} 项无效偏好数据`,
         );
@@ -432,14 +432,14 @@ export class LocaleMaintenanceOperationsManager {
       // 检查验证统计
       const validationSummary = LocaleValidationManager.getValidationSummary();
 
-      if (validationSummary.invalidKeys > 0) {
+      if (validationSummary.invalidKeys > ZERO) {
         recommendations.push(
           `修复 ${validationSummary.invalidKeys} 项无效数据`,
         );
         priority = 'high';
       }
 
-      if (validationSummary.syncIssues > 0) {
+      if (validationSummary.syncIssues > ZERO) {
         recommendations.push(`修复 ${validationSummary.syncIssues} 个同步问题`);
         priority = 'medium';
       }
@@ -448,18 +448,18 @@ export class LocaleMaintenanceOperationsManager {
       const historyData = LocalStorageManager.get<LocaleDetectionHistory>(
         STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
       );
-      if (historyData?.detections && historyData.detections.length > 200) {
+      if (historyData?.detections && historyData.detections.length > HTTP_OK) {
         recommendations.push('优化检测历史数据（记录过多）');
         if (priority === 'low') priority = 'medium';
       }
 
-      if (recommendations.length === 0) {
+      if (recommendations.length === ZERO) {
         recommendations.push('存储状态良好，无需特殊维护');
       }
 
       // 估算维护时间
       let estimatedTime = '< 1分钟';
-      if (recommendations.length > 3) {
+      if (recommendations.length > COUNT_TRIPLE) {
         estimatedTime = '1-2分钟';
       }
       if (priority === 'high') {

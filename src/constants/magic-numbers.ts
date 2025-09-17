@@ -1,149 +1,90 @@
-// 自动生成的数字常量文件
-// 用于替换代码中的魔法数字，提升可读性和维护性
+/**
+ * CODEX分层治理：魔法数字常量库 - 叶子常量聚合模式
+ *
+ * 🎯 设计原则：仅聚合无依赖的叶子常量模块，避免循环导入
+ * 📊 优化效果：通过re-export模式，聚合基础常量，保持单一入口
+ * 🔄 配合ESLint规则豁免和单位工具库，实现分层治理
+ *
+ * ⚠️  重要：此文件仅聚合叶子常量模块，不可re-export任何会依赖本文件的模块
+ * 📝 叶子常量分布：
+ *     - 时间相关：./time
+ *     - 十六进制：./hex
+ *     - 计数相关：./count
+ *     - 小数相关：./decimal
+ *
+ * 更新时间: 2025-09-17T16:52:11.363Z
+ * 聚合模式: Leaf Constants Aggregation Pattern
+ */
 
-// 动画和时间常量 (毫秒)
-export const ANIMATION_DURATION_FAST = 150;
+// ============================================================================
+// 🔄 叶子常量聚合 - 仅聚合无依赖的基础常量模块
+// ============================================================================
+
+// 基础领域常量文件 - 无循环依赖
+export * from './time';
+export * from './hex';
+export * from './count';
+export * from './decimal';
+
+// ============================================================================
+// 🔴 核心业务常量 - 保留在此文件的高频核心常量
+// ============================================================================
+
+// 基础数值常量 - 高频使用
+export const ZERO = 0;
+export const ONE = 1;
+
+// HTTP状态码 - API交互核心常量
+export const HTTP_OK = 200;
+export const HTTP_BAD_REQUEST = 400;
+export const HTTP_UNAUTHORIZED = 401;
+
+// HTTP状态码别名 (兼容历史命名)
+export const HTTP_OK_CONST = HTTP_OK;
+export const HTTP_BAD_REQUEST_CONST = HTTP_BAD_REQUEST;
+
+// 响应式断点 - 移动端适配核心 (像素)
+export const BREAKPOINT_SM = 640;
+export const BREAKPOINT_MD = 768;
+export const BREAKPOINT_XL = 1280;
+export const BREAKPOINT_FULL_HD = 1920;
+
+// 动画持续时间 - 用户体验相关 (毫秒)
 export const ANIMATION_DURATION_NORMAL = 300;
 export const ANIMATION_DURATION_SLOW = 500;
 export const ANIMATION_DURATION_VERY_SLOW = 1000;
-export const ANIMATION_DURATION_EXTRA_SLOW = 1250;
 
-// 尺寸和布局常量 (像素)
-export const SIZE_SMALL = 45;
-export const SIZE_MEDIUM = 120;
-export const SIZE_LARGE = 150;
-export const SIZE_EXTRA_LARGE = 890;
-export const SIZE_CONTAINER_WIDTH = 1412;
-
-// 透明度和比例常量
-export const OPACITY_VERY_LOW = 0.02;
-export const OPACITY_LOW = 0.08;
-export const OPACITY_MEDIUM = 0.65;
-export const OPACITY_HIGH = 0.94;
-
-// 计数常量
-export const COUNT_PAIR = 2;
-export const COUNT_TRIPLE = 3;
-export const COUNT_QUAD = 4;
-export const COUNT_FIVE = 5;
-export const COUNT_TEN = 10;
-
-// 百分比常量
-export const PERCENTAGE_QUARTER = 25;
-export const PERCENTAGE_HALF = 50;
-export const PERCENTAGE_FULL = 100;
-
-// 时间单位常量
-export const SECONDS_PER_MINUTE = 60;
-export const HOURS_PER_DAY = 24;
-export const DAYS_PER_WEEK = 7;
-export const DAYS_PER_MONTH = 30;
-export const DAYS_PER_YEAR = 365;
-
-// 数据单位常量
+// 数据大小 - 性能和存储相关 (字节)
 export const BYTES_PER_KB = 1024;
 
-// 负数偏移常量
-export const OFFSET_NEGATIVE_SMALL = -2;
-export const OFFSET_NEGATIVE_MEDIUM = -5;
-export const OFFSET_NEGATIVE_LARGE = -10;
-export const OFFSET_NEGATIVE_EXTRA_LARGE = -50;
-export const OFFSET_NEGATIVE_HUGE = -100;
-export const OFFSET_NEGATIVE_MASSIVE = -500;
+// 角度常量 - 图形和动画相关 (度)
+export const ANGLE_90_DEG = 90;
+export const ANGLE_360_DEG = 360;
 
-// 十六进制常量 - 文件格式标识
-export const HEX_BYTE_MAX = 0xff;
-export const HEX_JPEG_MARKER_1 = 0xd8;
-export const HEX_PNG_SIGNATURE_1 = 0x89;
-export const HEX_PNG_SIGNATURE_2 = 0x50;
-export const HEX_PNG_SIGNATURE_3 = 0x4e;
-export const HEX_PNG_SIGNATURE_4 = 0x47;
-export const HEX_PNG_SIGNATURE_5 = 0x49;
-export const HEX_PNG_SIGNATURE_6 = 0x46;
-export const HEX_PDF_MARKER = 0x25;
-export const HEX_PDF_SIGNATURE_1 = 0x44;
-export const HEX_ZIP_SIGNATURE = 0x4b;
+// ============================================================================
+// 📝 Facade聚合模式使用指南
+// ============================================================================
 
-// 十六进制常量 - 位操作
-export const HEX_MASK_LOW_NIBBLE = 0x0f;
-export const HEX_MASK_BIT_6 = 0x40;
-export const HEX_MASK_6_BITS = 0x3f;
-export const HEX_MASK_HIGH_BIT = 0x80;
-export const HEX_MASK_SIGN_BIT_32 = 0x80000000;
-
-// 其他动态生成的常量
-export const MAGIC_36 = 36;
-export const MAGIC_9 = 9;
-export const MAGIC_0_8 = 0.8;
-export const MAGIC_0_5 = 0.5;
-export const MAGIC_2000 = 2000;
-export const MAGIC_60000 = 60000;
-export const MAGIC_3600000 = 3600000;
-export const MAGIC_1048576 = 1048576;
-export const MAGIC_10000 = 10000;
-export const MAGIC_85 = 85;
-export const MAGIC_15 = 15;
-export const MAGIC_0_95 = 0.95;
-export const MAGIC_90 = 90;
-export const MAGIC_80 = 80;
-export const MAGIC_70 = 70;
-export const MAGIC_0_25 = 0.25;
-export const MAGIC_0_1 = 0.1;
-export const MAGIC_4000 = 4000;
-export const MAGIC_2500 = 2500;
-export const MAGIC_75 = 75;
-export const MAGIC_300000 = 300000;
-export const MAGIC_0_9 = 0.9;
-export const MAGIC_0_7 = 0.7;
-export const MAGIC_17 = 17;
-export const MAGIC_18 = 18;
-export const MAGIC_22 = 22;
-export const MAGIC_999 = 999;
-export const MAGIC_0_2 = 0.2;
-export const MAGIC_1_5 = 1.5;
-export const MAGIC_6 = 6;
-export const MAGIC_16 = 16;
-export const MAGIC_0_3 = 0.3;
-export const MAGIC_1_1 = 1.1;
-export const MAGIC_40 = 40;
-export const MAGIC_20 = 20;
-export const MAGIC_0_6 = 0.6;
-export const MAGIC_512 = 512;
-export const MAGIC_8 = 8;
-export const MAGIC_32 = 32;
-export const MAGIC_12 = 12;
-export const MAGIC_255 = 255;
-export const MAGIC_HEX_03 = 0x03;
-export const MAGIC_HEX_04 = 0x04;
-export const MAGIC_HEX_3 = 0x3;
-export const MAGIC_HEX_8 = 0x8;
-export const MAGIC_48 = 48;
-export const MAGIC_64 = 64;
-export const MAGIC_1800 = 1800;
-export const MAGIC_800 = 800;
-export const MAGIC_600 = 600;
-export const MAGIC_256 = 256;
-export const MAGIC_72 = 72;
-export const MAGIC_131 = 131;
-export const MAGIC_131000 = 131000;
-export const MAGIC_131014 = 131014;
-export const MAGIC_131016 = 131016;
-export const MAGIC_131052 = 131052;
-export const MAGIC_131053 = 131053;
-export const MAGIC_132 = 132;
-export const MAGIC_133 = 133;
-export const MAGIC_136 = 136;
-export const MAGIC_190 = 190;
-export const MAGIC_368 = 368;
-export const MAGIC_131005 = 131005;
-export const MAGIC_131008 = 131008;
-export const MAGIC_131009 = 131009;
-export const MAGIC_131021 = 131021;
-export const MAGIC_131026 = 131026;
-export const MAGIC_131047 = 131047;
-export const MAGIC_131051 = 131051;
-export const MAGIC_4096 = 4096;
-export const MAGIC_429 = 429;
-export const MAGIC_95 = 95;
-export const MAGIC_99 = 99;
-export const MAGIC_0_99 = 0.99;
+/**
+ * 常量使用方式：
+ *
+ * 1. 统一导入入口：
+ *    import { MAGIC_36, DAYS_PER_WEEK, HEX_BYTE_MAX } from '@/constants/magic-numbers';
+ *
+ * 2. 按领域导入（可选）：
+ *    import { DAYS_PER_WEEK } from '@/constants/time';
+ *    import { HEX_BYTE_MAX } from '@/constants/hex';
+ *
+ * 3. 时间相关 → 优先使用领域常量或单位工具库
+ *    import { seconds, minutes } from '@/lib/units';
+ *    setTimeout(callback, seconds(5));  // 替代 5000
+ *
+ * 4. 测试文件 → ESLint规则豁免
+ *    测试文件中的数字通过ESLint配置自动豁免
+ *
+ * 5. 配置文件 → 环境变量或配置集中化
+ *    端口、超时等配置值迁移到 .env 或 src/config/app.ts
+ *
+ * 6. 低频数字 → 局部常量
+ *    const RETRY_COUNT = 3;  // 文件内局部常量
+ */

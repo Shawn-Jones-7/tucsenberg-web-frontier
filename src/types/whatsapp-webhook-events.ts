@@ -5,14 +5,13 @@
  * 提供WhatsApp webhook事件的类型定义和处理接口
  */
 
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_QUAD, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_WEEK, HOURS_PER_DAY, MAGIC_6, MAGIC_8, MAGIC_9, ONE, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
 import type { WhatsAppContact } from '@/types/whatsapp-base-types';
-import { COUNT_PAIR, COUNT_TRIPLE, COUNT_QUAD, COUNT_FIVE, MAGIC_6, DAYS_PER_WEEK, MAGIC_8, MAGIC_9, COUNT_TEN, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
-
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
   MessageStatusUpdate,
   WebhookError,
-} from './whatsapp-webhook-base';
-import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
+} from '@/types/whatsapp-webhook-base';
 
 /**
  * 消息接收事件
@@ -385,7 +384,7 @@ export function isSystemEvent(
 export function getEventPriority(event: WebhookEvent): number {
   switch (event.type) {
     case 'security_event':
-      return 1; // Highest priority
+      return ONE; // Highest priority
     case 'webhook_error':
       return COUNT_PAIR;
     case 'message_received':
@@ -428,7 +427,7 @@ export function getEventTimestamp(event: WebhookEvent): Date {
 
 export function isEventExpired(
   event: WebhookEvent,
-  maxAgeMs: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000,
+  maxAgeMs: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
 ): boolean {
   const eventTime = getEventTimestamp(event);
   const now = new Date();

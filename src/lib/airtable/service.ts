@@ -2,10 +2,11 @@
  * Airtable 核心服务类
  */
 
-import Airtable from 'airtable';
 import { env } from '@/../env.mjs';
+import { ANIMATION_DURATION_VERY_SLOW, ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import { logger } from '@/lib/logger';
 import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
+import Airtable from 'airtable';
 import type {
   AirtableQueryOptions,
   AirtableRecord,
@@ -173,7 +174,7 @@ export class AirtableService {
     }
 
     try {
-      const { maxRecords = 100, filterByFormula, sort } = options;
+      const { maxRecords = PERCENTAGE_FULL, filterByFormula, sort } = options;
 
       const selectOptions: {
         maxRecords: number;
@@ -278,11 +279,11 @@ export class AirtableService {
       const records = await this.base!.table(this.tableName)
         .select({
           filterByFormula: `{Email} = "${email.toLowerCase()}"`,
-          maxRecords: 1,
+          maxRecords: ONE,
         })
         .all();
 
-      return records.length > 0;
+      return records.length > ZERO;
     } catch (error) {
       logger.error('Failed to check duplicate email', {
         error: error instanceof Error ? error.message : 'Unknown error',
@@ -308,18 +309,18 @@ export class AirtableService {
 
     try {
       const [total, newContacts, completed, recent] = await Promise.all([
-        this.getContacts({ maxRecords: 1000 }),
+        this.getContacts({ maxRecords: ANIMATION_DURATION_VERY_SLOW }),
         this.getContacts({
           filterByFormula: `{Status} = "New"`,
-          maxRecords: 1000,
+          maxRecords: ANIMATION_DURATION_VERY_SLOW,
         }),
         this.getContacts({
           filterByFormula: `{Status} = "Completed"`,
-          maxRecords: 1000,
+          maxRecords: ANIMATION_DURATION_VERY_SLOW,
         }),
         this.getContacts({
           filterByFormula: `IS_AFTER({Submitted At}, DATEADD(TODAY(), -7, 'days'))`,
-          maxRecords: 1000,
+          maxRecords: ANIMATION_DURATION_VERY_SLOW,
         }),
       ]);
 

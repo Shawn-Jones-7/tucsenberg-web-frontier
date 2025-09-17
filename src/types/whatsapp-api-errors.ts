@@ -1,4 +1,4 @@
-import { COUNT_PAIR, MAGIC_36, MAGIC_9 } from '@/constants/magic-numbers';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_36, MAGIC_9, ONE, THIRTY_SECONDS_MS } from "@/constants/magic-numbers";
 
 /**
  * WhatsApp API 错误处理类型定义
@@ -486,11 +486,11 @@ export const ErrorUtils = {
    */
   calculateRetryDelay(
     attempt: number,
-    baseDelay: number = 1000,
+    baseDelay: number = ANIMATION_DURATION_VERY_SLOW,
     multiplier: number = COUNT_PAIR,
-    maxDelay: number = 30000,
+    maxDelay: number = THIRTY_SECONDS_MS,
   ): number {
-    const delay = baseDelay * multiplier**(attempt - 1);
+    const delay = baseDelay * multiplier**(attempt - ONE);
     return Math.min(delay, maxDelay);
   },
 

@@ -1,3 +1,5 @@
+import { ANIMATION_DURATION_VERY_SLOW, ONE, PERCENTAGE_FULL, THIRTY_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+
 interface I18nEvent {
   type: 'locale_change' | 'translation_error' | 'fallback_used' | 'load_time';
   locale: string;
@@ -114,7 +116,7 @@ export class I18nAnalytics {
     });
 
     // 性能监控
-    if (loadTime > 1000) {
+    if (loadTime > ANIMATION_DURATION_VERY_SLOW) {
       // 超过1秒
       this.sendPerformanceAlert({
         type: 'slow_translation_load',
@@ -135,20 +137,20 @@ export class I18nAnalytics {
     );
 
     const localeUsage: Record<string, number> = {};
-    let translationErrors = 0;
-    let fallbackUsage = 0;
+    let translationErrors = ZERO;
+    let fallbackUsage = ZERO;
     const loadTimes: number[] = [];
 
     for (const event of filteredEvents) {
       switch (event.type) {
         case 'locale_change':
-          localeUsage[event.locale] = (localeUsage[event.locale] || 0) + 1;
+          localeUsage[event.locale] = (localeUsage[event.locale] || ZERO) + ONE;
           break;
         case 'translation_error':
-          translationErrors += 1;
+          translationErrors += ONE;
           break;
         case 'fallback_used':
-          fallbackUsage += 1;
+          fallbackUsage += ONE;
           break;
         case 'load_time':
           if (typeof event.metadata.loadTime === 'number') {
@@ -159,9 +161,9 @@ export class I18nAnalytics {
     }
 
     const averageLoadTime =
-      loadTimes.length > 0
-        ? loadTimes.reduce((a, b) => a + b, 0) / loadTimes.length
-        : 0;
+      loadTimes.length > ZERO
+        ? loadTimes.reduce((a, b) => a + b, ZERO) / loadTimes.length
+        : ZERO;
 
     return {
       localeUsage,
@@ -259,11 +261,11 @@ export class I18nAnalytics {
     // 定期刷新事件
     setInterval(() => {
       this.flushEvents();
-    }, 30000); // 30秒
+    }, THIRTY_SECONDS_MS); // 30秒
   }
 
   private async flushEvents(): Promise<void> {
-    if (this.events.length === 0) return;
+    if (this.events.length === ZERO) return;
 
     try {
       if (typeof fetch !== 'undefined') {
@@ -284,7 +286,7 @@ export class I18nAnalytics {
     this.events.push(event);
 
     // 限制内存中事件数量
-    if (this.events.length > 1000) {
+    if (this.events.length > ANIMATION_DURATION_VERY_SLOW) {
       this.events = this.events.slice(-500);
     }
   }
@@ -295,9 +297,9 @@ export class I18nAnalytics {
       (e) => e.type === 'translation_error',
     ).length;
     const totalEvents = events.length;
-    const errorRate = totalEvents > 0 ? errorEvents / totalEvents : 0;
+    const errorRate = totalEvents > ZERO ? errorEvents / totalEvents : ZERO;
 
-    return Math.max(0, 100 - errorRate * 100);
+    return Math.max(ZERO, PERCENTAGE_FULL - errorRate * PERCENTAGE_FULL);
   }
 
   private calculateLocaleDistribution(
@@ -306,7 +308,7 @@ export class I18nAnalytics {
     const distribution: Record<string, number> = {};
 
     for (const event of events) {
-      distribution[event.locale] = (distribution[event.locale] || 0) + 1;
+      distribution[event.locale] = (distribution[event.locale] || ZERO) + ONE;
     }
 
     return distribution;
@@ -316,22 +318,22 @@ export class I18nAnalytics {
     const errorEvents = events.filter(
       (e) => e.type === 'translation_error',
     ).length;
-    return events.length > 0 ? (errorEvents / events.length) * 100 : 0;
+    return events.length > ZERO ? (errorEvents / events.length) * PERCENTAGE_FULL : ZERO;
   }
 
   private calculatePerformanceScore(events: I18nEvent[]): number {
     const loadTimeEvents = events.filter((e) => e.type === 'load_time');
-    if (loadTimeEvents.length === 0) return 100;
+    if (loadTimeEvents.length === ZERO) return PERCENTAGE_FULL;
 
     const avgLoadTime =
       loadTimeEvents.reduce((sum, e) => {
         const loadTime =
-          typeof e.metadata.loadTime === 'number' ? e.metadata.loadTime : 0;
+          typeof e.metadata.loadTime === 'number' ? e.metadata.loadTime : ZERO;
         return sum + loadTime;
-      }, 0) / loadTimeEvents.length;
+      }, ZERO) / loadTimeEvents.length;
 
     // 100ms = 100分，1000ms = 0分
-    return Math.max(0, 100 - avgLoadTime / 10);
+    return Math.max(ZERO, PERCENTAGE_FULL - avgLoadTime / 10);
   }
 }
 

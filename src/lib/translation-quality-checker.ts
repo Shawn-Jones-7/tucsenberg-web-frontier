@@ -1,4 +1,11 @@
+import {
+  PERFORMANCE_THRESHOLDS,
+  QUALITY_WEIGHTS,
+  VALIDATION_THRESHOLDS,
+} from '@/constants/i18n-constants';
+import { ONE, PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
 import type { Locale } from '@/types/i18n';
+import '@/types/translation-manager';
 import type {
   LocaleQualityReport,
   QualityIssue,
@@ -6,12 +13,6 @@ import type {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
-import '@/types/translation-manager';
-import {
-  PERFORMANCE_THRESHOLDS,
-  QUALITY_WEIGHTS,
-  VALIDATION_THRESHOLDS,
-} from '@/constants/i18n-constants';
 import {
   calculateConfidence,
   checkTerminologyConsistency,
@@ -55,10 +56,10 @@ export class TranslationQualityChecker {
     }
 
     const issues: QualityIssue[] = [];
-    let score = 100;
+    let score = PERCENTAGE_FULL;
 
     // 基础质量检查
-    if (aiTranslation.trim().length === 0) {
+    if (aiTranslation.trim().length === ZERO) {
       issues.push({
         type: 'length',
         severity: 'critical',
@@ -114,7 +115,7 @@ export class TranslationQualityChecker {
     score -= terminologyIssues.length * QUALITY_WEIGHTS.LENGTH_PENALTY;
 
     const qualityScore: QualityScore = {
-      score: Math.max(0, score),
+      score: Math.max(ZERO, score),
       confidence: calculateConfidence(issues),
       issues,
       suggestions: generateSuggestions(issues),
@@ -133,11 +134,11 @@ export class TranslationQualityChecker {
     translations: Record<string, string>,
   ): Promise<ValidationReport> {
     const issues: QualityIssue[] = [];
-    let totalScore = 0;
-    let validTranslations = 0;
+    let totalScore = ZERO;
+    let validTranslations = ZERO;
 
     for (const [key, translation] of Object.entries(translations)) {
-      if (!translation || translation.trim().length === 0) {
+      if (!translation || translation.trim().length === ZERO) {
         issues.push({
           type: 'consistency',
           severity: 'high',
@@ -161,14 +162,14 @@ export class TranslationQualityChecker {
         });
       }
 
-      validTranslations += 1;
+      validTranslations += ONE;
       totalScore += PERFORMANCE_THRESHOLDS.MAX_MEMORY_USAGE; // 基础分数
     }
 
     const averageScore =
-      validTranslations > 0 ? totalScore / validTranslations : 0;
+      validTranslations > ZERO ? totalScore / validTranslations : ZERO;
     const finalScore = Math.max(
-      0,
+      ZERO,
       averageScore - issues.length * QUALITY_WEIGHTS.LENGTH_PENALTY,
     );
 
@@ -176,7 +177,7 @@ export class TranslationQualityChecker {
       isValid:
         issues.filter(
           (issue) => issue.severity === 'critical' || issue.severity === 'high',
-        ).length === 0,
+        ).length === ZERO,
       score: finalScore,
       issues,
       recommendations: generateRecommendations(issues),
@@ -239,7 +240,7 @@ export class TranslationQualityChecker {
   getCacheStats(): { size: number; hitRate: number } {
     return {
       size: this.qualityCache.size,
-      hitRate: 0, // 需要实现命中率统计
+      hitRate: ZERO, // 需要实现命中率统计
     };
   }
 }

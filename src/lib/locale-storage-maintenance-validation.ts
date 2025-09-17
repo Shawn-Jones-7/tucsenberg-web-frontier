@@ -7,16 +7,18 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
+import { ONE, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { STORAGE_KEYS } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
   UserLocalePreference,
   ValidationResult,
 } from './locale-storage-types';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 
 /**
  * 存储验证数据结构
@@ -62,20 +64,20 @@ export class LocaleValidationManager {
       const syncIssues = this.validateStorageSync();
       issues.push(...syncIssues);
 
-      if (issues.length === 0) {
+      if (issues.length === ZERO) {
         return {
           success: true,
           timestamp: Date.now(),
           data: { issues },
         };
-      } 
+      }
         return {
           success: false,
           error: `发现 ${issues.length} 个问题`,
           timestamp: Date.now(),
           data: { issues },
         };
-      
+
     } catch (error) {
       return {
         success: false,
@@ -104,8 +106,8 @@ export class LocaleValidationManager {
     if (typeof preference.confidence !== 'number') return false;
 
     // 验证值的合理性
-    if (preference.confidence < 0 || preference.confidence > 1) return false;
-    if (preference.timestamp > Date.now() || preference.timestamp < 0)
+    if (preference.confidence < ZERO || preference.confidence > ONE) return false;
+    if (preference.timestamp > Date.now() || preference.timestamp < ZERO)
       return false;
 
     return true;
@@ -126,8 +128,8 @@ export class LocaleValidationManager {
         typeof detection.source === 'string' &&
         typeof detection.timestamp === 'number' &&
         typeof detection.confidence === 'number' &&
-        detection.confidence >= 0 &&
-        detection.confidence <= 1,
+        detection.confidence >= ZERO &&
+        detection.confidence <= ONE,
     );
   }
 
@@ -296,7 +298,7 @@ export class LocaleValidationManager {
 
           if (
             Math.abs(localPreference.timestamp - cookiePreference.timestamp) >
-            60000
+            MINUTE_MS
           ) {
             // 1分钟差异
             warnings.push('localStorage和Cookie中的偏好时间戳差异较大');
@@ -318,20 +320,20 @@ export class LocaleValidationManager {
         issues.push('localStorage和Cookie中的语言覆盖设置不一致');
       }
 
-      if (issues.length === 0) {
+      if (issues.length === ZERO) {
         return {
           success: true,
           timestamp: Date.now(),
           data: { issues, warnings },
         };
-      } 
+      }
         return {
           success: false,
           error: `发现 ${issues.length} 个一致性问题`,
           timestamp: Date.now(),
           data: { issues, warnings },
         };
-      
+
     } catch (error) {
       return {
         success: false,
@@ -355,18 +357,18 @@ export class LocaleValidationManager {
     const allResults = this.validateAllData();
     const syncIssues = this.validateStorageSync();
 
-    let validKeys = 0;
-    let invalidKeys = 0;
-    let warningKeys = 0;
+    let validKeys = ZERO;
+    let invalidKeys = ZERO;
+    let warningKeys = ZERO;
 
     Object.values(allResults).forEach((result) => {
       if (result.isValid) {
-        validKeys += 1;
+        validKeys += ONE;
       } else {
-        invalidKeys += 1;
+        invalidKeys += ONE;
       }
-      if (result.warnings.length > 0) {
-        warningKeys += 1;
+      if (result.warnings.length > ZERO) {
+        warningKeys += ONE;
       }
     });
 
@@ -385,7 +387,7 @@ export class LocaleValidationManager {
    */
   static fixSyncIssues(): StorageOperationResult {
     try {
-      let fixedIssues = 0;
+      let fixedIssues = ZERO;
       const actions: string[] = [];
 
       // 修复偏好数据同步
@@ -401,7 +403,7 @@ export class LocaleValidationManager {
           STORAGE_KEYS.LOCALE_PREFERENCE,
           JSON.stringify(localPreference),
         );
-        fixedIssues += 1;
+        fixedIssues += ONE;
         actions.push('已同步偏好数据到Cookie');
       }
 
@@ -415,7 +417,7 @@ export class LocaleValidationManager {
 
       if (localOverride && !cookieOverride) {
         CookieManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, localOverride);
-        fixedIssues += 1;
+        fixedIssues += ONE;
         actions.push('已同步覆盖设置到Cookie');
       }
 

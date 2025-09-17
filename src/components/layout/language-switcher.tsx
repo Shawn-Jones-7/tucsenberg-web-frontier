@@ -6,11 +6,6 @@
  */
 'use client';
 
-import { memo, useEffect, useRef, useState, useTransition } from 'react';
-import { Check, Globe, Languages, Loader2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { NAVIGATION_ARIA } from '@/lib/navigation';
-import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -20,7 +15,13 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { LOCALES_CONFIG } from '@/config/paths';
 import { UI_TIMINGS } from '@/constants/i18n-constants';
+import { COUNT_PAIR } from "@/constants/magic-numbers";
 import { Link, usePathname } from '@/i18n/routing';
+import { NAVIGATION_ARIA } from '@/lib/navigation';
+import { cn } from '@/lib/utils';
+import { Check, Globe, Languages, Loader2 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { memo, useEffect, useRef, useState, useTransition } from 'react';
 
 /**
  * Language Switcher Component
@@ -30,7 +31,7 @@ import { Link, usePathname } from '@/i18n/routing';
  */
 
 // Use centralized timing constants to avoid magic numbers
-const TRANSITION_DIVISOR = 2;
+const TRANSITION_DIVISOR = COUNT_PAIR;
 const TRANSITION_TIMEOUT =
   UI_TIMINGS.LANGUAGE_SWITCH_ANIMATION / TRANSITION_DIVISOR; // 1 second for transition
 const SUCCESS_INDICATOR_TIMEOUT = UI_TIMINGS.SUCCESS_DISPLAY_DURATION; // 2 seconds for success indicator

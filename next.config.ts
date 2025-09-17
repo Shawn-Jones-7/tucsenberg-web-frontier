@@ -4,7 +4,7 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
-import { getSecurityHeaders } from '@/config/security';
+import { getSecurityHeaders } from './src/config/security';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 

@@ -1,4 +1,4 @@
-import { MAGIC_429, SECONDS_PER_MINUTE } from '@/constants/magic-numbers';
+import { ANIMATION_DURATION_VERY_SLOW, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, MAGIC_429, SECONDS_PER_MINUTE } from "@/constants/magic-numbers";
 
 /**
  * WhatsApp Service Error Types and Classes
@@ -152,7 +152,7 @@ export class WhatsAppValidationError extends WhatsAppError {
   public readonly value?: unknown;
 
   constructor(message: string, field?: string, value?: unknown) {
-    super(message, 400, 'ValidationError');
+    super(message, HTTP_BAD_REQUEST, 'ValidationError');
     this.name = 'WhatsAppValidationError';
     if (field !== undefined) {
       this.field = field;
@@ -247,7 +247,7 @@ export class WhatsAppRateLimitError extends WhatsAppError {
    * Get retry delay in milliseconds
    */
   getRetryDelay(): number {
-    return (this.retryAfter || SECONDS_PER_MINUTE) * 1000; // Default to SECONDS_PER_MINUTE seconds
+    return (this.retryAfter || SECONDS_PER_MINUTE) * ANIMATION_DURATION_VERY_SLOW; // Default to SECONDS_PER_MINUTE seconds
   }
 
   /**
@@ -325,7 +325,7 @@ export class WhatsAppAuthError extends WhatsAppError {
   public readonly tokenInvalid?: boolean;
 
   constructor(message: string, tokenExpired?: boolean, tokenInvalid?: boolean) {
-    super(message, 401, 'AuthError');
+    super(message, HTTP_UNAUTHORIZED, 'AuthError');
     this.name = 'WhatsAppAuthError';
     if (tokenExpired !== undefined) {
       this.tokenExpired = tokenExpired;
@@ -424,7 +424,7 @@ export function createErrorFromApiResponse(
 ): WhatsAppError {
   const { status, data } = response;
 
-  if (status === 401) {
+  if (status === HTTP_UNAUTHORIZED) {
     return WhatsAppAuthError.invalidToken();
   }
 

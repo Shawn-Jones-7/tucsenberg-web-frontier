@@ -1,10 +1,9 @@
-import { MAGIC_600 } from '@/constants/magic-numbers';
-
 /**
  * WhatsApp Webhook 工具函数
  * WhatsApp Webhook Utility Functions
  */
 
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, MAGIC_600 } from "@/constants/magic-numbers";
 import type {
   WebhookError,
   WebhookVerificationRequest,
@@ -65,12 +64,12 @@ export function isRetryableError(error: WebhookError): boolean {
  */
 export function isTimestampValid(
   timestamp: string,
-  maxAgeSeconds: number = 300,
+  maxAgeSeconds: number = ANIMATION_DURATION_NORMAL,
 ): boolean {
   try {
     const eventTime = new Date(timestamp);
     const now = new Date();
-    const ageSeconds = (now.getTime() - eventTime.getTime()) / 1000;
+    const ageSeconds = (now.getTime() - eventTime.getTime()) / ANIMATION_DURATION_VERY_SLOW;
     return ageSeconds <= maxAgeSeconds;
   } catch {
     return false;

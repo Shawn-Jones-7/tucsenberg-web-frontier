@@ -1,4 +1,4 @@
-import { COUNT_PAIR, HEX_BYTE_MAX, HEX_JPEG_MARKER_1, HEX_PDF_MARKER, HEX_PDF_SIGNATURE_1, HEX_PNG_SIGNATURE_1, HEX_PNG_SIGNATURE_2, HEX_PNG_SIGNATURE_3, HEX_PNG_SIGNATURE_4, HEX_PNG_SIGNATURE_5, HEX_PNG_SIGNATURE_6, HEX_ZIP_SIGNATURE, MAGIC_255, MAGIC_HEX_03, MAGIC_HEX_04 } from '@/constants/magic-numbers';
+import { BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, HEX_BYTE_MAX, HEX_JPEG_MARKER_1, HEX_PDF_MARKER, HEX_PDF_SIGNATURE_1, HEX_PNG_SIGNATURE_1, HEX_PNG_SIGNATURE_2, HEX_PNG_SIGNATURE_3, HEX_PNG_SIGNATURE_4, HEX_PNG_SIGNATURE_5, HEX_PNG_SIGNATURE_6, HEX_ZIP_SIGNATURE, MAGIC_255, MAGIC_HEX_03, MAGIC_HEX_04, ONE, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 文件上传安全验证工具
@@ -9,9 +9,9 @@ import { COUNT_PAIR, HEX_BYTE_MAX, HEX_JPEG_MARKER_1, HEX_PDF_MARKER, HEX_PDF_SI
  * File upload constants
  */
 const FILE_UPLOAD_CONSTANTS = {
-  MAX_FILE_SIZE_MB: 10,
-  BYTES_PER_MB: 1024,
-  KB_TO_BYTES: 1024,
+  MAX_FILE_SIZE_MB: COUNT_TEN,
+  BYTES_PER_MB: BYTES_PER_KB,
+  KB_TO_BYTES: BYTES_PER_KB,
 } as const;
 
 /**
@@ -144,7 +144,7 @@ export function validateFileUpload(
   // Check for double extensions (e.g., file.pdf.exe)
   const parts = fileName.split('.');
   if (parts.length > COUNT_PAIR) {
-    for (let i = 1; i < parts.length - 1; i++) {
+    for (let i = ONE; i < parts.length - ONE; i++) {
       const ext = `.${parts[i]}`;
       if (DANGEROUS_EXTENSIONS.includes(ext as any)) {
         return {
@@ -190,7 +190,7 @@ export function validateFileUpload(
 
   return {
     valid: true,
-    ...(warnings.length > 0 && { warnings }),
+    ...(warnings.length > ZERO && { warnings }),
   };
 }
 
@@ -220,7 +220,7 @@ export async function validateFileSignature(
 
     if (expectedSignature) {
       const actualSignature = Array.from(
-        bytes.slice(0, expectedSignature.length),
+        bytes.slice(ZERO, expectedSignature.length),
       );
       const matches = expectedSignature.every(
         (byte, index) => byte === actualSignature[index],
@@ -251,7 +251,7 @@ export function sanitizeFileName(fileName: string): string {
     .replace(/[^a-zA-Z0-9._-]/g, '_') // Replace special chars with underscore
     .replace(/_{COUNT_PAIR,}/g, '_') // Replace multiple underscores with single
     .replace(/^_+|_+$/g, '') // Remove leading/trailing underscores
-    .substring(0, MAGIC_255); // Limit length
+    .substring(ZERO, MAGIC_255); // Limit length
 }
 
 /**
@@ -328,7 +328,7 @@ export function validateMultipleFiles(
 
   // Check total size
   if (options.maxTotalSizeMB) {
-    const totalSize = fileArray.reduce((sum, file) => sum + file.size, 0);
+    const totalSize = fileArray.reduce((sum, file) => sum + file.size, ZERO);
     const maxTotalSize =
       options.maxTotalSizeMB *
       FILE_UPLOAD_CONSTANTS.BYTES_PER_MB *
@@ -343,14 +343,14 @@ export function validateMultipleFiles(
   }
 
   // Validate each file
-  for (let i = 0; i < fileArray.length; i++) {
+  for (let i = ZERO; i < fileArray.length; i++) {
     const file = fileArray[i];
     if (!file) continue;
     const result = validateFileUpload(file, options);
     if (!result.valid) {
       return {
         valid: false,
-        error: `File ${i + 1} (${fileArray[i]?.name}): ${result.error}`,
+        error: `File ${i + ONE} (${fileArray[i]?.name}): ${result.error}`,
       };
     }
   }

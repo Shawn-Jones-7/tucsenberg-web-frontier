@@ -5,6 +5,7 @@
  * 提供缓存系统所需的基础类型、接口和常量定义
  */
 
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, FIVE_SECONDS_MS, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
 import type { I18nMetrics, Locale } from '@/types/i18n';
 
 /**
@@ -148,8 +149,8 @@ export interface CacheDebugInfo {
  * Default cache configuration
  */
 export const DEFAULT_CACHE_CONFIG: CacheConfig = {
-  maxSize: 1000,
-  ttl: 5 * 60 * 1000, // 5 minutes
+  maxSize: ANIMATION_DURATION_VERY_SLOW,
+  ttl: COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 5 minutes
   enablePersistence: true,
   storageKey: 'i18n_cache',
 };
@@ -161,9 +162,9 @@ export const DEFAULT_CACHE_CONFIG: CacheConfig = {
 export const DEFAULT_PRELOAD_CONFIG: PreloadConfig = {
   enablePreload: true,
   preloadLocales: ['en', 'zh'],
-  batchSize: 5,
-  delayBetweenBatches: 100,
-  timeout: 5000,
+  batchSize: COUNT_FIVE,
+  delayBetweenBatches: PERCENTAGE_FULL,
+  timeout: FIVE_SECONDS_MS,
 };
 
 /**
@@ -171,14 +172,14 @@ export const DEFAULT_PRELOAD_CONFIG: PreloadConfig = {
  * Cache constants
  */
 export const CACHE_CONSTANTS = {
-  MIN_TTL: 1000, // 1 second
-  MAX_TTL: 24 * 60 * 60 * 1000, // 24 hours
-  MIN_CACHE_SIZE: 10,
-  MAX_CACHE_SIZE: 10000,
-  DEFAULT_BATCH_SIZE: 5,
-  MAX_CONCURRENT_LOADS: 10,
-  METRICS_RESET_INTERVAL: 60 * 60 * 1000, // 1 hour
-  HEALTH_CHECK_INTERVAL: 5 * 60 * 1000, // 5 minutes
+  MIN_TTL: ANIMATION_DURATION_VERY_SLOW, // 1 second
+  MAX_TTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24 hours
+  MIN_CACHE_SIZE: COUNT_TEN,
+  MAX_CACHE_SIZE: TEN_SECONDS_MS,
+  DEFAULT_BATCH_SIZE: COUNT_FIVE,
+  MAX_CONCURRENT_LOADS: COUNT_TEN,
+  METRICS_RESET_INTERVAL: SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 1 hour
+  HEALTH_CHECK_INTERVAL: COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 5 minutes
 } as const;
 
 /**
@@ -291,9 +292,9 @@ export function parseCacheKey(cacheKey: string): {
 } {
   const parts = cacheKey.split(':');
   return {
-    locale: parts[0] as Locale,
-    ...(parts[1] && { namespace: parts[1] }),
-    ...(parts[2] && { key: parts[2] }),
+    locale: parts[ZERO] as Locale,
+    ...(parts[ONE] && { namespace: parts[ONE] }),
+    ...(parts[COUNT_PAIR] && { key: parts[COUNT_PAIR] }),
   };
 }
 
@@ -328,7 +329,7 @@ export function validateCacheConfig(
   if (config.storageKey !== undefined) {
     if (
       typeof config.storageKey !== 'string' ||
-      config.storageKey.length === 0
+      config.storageKey.length === ZERO
     ) {
       errors.push('storageKey must be a non-empty string');
     }
@@ -341,7 +342,7 @@ export function validateCacheConfig(
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings,
   };

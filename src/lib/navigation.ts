@@ -4,8 +4,10 @@
  * This module provides navigation configuration, route definitions,
  * and utility functions for the responsive navigation system.
  */
-import type { Locale } from '@/types/i18n';
 import { LOCALES_CONFIG } from '@/config/paths';
+import { COUNT_250 } from "@/constants/count";
+import { BREAKPOINT_MD, BREAKPOINT_XL, BYTES_PER_KB, PERCENTAGE_FULL } from "@/constants/magic-numbers";
+import type { Locale } from '@/types/i18n';
 
 // Navigation item interface
 export interface NavigationItem {
@@ -105,16 +107,16 @@ export function getLocalizedHref(href: string, locale: Locale): string {
 
 // Navigation breakpoints
 export const NAVIGATION_BREAKPOINTS = Object.freeze({
-  mobile: 768,
-  tablet: 1024,
-  desktop: 1280,
+  mobile: BREAKPOINT_MD,
+  tablet: BYTES_PER_KB,
+  desktop: BREAKPOINT_XL,
 } as const);
 
 // Animation durations
 export const NAVIGATION_ANIMATIONS = Object.freeze({
-  mobileMenuToggle: 250,
-  dropdownFade: 100,
-  hoverTransition: 100,
+  mobileMenuToggle: COUNT_250,
+  dropdownFade: PERCENTAGE_FULL,
+  hoverTransition: PERCENTAGE_FULL,
 } as const);
 
 // ARIA labels and accessibility

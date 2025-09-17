@@ -5,14 +5,14 @@ import {
   TEST_PERCENTAGE_VALUES,
   TEST_PERFORMANCE_TIMESTAMPS,
   TEST_TIME_CALCULATIONS,
-} from '@/constants/test-app-constants';
+} from '../test-app-constants';
 import {
   TEST_ANGLE_CONSTANTS,
   TEST_CONTENT_LIMITS,
   TEST_COUNT_CONSTANTS,
   TEST_OPACITY_CONSTANTS,
   TEST_SPECIAL_CONSTANTS,
-} from '@/constants/test-constants';
+} from '../test-constants';
 import {
   APP_CONSTANTS,
   CONTENT_LIMITS,

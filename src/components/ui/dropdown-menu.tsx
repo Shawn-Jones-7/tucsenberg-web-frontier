@@ -1,9 +1,10 @@
 'use client';
 
-import * as React from 'react';
+import { COUNT_4 } from "@/constants/count";
+import { cn } from '@/lib/utils';
 import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
+import * as React from 'react';
 
 function DropdownMenu({
   ...props
@@ -38,7 +39,7 @@ function DropdownMenuTrigger({
   );
 }
 
-const DEFAULT_SIDE_OFFSET = 4;
+const DEFAULT_SIDE_OFFSET = COUNT_4;
 
 function DropdownMenuContent({
   className,
@@ -270,5 +271,5 @@ export {
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+  DropdownMenuTrigger
 };

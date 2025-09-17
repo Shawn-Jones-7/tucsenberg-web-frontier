@@ -1,12 +1,12 @@
-import type { ReactNode } from 'react';
-import { notFound } from 'next/navigation';
-import { NextIntlClientProvider } from 'next-intl';
-import { getMessages } from 'next-intl/server';
-import NextTopLoader from 'nextjs-toploader';
-import { generateJSONLD } from '@/lib/structured-data';
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import { EnterpriseAnalytics } from '@/components/monitoring/enterprise-analytics';
+import { generateJSONLD } from '@/lib/structured-data';
+import { NextIntlClientProvider } from 'next-intl';
+import { getMessages } from 'next-intl/server';
+import { notFound } from 'next/navigation';
+import NextTopLoader from 'nextjs-toploader';
+import type { ReactNode } from 'react';
 // 临时禁用所有性能监控组件以排查 "Maximum update depth exceeded" 错误
 // import {
 //     DevelopmentPerformanceMonitor,
@@ -21,6 +21,8 @@ import { generateLocaleMetadata } from '@/app/[locale]/layout-metadata';
 import { generatePageStructuredData } from '@/app/[locale]/layout-structured-data';
 import '@/app/globals.css';
 import { ThemeProvider } from '@/components/theme-provider';
+import { COUNT_1600 } from "@/constants/count";
+import { ANIMATION_DURATION_NORMAL, COUNT_TRIPLE } from "@/constants/magic-numbers";
 import { routing } from '@/i18n/routing';
 
 // 重新导出元数据生成函数
@@ -79,12 +81,12 @@ export default async function LocaleLayout({
             {/* 页面导航进度条 - 全局生效 */}
             <NextTopLoader
               color='hsl(var(--primary))'
-              height={3}
+              height={COUNT_TRIPLE}
               showSpinner={false}
               easing='ease-in-out'
-              speed={300}
+              speed={ANIMATION_DURATION_NORMAL}
               shadow='0 0 10px hsl(var(--primary)),0 0 5px hsl(var(--primary))'
-              zIndex={1600}
+              zIndex={COUNT_1600}
             />
 
             {/* 临时禁用：I18n性能优化组件 - 动态导入 */}

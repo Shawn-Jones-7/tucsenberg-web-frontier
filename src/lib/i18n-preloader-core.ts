@@ -5,8 +5,11 @@
  * 提供翻译预加载的核心功能和主要类实现
  */
 
-import type { Locale, Messages } from '@/types/i18n';
+import { MAGIC_0_1 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TRIPLE, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from "@/constants/magic-numbers";
+import { MINUTE_MS } from "@/constants/time";
 import { logger } from '@/lib/logger';
+import type { Locale, Messages } from '@/types/i18n';
 import type {
   CacheOperationResult,
   CacheStorage,
@@ -35,9 +38,9 @@ export class TranslationPreloader implements Preloader, IPreloader {
   private metricsCollector: MetricsCollector;
   private preloadState: PreloadState = {
     isPreloading: false,
-    progress: 0,
-    totalLocales: 0,
-    completedLocales: 0,
+    progress: ZERO,
+    totalLocales: ZERO,
+    completedLocales: ZERO,
     errors: [],
   };
   private preloadConfig: PreloaderConfig;
@@ -53,27 +56,27 @@ export class TranslationPreloader implements Preloader, IPreloader {
     this.preloadConfig = {
       enablePreload: true,
       preloadLocales: ['en', 'zh'],
-      batchSize: 3,
-      delayBetweenBatches: 100,
-      maxConcurrency: 5,
-      timeout: 10000,
-      retryCount: 3,
-      retryDelay: 1000,
+      batchSize: COUNT_TRIPLE,
+      delayBetweenBatches: PERCENTAGE_FULL,
+      maxConcurrency: COUNT_FIVE,
+      timeout: TEN_SECONDS_MS,
+      retryCount: COUNT_TRIPLE,
+      retryDelay: ANIMATION_DURATION_VERY_SLOW,
       smartPreload: {
         enabled: false,
-        maxLocales: 3,
-        minUsageThreshold: 0.1,
-        usageWindow: 24,
+        maxLocales: COUNT_TRIPLE,
+        minUsageThreshold: MAGIC_0_1,
+        usageWindow: HOURS_PER_DAY,
         preloadTrigger: 'idle',
       },
-      memoryLimit: 50 * 1024 * 1024,
+      memoryLimit: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB,
       networkThrottling: false,
       priorityQueue: false,
       cacheStrategy: 'adaptive',
-      cacheTTL: 24 * 60 * 60 * 1000,
-      maxCacheSize: 100,
+      cacheTTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+      maxCacheSize: PERCENTAGE_FULL,
       enableMetrics: true,
-      metricsInterval: 60000,
+      metricsInterval: MINUTE_MS,
       enableLogging: false,
       logLevel: 'info',
       ...config,
@@ -169,9 +172,9 @@ export class TranslationPreloader implements Preloader, IPreloader {
 
     this.preloadState = {
       isPreloading: true,
-      progress: 0,
+      progress: ZERO,
       totalLocales: locales.length,
-      completedLocales: 0,
+      completedLocales: ZERO,
       errors: [],
       startTime: Date.now(),
     };
@@ -183,7 +186,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
       // 分批处理
       const batches = this.createBatches(locales, this.preloadConfig.batchSize);
 
-      for (let i = 0; i < batches.length; i++) {
+      for (let i = ZERO; i < batches.length; i++) {
         if (this.abortController.signal.aborted) {
           break;
         }
@@ -198,14 +201,14 @@ export class TranslationPreloader implements Preloader, IPreloader {
         this.preloadState.progress =
           (this.preloadState.completedLocales /
             this.preloadState.totalLocales) *
-          100;
+          PERCENTAGE_FULL;
 
         options?.onProgress?.(this.preloadState.progress);
 
         // 批次间延迟
         if (
-          i < batches.length - 1 &&
-          this.preloadConfig.delayBetweenBatches > 0
+          i < batches.length - ONE &&
+          this.preloadConfig.delayBetweenBatches > ZERO
         ) {
           await this.delay(this.preloadConfig.delayBetweenBatches);
         }
@@ -263,9 +266,9 @@ export class TranslationPreloader implements Preloader, IPreloader {
     const sortedLocales = Object.entries(localeUsage)
       .sort(([, a], [, b]) => b - a)
       .map(([locale]) => locale as Locale)
-      .slice(0, 3); // 只预加载前3个最常用的语言
+      .slice(ZERO, COUNT_TRIPLE); // 只预加载前3个最常用的语言
 
-    if (sortedLocales.length > 0) {
+    if (sortedLocales.length > ZERO) {
       await this.preloadMultipleLocales(sortedLocales);
     }
   }
@@ -276,7 +279,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
    */
   async preloadRelatedLocales(currentLocale: Locale): Promise<void> {
     const relatedLocales = this.getRelatedLocales(currentLocale);
-    if (relatedLocales.length > 0) {
+    if (relatedLocales.length > ZERO) {
       await this.preloadMultipleLocales(relatedLocales);
     }
   }
@@ -310,7 +313,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
    */
   getPreloadStats(): PreloadStats {
     const state = this.preloadState;
-    const duration = state.startTime ? Date.now() - state.startTime : 0;
+    const duration = state.startTime ? Date.now() - state.startTime : ZERO;
 
     return {
       isActive: state.isPreloading,
@@ -319,11 +322,11 @@ export class TranslationPreloader implements Preloader, IPreloader {
       completedLocales: state.completedLocales,
       errorCount: state.errors.length,
       duration,
-      averageLoadTime: duration / Math.max(state.completedLocales, 1),
+      averageLoadTime: duration / Math.max(state.completedLocales, ONE),
       successRate:
-        state.totalLocales > 0
+        state.totalLocales > ZERO
           ? (state.completedLocales - state.errors.length) / state.totalLocales
-          : 0,
+          : ZERO,
     };
   }
 
@@ -429,7 +432,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
    */
   private createBatches<T>(items: T[], batchSize: number): T[][] {
     const batches: T[][] = [];
-    for (let i = 0; i < items.length; i += batchSize) {
+    for (let i = ZERO; i < items.length; i += batchSize) {
       batches.push(items.slice(i, i + batchSize));
     }
     return batches;
@@ -500,9 +503,9 @@ export class TranslationPreloader implements Preloader, IPreloader {
     this.stopPreloading();
     this.preloadState = {
       isPreloading: false,
-      progress: 0,
-      totalLocales: 0,
-      completedLocales: 0,
+      progress: ZERO,
+      totalLocales: ZERO,
+      completedLocales: ZERO,
       errors: [],
     };
   }

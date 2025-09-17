@@ -7,15 +7,17 @@
 
 'use client';
 
-import type { Locale } from '@/types/i18n';
+import { DEC_0_01, MAGIC_0_5, MAGIC_0_7 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } from "@/constants/magic-numbers";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
+import { isUserLocalePreference } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 import type {
   StorageOperationResult,
   UserLocalePreference,
   ValidationResult,
 } from './locale-storage-types';
-import { isUserLocalePreference } from '@/lib/locale-storage-types';
 
 // ==================== 数据验证功能 ====================
 
@@ -47,14 +49,14 @@ export function validatePreferenceData(preference: unknown): ValidationResult {
   // 验证置信度
   if (
     typeof preference.confidence !== 'number' ||
-    preference.confidence < 0 ||
-    preference.confidence > 1
+    preference.confidence < ZERO ||
+    preference.confidence > ONE
   ) {
     errors.push('Invalid confidence value (must be between 0 and 1)');
   }
 
   // 验证时间戳
-  if (typeof preference.timestamp !== 'number' || preference.timestamp <= 0) {
+  if (typeof preference.timestamp !== 'number' || preference.timestamp <= ZERO) {
     errors.push('Invalid timestamp');
   }
 
@@ -64,7 +66,7 @@ export function validatePreferenceData(preference: unknown): ValidationResult {
   }
 
   return {
-    isValid: errors.length === 0,
+    isValid: errors.length === ZERO,
     errors,
     warnings: [],
   };
@@ -80,7 +82,7 @@ export function createDefaultPreference(
   return {
     locale,
     source: 'default',
-    confidence: 0.5,
+    confidence: MAGIC_0_5,
     timestamp: Date.now(),
     metadata: {},
   };
@@ -96,7 +98,7 @@ export function normalizePreference(
   return {
     locale: preference.locale,
     source: preference.source,
-    confidence: Math.max(0, Math.min(1, preference.confidence)),
+    confidence: Math.max(ZERO, Math.min(ONE, preference.confidence)),
     timestamp: preference.timestamp || Date.now(),
     metadata: preference.metadata || {},
   };
@@ -182,7 +184,7 @@ export function getUserPreference(): StorageOperationResult<UserLocalePreference
       const cookiePreference: UserLocalePreference = {
         locale: cookieLocale as Locale,
         source: 'fallback',
-        confidence: 0.7,
+        confidence: MAGIC_0_7,
         timestamp: Date.now(),
         metadata: { source: 'cookie_fallback' },
       };
@@ -239,7 +241,7 @@ export function updatePreferenceConfidence(
 
   const updatedPreference: UserLocalePreference = {
     ...currentResult.data,
-    confidence: Math.max(0, Math.min(1, confidence)),
+    confidence: Math.max(ZERO, Math.min(ONE, confidence)),
     timestamp: Date.now(),
   };
 
@@ -278,17 +280,17 @@ export function getPreferenceSourcePriority(): Array<{
     {
       source: 'localStorage',
       available: Boolean(localPreference && validatePreferenceData(localPreference).isValid),
-      priority: 1,
+      priority: ONE,
     },
     {
       source: 'cookies',
       available: Boolean(cookieLocale),
-      priority: 2,
+      priority: COUNT_PAIR,
     },
     {
       source: 'default',
       available: true,
-      priority: 3,
+      priority: COUNT_TRIPLE,
     },
   ];
 }
@@ -314,16 +316,16 @@ export function comparePreferences(
     differences.push(`source: ${pref1.source} vs ${pref2.source}`);
   }
 
-  if (Math.abs(pref1.confidence - pref2.confidence) > 0.01) {
+  if (Math.abs(pref1.confidence - pref2.confidence) > DEC_0_01) {
     differences.push(`confidence: ${pref1.confidence} vs ${pref2.confidence}`);
   }
 
-  if (Math.abs(pref1.timestamp - pref2.timestamp) > 1000) {
+  if (Math.abs(pref1.timestamp - pref2.timestamp) > ANIMATION_DURATION_VERY_SLOW) {
     differences.push(`timestamp: ${pref1.timestamp} vs ${pref2.timestamp}`);
   }
 
   return {
-    isEqual: differences.length === 0,
+    isEqual: differences.length === ZERO,
     differences,
   };
 }

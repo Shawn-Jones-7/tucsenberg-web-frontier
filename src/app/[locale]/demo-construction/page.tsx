@@ -1,5 +1,6 @@
-import type { Metadata } from 'next';
 import { UnderConstructionV2 } from '@/components/shared/under-construction-v2';
+import { COUNT_PAIR } from "@/constants/magic-numbers";
+import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: '建设中页面演示 | Tucsenberg',
@@ -10,7 +11,7 @@ export default function DemoConstructionPage() {
   return (
     <UnderConstructionV2
       pageType='products'
-      currentStep={2}
+      currentStep={COUNT_PAIR}
       expectedDate='2024年第三季度'
       showProgress={true}
       showEmailSubscription={true}

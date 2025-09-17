@@ -1,10 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
-import type { LocaleDetectionResult } from '@/lib/locale-detection';
-import { useClientLocaleDetection } from '@/lib/locale-detection';
-import type { UserLocalePreference } from '@/lib/locale-storage';
-import { useLocaleStorage } from '@/lib/locale-storage';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -15,12 +11,18 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
-import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
+import { MAGIC_0_5, MAGIC_0_8 } from "@/constants/decimal";
+import { PERCENTAGE_FULL, ZERO } from "@/constants/magic-numbers";
+import type { LocaleDetectionResult } from '@/lib/locale-detection';
+import { useClientLocaleDetection } from '@/lib/locale-detection';
+import type { UserLocalePreference } from '@/lib/locale-storage';
+import { useLocaleStorage } from '@/lib/locale-storage';
+import { useCallback, useEffect, useState } from 'react';
 
 // 工具函数
 const getConfidenceColor = (confidence: number) => {
-  if (confidence > 0.8) return 'bg-green-100 text-green-800';
-  if (confidence > 0.5) return 'bg-yellow-100 text-yellow-800';
+  if (confidence > MAGIC_0_8) return 'bg-green-100 text-green-800';
+  if (confidence > MAGIC_0_5) return 'bg-yellow-100 text-yellow-800';
   return 'bg-red-100 text-red-800';
 };
 
@@ -62,7 +64,7 @@ const DetectionResult = ({ detection }: DetectionResultProps) => (
         <div className='flex items-center space-x-2'>
           <span>置信度:</span>
           <Badge className={getConfidenceColor(detection.confidence)}>
-            {Math.round(detection.confidence * 100)}%
+            {Math.round(detection.confidence * PERCENTAGE_FULL)}%
           </Badge>
         </div>
         {detection.details?.browserLanguages && (
@@ -141,7 +143,7 @@ const PreferenceDetails = ({ preference }: PreferenceDetailsProps) => (
       <div className='grid grid-cols-2 gap-2 text-sm'>
         <div>语言: {preference.locale}</div>
         <div>来源: {preference.source}</div>
-        <div>置信度: {Math.round(preference.confidence * 100)}%</div>
+        <div>置信度: {Math.round(preference.confidence * PERCENTAGE_FULL)}%</div>
         <div>时间: {new Date(preference.timestamp).toLocaleString()}</div>
       </div>
     </div>
@@ -157,7 +159,7 @@ const BrowserInfo = () => (
         <>
           <div>语言: {navigator.language}</div>
           <div>语言列表: {navigator.languages?.join(', ')}</div>
-          <div>用户代理: {navigator.userAgent.substring(0, 100)}...</div>
+          <div>用户代理: {navigator.userAgent.substring(ZERO, PERCENTAGE_FULL)}...</div>
         </>
       )}
     </div>

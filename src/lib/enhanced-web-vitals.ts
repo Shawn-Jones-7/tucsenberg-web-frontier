@@ -1,4 +1,7 @@
 // 导入实例用于内部函数使用
+import { COUNT_800, MAGIC_1800, MAGIC_2500, MAGIC_4000, MAGIC_70 } from "@/constants/count";
+import { MAGIC_0_1, MAGIC_0_25 } from "@/constants/decimal";
+import { ANIMATION_DURATION_NORMAL, PERCENTAGE_FULL, PERCENTAGE_HALF, THREE_SECONDS_MS } from "@/constants/magic-numbers";
 import {
   enhancedWebVitalsCollector,
   performanceAlertSystem,
@@ -20,7 +23,7 @@ export type {
   PerformanceBaseline,
   PerformanceMonitoringConfig,
   PerformanceMonitoringStatus,
-  RegressionDetectionResult,
+  RegressionDetectionResult
 } from './web-vitals/types';
 
 // 重新导出常量
@@ -40,13 +43,13 @@ export {
   performanceAlertSystem,
   performanceBaselineManager,
   performanceMonitoringManager,
-  performanceRegressionDetector,
+  performanceRegressionDetector
 } from './web-vitals';
 
 // 为了向后兼容，也导出一些常用的别名
 export {
   performanceMonitoringManager as monitoringManager,
-  enhancedWebVitalsCollector as webVitalsCollector,
+  enhancedWebVitalsCollector as webVitalsCollector
 } from './web-vitals';
 
 /**
@@ -73,12 +76,12 @@ export function initializePerformanceMonitoring(config?: {
     performanceAlertSystem.configure({
       enabled: true,
       thresholds: {
-        cls: config.alertThresholds?.cls || { warning: 0.1, critical: 0.25 },
-        lcp: config.alertThresholds?.lcp || { warning: 2500, critical: 4000 },
-        fid: config.alertThresholds?.fid || { warning: 100, critical: 300 },
-        fcp: config.alertThresholds?.fcp || { warning: 1800, critical: 3000 },
-        ttfb: config.alertThresholds?.ttfb || { warning: 800, critical: 1800 },
-        score: config.alertThresholds?.score || { warning: 70, critical: 50 },
+        cls: config.alertThresholds?.cls || { warning: MAGIC_0_1, critical: MAGIC_0_25 },
+        lcp: config.alertThresholds?.lcp || { warning: MAGIC_2500, critical: MAGIC_4000 },
+        fid: config.alertThresholds?.fid || { warning: PERCENTAGE_FULL, critical: ANIMATION_DURATION_NORMAL },
+        fcp: config.alertThresholds?.fcp || { warning: MAGIC_1800, critical: THREE_SECONDS_MS },
+        ttfb: config.alertThresholds?.ttfb || { warning: COUNT_800, critical: MAGIC_1800 },
+        score: config.alertThresholds?.score || { warning: MAGIC_70, critical: PERCENTAGE_HALF },
       },
     });
   }

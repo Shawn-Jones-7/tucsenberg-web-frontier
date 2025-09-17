@@ -4,6 +4,8 @@
  * 包含语言代码映射、地理位置映射、时区映射等常量定义
  */
 
+import { DEC_0_4, MAGIC_0_1, MAGIC_0_3, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8, MAGIC_0_95 } from "@/constants/decimal";
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THREE_SECONDS_MS } from "@/constants/magic-numbers";
 import type { Locale } from '@/types/i18n';
 
 // ==================== 语言代码映射常量 ====================
@@ -230,8 +232,8 @@ export const TIMEZONE_TO_LOCALE_MAP = new Map<string, Locale>([
  */
 export const DETECTION_TIMEOUTS = {
   GEOLOCATION: 5000, // 地理位置检测超时 (毫秒)
-  NETWORK_REQUEST: 3000, // 网络请求超时 (毫秒)
-  TOTAL_DETECTION: 10000, // 总检测超时 (毫秒)
+  NETWORK_REQUEST: THREE_SECONDS_MS, // 网络请求超时 (毫秒)
+  TOTAL_DETECTION: TEN_SECONDS_MS, // 总检测超时 (毫秒)
 } as const;
 
 /**
@@ -239,12 +241,12 @@ export const DETECTION_TIMEOUTS = {
  * Confidence weight configuration
  */
 export const CONFIDENCE_WEIGHTS = {
-  USER_OVERRIDE: 1.0, // 用户手动设置
-  STORED_PREFERENCE: 0.95, // 存储的用户偏好
+  USER_OVERRIDE: ONE, // 用户手动设置
+  STORED_PREFERENCE: MAGIC_0_95, // 存储的用户偏好
   GEOLOCATION: 0.8, // 地理位置检测
-  BROWSER_LANGUAGE: 0.7, // 浏览器语言
-  TIMEZONE: 0.6, // 时区检测
-  DEFAULT_FALLBACK: 0.3, // 默认回退
+  BROWSER_LANGUAGE: MAGIC_0_7, // 浏览器语言
+  TIMEZONE: MAGIC_0_6, // 时区检测
+  DEFAULT_FALLBACK: MAGIC_0_3, // 默认回退
 } as const;
 
 /**
@@ -276,8 +278,8 @@ export const GEO_API_CONFIG = {
     'https://ipinfo.io/json',
   ],
   FALLBACK_ENDPOINT: 'https://httpbin.org/ip',
-  MAX_RETRIES: 2,
-  CACHE_DURATION: 24 * 60 * 60 * 1000, // 24小时缓存
+  MAX_RETRIES: COUNT_PAIR,
+  CACHE_DURATION: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24小时缓存
 } as const;
 
 /**
@@ -285,9 +287,9 @@ export const GEO_API_CONFIG = {
  * Detection quality thresholds
  */
 export const QUALITY_THRESHOLDS = {
-  HIGH_CONFIDENCE: 0.8, // 高置信度阈值
-  MEDIUM_CONFIDENCE: 0.6, // 中等置信度阈值
-  LOW_CONFIDENCE: 0.4, // 低置信度阈值
-  CONSISTENCY_BONUS: 0.1, // 一致性奖励
-  MIN_SOURCES_FOR_COMBINED: 2, // 组合检测的最小源数量
+  HIGH_CONFIDENCE: MAGIC_0_8, // 高置信度阈值
+  MEDIUM_CONFIDENCE: MAGIC_0_6, // 中等置信度阈值
+  LOW_CONFIDENCE: DEC_0_4, // 低置信度阈值
+  CONSISTENCY_BONUS: MAGIC_0_1, // 一致性奖励
+  MIN_SOURCES_FOR_COMBINED: COUNT_PAIR, // 组合检测的最小源数量
 } as const;

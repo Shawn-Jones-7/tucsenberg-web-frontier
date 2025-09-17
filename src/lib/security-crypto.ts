@@ -1,4 +1,5 @@
-import { COUNT_PAIR, MAGIC_12, MAGIC_16 } from '@/constants/magic-numbers';
+import { COUNT_100000, COUNT_256 } from "@/constants/count";
+import { COUNT_PAIR, MAGIC_12, MAGIC_16, ZERO } from "@/constants/magic-numbers";
 
 /**
  * 加密和密码哈希工具
@@ -211,11 +212,11 @@ export async function encryptData(
     {
       name: 'PBKDF2',
       salt,
-      iterations: 100000,
+      iterations: COUNT_100000,
       hash: 'SHA-256',
     },
     passwordKey,
-    { name: 'AES-GCM', length: 256 },
+    { name: 'AES-GCM', length: COUNT_256 },
     false,
     ['encrypt'],
   );
@@ -275,11 +276,11 @@ export async function decryptData(
     {
       name: 'PBKDF2',
       salt,
-      iterations: 100000,
+      iterations: COUNT_100000,
       hash: 'SHA-256',
     },
     passwordKey,
-    { name: 'AES-GCM', length: 256 },
+    { name: 'AES-GCM', length: COUNT_256 },
     false,
     ['decrypt'],
   );
@@ -299,7 +300,7 @@ export async function decryptData(
  */
 export async function generateEncryptionKey(): Promise<CryptoKey> {
   return await crypto.subtle.generateKey(
-    { name: 'AES-GCM', length: 256 },
+    { name: 'AES-GCM', length: COUNT_256 },
     true,
     ['encrypt', 'decrypt'],
   );
@@ -340,10 +341,10 @@ export function constantTimeCompare(a: string, b: string): boolean {
     return false;
   }
 
-  let result = 0;
-  for (let i = 0; i < a.length; i++) {
+  let result = ZERO;
+  for (let i = ZERO; i < a.length; i++) {
     result |= a.charCodeAt(i) ^ b.charCodeAt(i);
   }
 
-  return result === 0;
+  return result === ZERO;
 }

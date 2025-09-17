@@ -1,5 +1,7 @@
 'use client';
 
+import { COUNT_6000, MAGIC_4000 } from "@/constants/count";
+import { FIVE_SECONDS_MS } from "@/constants/magic-numbers";
 import { useTranslations } from 'next-intl';
 import { toast as sonnerToast } from 'sonner';
 
@@ -14,28 +16,28 @@ export function useToast() {
     success: (message: string, description?: string) => {
       sonnerToast.success(message, {
         description,
-        duration: 4000,
+        duration: MAGIC_4000,
       });
     },
 
     error: (message: string, description?: string) => {
       sonnerToast.error(message, {
         description,
-        duration: 6000,
+        duration: COUNT_6000,
       });
     },
 
     info: (message: string, description?: string) => {
       sonnerToast.info(message, {
         description,
-        duration: 4000,
+        duration: MAGIC_4000,
       });
     },
 
     warning: (message: string, description?: string) => {
       sonnerToast.warning(message, {
         description,
-        duration: 5000,
+        duration: FIVE_SECONDS_MS,
       });
     },
 
@@ -45,7 +47,7 @@ export function useToast() {
       const description = t(`form.${formType}.successDescription`);
       sonnerToast.success(message, {
         description,
-        duration: 4000,
+        duration: MAGIC_4000,
       });
     },
 
@@ -57,7 +59,7 @@ export function useToast() {
       const description = error || t(`form.${formType}.errorDescription`);
       sonnerToast.error(message, {
         description,
-        duration: 6000,
+        duration: COUNT_6000,
       });
     },
 
