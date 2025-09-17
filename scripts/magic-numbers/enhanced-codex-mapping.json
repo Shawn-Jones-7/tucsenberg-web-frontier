@@ -1,0 +1,753 @@
+{
+  "0": {
+    "export": "ZERO",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "1": {
+    "export": "ONE",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "2": {
+    "export": "COUNT_PAIR",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "3": {
+    "export": "COUNT_TRIPLE",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "4": {
+    "export": "COUNT_4",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "5": {
+    "export": "COUNT_FIVE",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "6": {
+    "export": "MAGIC_6",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "7": {
+    "export": "DAYS_PER_WEEK",
+    "module": "@/constants/time",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "8": {
+    "export": "MAGIC_8",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "9": {
+    "export": "MAGIC_9",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "10": {
+    "export": "COUNT_TEN",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "12": {
+    "export": "MAGIC_12",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "14": {
+    "export": "COUNT_14",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "15": {
+    "export": "MAGIC_15",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "16": {
+    "export": "MAGIC_16",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "17": {
+    "export": "MAGIC_17",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "18": {
+    "export": "MAGIC_18",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "20": {
+    "export": "MAGIC_20",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "22": {
+    "export": "MAGIC_22",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "23": {
+    "export": "COUNT_23",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "24": {
+    "export": "HOURS_PER_DAY",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "25": {
+    "export": "PERCENTAGE_QUARTER",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "30": {
+    "export": "DAYS_PER_MONTH",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "32": {
+    "export": "MAGIC_32",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "35": {
+    "export": "COUNT_35",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "36": {
+    "export": "ALERT_SYSTEM_CONSTANTS",
+    "module": "@/constants/performance-constants",
+    "source": "src/constants/performance-constants.ts:235",
+    "type": "existing-constant",
+    "alternatives": [
+      {
+        "export": "WEB_VITALS_CONSTANTS.HASH_BASE",
+        "module": "@/constants/test-web-vitals-constants",
+        "source": "src/constants/test-web-vitals-constants.ts:70"
+      }
+    ]
+  },
+  "40": {
+    "export": "MAGIC_40",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "45": {
+    "export": "COUNT_45",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "48": {
+    "export": "MAGIC_48",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "50": {
+    "export": "PERCENTAGE_HALF",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "60": {
+    "export": "SECONDS_PER_MINUTE",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "64": {
+    "export": "MAGIC_64",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "70": {
+    "export": "MAGIC_70",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "72": {
+    "export": "MAGIC_72",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "75": {
+    "export": "MAGIC_75",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "80": {
+    "export": "MAGIC_80",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "85": {
+    "export": "MAGIC_85",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "90": {
+    "export": "ANGLE_90_DEG",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "95": {
+    "export": "MAGIC_95",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "99": {
+    "export": "MAGIC_99",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "100": {
+    "export": "PERCENTAGE_FULL",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "120": {
+    "export": "COUNT_120",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "130": {
+    "export": "PERFORMANCE_CONSTANTS",
+    "module": "@/constants/performance",
+    "source": "src/constants/performance.ts:14",
+    "type": "existing-constant"
+  },
+  "131": {
+    "export": "MAGIC_131",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "132": {
+    "export": "MAGIC_132",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "133": {
+    "export": "MAGIC_133",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "136": {
+    "export": "MAGIC_136",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "160": {
+    "export": "COUNT_160",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "190": {
+    "export": "MAGIC_190",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "200": {
+    "export": "HTTP_OK",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "250": {
+    "export": "COUNT_250",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "254": {
+    "export": "INPUT_VALIDATION_CONSTANTS",
+    "module": "@/constants/security-constants",
+    "source": "src/constants/security-constants.ts:169",
+    "type": "existing-constant"
+  },
+  "255": {
+    "export": "FILE_SECURITY_CONSTANTS",
+    "module": "@/constants/security-constants",
+    "source": "src/constants/security-constants.ts:146",
+    "type": "existing-constant"
+  },
+  "256": {
+    "export": "COUNT_256",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "300": {
+    "export": "ANIMATION_DURATION_NORMAL",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "360": {
+    "export": "ANGLE_360_DEG",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "365": {
+    "export": "DAYS_PER_YEAR",
+    "module": "@/constants/time",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "368": {
+    "export": "COUNT_368",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "400": {
+    "export": "HTTP_BAD_REQUEST",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "401": {
+    "export": "HTTP_UNAUTHORIZED",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "450": {
+    "export": "COUNT_450",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "500": {
+    "export": "ANIMATION_DURATION_SLOW",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "512": {
+    "export": "MAGIC_512",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "600": {
+    "export": "WEB_VITALS_CONSTANTS",
+    "module": "@/constants/test-web-vitals-constants",
+    "source": "src/constants/test-web-vitals-constants.ts:106",
+    "type": "existing-constant"
+  },
+  "640": {
+    "export": "BREAKPOINT_SM",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "700": {
+    "export": "COUNT_700",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "768": {
+    "export": "BREAKPOINT_MD",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "800": {
+    "export": "COUNT_800",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "999": {
+    "export": "MAGIC_999",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1000": {
+    "export": "ANIMATION_DURATION_VERY_SLOW",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "1024": {
+    "export": "BYTES_PER_KB",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "1080": {
+    "export": "TEST_APP_CONSTANTS",
+    "module": "@/constants/test-constants",
+    "source": "src/constants/test-constants.ts:157",
+    "type": "existing-constant"
+  },
+  "1280": {
+    "export": "BREAKPOINT_XL",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "1536": {
+    "export": "COUNT_1536",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1600": {
+    "export": "COUNT_1600",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1800": {
+    "export": "MAGIC_1800",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1920": {
+    "export": "BREAKPOINT_FULL_HD",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "2000": {
+    "export": "MAGIC_2000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "2500": {
+    "export": "MAGIC_2500",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "3000": {
+    "export": "THREE_SECONDS_MS",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "3600": {
+    "export": "COUNT_3600",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "4000": {
+    "export": "MAGIC_4000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "4096": {
+    "export": "MAGIC_4096",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "5000": {
+    "export": "FIVE_SECONDS_MS",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "6000": {
+    "export": "COUNT_6000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "7000": {
+    "export": "COUNT_7000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "8000": {
+    "export": "COUNT_8000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "9000": {
+    "export": "COUNT_9000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "10000": {
+    "export": "TEN_SECONDS_MS",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "12000": {
+    "export": "COUNT_12000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "15000": {
+    "export": "COUNT_15000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "30000": {
+    "export": "THIRTY_SECONDS_MS",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "45000": {
+    "export": "COUNT_45000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "60000": {
+    "export": "MINUTE_MS",
+    "module": "@/constants/magic-numbers",
+    "source": "CODEX核心常量",
+    "type": "codex-core"
+  },
+  "100000": {
+    "export": "COUNT_100000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "125000": {
+    "export": "COUNT_125000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "200000": {
+    "export": "COUNT_200000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "300000": {
+    "export": "COUNT_300000",
+    "module": "@/constants/count",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.001": {
+    "export": "DEC_0_001",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.01": {
+    "export": "DEC_0_01",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.02": {
+    "export": "DEC_0_02",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.05": {
+    "export": "DEC_0_05",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.08": {
+    "export": "DEC_0_08",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.1": {
+    "export": "MAGIC_0_1",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.15": {
+    "export": "DEC_0_15",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.2": {
+    "export": "MAGIC_0_2",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.25": {
+    "export": "MAGIC_0_25",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.3": {
+    "export": "MAGIC_0_3",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.4": {
+    "export": "DEC_0_4",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.5": {
+    "export": "MAGIC_0_5",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.6": {
+    "export": "MAGIC_0_6",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.65": {
+    "export": "DEC_0_65",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.7": {
+    "export": "MAGIC_0_7",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.75": {
+    "export": "DEC_0_75",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.8": {
+    "export": "MAGIC_0_8",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.9": {
+    "export": "MAGIC_0_9",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.94": {
+    "export": "DEC_0_94",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.95": {
+    "export": "MAGIC_0_95",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.96": {
+    "export": "DEC_0_96",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "0.99": {
+    "export": "MAGIC_0_99",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1.1": {
+    "export": "MAGIC_1_1",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "1.5": {
+    "export": "MAGIC_1_5",
+    "module": "@/constants/decimal",
+    "source": "新增领域常量",
+    "type": "domain-constant"
+  },
+  "63": {
+    "export": "HEX_MASK_6_BITS",
+    "module": "@/constants/hex",
+    "source": "src/constants/hex.ts:22",
+    "type": "existing-constant"
+  },
+  "128": {
+    "export": "HEX_MASK_HIGH_BIT",
+    "module": "@/constants/hex",
+    "source": "src/constants/hex.ts:24",
+    "type": "existing-constant"
+  }
+}
