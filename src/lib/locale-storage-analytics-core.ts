@@ -12,15 +12,7 @@ import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, HOURS_PER_DAY, 
 
 import { DAYS_PER_WEEK } from "@/constants/time";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { estimateStorageSize } from '@/lib/locale-storage-types';
-import type {
-  ErrorType,
-  LocaleDetectionHistory,
-  PriorityLevel,
-  StorageHealthCheck,
-  StorageOperationResult,
-  StorageStats,
-} from '@/lib/locale-storage-types';
+import { estimateStorageSize, type ErrorType, type PriorityLevel, type StorageHealthCheck, type StorageOperationResult, type StorageStats } from '@/lib/locale-storage-types';
 
 // ==================== 核心统计功能 ====================
 
@@ -28,18 +20,25 @@ import type {
  * 计算存储统计信息
  * Calculate storage statistics
  */
+interface UserPreferencePartial {
+  locale?: string;
+  confidence?: number;
+  lastUpdated?: number;
+  source?: string;
+}
+
+interface DetectionHistoryPartial {
+  history?: Array<{ detectedLocale?: string; locale?: string; timestamp?: number }>;
+  lastUpdated?: number;
+}
+
 export function calculateStorageStats(): StorageStats {
   const now = Date.now();
 
   // 获取所有存储的数据
-  const userPreference = LocalStorageManager.get(
-    'user-locale-preference',
-  ) as any;
-  const detectionHistory = (LocalStorageManager.get(
-    'locale-detection-history',
-  ) || { history: [], lastUpdated: ZERO }) as any;
-  const fallbackLocale = (LocalStorageManager.get('fallback-locale') ||
-    'en') as any;
+  const userPreference = LocalStorageManager.get('user-locale-preference') as UserPreferencePartial | null;
+  const detectionHistory = (LocalStorageManager.get('locale-detection-history') || { history: [], lastUpdated: ZERO }) as DetectionHistoryPartial;
+  const fallbackLocale = LocalStorageManager.get('fallback-locale');
 
   // 计算存储大小
   const userPreferenceSize = estimateStorageSize(userPreference);
@@ -48,16 +47,20 @@ export function calculateStorageStats(): StorageStats {
   const totalSize = userPreferenceSize + historySize + fallbackSize;
 
   // 计算历史记录统计
-  const historyCount = detectionHistory?.history?.length || ZERO;
-  const uniqueLocales = new Set(
-    detectionHistory?.history?.map((h: any) => h.detectedLocale) || [],
-  ).size;
+  const historyCount = Array.isArray(detectionHistory?.history) ? detectionHistory.history.length : ZERO;
+  const uniqueLocales = Array.isArray(detectionHistory?.history)
+    ? new Set(detectionHistory.history.map((h) => h.detectedLocale ?? h.locale ?? 'unknown')).size
+    : ZERO;
 
   // 计算最近活动
+  const fallbackLastUpdated =
+    typeof fallbackLocale === 'object' && fallbackLocale !== null && 'lastUpdated' in (fallbackLocale as Record<string, unknown>)
+      ? Number((fallbackLocale as { lastUpdated?: number }).lastUpdated ?? ZERO)
+      : ZERO;
   const lastActivity = Math.max(
-    userPreference?.lastUpdated || ZERO,
-    detectionHistory?.lastUpdated || ZERO,
-    fallbackLocale?.lastUpdated || ZERO,
+    userPreference?.lastUpdated ?? ZERO,
+    detectionHistory?.lastUpdated ?? ZERO,
+    fallbackLastUpdated,
   );
 
   // 计算数据新鲜度 (0-1, 1表示最新)
@@ -81,8 +84,8 @@ export function calculateStorageStats(): StorageStats {
       totalEntries: historyCount,
       uniqueLocales,
       oldestEntry:
-        detectionHistory?.history?.[historyCount - ONE]?.timestamp || ZERO,
-      newestEntry: detectionHistory?.history?.[ZERO]?.timestamp || ZERO,
+        detectionHistory?.history?.at(-ONE)?.timestamp || ZERO,
+      newestEntry: detectionHistory?.history?.at(ZERO)?.timestamp || ZERO,
     },
   };
 }
@@ -91,23 +94,7 @@ export function calculateStorageStats(): StorageStats {
  * 计算语言分布
  * Calculate locale distribution
  */
-function calculateLocaleDistribution(
-  detectionHistory: LocaleDetectionHistory | null,
-): Record<string, number> {
-  if (!detectionHistory?.history) {
-    return {};
-  }
-
-  const distribution: Record<string, number> = {};
-
-  for (const entry of detectionHistory.history) {
-    const locale =
-      (entry as any).detectedLocale || (entry as any).locale || 'unknown';
-    distribution[locale] = (distribution[locale] || ZERO) + ONE;
-  }
-
-  return distribution;
-}
+// 注：保留按需实现的 locale 分布计算；当前未使用以避免无用代码告警
 
 /**
  * 获取存储统计信息
@@ -146,70 +133,19 @@ export function getStorageStats(): StorageOperationResult<StorageStats> {
 export function calculateHealthCheck(): StorageHealthCheck {
   const stats = calculateStorageStats();
   const availability = checkStorageAvailability();
-
-  // 计算健康分数 (0-1)
+  type Issue = { type: ErrorType; severity: PriorityLevel; message: string; timestamp: number };
   let healthScore = ONE;
-  const issues: Array<{
-    type: ErrorType;
-    severity: PriorityLevel;
-    message: string;
-    timestamp: number;
-  }> = [];
+  const issues: Issue[] = [];
 
-  // 检查存储可用性
-  if (!availability.localStorageAvailable) {
-    healthScore -= DEC_0_4;
-    issues.push({
-      type: 'access_denied',
-      severity: 'high',
-      message: 'localStorage不可用',
-      timestamp: Date.now(),
-    });
-  }
+  const apply = (delta: number, newIssues: Issue[]) => {
+    healthScore -= delta;
+    issues.push(...newIssues);
+  };
 
-  if (!availability.cookiesAvailable) {
-    healthScore -= MAGIC_0_2;
-    issues.push({
-      type: 'access_denied',
-      severity: 'medium',
-      message: 'Cookies不可用',
-      timestamp: Date.now(),
-    });
-  }
-
-  // 检查数据新鲜度
-  if (stats.freshness < MAGIC_0_5) {
-    healthScore -= MAGIC_0_2;
-    issues.push({
-      type: 'validation_error',
-      severity: 'medium',
-      message: '数据过期',
-      timestamp: Date.now(),
-    });
-  }
-
-  // 检查存储大小
-  const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB
-  if (stats.totalSize > maxSize * MAGIC_0_8) {
-    healthScore -= MAGIC_0_1;
-    issues.push({
-      type: 'storage_full',
-      severity: 'medium',
-      message: '存储空间使用过多',
-      timestamp: Date.now(),
-    });
-  }
-
-  // 检查历史记录数量
-  if (stats.historyStats.totalEntries > ANIMATION_DURATION_VERY_SLOW) {
-    healthScore -= MAGIC_0_1;
-    issues.push({
-      type: 'validation_error',
-      severity: 'low',
-      message: '历史记录过多',
-      timestamp: Date.now(),
-    });
-  }
+  apply(...checkAvailabilityIssues(availability));
+  apply(...checkFreshnessIssue(stats));
+  apply(...checkSizeIssue(stats));
+  apply(...checkHistoryIssue(stats));
 
   // 确定健康状态
   let status: 'healthy' | 'warning' | 'error';
@@ -239,6 +175,45 @@ export function calculateHealthCheck(): StorageHealthCheck {
     },
     lastCheck: Date.now(),
   };
+}
+
+function checkAvailabilityIssues(availability: {
+  localStorageAvailable: boolean;
+  cookiesAvailable: boolean;
+}): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+  const list: Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }> = [];
+  let delta = ZERO;
+  if (!availability.localStorageAvailable) {
+    delta += DEC_0_4;
+    list.push({ type: 'access_denied', severity: 'high', message: 'localStorage不可用', timestamp: Date.now() });
+  }
+  if (!availability.cookiesAvailable) {
+    delta += MAGIC_0_2;
+    list.push({ type: 'access_denied', severity: 'medium', message: 'Cookies不可用', timestamp: Date.now() });
+  }
+  return [delta, list];
+}
+
+function checkFreshnessIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+  if (stats.freshness < MAGIC_0_5) {
+    return [MAGIC_0_2, [{ type: 'validation_error', severity: 'medium', message: '数据过期', timestamp: Date.now() }]];
+  }
+  return [ZERO, []];
+}
+
+function checkSizeIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+  const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB
+  if (stats.totalSize > maxSize * MAGIC_0_8) {
+    return [MAGIC_0_1, [{ type: 'storage_full', severity: 'medium', message: '存储空间使用过多', timestamp: Date.now() }]];
+  }
+  return [ZERO, []];
+}
+
+function checkHistoryIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+  if (stats.historyStats.totalEntries > ANIMATION_DURATION_VERY_SLOW) {
+    return [MAGIC_0_1, [{ type: 'validation_error', severity: 'low', message: '历史记录过多', timestamp: Date.now() }]];
+  }
+  return [ZERO, []];
 }
 
 /**
@@ -303,47 +278,7 @@ function checkStorageAvailability(): {
  * 生成健康建议
  * Generate health recommendations
  */
-function generateHealthRecommendations(
-  healthScore: number,
-  issues: Array<{
-    type: ErrorType;
-    severity: PriorityLevel;
-    message: string;
-    timestamp: number;
-  }>,
-): string[] {
-  const recommendations: string[] = [];
-
-  if (healthScore < MAGIC_0_5) {
-    recommendations.push('建议立即检查存储系统配置');
-  }
-
-  if (issues.some((issue) => issue.message === 'localStorage不可用')) {
-    recommendations.push('检查浏览器设置，确保localStorage已启用');
-  }
-
-  if (issues.some((issue) => issue.message === 'Cookies不可用')) {
-    recommendations.push('检查浏览器Cookie设置');
-  }
-
-  if (issues.some((issue) => issue.message === '数据过期')) {
-    recommendations.push('考虑清理过期数据或更新数据');
-  }
-
-  if (issues.some((issue) => issue.message === '存储空间使用过多')) {
-    recommendations.push('清理不必要的历史记录');
-  }
-
-  if (issues.some((issue) => issue.message === '历史记录过多')) {
-    recommendations.push('定期清理旧的检测历史记录');
-  }
-
-  if (recommendations.length === ZERO) {
-    recommendations.push('系统运行正常，建议定期监控');
-  }
-
-  return recommendations;
-}
+// 备注：健康建议生成函数按需实现，避免未使用告警
 
 /**
  * 执行健康检查

@@ -350,6 +350,22 @@ export type PreloaderMiddleware = (
 ) => Promise<Messages>;
 
 /**
+ * 预加载策略名称（受控联合）
+ * Preload strategy name (controlled union)
+ */
+export type PreloadStrategyName =
+  | 'immediate'
+  | 'smart'
+  | 'progressive'
+  | 'priority'
+  | 'lazy'
+  | 'batch'
+  | 'adaptive'
+  | 'networkAware'
+  | 'timeAware'
+  | 'memoryAware';
+
+/**
  * 预加载器插件接口
  * Preloader plugin interface
  */
@@ -367,50 +383,63 @@ export interface PreloaderPlugin {
  * 预加载器错误类型
  * Preloader error types
  */
+export interface PreloaderErrorParams {
+  message: string;
+  locale?: Locale;
+  code?: string;
+  retryable?: boolean;
+}
+
 export class PreloaderError extends Error {
-  constructor(
-    message: string,
-    public locale?: Locale,
-    public code?: string,
-    public retryable: boolean = true,
-  ) {
-    super(message);
+  public locale: Locale | undefined;
+  public code: string | undefined;
+  public retryable: boolean;
+
+  constructor(params: PreloaderErrorParams) {
+    super(params.message);
     this.name = 'PreloaderError';
+    if (params.locale !== undefined) {
+      this.locale = params.locale;
+    }
+    if (params.code !== undefined) {
+      this.code = params.code;
+    }
+    this.retryable = params.retryable ?? true;
   }
 }
 
 export class PreloaderTimeoutError extends PreloaderError {
   constructor(locale: Locale, timeout: number) {
-    super(
-      `Preload timeout for locale ${locale} after ${timeout}ms`,
+    super({
+      message: `Preload timeout for locale ${locale} after ${timeout}ms`,
       locale,
-      'TIMEOUT',
-      true,
-    );
+      code: 'TIMEOUT',
+      retryable: true,
+    });
     this.name = 'PreloaderTimeoutError';
   }
 }
 
 export class PreloaderNetworkError extends PreloaderError {
   constructor(locale: Locale, originalError: Error) {
-    super(
-      `Network error while preloading ${locale}: ${originalError.message}`,
+    super({
+      message: `Network error while preloading ${locale}: ${originalError.message}`,
       locale,
-      'NETWORK',
-      true,
-    );
+      code: 'NETWORK',
+      retryable: true,
+    });
     this.name = 'PreloaderNetworkError';
   }
 }
 
 export class PreloaderCacheError extends PreloaderError {
   constructor(locale: Locale, operation: string) {
-    super(
-      `Cache error during ${operation} for locale ${locale}`,
+    super({
+      message: `Cache error during ${operation} for locale ${locale}`,
       locale,
-      'CACHE',
-      false,
-    );
+      code: 'CACHE',
+      retryable: false,
+    });
     this.name = 'PreloaderCacheError';
   }
 }

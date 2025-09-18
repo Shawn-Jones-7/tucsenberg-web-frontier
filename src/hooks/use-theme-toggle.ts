@@ -26,16 +26,23 @@ function useMounted() {
 /**
  * 创建主题切换处理函数
  */
-function createThemeChangeHandler(
+function createThemeChangeHandler(args: {
   setCircularTheme: (
     _theme: string,
     _event?: React.MouseEvent<HTMLElement>,
-  ) => void,
-  announceSwitching: () => void,
-  announceThemeChange: (_theme: string) => void,
-  prefersReducedMotion: boolean,
-  setIsOpen: (_open: boolean) => void,
-) {
+  ) => void;
+  announceSwitching: () => void;
+  announceThemeChange: (_theme: string) => void;
+  prefersReducedMotion: boolean;
+  setIsOpen: (_open: boolean) => void;
+}) {
+  const {
+    setCircularTheme,
+    announceSwitching,
+    announceThemeChange,
+    prefersReducedMotion,
+    setIsOpen,
+  } = args;
   return (newTheme: string, event?: React.MouseEvent<HTMLElement>) => {
     // 播报切换状态
     announceSwitching();
@@ -80,13 +87,13 @@ export function useThemeToggle() {
   // 处理主题切换
   const handleThemeChange = useCallback(
     (newTheme: string, event?: React.MouseEvent<HTMLElement>) => {
-      const handler = createThemeChangeHandler(
+      const handler = createThemeChangeHandler({
         setCircularTheme,
         announceSwitching,
         announceThemeChange,
         prefersReducedMotion,
         setIsOpen,
-      );
+      });
       handler(newTheme, event);
     },
     [

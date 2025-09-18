@@ -38,6 +38,9 @@ export const MILLISECONDS_PER_HOUR = 3600000 as const;
 // 常用时间间隔 (毫秒)
 // ============================================================================
 
+export const HALF_SECOND_MS = 500;
+export const TWO_HUNDRED_MS = 200;
+export const FOUR_HUNDRED_MS = 400;
 export const ONE_SECOND_MS = 1000;
 export const TWO_SECONDS_MS = MAGIC_2000;
 export const THREE_SECONDS_MS = 3000;

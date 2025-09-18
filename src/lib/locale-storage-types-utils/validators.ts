@@ -4,6 +4,7 @@
  */
 
 import { BaseValidators } from '@/lib/locale-storage-types-base';
+import { safeGetArrayItem } from '@/lib/security-object-access';
 import { MAGIC_0_3, MAGIC_0_9, ONE, ZERO } from '@/constants';
 
 import type {
@@ -27,76 +28,57 @@ export function validatePreference(
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // 验证必需字段
-  if (!BaseValidators.isValidLocale(preference.locale)) {
-    errors.push('Invalid locale');
-  }
+  validateRequiredFields(preference, errors);
+  validateMetadata(preference, warnings, errors);
 
-  if (!BaseValidators.isValidSource(preference.source)) {
-    errors.push('Invalid source');
-  }
-
-  if (!BaseValidators.isValidTimestamp(preference.timestamp)) {
-    errors.push('Invalid timestamp');
-  }
-
-  if (!BaseValidators.isValidConfidence(preference.confidence)) {
-    errors.push('Invalid confidence value');
-  }
-
-  // 验证元数据
-  if (preference.metadata) {
-    if (typeof preference.metadata !== 'object') {
-      errors.push('Metadata must be an object');
-    } else {
-      // 验证用户代理
-      if (
-        preference.metadata.userAgent &&
-        typeof preference.metadata.userAgent !== 'string'
-      ) {
-        warnings.push('User agent should be a string');
-      }
-
-      // 验证IP国家
-      if (
-        preference.metadata.ipCountry &&
-        typeof preference.metadata.ipCountry !== 'string'
-      ) {
-        warnings.push('IP country should be a string');
-      }
-
-      // 验证浏览器语言
-      if (
-        preference.metadata.browserLanguages &&
-        !Array.isArray(preference.metadata.browserLanguages)
-      ) {
-        warnings.push('Browser languages should be an array');
-      }
-
-      // 验证时区
-      if (
-        preference.metadata.timezone &&
-        typeof preference.metadata.timezone !== 'string'
-      ) {
-        warnings.push('Timezone should be a string');
-      }
-    }
-  }
-
-  // 验证置信度与来源的一致性
+  // 置信度与来源的一致性
   if (preference.source === 'user' && preference.confidence < MAGIC_0_9) {
     warnings.push('User-selected preferences should have high confidence');
   }
-
   if (preference.source === 'fallback' && preference.confidence > MAGIC_0_3) {
     warnings.push('Fallback preferences should have low confidence');
   }
 
-  return {
-    isValid: errors.length === ZERO,
-    errors,
-    warnings,
-  };
+  return { isValid: errors.length === ZERO, errors, warnings };
+}
+
+function validateRequiredFields(preference: UserLocalePreference, errors: string[]): void {
+  if (!BaseValidators.isValidLocale(preference.locale)) {
+    errors.push('Invalid locale');
+  }
+  if (!BaseValidators.isValidSource(preference.source)) {
+    errors.push('Invalid source');
+  }
+  if (!BaseValidators.isValidTimestamp(preference.timestamp)) {
+    errors.push('Invalid timestamp');
+  }
+  if (!BaseValidators.isValidConfidence(preference.confidence)) {
+    errors.push('Invalid confidence value');
+  }
+}
+
+function validateMetadata(
+  preference: UserLocalePreference,
+  warnings: string[],
+  errors: string[],
+): void {
+  if (!preference.metadata) return;
+  if (typeof preference.metadata !== 'object') {
+    errors.push('Metadata must be an object');
+    return;
+  }
+  if (preference.metadata.userAgent && typeof preference.metadata.userAgent !== 'string') {
+    warnings.push('User agent should be a string');
+  }
+  if (preference.metadata.ipCountry && typeof preference.metadata.ipCountry !== 'string') {
+    warnings.push('IP country should be a string');
+  }
+  if (preference.metadata.browserLanguages && !Array.isArray(preference.metadata.browserLanguages)) {
+    warnings.push('Browser languages should be an array');
+  }
+  if (preference.metadata.timezone && typeof preference.metadata.timezone !== 'string') {
+    warnings.push('Timezone should be a string');
+  }
 }
 
 /**
@@ -139,8 +121,8 @@ export function validateDetectionHistory(
 
     // 验证时间顺序
     for (let i = ONE; i < history.detections.length; i++) {
-      const current = history.detections[i];
-      const previous = history.detections[i - ONE];
+      const current = safeGetArrayItem(history.detections, i);
+      const previous = safeGetArrayItem(history.detections, i - ONE);
       if (current && previous && current.timestamp < previous.timestamp) {
         warnings.push('Detections are not in chronological order');
         break;

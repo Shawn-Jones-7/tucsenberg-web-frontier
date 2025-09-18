@@ -49,13 +49,13 @@ export class WhatsAppService {
   }
 
   // 消息发送方法代理
-  async sendMessage(
+  sendMessage(
     message: SendMessageRequest,
   ): Promise<WhatsAppServiceResponse> {
     return this.messageService.sendMessage(message);
   }
 
-  async sendTextMessage(
+  sendTextMessage(
     to: string,
     text: string,
     previewUrl?: boolean,
@@ -63,7 +63,7 @@ export class WhatsAppService {
     return this.messageService.sendTextMessage(to, text, previewUrl);
   }
 
-  async sendImageMessage(
+  sendImageMessage(
     to: string,
     imageUrl: string,
     caption?: string,
@@ -71,65 +71,48 @@ export class WhatsAppService {
     return this.messageService.sendImageMessage(to, imageUrl, caption);
   }
 
-  async sendTemplateMessage(
-    to: string,
-    templateName: string,
-    languageCode: string,
-    parameters?: string[],
-  ): Promise<WhatsAppServiceResponse> {
-    return this.messageService.sendTemplateMessage(
-      to,
-      templateName,
-      languageCode,
-      parameters,
-    );
+  sendTemplateMessage(args: {
+    to: string;
+    templateName: string;
+    languageCode: string;
+    parameters?: string[];
+  }): Promise<WhatsAppServiceResponse> {
+    return this.messageService.sendTemplateMessage(args);
   }
 
-  async sendButtonMessage(
-    to: string,
-    bodyText: string,
-    buttons: Array<{ id: string; title: string }>,
-    headerText?: string,
-    footerText?: string,
-  ): Promise<WhatsAppServiceResponse> {
-    return this.messageService.sendButtonMessage(
-      to,
-      bodyText,
-      buttons,
-      headerText,
-      footerText,
-    );
+  sendButtonMessage(args: {
+    to: string;
+    bodyText: string;
+    buttons: Array<{ id: string; title: string }>;
+    headerText?: string;
+    footerText?: string;
+  }): Promise<WhatsAppServiceResponse> {
+    return this.messageService.sendButtonMessage(args);
   }
 
-  async sendListMessage(
-    to: string,
-    bodyText: string,
-    buttonText: string,
+  sendListMessage(args: {
+    to: string;
+    bodyText: string;
+    buttonText: string;
     sections: Array<{
       title?: string;
       rows: Array<{ id: string; title: string; description?: string }>;
-    }>,
-    options?: { headerText?: string; footerText?: string },
-  ): Promise<WhatsAppServiceResponse> {
-    return this.messageService.sendListMessage(
-      to,
-      bodyText,
-      buttonText,
-      sections,
-      options,
-    );
+    }>;
+    options?: { headerText?: string; footerText?: string };
+  }): Promise<WhatsAppServiceResponse> {
+    return this.messageService.sendListMessage(args);
   }
 
   // 媒体处理方法代理
-  async getMediaUrl(mediaId: string): Promise<string | null> {
+  getMediaUrl(mediaId: string): Promise<string | null> {
     return this.mediaService.getMediaUrl(mediaId);
   }
 
-  async downloadMedia(mediaId: string): Promise<Buffer | null> {
+  downloadMedia(mediaId: string): Promise<Buffer | null> {
     return this.mediaService.downloadMedia(mediaId);
   }
 
-  async uploadMedia(
+  uploadMedia(
     file: Buffer | Blob,
     type: 'image' | 'document' | 'audio' | 'video' | 'sticker',
     filename?: string,

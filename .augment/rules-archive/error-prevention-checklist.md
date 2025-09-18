@@ -69,7 +69,7 @@ export function Component({ children, className = '', onClick }: ComponentProps)
 ### Automated Checks
 
 ```bash
-npm run type-check && npm run lint && npm run build && npm run test && npm run test:a11y
+pnpm type-check && pnpm lint && pnpm build && pnpm test && pnpm test:a11y
 ```
 
 ### Manual Verification Checklist

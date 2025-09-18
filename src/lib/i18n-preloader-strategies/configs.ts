@@ -4,18 +4,17 @@
  */
 
 import { COUNT_12000, COUNT_15000, COUNT_4, COUNT_7000, COUNT_800, COUNT_8000, COUNT_9000 } from "@/constants/count";
-import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, FIVE_SECONDS_MS, ONE, PERCENTAGE_FULL, TEN_SECONDS_MS, ZERO } from '@/constants';
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, FIVE_SECONDS_MS, FOUR_HUNDRED_MS, HALF_SECOND_MS, ONE, PERCENTAGE_FULL, TEN_SECONDS_MS, TWO_HUNDRED_MS, ZERO } from '@/constants';
 
 import { DEC_0_15, MAGIC_0_1, MAGIC_0_2, MAGIC_0_25, MAGIC_0_3, MAGIC_0_5, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
-import type { PreloadStrategyConfig } from '@/lib/i18n-preloader-types';
+import type { PreloadStrategyConfig, PreloadStrategyName } from '@/lib/i18n-preloader-types';
 import { WEB_VITALS_CONSTANTS } from "@/constants/test-web-vitals-constants";
-const {TEST_DOM_INTERACTIVE} = WEB_VITALS_CONSTANTS;
 
 /**
  * 预加载策略配置
  * Preload strategy configurations
  */
-export const strategyConfigs: Record<string, PreloadStrategyConfig> = {
+export const strategyConfigs: Record<PreloadStrategyName, PreloadStrategyConfig> = {
   immediate: {
     name: 'immediate',
     description: '立即预加载所有语言',
@@ -56,7 +55,7 @@ export const strategyConfigs: Record<string, PreloadStrategyConfig> = {
     },
     parameters: {
       batchSize: ONE,
-      delayBetweenBatches: 500,
+      delayBetweenBatches: HALF_SECOND_MS,
       maxConcurrency: COUNT_PAIR,
       timeout: TEN_SECONDS_MS,
     },
@@ -71,7 +70,7 @@ export const strategyConfigs: Record<string, PreloadStrategyConfig> = {
     },
     parameters: {
       batchSize: COUNT_PAIR,
-      delayBetweenBatches: 200,
+      delayBetweenBatches: TWO_HUNDRED_MS,
       maxConcurrency: COUNT_TRIPLE,
       timeout: COUNT_7000,
     },
@@ -128,7 +127,7 @@ export const strategyConfigs: Record<string, PreloadStrategyConfig> = {
     },
     parameters: {
       batchSize: COUNT_PAIR,
-      delayBetweenBatches: 400,
+      delayBetweenBatches: FOUR_HUNDRED_MS,
       maxConcurrency: COUNT_TRIPLE,
       timeout: COUNT_8000,
     },

@@ -4,7 +4,7 @@
  */
 
 import { env } from '@/../env.mjs';
-import { ONE, ZERO } from "@/constants";
+import { ZERO } from "@/constants";
 import { logger } from '@/lib/logger';
 
 /**
@@ -46,9 +46,13 @@ export function getWebSecurityHeaders(nonce?: string): Record<string, string> {
  * Generate Content Security Policy
  */
 export function generateCSP(nonce?: string): string {
+  const scriptPolicy = nonce
+    ? `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`
+    : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com";
+
   const policies = [
     "default-src 'self'",
-    "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com",
+    scriptPolicy,
     "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "font-src 'self' https://fonts.gstatic.com",
     "img-src 'self' data: https: blob:",
@@ -60,15 +64,6 @@ export function generateCSP(nonce?: string): string {
     "frame-ancestors 'self'",
     'upgrade-insecure-requests',
   ];
-
-  if (nonce) {
-    // Replace 'unsafe-inline' with nonce for scripts
-    const scriptIndex = policies.findIndex((p) => p.startsWith('script-src'));
-    if (scriptIndex !== -ONE) {
-      policies[scriptIndex] =
-        `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`;
-    }
-  }
 
   return policies.join('; ');
 }
@@ -277,10 +272,9 @@ export function validateSecurityHeaders(headers: Record<string, string>): {
     'Permissions-Policy',
   ];
 
-  const missing = requiredHeaders.filter((header) => !headers[header]);
-  const recommendations = recommendedHeaders.filter(
-    (header) => !headers[header],
-  );
+  const headerKeys = new Set(Object.keys(headers));
+  const missing = requiredHeaders.filter((header) => !headerKeys.has(header));
+  const recommendations = recommendedHeaders.filter((header) => !headerKeys.has(header));
 
   return {
     valid: missing.length === ZERO,

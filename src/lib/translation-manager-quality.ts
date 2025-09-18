@@ -42,78 +42,23 @@ export class TranslationQualityManager {
     translations: Partial<Record<Locale, Record<string, unknown>>>,
   ): Promise<ValidationReport> {
     const issues: QualityIssue[] = [];
-    const byLocale: Record<Locale, LocaleQualityReport> = {} as Record<
-      Locale,
-      LocaleQualityReport
-    >;
+    const byLocale: Record<Locale, LocaleQualityReport> = {} as Record<Locale, LocaleQualityReport>;
 
     for (const locale of this.config.locales) {
-      const localeTranslations =
-        TranslationManagerSecurity.getTranslationsForLocale(
-          translations,
-          locale,
-        );
-      const flatTranslations = flattenTranslations(localeTranslations);
+      const { localeReport, collectedIssues } = await this.processLocale(translations, locale);
+      issues.push(...collectedIssues);
 
-      // 检查缺失的翻译
-      const missingKeys = this.findMissingTranslations(
-        flatTranslations,
-        locale,
-      );
-      issues.push(...missingKeys);
-
-      // 检查空翻译
-      const emptyKeys = this.findEmptyTranslations(flatTranslations, locale);
-      issues.push(...emptyKeys);
-
-      // 质量检查 - 对每个翻译键进行检查
-      const qualityIssues: QualityIssue[] = [];
-      for (const [key, translation] of Object.entries(flatTranslations)) {
-        if (translation && typeof translation === 'string') {
-          const qualityResult = await this.qualityChecker.checkLingoTranslation(
-            key,
-            translation,
-          );
-          qualityIssues.push(...qualityResult.issues);
-        }
+      // 安全赋值：避免动态索引
+      switch (locale) {
+        case 'en':
+          byLocale.en = localeReport;
+          break;
+        case 'zh':
+          byLocale.zh = localeReport;
+          break;
+        default:
+          break;
       }
-      issues.push(...qualityIssues);
-
-      // 生成本地化报告
-      const qualityScore = this.calculateQualityScore(
-        flatTranslations,
-        qualityIssues,
-      );
-      const totalKeys = Object.keys(flatTranslations).length;
-      const translatedKeysCount = Object.keys(flatTranslations).filter(
-        (key) =>
-          !isEmptyTranslation(
-            TranslationManagerSecurity.getTranslationValue(
-              flatTranslations,
-              key,
-            ) || '',
-          ),
-      ).length;
-
-      const localeReport: LocaleQualityReport = {
-        locale,
-        totalKeys,
-        validKeys: translatedKeysCount,
-        translatedKeys: translatedKeysCount,
-        missingKeys: missingKeys.length,
-        emptyKeys: emptyKeys.length,
-        issues: qualityIssues,
-        score: qualityScore.score,
-        timestamp: new Date().toISOString(),
-        confidence: qualityScore.confidence,
-        suggestions: generateSuggestions(qualityIssues),
-      };
-
-      TranslationManagerSecurity.setQualityScoreForLocale(
-        byLocale,
-        locale,
-        qualityScore,
-      );
     }
 
     const overallScore =
@@ -144,7 +89,7 @@ export class TranslationQualityManager {
     translations: Partial<Record<Locale, Record<string, unknown>>>,
   ): Promise<QualityReport> {
     const validation = await this.validateTranslations(translations);
-    const trends = await this.getQualityTrends();
+    const trends = this.getQualityTrends();
 
     // 计算整体质量分数
     const overall: QualityScore = {
@@ -154,16 +99,36 @@ export class TranslationQualityManager {
       suggestions: generateSuggestions(validation.issues),
     };
 
-    // 从验证报告中提取byLocale数据
+    // 从验证报告中提取 byLocale 数据（安全白名单写入，避免对象注入）
     const byLocale = {} as Record<Locale, QualityScore>;
-    Object.entries(validation.byLocale).forEach(([locale, report]) => {
-      byLocale[locale as Locale] = {
-        score: report.score,
-        confidence: report.confidence,
-        issues: report.issues,
-        suggestions: report.suggestions,
-      };
-    });
+    const assignByLocale = (loc: Locale, report: LocaleQualityReport) => {
+      switch (loc) {
+        case 'en':
+          byLocale.en = {
+            score: report.score,
+            confidence: report.confidence,
+            issues: report.issues,
+            suggestions: report.suggestions,
+          };
+          break;
+        case 'zh':
+          byLocale.zh = {
+            score: report.score,
+            confidence: report.confidence,
+            issues: report.issues,
+            suggestions: report.suggestions,
+          };
+          break;
+        default:
+          break;
+      }
+    };
+    if (Object.prototype.hasOwnProperty.call(validation.byLocale, 'en')) {
+      assignByLocale('en', validation.byLocale.en);
+    }
+    if (Object.prototype.hasOwnProperty.call(validation.byLocale, 'zh')) {
+      assignByLocale('zh', validation.byLocale.zh);
+    }
 
     return {
       overall,
@@ -219,11 +184,8 @@ export class TranslationQualityManager {
   ): QualityIssue[] {
     const issues: QualityIssue[] = [];
 
-    for (const key in flatTranslations) {
-      if (!Object.prototype.hasOwnProperty.call(flatTranslations, key)) {
-        continue;
-      }
-
+    // 使用 Object.keys 白名单遍历避免原型污染影响 for..in
+    for (const key of Object.keys(flatTranslations)) {
       if (!TranslationManagerSecurity.isValidTranslationKey(key)) {
         continue;
       }
@@ -320,9 +282,61 @@ export class TranslationQualityManager {
   /**
    * 获取质量趋势
    */
-  private async getQualityTrends(): Promise<QualityTrend[]> {
+  private getQualityTrends(): QualityTrend[] {
     // 这里可以实现质量趋势分析
     // 例如从历史数据中获取质量变化趋势
-    return Promise.resolve([]);
+    return [];
+  }
+
+  /**
+   * 处理单个语言的质量分析，降低 validateTranslations 语句数
+   */
+  private async processLocale(
+    translations: Partial<Record<Locale, Record<string, unknown>>>,
+    locale: Locale,
+  ): Promise<{ localeReport: LocaleQualityReport; collectedIssues: QualityIssue[] }> {
+    const collectedIssues: QualityIssue[] = [];
+    const localeTranslations = TranslationManagerSecurity.getTranslationsForLocale(translations, locale);
+    const flatTranslations = flattenTranslations(localeTranslations);
+
+    // 检查缺失与空翻译
+    const missingKeys = this.findMissingTranslations(flatTranslations, locale);
+    const emptyKeys = this.findEmptyTranslations(flatTranslations, locale);
+    collectedIssues.push(...missingKeys, ...emptyKeys);
+
+    // 逐键质量检查
+    const qualityIssues: QualityIssue[] = [];
+    for (const [key, translation] of Object.entries(flatTranslations)) {
+      if (translation && typeof translation === 'string') {
+        const qualityResult = await this.qualityChecker.checkLingoTranslation(key, translation);
+        qualityIssues.push(...qualityResult.issues);
+      }
+    }
+    collectedIssues.push(...qualityIssues);
+
+    // 生成本地化报告
+    const qualityScore = this.calculateQualityScore(flatTranslations, qualityIssues);
+    const totalKeys = Object.keys(flatTranslations).length;
+    const translatedKeysCount = Object.keys(flatTranslations).filter((key) =>
+      !isEmptyTranslation(
+        TranslationManagerSecurity.getTranslationValue(flatTranslations, key) || '',
+      ),
+    ).length;
+
+    const localeReport: LocaleQualityReport = {
+      locale,
+      totalKeys,
+      validKeys: translatedKeysCount,
+      translatedKeys: translatedKeysCount,
+      missingKeys: missingKeys.length,
+      emptyKeys: emptyKeys.length,
+      issues: qualityIssues,
+      score: qualityScore.score,
+      timestamp: new Date().toISOString(),
+      confidence: qualityScore.confidence,
+      suggestions: generateSuggestions(qualityIssues),
+    };
+
+    return { localeReport, collectedIssues };
   }
 }

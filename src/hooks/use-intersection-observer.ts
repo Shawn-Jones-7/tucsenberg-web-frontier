@@ -77,12 +77,13 @@ const DEFAULT_OPTIONS: Required<Omit<IntersectionObserverOptions, 'root'>> = {
 /**
  * 处理可见性状态的辅助函数
  */
-function setVisibilityState(
-  setIsVisible: (_visible: boolean) => void,
-  setHasBeenVisible: (_visible: boolean) => void,
-  hasBeenVisibleRef: { current: boolean },
-  visible: boolean,
-) {
+function setVisibilityState(args: {
+  setIsVisible: (_visible: boolean) => void;
+  setHasBeenVisible: (_visible: boolean) => void;
+  hasBeenVisibleRef: { current: boolean };
+  visible: boolean;
+}) {
+  const { setIsVisible, setHasBeenVisible, hasBeenVisibleRef, visible } = args;
   setIsVisible(visible);
   setHasBeenVisible(visible);
   hasBeenVisibleRef.current = visible;
@@ -91,19 +92,20 @@ function setVisibilityState(
 /**
  * 创建 IntersectionObserver 的辅助函数
  */
-function createObserver(
-  element: HTMLElement,
+function createObserver(args: {
+  element: HTMLElement;
   handleIntersection: (
     _entries: IntersectionObserverEntry[],
     _observer: IntersectionObserver,
-  ) => void,
+  ) => void;
   config: IntersectionObserverOptions & {
     threshold: number;
     rootMargin: string;
     triggerOnce: boolean;
-  },
-  fallbackToVisible: () => void,
-): (() => void) | null {
+  };
+  fallbackToVisible: () => void;
+}): (() => void) | null {
+  const { element, handleIntersection, config, fallbackToVisible } = args;
   try {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -157,7 +159,7 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLElement>(
 
   const handleIntersection = useCallback(
     (entries: IntersectionObserverEntry[], observer: IntersectionObserver) => {
-      const entry = entries.length > ZERO ? entries[ZERO] : null;
+      const entry = entries.length > 0 ? entries[0] : null;
       if (!entry) return;
 
       const isCurrentlyVisible = entry.isIntersecting;
@@ -181,12 +183,12 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLElement>(
     if (!element) return undefined;
 
     const fallbackToVisible = () =>
-      setVisibilityState(
+      setVisibilityState({
         setIsVisible,
         setHasBeenVisible,
         hasBeenVisibleRef,
-        true,
-      );
+        visible: true,
+      });
 
     if (
       prefersReducedMotion ||
@@ -206,8 +208,12 @@ export function useIntersectionObserver<T extends HTMLElement = HTMLElement>(
     };
 
     return (
-      createObserver(element, handleIntersection, config, fallbackToVisible) ||
-      undefined
+      createObserver({
+        element,
+        handleIntersection,
+        config,
+        fallbackToVisible,
+      }) || undefined
     );
   }, [
     element,

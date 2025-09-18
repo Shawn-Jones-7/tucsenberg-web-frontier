@@ -45,10 +45,11 @@ export const CacheKeyUtils = {
     key?: string;
   } {
     const parts = cacheKey.split(':');
+    const [loc, ns, k] = parts;
     return {
-      locale: parts[ZERO] as Locale,
-      ...(parts[ONE] && { namespace: parts[ONE] }),
-      ...(parts[COUNT_PAIR] && { key: parts[COUNT_PAIR] }),
+      locale: (loc ?? '') as Locale,
+      ...(ns ? { namespace: ns } : {}),
+      ...(k ? { key: k } : {}),
     };
   },
 
@@ -168,16 +169,18 @@ export const CacheSizeUtils = {
    * Format byte size
    */
   formatBytes(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB', 'TB'];
     let size = bytes;
-    let unitIndex = ZERO;
-
-    while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
+    let unitIndex = 0;
+    while (size >= BYTES_PER_KB && unitIndex < 4) {
       size /= BYTES_PER_KB;
-      unitIndex += ONE;
+      unitIndex += 1;
     }
-
-    return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
+    const unitLabel =
+      unitIndex === 0 ? 'B' :
+      unitIndex === 1 ? 'KB' :
+      unitIndex === 2 ? 'MB' :
+      unitIndex === 3 ? 'GB' : 'TB';
+    return `${size.toFixed(COUNT_PAIR)} ${unitLabel}`;
   },
 
   /**
@@ -185,22 +188,45 @@ export const CacheSizeUtils = {
    * Parse size string
    */
   parseSize(sizeStr: string): number {
-    const units: Record<string, number> = {
-      B: ONE,
-      KB: BYTES_PER_KB,
-      MB: BYTES_PER_KB * BYTES_PER_KB,
-      GB: BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB,
-      TB: BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB,
-    };
+    const upper = sizeStr.trim().toUpperCase();
+    const units = ['B', 'KB', 'MB', 'GB', 'TB'] as const;
+    const unit = units.find((u) => upper.endsWith(u));
+    if (!unit) throw new Error(`Invalid size format: ${sizeStr}`);
 
-    const match = sizeStr.match(/^(\d+(?:\.\d+)?)\s*(B|KB|MB|GB|TB)$/i);
-    if (!match) throw new Error(`Invalid size format: ${sizeStr}`);
+    const numberPart = upper.slice(0, -unit.length).trim();
+    // Validate numberPart without regex: digits with at most one dot
+    let dotCount = 0;
+    for (let i = 0; i < numberPart.length; i++) {
+      const code = numberPart.charCodeAt(i);
+      if (code === 46) { // '.'
+        dotCount += 1;
+        if (dotCount > 1) throw new Error(`Invalid size format: ${sizeStr}`);
+        continue;
+      }
+      if (code < 48 || code > 57) throw new Error(`Invalid size format: ${sizeStr}`);
+    }
+    const value = parseFloat(numberPart);
+    if (!Number.isFinite(value)) throw new Error(`Invalid size format: ${sizeStr}`);
 
-    const [, value, unit] = match;
-    if (!value || !unit) throw new Error(`Invalid size format: ${sizeStr}`);
-    return (
-      parseFloat(value) * (units[unit.toUpperCase() as keyof typeof units] || ONE)
-    );
+    const multiplier = (() => {
+      switch (unit) {
+        case 'B':
+          return ONE;
+        case 'KB':
+          return BYTES_PER_KB;
+        case 'MB':
+          return BYTES_PER_KB * BYTES_PER_KB;
+        case 'GB':
+          return BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB;
+        case 'TB':
+          return (
+            BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB
+          );
+        default:
+          return ONE;
+      }
+    })();
+    return value * multiplier;
   },
 } as const;
 
@@ -237,10 +263,13 @@ export const CacheStatsUtils = {
    * Generate statistics report
    */
   generateReport(stats: CacheStats): string {
-    return `Cache Statistics:
-- Size: ${stats.size} items
-- Total Hits: ${stats.totalHits}
-- Average Age: ${CacheTimeUtils.formatDuration(stats.averageAge)}`;
+    const parts = [
+      'Cache Statistics:',
+      `- Size: ${stats.size} items`,
+      `- Total Hits: ${stats.totalHits}`,
+      `- Average Age: ${CacheTimeUtils.formatDuration(stats.averageAge)}`,
+    ];
+    return parts.join('\n');
   },
 
   /**

@@ -14,15 +14,16 @@ interface FormatDateProps {
 
 const MILLISECONDS_PER_DAY = ANIMATION_DURATION_VERY_SLOW * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * HOURS_PER_DAY;
 
-const applyFractionDigits = (
-  baseOptions: Intl.NumberFormatOptions,
+const buildNumberOptions = (
+  base: Record<string, unknown>,
   minimum?: number,
   maximum?: number,
-): Intl.NumberFormatOptions => ({
-  ...baseOptions,
-  ...(typeof minimum === 'number' ? { minimumFractionDigits: minimum } : {}),
-  ...(typeof maximum === 'number' ? { maximumFractionDigits: maximum } : {}),
-});
+): Record<string, unknown> => {
+  const opts: Record<string, unknown> = { ...base };
+  if (typeof minimum === 'number') opts.minimumFractionDigits = minimum;
+  if (typeof maximum === 'number') opts.maximumFractionDigits = maximum;
+  return opts;
+};
 
 const resolveCurrency = (locale: string, fallback: string) => (locale === 'zh' ? 'CNY' : fallback);
 
@@ -103,7 +104,7 @@ const FormatNumberComponent = ({
 
   const formatValue = (): string => {
     if (type === 'currency') {
-      const options = applyFractionDigits(
+      const options = buildNumberOptions(
         {
           style: 'currency',
           currency: resolveCurrency(locale, currency),
@@ -111,22 +112,25 @@ const FormatNumberComponent = ({
         minimumFractionDigits,
         maximumFractionDigits,
       );
-      return formatter.number(value, options);
+      const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+      return num(value, options);
     }
 
     if (type === 'percentage') {
-      const options = applyFractionDigits(
+      const options = buildNumberOptions(
         {
           style: 'percent',
         },
         minimumFractionDigits,
         maximumFractionDigits,
       );
-      return formatter.number(value / PERCENTAGE_FULL, options);
+      const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+      return num(value / PERCENTAGE_FULL, options);
     }
 
-    const options = applyFractionDigits({}, minimumFractionDigits, maximumFractionDigits);
-    return formatter.number(value, options);
+    const options = buildNumberOptions({}, minimumFractionDigits, maximumFractionDigits);
+    const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+    return num(value, options);
   };
 
   const formattedNumber = formatValue();

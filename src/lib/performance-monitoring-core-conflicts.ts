@@ -24,40 +24,7 @@ export interface ToolConflictResult {
  * Tool conflict checker
  */
 export class PerformanceToolConflictChecker {
-  private _knownTools = [
-    'React DevTools',
-    'Redux DevTools',
-    'Vue DevTools',
-    'Angular DevTools',
-    'Lighthouse',
-    'Web Vitals',
-    'Performance Observer',
-    'User Timing API',
-    'Navigation Timing API',
-    'Resource Timing API',
-    'Paint Timing API',
-    'Long Tasks API',
-    'Intersection Observer',
-    'Mutation Observer',
-    'ResizeObserver',
-    'PerformanceObserver',
-    'Chrome DevTools',
-    'Firefox DevTools',
-    'Safari DevTools',
-    'Edge DevTools',
-    'Sentry',
-    'LogRocket',
-    'FullStory',
-    'Hotjar',
-    'Google Analytics',
-    'Adobe Analytics',
-    'Mixpanel',
-    'Amplitude',
-    'New Relic',
-    'DataDog',
-    'AppDynamics',
-    'Dynatrace',
-  ];
+  // 删除未使用的 _knownTools 以消除 no-underscore-dangle 与 no-unused-vars
 
   /**
    * 检查工具冲突
@@ -100,72 +67,22 @@ export class PerformanceToolConflictChecker {
   private detectGlobalTools(detectedTools: string[]): void {
     if (typeof window === 'undefined') return;
 
-    // 检查React DevTools
-    if (
-      (window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-        .__REACT_DEVTOOLS_GLOBAL_HOOK__
-    ) {
-      detectedTools.push('React DevTools');
-    }
+    const checks: Array<{ name: string; test: () => boolean }> = [
+      { name: 'React DevTools', test: () => '__REACT_DEVTOOLS_GLOBAL_HOOK__' in window },
+      { name: 'Redux DevTools', test: () => '__REDUX_DEVTOOLS_EXTENSION__' in window },
+      { name: 'Vue DevTools', test: () => '__VUE_DEVTOOLS_GLOBAL_HOOK__' in window },
+      { name: 'Angular DevTools', test: () => 'ng' in window },
+      { name: 'Sentry', test: () => 'Sentry' in window || '__SENTRY__' in window },
+      { name: 'Google Analytics', test: () => 'gtag' in window || 'ga' in window || 'dataLayer' in window },
+      { name: 'LogRocket', test: () => 'LogRocket' in window },
+      { name: 'FullStory', test: () => 'FS' in window },
+      { name: 'Hotjar', test: () => 'hj' in window },
+      { name: 'Mixpanel', test: () => 'mixpanel' in window },
+      { name: 'Amplitude', test: () => 'amplitude' in window },
+    ];
 
-    // 检查Redux DevTools
-    if (
-      (window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
-        .__REDUX_DEVTOOLS_EXTENSION__
-    ) {
-      detectedTools.push('Redux DevTools');
-    }
-
-    // 检查Vue DevTools
-    if (
-      (window as { __VUE_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-        .__VUE_DEVTOOLS_GLOBAL_HOOK__
-    ) {
-      detectedTools.push('Vue DevTools');
-    }
-
-    // 检查Angular DevTools
-    if ((window as { ng?: unknown }).ng) {
-      detectedTools.push('Angular DevTools');
-    }
-
-    // 检查Sentry
-    if (
-      (window as { Sentry?: unknown; __SENTRY__?: unknown }).Sentry ||
-      (window as { Sentry?: unknown; __SENTRY__?: unknown }).__SENTRY__
-    ) {
-      detectedTools.push('Sentry');
-    }
-
-    // 检查Google Analytics
-    if (
-      (window as { gtag?: unknown; ga?: unknown; dataLayer?: unknown }).gtag ||
-      (window as { gtag?: unknown; ga?: unknown; dataLayer?: unknown }).ga ||
-      (window as { gtag?: unknown; ga?: unknown; dataLayer?: unknown })
-        .dataLayer
-    ) {
-      detectedTools.push('Google Analytics');
-    }
-
-    // 检查其他监控工具
-    if ((window as { LogRocket?: unknown }).LogRocket) {
-      detectedTools.push('LogRocket');
-    }
-
-    if ((window as { FS?: unknown }).FS) {
-      detectedTools.push('FullStory');
-    }
-
-    if ((window as { hj?: unknown }).hj) {
-      detectedTools.push('Hotjar');
-    }
-
-    if ((window as { mixpanel?: unknown }).mixpanel) {
-      detectedTools.push('Mixpanel');
-    }
-
-    if ((window as { amplitude?: unknown }).amplitude) {
-      detectedTools.push('Amplitude');
+    for (const c of checks) {
+      if (c.test()) detectedTools.push(c.name);
     }
   }
 
@@ -221,20 +138,11 @@ export class PerformanceToolConflictChecker {
     if (isDevelopment) {
       let devToolsCount = ZERO;
 
-      if (
-        (window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-          .__REACT_DEVTOOLS_GLOBAL_HOOK__
-      )
+      if ('__REACT_DEVTOOLS_GLOBAL_HOOK__' in window)
         devToolsCount += ONE;
-      if (
-        (window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
-          .__REDUX_DEVTOOLS_EXTENSION__
-      )
+      if ('__REDUX_DEVTOOLS_EXTENSION__' in window)
         devToolsCount += ONE;
-      if (
-        (window as { __VUE_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-          .__VUE_DEVTOOLS_GLOBAL_HOOK__
-      )
+      if ('__VUE_DEVTOOLS_GLOBAL_HOOK__' in window)
         devToolsCount += ONE;
 
       if (devToolsCount > COUNT_PAIR) {
@@ -248,15 +156,9 @@ export class PerformanceToolConflictChecker {
     if (!isDevelopment) {
       const prodDevTools: string[] = [];
 
-      if (
-        (window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-          .__REACT_DEVTOOLS_GLOBAL_HOOK__
-      )
+      if ('__REACT_DEVTOOLS_GLOBAL_HOOK__' in window)
         prodDevTools.push('React DevTools');
-      if (
-        (window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
-          .__REDUX_DEVTOOLS_EXTENSION__
-      )
+      if ('__REDUX_DEVTOOLS_EXTENSION__' in window)
         prodDevTools.push('Redux DevTools');
 
       if (prodDevTools.length > ZERO) {
@@ -375,12 +277,11 @@ export class PerformanceToolConflictChecker {
     if ((window as { webVitals?: unknown }).webVitals) count += ONE;
 
     // 检查其他可能的监控工具
-    if (
-      (window as { __PERFORMANCE_OBSERVERS__?: unknown[] })
-        .__PERFORMANCE_OBSERVERS__
-    ) {
-      count += (window as { __PERFORMANCE_OBSERVERS__?: unknown[] })
-        .__PERFORMANCE_OBSERVERS__!.length;
+    if ((window as Record<string, unknown>)['__PERFORMANCE_OBSERVERS__']) {
+      const observers = (window as Record<string, unknown>)[
+        '__PERFORMANCE_OBSERVERS__'
+      ];
+      if (Array.isArray(observers)) count += observers.length;
     }
 
     return count;
@@ -404,18 +305,30 @@ export class PerformanceToolConflictChecker {
    * 获取事件监听器数量
    * Get event listener count
    */
-  private getEventListenerCount(eventType: string): number {
+  private getEventListenerCount(eventType: 'load' | 'DOMContentLoaded'): number {
     // 这是一个简化的实现，实际可能需要更复杂的检测
     if (typeof window === 'undefined') return ZERO;
 
     try {
       // 尝试获取事件监听器信息（仅在开发环境中可用）
-      const listeners = (
+      const listenersMap = (
         window as {
-          getEventListeners?: (target: unknown) => Record<string, unknown[]>;
+          getEventListeners?: (target: unknown) => {
+            load?: unknown[];
+            DOMContentLoaded?: unknown[];
+          };
         }
-      ).getEventListeners?.(window)?.[eventType];
-      return listeners ? listeners.length : ZERO;
+      ).getEventListeners?.(window);
+
+      if (!listenersMap) return ZERO;
+
+      if (eventType === 'load') {
+        return Array.isArray(listenersMap.load) ? listenersMap.load.length : ZERO;
+      }
+      // eventType === 'DOMContentLoaded'
+      return Array.isArray(listenersMap.DOMContentLoaded)
+        ? listenersMap.DOMContentLoaded.length
+        : ZERO;
     } catch {
       return ZERO;
     }
@@ -434,40 +347,58 @@ export class PerformanceToolConflictChecker {
   } | null {
     if (typeof window === 'undefined') return null;
 
-    const toolDetails = {
-      'React DevTools': {
-        detected: Boolean((window as { __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown })
-          .__REACT_DEVTOOLS_GLOBAL_HOOK__),
-        impact: 'low' as const,
-        description: 'React 开发者工具，用于调试 React 组件',
-      },
-      'Redux DevTools': {
-        detected: Boolean((window as { __REDUX_DEVTOOLS_EXTENSION__?: unknown })
-          .__REDUX_DEVTOOLS_EXTENSION__),
-        impact: 'low' as const,
-        description: 'Redux 开发者工具，用于调试状态管理',
-      },
-      'Sentry': {
-        detected: Boolean((window as { Sentry?: unknown }).Sentry),
-        impact: 'medium' as const,
-        description: '错误监控和性能监控平台',
-      },
-      'Google Analytics': {
-        detected:
-          Boolean((window as { gtag?: unknown; ga?: unknown }).gtag) ||
-          Boolean((window as { gtag?: unknown; ga?: unknown }).ga),
-        impact: 'medium' as const,
-        description: '网站分析和用户行为跟踪工具',
-      },
-    };
+    type KnownTool = 'React DevTools' | 'Redux DevTools' | 'Sentry' | 'Google Analytics';
 
-    const tool = toolDetails[toolName as keyof typeof toolDetails];
+    const toolDetailsMap = new Map<KnownTool, {
+      detected: boolean;
+      impact: 'low' | 'medium' | 'high';
+      description: string;
+    }>([
+      [
+        'React DevTools',
+        {
+          detected: '__REACT_DEVTOOLS_GLOBAL_HOOK__' in window,
+          impact: 'low',
+          description: 'React 开发者工具，用于调试 React 组件',
+        },
+      ],
+      [
+        'Redux DevTools',
+        {
+          detected: '__REDUX_DEVTOOLS_EXTENSION__' in window,
+          impact: 'low',
+          description: 'Redux 开发者工具，用于调试状态管理',
+        },
+      ],
+      [
+        'Sentry',
+        {
+          detected: 'Sentry' in window,
+          impact: 'medium',
+          description: '错误监控和性能监控平台',
+        },
+      ],
+      [
+        'Google Analytics',
+        {
+          detected: 'gtag' in window || 'ga' in window,
+          impact: 'medium',
+          description: '网站分析和用户行为跟踪工具',
+        },
+      ],
+    ]);
+
+    const isKnownTool = (name: string): name is KnownTool =>
+      (['React DevTools', 'Redux DevTools', 'Sentry', 'Google Analytics'] as const).includes(
+        name as KnownTool,
+      );
+
+    if (!isKnownTool(toolName)) return null;
+
+    const tool = toolDetailsMap.get(toolName);
     if (!tool) return null;
 
-    return {
-      name: toolName,
-      ...tool,
-    };
+    return { name: toolName, ...tool };
   }
 
   /**

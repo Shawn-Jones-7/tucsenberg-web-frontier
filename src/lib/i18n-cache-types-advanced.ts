@@ -6,11 +6,10 @@
  */
 
 import { COUNT_14, COUNT_256, MAGIC_16, MAGIC_32, MAGIC_512, MAGIC_6 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS, ZERO } from '@/constants';
+import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS } from '@/constants';
 
 import { DEC_0_05, MAGIC_0_8 } from "@/constants/decimal";
-import { MINUTE_MS } from "@/constants/time";
-import { DAYS_PER_WEEK } from "@/constants/time";
+import { MINUTE_MS, DAYS_PER_WEEK } from "@/constants/time";
 import type { Locale } from '@/types/i18n';
 import type {
   CacheBackupConfig,
@@ -327,7 +326,10 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   // 分区配置
   partitioning: {
     enablePartitioning: false,
-    partitionKey: (key: string) => key.split(':')[ZERO] || key,
+    partitionKey: (key: string) => {
+      const [first] = key.split(':');
+      return first || key;
+    },
     maxPartitions: COUNT_TEN,
     partitionStrategy: 'hash',
   },

@@ -116,12 +116,12 @@ export default defineConfig({
         'src/components/monitoring/enterprise-analytics.tsx',
       ],
       thresholds: {
-        // 全局目标：基于当前51.37%设置现实的渐进目标
+        // 覆盖率分阶段目标（Phase 1 → 65% | Phase 2 → 75% | Phase 3 → 80%）
         'global': {
-          branches: 50, // 基于当前实际水平
-          functions: 55, // 略高于当前水平，激励提升
-          lines: 55, // 略高于当前水平，激励提升
-          statements: 55, // 略高于当前水平，激励提升
+          branches: 65,
+          functions: 65,
+          lines: 65,
+          statements: 65,
         },
 
         // 关键业务逻辑 - 保持高标准但现实化

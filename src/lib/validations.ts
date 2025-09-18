@@ -1,5 +1,5 @@
 import { MAGIC_15 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
 
 import { z } from 'zod';
 
@@ -237,7 +237,8 @@ export const validationHelpers = {
   isEmailDomainAllowed: (email: string, allowedDomains?: string[]): boolean => {
     if (!allowedDomains || allowedDomains.length === ZERO) return true;
 
-    const domain = email.split('@')[ONE]?.toLowerCase();
+    const parts = email.split('@');
+    const domain = parts.length > 1 ? parts[1]?.toLowerCase() : undefined;
     return allowedDomains.some((allowed) => domain === allowed.toLowerCase());
   },
 

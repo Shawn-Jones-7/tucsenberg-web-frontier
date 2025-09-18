@@ -84,12 +84,13 @@ function handleArrowKey(config: ArrowKeyConfig): boolean {
 }
 
 // 处理Tab键的辅助函数
-function handleTabKey(
-  event: KeyboardEvent,
-  config: KeyboardNavigationConfig,
-  getFocusableElements: () => HTMLElement[],
-  getCurrentFocusIndex: () => number,
-): boolean {
+function handleTabKey(args: {
+  event: KeyboardEvent;
+  config: KeyboardNavigationConfig;
+  getFocusableElements: () => HTMLElement[];
+  getCurrentFocusIndex: () => number;
+}): boolean {
+  const { event, config, getFocusableElements, getCurrentFocusIndex } = args;
   const direction = event.shiftKey ? 'previous' : 'next';
   const elements = getFocusableElements();
   const currentIndex = getCurrentFocusIndex();
@@ -149,12 +150,14 @@ function useFocusManagement(
 /**
  * 创建导航函数
  */
-function useNavigationActions(
-  getFocusableElements: () => HTMLElement[],
-  getCurrentFocusIndex: () => number,
-  setFocusIndex: (_index: number) => void,
-  config: KeyboardNavigationConfig,
-) {
+function useNavigationActions(args: {
+  getFocusableElements: () => HTMLElement[];
+  getCurrentFocusIndex: () => number;
+  setFocusIndex: (_index: number) => void;
+  config: KeyboardNavigationConfig;
+}) {
+  const { getFocusableElements, getCurrentFocusIndex, setFocusIndex, config } =
+    args;
   const focusFirst = useCallback((): void => {
     setFocusIndex(ZERO);
   }, [setFocusIndex]);
@@ -199,17 +202,19 @@ function useNavigationActions(
 /**
  * 创建键盘事件处理器
  */
-function useKeyboardHandler(
-  config: KeyboardNavigationConfig,
+function useKeyboardHandler(args: {
+  config: KeyboardNavigationConfig;
   navigationActions: {
     focusNext: () => void;
     focusPrevious: () => void;
     focusFirst: () => void;
     focusLast: () => void;
-  },
-  getFocusableElements: () => HTMLElement[],
-  getCurrentFocusIndex: () => number,
-) {
+  };
+  getFocusableElements: () => HTMLElement[];
+  getCurrentFocusIndex: () => number;
+}) {
+  const { config, navigationActions, getFocusableElements, getCurrentFocusIndex } =
+    args;
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): void => {
       if (!config.enabled) return;
@@ -233,12 +238,12 @@ function useKeyboardHandler(
       if (arrowHandled) return;
 
       // 处理Tab键
-      const tabHandled = handleTabKey(
+      const tabHandled = handleTabKey({
         event,
         config,
         getFocusableElements,
         getCurrentFocusIndex,
-      );
+      });
       if (tabHandled) return;
 
       // 处理Home/End键
@@ -265,19 +270,19 @@ export function useKeyboardNavigation(
   const { getFocusableElements, getCurrentFocusIndex, setFocusIndex } =
     useFocusManagement(containerRef, config);
 
-  const navigationActions = useNavigationActions(
+  const navigationActions = useNavigationActions({
     getFocusableElements,
     getCurrentFocusIndex,
     setFocusIndex,
     config,
-  );
+  });
 
-  const { handleKeyDown } = useKeyboardHandler(
+  const { handleKeyDown } = useKeyboardHandler({
     config,
     navigationActions,
     getFocusableElements,
     getCurrentFocusIndex,
-  );
+  });
 
   useEffect(() => {
     const container = containerRef.current;

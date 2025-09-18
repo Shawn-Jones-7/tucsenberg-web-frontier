@@ -7,6 +7,7 @@
 
 import { getPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
 import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { safeGetArrayItem } from '@/lib/security-object-access';
 
 import type { Locale } from '@/types/i18n';
 
@@ -39,27 +40,31 @@ export function getPreferenceChangeStats(): {
 
   let totalConfidence = ZERO;
 
+  const localeMap = new Map<Locale, number>();
+  const sourceMap = new Map<string, number>();
+
   history.forEach((pref) => {
     // 统计语言变化
-    stats.localeChanges[pref.locale] =
-      (stats.localeChanges[pref.locale] || ZERO) + ONE;
+    localeMap.set(pref.locale, (localeMap.get(pref.locale) || ZERO) + ONE);
 
     // 统计来源变化
-    stats.sourceChanges[pref.source] =
-      (stats.sourceChanges[pref.source] || ZERO) + ONE;
+    sourceMap.set(pref.source, (sourceMap.get(pref.source) || ZERO) + ONE);
 
     // 累计置信度
     totalConfidence += pref.confidence;
   });
 
+  stats.localeChanges = Object.fromEntries(localeMap) as Record<Locale, number>;
+  stats.sourceChanges = Object.fromEntries(sourceMap) as Record<string, number>;
   stats.averageConfidence = totalConfidence / history.length;
-  stats.lastChange = history[ZERO]?.timestamp || ZERO;
+  const first = safeGetArrayItem(history, ZERO);
+  stats.lastChange = first ? first.timestamp || ZERO : ZERO;
 
   // 计算变化频率
   if (history.length > ONE) {
-    const timeSpan =
-      (history[ZERO]?.timestamp || ZERO) -
-      (history[history.length - ONE]?.timestamp || ZERO);
+    const start = safeGetArrayItem(history, ZERO)?.timestamp || ZERO;
+    const end = safeGetArrayItem(history, history.length - ONE)?.timestamp || ZERO;
+    const timeSpan = start - end;
     const days = timeSpan / (HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
     stats.changeFrequency = days > ZERO ? history.length / days : ZERO;
   }

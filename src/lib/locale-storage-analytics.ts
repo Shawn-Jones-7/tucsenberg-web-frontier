@@ -96,12 +96,12 @@ export class LocaleStorageAnalytics {
       CacheManager.setCachedMetrics('storage_stats', stats);
 
       // 记录访问
-      AccessLogger.logAccess(
-        'storage_stats',
-        'read',
-        true,
-        Date.now() - startTime,
-      );
+      AccessLogger.logAccess({
+        key: 'storage_stats',
+        operation: 'read',
+        success: true,
+        responseTime: Date.now() - startTime,
+      });
 
       return {
         success: true,
@@ -113,14 +113,14 @@ export class LocaleStorageAnalytics {
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : 'Unknown error';
-      ErrorLogger.logError(errorMessage, 'getStorageStats');
-      AccessLogger.logAccess(
-        'storage_stats',
-        'read',
-        false,
-        Date.now() - startTime,
-        errorMessage,
-      );
+      ErrorLogger.logError({ error: errorMessage, context: 'getStorageStats' });
+      AccessLogger.logAccess({
+        key: 'storage_stats',
+        operation: 'read',
+        success: false,
+        responseTime: Date.now() - startTime,
+        error: errorMessage,
+      });
 
       return {
         success: false,
@@ -145,7 +145,7 @@ export class LocaleStorageAnalytics {
    * Log access
    */
   static logAccess(key: string, operation: string, success: boolean): void {
-    AccessLogger.logAccess(key, operation, success);
+    AccessLogger.logAccess({ key, operation, success });
   }
 
   /**
@@ -153,7 +153,7 @@ export class LocaleStorageAnalytics {
    * Log error
    */
   static logError(error: string, context?: string): void {
-    ErrorLogger.logError(error, context);
+    ErrorLogger.logError({ error, context });
   }
 
   /**

@@ -1,39 +1,8 @@
-// 向后兼容的重新导出
+// 向后兼容的重新导出（仅保留别名所需的类型导入）
 import type { BundleAnalyzerIntegration } from '@/lib/performance-monitoring-integrations-bundle';
-import {
-  BundleAnalyzerAnalyzer,
-  BundleAnalyzerUtils,
-  useBundleAnalyzerIntegration,
-  validateBundleAnalyzerConfig,
-} from '@/lib/performance-monitoring-integrations-bundle';
 import type { ReactScanIntegration } from '@/lib/performance-monitoring-integrations-react-scan';
-import {
-  ReactScanAnalyzer,
-  ReactScanUtils,
-  useReactScanIntegration,
-  validateReactScanConfig,
-} from '@/lib/performance-monitoring-integrations-react-scan';
-import type {
-  EnvironmentCompatibilityResult,
-  WebVitalsIntegration,
-} from '@/lib/performance-monitoring-integrations-vitals';
-import {
-  checkEnvironmentCompatibility,
-  performHealthCheck,
-  useWebVitalsIntegration,
-  validateWebVitalsConfig,
-  WebVitalsAnalyzer,
-} from '@/lib/performance-monitoring-integrations-vitals';
+import type { EnvironmentCompatibilityResult, WebVitalsIntegration } from '@/lib/performance-monitoring-integrations-vitals';
 import type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
-import {
-  useWebEvalAgentIntegration,
-  validateWebEvalAgentConfig,
-  WebEvalAgentAnalyzer,
-} from '@/lib/performance-monitoring-integrations-web-eval';
-import type {
-  PerformanceConfig,
-  PerformanceMetrics,
-} from '@/lib/performance-monitoring-types';
 
 /**
  * 性能监控集成钩子和工具 - 主入口

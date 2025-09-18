@@ -3,6 +3,7 @@ import { MAGIC_0_8 } from "@/constants/decimal";
 import { logger } from '@/lib/logger';
 import { TranslationQualityManager } from '@/lib/translation-manager-quality';
 import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
+import { safeSetProperty } from '@/lib/security-object-access';
 import type { Locale } from '@/types/i18n';
 import type {
   QualityReport,
@@ -92,32 +93,31 @@ export class TranslationManagerCore implements TranslationQualityCheck {
   /**
    * 验证翻译
    */
-  async validateTranslations(): Promise<ValidationReport> {
+  validateTranslations(): Promise<ValidationReport> {
     return this.qualityManager.validateTranslations(this.translations);
   }
 
   /**
    * 检查Lingo翻译质量
    */
-  async checkLingoTranslation(
+  checkLingoTranslation(
     _key: string,
     _aiTranslation: string,
     _humanTranslation?: string,
   ): Promise<QualityScore> {
-    // 委托给质量管理器
-    // 简单的质量检查实现
-    return {
+    // 简单的质量检查实现（占位实现）
+    return Promise.resolve({
       score: MAGIC_85,
       confidence: MAGIC_0_8,
       issues: [],
       suggestions: [],
-    };
+    });
   }
 
   /**
    * 验证翻译一致性
    */
-  async validateTranslationConsistency(
+  validateTranslationConsistency(
     _translations: Record<string, string>,
   ): Promise<ValidationReport> {
     // 委托给质量管理器
@@ -127,7 +127,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
   /**
    * 生成质量报告
    */
-  async generateQualityReport(): Promise<QualityReport> {
+  generateQualityReport(): Promise<QualityReport> {
     return this.qualityManager.generateQualityReport(this.translations);
   }
 
@@ -218,12 +218,10 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     }
 
     const translations = this.getTranslations(locale);
-    const updatedTranslations = TranslationManagerSecurity.mergeTranslations(
-      translations,
-      {
-        [key]: value,
-      },
-    );
+    const updatedTranslations = { ...translations };
+
+    // 使用安全设置函数避免对象注入
+    safeSetProperty({ obj: updatedTranslations, key, value });
 
     this.setTranslations(locale, updatedTranslations);
   }
@@ -238,8 +236,11 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     }
 
     const translations = this.getTranslations(locale);
-    const updatedTranslations = { ...translations };
-    delete updatedTranslations[key];
+
+    // 创建不包含目标键的副本，避免动态删除
+    const updatedTranslations = Object.fromEntries(
+      Object.entries(translations).filter(([k]) => k !== key),
+    );
 
     this.setTranslations(locale, updatedTranslations);
   }
@@ -259,6 +260,23 @@ export class TranslationManagerCore implements TranslationQualityCheck {
       { total: number; translated: number; missing: number }
     >;
 
+    const setStatsForLocale = (
+      target: Record<Locale, { total: number; translated: number; missing: number }>,
+      locale: Locale,
+      data: { total: number; translated: number; missing: number },
+    ) => {
+      switch (locale) {
+        case 'en':
+          target.en = data;
+          break;
+        case 'zh':
+          target.zh = data;
+          break;
+        default:
+          break;
+      }
+    };
+
     for (const locale of this.config.locales) {
       const translations = this.getTranslations(locale);
       const keys = Object.keys(translations);
@@ -270,11 +288,11 @@ export class TranslationManagerCore implements TranslationQualityCheck {
         return value !== undefined && value !== null && value !== '';
       });
 
-      stats[locale] = {
+      setStatsForLocale(stats, locale, {
         total: keys.length,
         translated: translatedKeys.length,
         missing: keys.length - translatedKeys.length,
-      };
+      });
     }
 
     return stats;

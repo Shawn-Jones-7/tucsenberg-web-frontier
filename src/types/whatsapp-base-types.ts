@@ -66,7 +66,7 @@ export interface WhatsAppMessage {
     name?: string;
     address?: string;
   };
-  contacts?: WhatsAppContact[] | any[];
+  contacts?: Array<WhatsAppContact | Record<string, unknown>>;
 }
 
 // Media Types
@@ -76,17 +76,13 @@ export interface MediaObject {
   caption?: string;
 }
 
-export interface ImageMedia extends MediaObject {
-  // Image-specific properties can be added here
-}
+export type ImageMedia = MediaObject;
 
 export interface DocumentMedia extends MediaObject {
   filename?: string;
 }
 
-export interface VideoMedia extends MediaObject {
-  // Video-specific properties can be added here
-}
+export type VideoMedia = MediaObject;
 
 export interface AudioMedia {
   id?: string;

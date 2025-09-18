@@ -24,6 +24,18 @@ export default [
   ...compat.extends('next/core-web-vitals'),
   ...compat.extends('next/typescript'),
 
+  // Import resolver settings for @/* alias (TypeScript + Node)
+  {
+    name: 'import-resolver-settings',
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    settings: {
+      'import/resolver': {
+        typescript: { project: ['./tsconfig.json'] },
+        node: { extensions: ['.js', '.jsx', '.ts', '.tsx'] },
+      },
+    },
+  },
+
   // React You Might Not Need An Effect configuration
   {
     name: 'react-you-might-not-need-an-effect-config',
@@ -364,6 +376,8 @@ export default [
     rules: {
       // 类型定义中的字面量数字是必要的，不应被视为魔法数字
       'no-magic-numbers': 'off', // 类型定义中的字面量类型
+      // 类型定义中允许更多参数以表达完整签名
+      'max-params': 'off',
     },
   },
 
@@ -565,6 +579,8 @@ export default [
       'scripts/**/*.{js,ts}',
       'config/**/*.{js,ts}',
       '*.config.{js,ts,mjs}',
+      // 允许常量聚合入口使用 export * 模式（集中 re-export 常量）
+      'src/constants/index.ts',
       // 测试文件豁免 - 允许相对路径导入
       '**/*.test.{js,jsx,ts,tsx}',
       '**/__tests__/**/*.{js,jsx,ts,tsx}',
@@ -590,9 +606,9 @@ export default [
         {
           patterns: [
             {
-              group: ['../*', './*'],
+              group: ['../*'],
               message:
-                '🚫 请使用 @/ 路径别名替代相对路径导入，例如：import { something } from "@/lib/module"',
+                '🚫 请使用 @/ 路径别名替代跨目录相对路径导入，例如：import { something } from "@/lib/module"',
             },
           ],
         },
@@ -663,11 +679,25 @@ export default [
       'no-restricted-syntax': 'off',
       // 安全规则在测试中降级为警告
       'security/detect-object-injection': 'warn',
+      // 允许在测试中动态构建正则（常见于匹配断言）；保持为warn以提示潜在风险
+      'security/detect-non-literal-regexp': 'warn',
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'max-depth': ['warn', 5],
+
+      // 测试文件中的React/Next特定放宽：
+      // - 文本中包含未转义的字符在测试快照/渲染中很常见
+      // - displayName 在内联测试组件中并非必要
+      // - Next.js 链接规则在测试中不强制
+      'react/no-unescaped-entities': 'off',
+      'react/display-name': 'off',
+      '@next/next/no-html-link-for-pages': 'off',
+      '@next/next/no-assign-module-variable': 'off',
+
+      // 一些在测试数据构造中常见但对生产代码不建议的模式
+      'no-constant-binary-expression': 'off',
     },
   },
 

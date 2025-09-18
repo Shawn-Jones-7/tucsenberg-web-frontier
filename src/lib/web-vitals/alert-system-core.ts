@@ -140,12 +140,17 @@ export class PerformanceAlertSystem {
   /**
    * 发送单个警报 (测试方法)
    */
-  sendAlert(
-    severity: 'warning' | 'critical',
-    message: string,
-    data?: Record<string, unknown>,
-  ): Promise<void> {
-    return this.sender.sendAlert(severity, message, this.config, data);
+  sendAlert(args: {
+    severity: 'warning' | 'critical';
+    message: string;
+    data?: Record<string, unknown>;
+  }): Promise<void> {
+    return this.sender.sendAlert({
+      severity: args.severity,
+      message: args.message,
+      config: this.config,
+      data: args.data,
+    });
   }
 
   /**

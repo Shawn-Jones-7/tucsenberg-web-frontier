@@ -56,13 +56,14 @@ export class ThemeAnalytics {
   /**
    * 记录主题切换性能
    */
-  recordThemeSwitch(
-    fromTheme: string,
-    toTheme: string,
-    startTime: number,
-    endTime: number,
-    supportsViewTransitions: boolean = false,
-  ): void {
+  recordThemeSwitch(args: {
+    fromTheme: string;
+    toTheme: string;
+    startTime: number;
+    endTime: number;
+    supportsViewTransitions?: boolean;
+  }): void {
+    const { fromTheme, toTheme, startTime, endTime, supportsViewTransitions = false } = args;
     if (
       !this.config.enabled ||
       !ThemeAnalyticsUtils.shouldSample(this.config.sampleRate)
@@ -88,12 +89,12 @@ export class ThemeAnalytics {
     this.lastSwitchTime = now;
 
     // 更新使用统计
-    ThemeAnalyticsUtils.updateUsageStats(
-      this.usageStats,
-      toTheme,
-      now,
-      this.lastSwitchTime,
-    );
+    ThemeAnalyticsUtils.updateUsageStats({
+      usageStats: this.usageStats,
+      theme: toTheme,
+      timestamp: now,
+      lastSwitchTime: this.lastSwitchTime,
+    });
 
     // 发送到Sentry
     ThemeAnalyticsUtils.sendPerformanceMetrics(metrics);
@@ -105,12 +106,12 @@ export class ThemeAnalytics {
 
     // 分析切换模式
     if (this.config.enableUserBehaviorAnalysis) {
-      ThemeAnalyticsUtils.analyzeSwitchPattern(
-        this.switchPatterns,
+      ThemeAnalyticsUtils.analyzeSwitchPattern({
+        switchPatterns: this.switchPatterns,
         fromTheme,
         toTheme,
-        switchDuration,
-      );
+        duration: switchDuration,
+      });
     }
 
     // 清理旧数据

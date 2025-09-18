@@ -1,7 +1,4 @@
-import { MAGIC_20 } from "./count";
-
-// 直接定义基础常量，避免循环依赖
-const DAYS_PER_MONTH = 30 as const;
+// 直接定义基础常量，避免循环依赖（保持本文件自洽，不引入未使用的外部常量）
 
 /**
  * 小数相关常量

@@ -483,51 +483,46 @@ export function validateConfig(config: PerformanceConfig): {
   const errors: string[] = [];
   const warnings: string[] = [];
 
-  // 验证 Size Limit 配置
-  if (config.sizeLimit.enabled) {
-    Object.entries(config.sizeLimit.limits).forEach(([key, limit]) => {
-      if (typeof limit !== 'number' || limit <= ZERO) {
-        errors.push(`Size limit for "${key}" must be a positive number`);
-      }
-    });
-  }
+  validateSizeLimits(config, errors);
+  validateWebVitalsConfig(config, errors);
+  validateGlobalConfig(config, errors);
+  collectWarnings(config, warnings);
 
-  // 验证 Web Vitals 配置
-  if (config.webVitals?.enabled) {
-    if (
-      config.webVitals.sampleRate &&
-      (config.webVitals.sampleRate < ZERO || config.webVitals.sampleRate > ONE)
-    ) {
-      errors.push('Web Vitals sample rate must be between 0 and 1');
+  return { isValid: errors.length === ZERO, errors, warnings };
+}
+
+function validateSizeLimits(config: PerformanceConfig, errors: string[]): void {
+  if (!config.sizeLimit.enabled) return;
+  for (const [key, limit] of Object.entries(config.sizeLimit.limits)) {
+    if (typeof limit !== 'number' || limit <= ZERO) {
+      errors.push(`Size limit for "${key}" must be a positive number`);
     }
   }
+}
 
-  // 验证全局配置
-  if (config.global?.enabled) {
-    if (config.global.dataRetentionTime <= ZERO) {
-      errors.push('Data retention time must be positive');
-    }
-    if (config.global.maxMetrics <= ZERO) {
-      errors.push('Max metrics must be positive');
-    }
+function validateWebVitalsConfig(config: PerformanceConfig, errors: string[]): void {
+  if (!config.webVitals?.enabled) return;
+  const rate = config.webVitals.sampleRate;
+  if (rate && (rate < ZERO || rate > ONE)) {
+    errors.push('Web Vitals sample rate must be between 0 and 1');
   }
+}
 
-  // 生成警告
+function validateGlobalConfig(config: PerformanceConfig, errors: string[]): void {
+  if (!config.global?.enabled) return;
+  if (config.global.dataRetentionTime <= ZERO) {
+    errors.push('Data retention time must be positive');
+  }
+  if (config.global.maxMetrics <= ZERO) {
+    errors.push('Max metrics must be positive');
+  }
+}
+
+function collectWarnings(config: PerformanceConfig, warnings: string[]): void {
   if (config.reactScan.enabled && isProductionEnvironment()) {
     warnings.push('React Scan is enabled in production environment');
   }
-
-  if (
-    config.bundleAnalyzer.enabled &&
-    config.bundleAnalyzer.openAnalyzer &&
-    isProductionEnvironment()
-  ) {
+  if (config.bundleAnalyzer.enabled && config.bundleAnalyzer.openAnalyzer && isProductionEnvironment()) {
     warnings.push('Bundle analyzer auto-open is enabled in production');
   }
-
-  return {
-    isValid: errors.length === ZERO,
-    errors,
-    warnings,
-  };
 }

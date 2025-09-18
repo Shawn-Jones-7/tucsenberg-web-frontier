@@ -23,10 +23,11 @@ export class ThemeAnalyticsUtils {
   static shouldSample(sampleRate: number): boolean {
     // 使用crypto.getRandomValues()替代Math.random()以提高安全性
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-      const array = new Uint32Array(ONE);
+      const array = new Uint32Array(1);
       crypto.getRandomValues(array);
-      const maxUint32 = ZERO;
-      const randomValue = (array[ZERO] || ZERO) / maxUint32;
+      const maxUint32 = 0xffffffff; // 2^32 - 1
+      const first = array.at(0) ?? 0;
+      const randomValue = first / maxUint32;
       return randomValue < sampleRate;
     }
 
@@ -83,12 +84,13 @@ export class ThemeAnalyticsUtils {
   /**
    * 更新使用统计
    */
-  static updateUsageStats(
-    usageStats: Map<string, ThemeUsageStats>,
-    theme: string,
-    timestamp: number,
-    lastSwitchTime: number,
-  ): void {
+  static updateUsageStats(args: {
+    usageStats: Map<string, ThemeUsageStats>;
+    theme: string;
+    timestamp: number;
+    lastSwitchTime: number;
+  }): void {
+    const { usageStats, theme, timestamp, lastSwitchTime } = args;
     const existing = usageStats.get(theme);
     if (existing) {
       existing.count += ONE;
@@ -107,12 +109,13 @@ export class ThemeAnalyticsUtils {
   /**
    * 分析切换模式
    */
-  static analyzeSwitchPattern(
-    switchPatterns: ThemeSwitchPattern[],
-    fromTheme: string,
-    toTheme: string,
-    duration: number,
-  ): void {
+  static analyzeSwitchPattern(args: {
+    switchPatterns: ThemeSwitchPattern[];
+    fromTheme: string;
+    toTheme: string;
+    duration: number;
+  }): void {
+    const { switchPatterns, fromTheme, toTheme, duration } = args;
     const sequence = [fromTheme, toTheme];
     const sequenceKey = sequence.join('-');
 

@@ -102,8 +102,8 @@ export class WhatsAppUtils {
    */
   static validateUrl(url: string): boolean {
     try {
-      new URL(url);
-      return true;
+      const parsed = new URL(url);
+      return Boolean(parsed);
     } catch {
       return false;
     }

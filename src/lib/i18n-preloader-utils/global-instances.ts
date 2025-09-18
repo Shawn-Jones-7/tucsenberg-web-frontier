@@ -25,12 +25,19 @@ export const globalPreloaderFactory = PreloaderFactory.getInstance();
  * 便捷函数：创建并注册预加载器
  * Convenience function: create and register preloader
  */
-export function setupPreloader(
-  name: string,
-  cache: CacheStorage<Messages>,
-  metricsCollector: MetricsCollector,
-  config?: Partial<PreloaderConfig>,
-): IPreloader {
+export interface SetupPreloaderParams {
+  name: string;
+  cache: CacheStorage<Messages>;
+  metricsCollector: MetricsCollector;
+  config?: Partial<PreloaderConfig>;
+}
+
+export function setupPreloader({
+  name,
+  cache,
+  metricsCollector,
+  config,
+}: SetupPreloaderParams): IPreloader {
   const preloader = globalPreloaderFactory.createPreloader(
     cache,
     metricsCollector,
@@ -52,14 +59,14 @@ export function getDefaultPreloader(): IPreloader | undefined {
  * 便捷函数：预加载语言
  * Convenience function: preload locale
  */
-export async function preloadLocale(
+export function preloadLocale(
   locale: Locale,
 ): Promise<Messages | undefined> {
   const preloader = getDefaultPreloader();
   if (preloader) {
-    return await preloader.preloadLocale(locale);
+    return preloader.preloadLocale(locale);
   }
-  return undefined;
+  return Promise.resolve(undefined);
 }
 
 /**

@@ -19,6 +19,7 @@ import { LocalePreferenceManager } from '@/lib/locale-storage-preference';
 import type { Locale } from '@/types/i18n';
 import type {
   LocaleDetectionHistory,
+  LocaleSource,
   MaintenanceOptions,
   UserLocalePreference,
 } from '@/lib/locale-storage-types';
@@ -76,9 +77,8 @@ export class LocaleStorageManager {
    * Save user locale preference
    */
   static saveUserPreference(preference: UserLocalePreference): void {
-    const result = LocalePreferenceManager.saveUserPreference(preference);
+    LocalePreferenceManager.saveUserPreference(preference);
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**
@@ -95,9 +95,8 @@ export class LocaleStorageManager {
    * Set user manually selected locale
    */
   static setUserOverride(locale: Locale): void {
-    const result = LocalePreferenceManager.setUserOverride(locale);
+    LocalePreferenceManager.setUserOverride(locale);
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**
@@ -114,9 +113,8 @@ export class LocaleStorageManager {
    * Clear user manual selection
    */
   static clearUserOverride(): void {
-    const result = LocalePreferenceManager.clearUserOverride();
+    LocalePreferenceManager.clearUserOverride();
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**
@@ -147,7 +145,12 @@ export class LocaleStorageManager {
     timestamp: number;
     confidence: number;
   }): void {
-    return (LocaleHistoryManager.addDetectionRecord as any)(detection);
+    LocaleHistoryManager.addDetectionRecord({
+      locale: detection.locale,
+      source: detection.source as LocaleSource,
+      confidence: detection.confidence,
+      metadata: { timestamp: detection.timestamp },
+    });
   }
 
   /**
@@ -168,9 +171,8 @@ export class LocaleStorageManager {
    * Clear all storage data
    */
   static clearAll(): void {
-    const result = LocaleMaintenanceManager.clearAll();
+    LocaleMaintenanceManager.clearAll();
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**
@@ -196,9 +198,8 @@ export class LocaleStorageManager {
   static cleanupExpiredDetections(
     maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   ): void {
-    const result = LocaleMaintenanceManager.cleanupExpiredDetections(maxAgeMs);
+    LocaleMaintenanceManager.cleanupExpiredDetections(maxAgeMs);
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**
@@ -218,14 +219,17 @@ export class LocaleStorageManager {
     override?: Locale;
     history?: LocaleDetectionHistory;
   }): void {
-    const importData: any = {};
-    if (data.preference) importData.preference = data.preference;
-    if (data.override) importData.override = data.override;
-    if (data.history) importData.history = data.history;
+    const payload: {
+      preference?: UserLocalePreference;
+      override?: Locale;
+      history?: LocaleDetectionHistory;
+    } = {};
+    if (data.preference) payload.preference = data.preference;
+    if (data.override) payload.override = data.override;
+    if (data.history) payload.history = data.history;
 
-    const result = LocaleMaintenanceManager.importData(importData);
+    LocaleMaintenanceManager.importData(payload);
     // 忽略返回值，保持向后兼容的void返回类型
-    
   }
 
   /**

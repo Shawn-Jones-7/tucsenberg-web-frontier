@@ -116,6 +116,9 @@ export class TranslationValidators {
           penalty += MAGIC_8;
         }
         break;
+      default:
+        // No locale-specific checks
+        break;
     }
 
     return { issues, penalty };

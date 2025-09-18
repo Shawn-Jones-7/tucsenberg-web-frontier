@@ -89,13 +89,19 @@ export class LocaleHistoryManager {
    * 添加检测记录
    * Add detection record
    */
-  static addDetectionRecord(
-    locale: Locale,
-    source: LocaleSource,
-    confidence: number,
-    metadata?: Record<string, unknown>,
-  ): StorageOperationResult<LocaleDetectionHistory> {
-    const result = addDetectionRecord(locale, source, confidence, metadata);
+  static addDetectionRecord(params: {
+    locale: Locale;
+    source: LocaleSource;
+    confidence: number;
+    metadata?: Record<string, unknown>;
+  }): StorageOperationResult<LocaleDetectionHistory> {
+    const { locale, source, confidence, metadata } = params;
+    const result = addDetectionRecord({
+      locale,
+      source,
+      confidence,
+      ...(metadata !== undefined && { metadata }),
+    });
 
     if (result.success) {
       HistoryEventManager.emitEvent(

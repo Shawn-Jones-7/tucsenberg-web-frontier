@@ -6,7 +6,7 @@
  */
 
 import type { I18nMetrics, Locale } from '@/types/i18n';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, FIVE_SECONDS_MS, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from '@/constants';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_TEN, FIVE_SECONDS_MS, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from '@/constants';
 
 /**
  * 缓存配置接口
@@ -291,10 +291,11 @@ export function parseCacheKey(cacheKey: string): {
   key?: string;
 } {
   const parts = cacheKey.split(':');
+  const [loc, ns, k] = parts;
   return {
-    locale: parts[ZERO] as Locale,
-    ...(parts[ONE] && { namespace: parts[ONE] }),
-    ...(parts[COUNT_PAIR] && { key: parts[COUNT_PAIR] }),
+    locale: (loc ?? '') as Locale,
+    ...(ns ? { namespace: ns } : {}),
+    ...(k ? { key: k } : {}),
   };
 }
 

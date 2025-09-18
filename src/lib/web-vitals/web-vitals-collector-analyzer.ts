@@ -16,6 +16,7 @@ import type { DetailedWebVitals } from '@/lib/web-vitals/types';
  * 负责性能指标分析和诊断报告生成
  */
 export class WebVitalsCollectorAnalyzer {
+  private static readonly SLOW_RESOURCE_MS_THRESHOLD = PERCENTAGE_FULL * COUNT_FIVE; // 500ms
   /**
    * 分析 CLS 指标并生成问题和建议
    */
@@ -78,12 +79,10 @@ export class WebVitalsCollectorAnalyzer {
     issues: string[],
     recommendations: string[],
   ): void {
-    if (
-      resourceTiming.slowResources.length > ZERO &&
-      resourceTiming.slowResources[ZERO]!.duration > 500
-    ) {
+    const [firstSlow] = resourceTiming.slowResources;
+    if (firstSlow && firstSlow.duration > WebVitalsCollectorAnalyzer.SLOW_RESOURCE_MS_THRESHOLD) {
       issues.push(
-        `发现慢速资源: ${resourceTiming.slowResources[ZERO]!.name} (${resourceTiming.slowResources[ZERO]!.duration.toFixed(ZERO)}ms)`,
+        `发现慢速资源: ${firstSlow.name} (${firstSlow.duration.toFixed(ZERO)}ms)`,
       );
       recommendations.push('优化慢速资源的加载，考虑压缩或使用 CDN');
     }
@@ -159,12 +158,12 @@ export class WebVitalsCollectorAnalyzer {
   /**
    * 构建诊断报告结果对象
    */
-  protected buildDiagnosticResult(
-    metrics: DetailedWebVitals,
-    issues: string[],
-    recommendations: string[],
-    score: number,
-  ): {
+  protected buildDiagnosticResult(args: {
+    metrics: DetailedWebVitals;
+    issues: string[];
+    recommendations: string[];
+    score: number;
+  }): {
     metrics: DetailedWebVitals;
     analysis: {
       issues: string[];
@@ -173,11 +172,11 @@ export class WebVitalsCollectorAnalyzer {
     };
   } {
     return {
-      metrics,
+      metrics: args.metrics,
       analysis: {
-        issues,
-        recommendations,
-        score,
+        issues: args.issues,
+        recommendations: args.recommendations,
+        score: args.score,
       },
     };
   }
@@ -203,7 +202,7 @@ export class WebVitalsCollectorAnalyzer {
     const score = this.calculatePerformanceScore(metrics);
 
     // 构建并返回结果
-    return this.buildDiagnosticResult(metrics, issues, recommendations, score);
+    return this.buildDiagnosticResult({ metrics, issues, recommendations, score });
   }
 
   /**

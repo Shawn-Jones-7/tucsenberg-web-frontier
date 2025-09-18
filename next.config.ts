@@ -236,16 +236,20 @@ const nextConfig: NextConfig = {
     await Promise.resolve(); // Satisfy require-await ESLint rule
 
     const securityHeaders = computeSecurityHeaders();
+    // Prefer CSP from middleware (with nonce). Remove CSP here to avoid duplication/conflicts.
+    const headersNoCSP = securityHeaders.filter(
+      (h) => h.key !== 'Content-Security-Policy',
+    );
 
     // Next.js 15.4.7+ requires non-empty headers array
-    if (securityHeaders.length === 0) {
+    if (headersNoCSP.length === 0) {
       return [];
     }
 
     return [
       {
         source: '/:path*',
-        headers: securityHeaders,
+        headers: headersNoCSP,
       },
     ];
   },

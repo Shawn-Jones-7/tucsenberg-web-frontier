@@ -19,6 +19,18 @@ import type {
   PerformanceMetricType,
 } from '@/lib/performance-monitoring-types';
 
+interface MetricsStats {
+  total: number;
+  byType: Record<PerformanceMetricType, number>;
+  bySource: Record<PerformanceMetricSource, number>;
+  timeRange: {
+    oldest: number;
+    newest: number;
+    span: number;
+  };
+  averageValue: number;
+}
+
 /**
  * 指标管理器
  * Metrics manager
@@ -157,59 +169,53 @@ export class PerformanceMetricsManager {
    * Analyze realtime metric
    */
   private analyzeRealtimeMetric(metric: PerformanceMetrics): void {
-    // 检查是否有性能问题需要立即关注
-    let isSlowPerformance = false;
     let threshold = ZERO;
+    let value = ZERO;
+    let slow = false;
 
     switch (metric.type) {
       case 'component':
-        if (
-          this.isComponentData(metric.data) &&
-          this.config.component?.thresholds
-        ) {
-          threshold = this.config.component.thresholds.renderTime || PERCENTAGE_FULL;
-          isSlowPerformance = (Number(metric.data.renderTime) || ZERO) > threshold;
-        }
+        ({ slow, threshold, value } = this.handleComponentMetric(metric));
         break;
       case 'network':
-        if (
-          this.isNetworkData(metric.data) &&
-          this.config.network?.thresholds
-        ) {
-          threshold = this.config.network.thresholds.responseTime || 1000;
-          isSlowPerformance =
-            (Number(metric.data.responseTime) || ZERO) > threshold;
-        }
+        ({ slow, threshold, value } = this.handleNetworkMetric(metric));
         break;
       case 'bundle':
-        if (this.isBundleData(metric.data) && this.config.bundle?.thresholds) {
-          threshold = this.config.bundle.thresholds.size || MB; // 1MB
-          isSlowPerformance = (Number(metric.data.size) || ZERO) > threshold;
-        }
+        ({ slow, threshold, value } = this.handleBundleMetric(metric));
         break;
+      default:
+        return;
     }
 
-    if (isSlowPerformance) {
-      // 安全获取值用于日志记录
-      let value: number | undefined;
-      if (this.isComponentData(metric.data)) {
-        value = metric.data.renderTime;
-      } else if (this.isNetworkData(metric.data)) {
-        value = metric.data.responseTime;
-      } else if (this.isBundleData(metric.data)) {
-        value = metric.data.size;
-      }
+    if (!slow) return;
 
-      logger.warn(
-        `Performance warning: ${metric.type} metric exceeded threshold`,
-        {
-          metric: metric.id || metric.type,
-          value: value || ZERO,
-          threshold,
-          source: metric.source,
-        },
-      );
-    }
+    logger.warn(
+      `Performance warning: ${metric.type} metric exceeded threshold`,
+      {
+        metric: metric.id || metric.type,
+        value,
+        threshold,
+        source: metric.source,
+      },
+    );
+  }
+
+  private handleComponentMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
+    const threshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
+    const value = this.isComponentData(metric.data) ? (Number(metric.data.renderTime) || ZERO) : ZERO;
+    return { slow: value > threshold, threshold, value };
+  }
+
+  private handleNetworkMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
+    const threshold = this.config.network?.thresholds?.responseTime || 1000;
+    const value = this.isNetworkData(metric.data) ? (Number(metric.data.responseTime) || ZERO) : ZERO;
+    return { slow: value > threshold, threshold, value };
+  }
+
+  private handleBundleMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
+    const threshold = this.config.bundle?.thresholds?.size || MB;
+    const value = this.isBundleData(metric.data) ? (Number(metric.data.size) || ZERO) : ZERO;
+    return { slow: value > threshold, threshold, value };
   }
 
   /**
@@ -278,10 +284,18 @@ export class PerformanceMetricsManager {
       return stats;
     }
 
-    // 统计类型分布
+    // 统计类型与来源分布（拆分子函数以降低复杂度）
+    const incType = (t: PerformanceMetricType) => {
+      this.incTypeGroupA(stats, t);
+      this.incTypeGroupB(stats, t);
+    };
+    const incSource = (s: PerformanceMetricSource) => {
+      this.incSourceGroupA(stats, s);
+      this.incSourceGroupB(stats, s);
+    };
     this.metrics.forEach((metric) => {
-      stats.byType[metric.type] = (stats.byType[metric.type] || ZERO) + ONE;
-      stats.bySource[metric.source] = (stats.bySource[metric.source] || ZERO) + ONE;
+      incType(metric.type);
+      incSource(metric.source);
     });
 
     // 计算时间范围
@@ -305,6 +319,101 @@ export class PerformanceMetricsManager {
     stats.averageValue = totalValue / this.metrics.length;
 
     return stats;
+  }
+
+  // 分组处理：类型计数（组A）
+  private incTypeGroupA(
+    stats: MetricsStats & { byType: Record<PerformanceMetricType, number> },
+    t: PerformanceMetricType,
+  ): void {
+    switch (t) {
+      case 'component':
+        stats.byType.component = (stats.byType.component || ZERO) + ONE;
+        break;
+      case 'page':
+        stats.byType.page = (stats.byType.page || ZERO) + ONE;
+        break;
+      case 'bundle':
+        stats.byType.bundle = (stats.byType.bundle || ZERO) + ONE;
+        break;
+      case 'network':
+        stats.byType.network = (stats.byType.network || ZERO) + ONE;
+        break;
+      case 'user-interaction':
+        stats.byType['user-interaction'] = (stats.byType['user-interaction'] || ZERO) + ONE;
+        break;
+      default:
+        break;
+    }
+  }
+
+  // 分组处理：类型计数（组B）
+  private incTypeGroupB(
+    stats: MetricsStats & { byType: Record<PerformanceMetricType, number> },
+    t: PerformanceMetricType,
+  ): void {
+    switch (t) {
+      case 'memory':
+        stats.byType.memory = (stats.byType.memory || ZERO) + ONE;
+        break;
+      case 'cpu':
+        stats.byType.cpu = (stats.byType.cpu || ZERO) + ONE;
+        break;
+      case 'rendering':
+        stats.byType.rendering = (stats.byType.rendering || ZERO) + ONE;
+        break;
+      case 'loading':
+        stats.byType.loading = (stats.byType.loading || ZERO) + ONE;
+        break;
+      default:
+        break;
+    }
+  }
+
+  // 分组处理：来源计数（组A）
+  private incSourceGroupA(
+    stats: MetricsStats & { bySource: Record<PerformanceMetricSource, number> },
+    s: PerformanceMetricSource,
+  ): void {
+    switch (s) {
+      case 'react-scan':
+        stats.bySource['react-scan'] = (stats.bySource['react-scan'] || ZERO) + ONE;
+        break;
+      case 'web-eval-agent':
+        stats.bySource['web-eval-agent'] = (stats.bySource['web-eval-agent'] || ZERO) + ONE;
+        break;
+      case 'bundle-analyzer':
+        stats.bySource['bundle-analyzer'] = (stats.bySource['bundle-analyzer'] || ZERO) + ONE;
+        break;
+      case 'size-limit':
+        stats.bySource['size-limit'] = (stats.bySource['size-limit'] || ZERO) + ONE;
+        break;
+      default:
+        break;
+    }
+  }
+
+  // 分组处理：来源计数（组B）
+  private incSourceGroupB(
+    stats: MetricsStats & { bySource: Record<PerformanceMetricSource, number> },
+    s: PerformanceMetricSource,
+  ): void {
+    switch (s) {
+      case 'custom':
+        stats.bySource.custom = (stats.bySource.custom || ZERO) + ONE;
+        break;
+      case 'web-vitals':
+        stats.bySource['web-vitals'] = (stats.bySource['web-vitals'] || ZERO) + ONE;
+        break;
+      case 'lighthouse':
+        stats.bySource.lighthouse = (stats.bySource.lighthouse || ZERO) + ONE;
+        break;
+      case 'user-timing':
+        stats.bySource['user-timing'] = (stats.bySource['user-timing'] || ZERO) + ONE;
+        break;
+      default:
+        break;
+    }
   }
 
   /**
@@ -382,7 +491,7 @@ export class PerformanceMetricsManager {
   exportMetrics(): {
     metrics: PerformanceMetrics[];
     exportTime: number;
-    stats: any;
+    stats: MetricsStats;
   } {
     return {
       metrics: [...this.metrics],

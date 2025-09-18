@@ -1,21 +1,5 @@
 import { COUNT_100000, COUNT_256 } from "@/constants/count";
-import {
-  COUNT_PAIR,
-  HEX_MASK_6_BITS,
-  HEX_MASK_BIT_6,
-  HEX_MASK_HIGH_BIT,
-  HEX_MASK_LOW_NIBBLE,
-  MAGIC_8,
-  MAGIC_12,
-  MAGIC_16,
-  MAGIC_20,
-  MAGIC_32,
-  MAGIC_48,
-  MAGIC_64,
-  MAGIC_HEX_3,
-  MAGIC_HEX_8,
-  ZERO,
-} from '@/constants';
+import { COUNT_PAIR, MAGIC_12, MAGIC_16, ZERO } from '@/constants';
 
 /**
  * 加密和密码哈希工具
@@ -83,7 +67,14 @@ export async function verifyPassword(
       return false;
     }
 
-    const salt = saltHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16));
+    const salt = (() => {
+      const pairs: string[] = [];
+      for (let i = 0; i < saltHex.length; i += COUNT_PAIR) {
+        const seg = saltHex.slice(i, i + COUNT_PAIR);
+        if (seg.length === COUNT_PAIR) pairs.push(seg);
+      }
+      return pairs.map((byte) => parseInt(byte, MAGIC_16));
+    })();
     if (!salt) {
       return false;
     }
@@ -187,13 +178,14 @@ export async function generateHMAC(
 /**
  * Verify HMAC signature
  */
-export async function verifyHMAC(
-  data: string,
-  signature: string,
-  secret: string,
-  algorithm: 'SHA-256' | 'SHA-512' = 'SHA-256',
-): Promise<boolean> {
+export async function verifyHMAC(params: {
+  data: string;
+  signature: string;
+  secret: string;
+  algorithm?: 'SHA-256' | 'SHA-512';
+}): Promise<boolean> {
   try {
+    const { data, signature, secret, algorithm = 'SHA-256' } = params;
     const expectedSignature = await generateHMAC(data, secret, algorithm);
     return expectedSignature === signature;
   } catch {
@@ -260,24 +252,40 @@ export async function encryptData(
 /**
  * Decrypt data using AES-GCM
  */
-export async function decryptData(
-  encryptedHex: string,
-  ivHex: string,
-  saltHex: string,
-  password: string,
-): Promise<string> {
+export async function decryptData(params: {
+  encryptedHex: string;
+  ivHex: string;
+  saltHex: string;
+  password: string;
+}): Promise<string> {
+  const { encryptedHex, ivHex, saltHex, password } = params;
   const encoder = new TextEncoder();
 
   // Convert hex strings back to bytes
-  const encrypted = new Uint8Array(
-    encryptedHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
-  );
-  const iv = new Uint8Array(
-    ivHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
-  );
-  const salt = new Uint8Array(
-    saltHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
-  );
+  const encrypted = new Uint8Array((() => {
+    const out: number[] = [];
+    for (let i = 0; i < encryptedHex.length; i += COUNT_PAIR) {
+      const seg = encryptedHex.slice(i, i + COUNT_PAIR);
+      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+    }
+    return out;
+  })());
+  const iv = new Uint8Array((() => {
+    const out: number[] = [];
+    for (let i = 0; i < ivHex.length; i += COUNT_PAIR) {
+      const seg = ivHex.slice(i, i + COUNT_PAIR);
+      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+    }
+    return out;
+  })());
+  const salt = new Uint8Array((() => {
+    const out: number[] = [];
+    for (let i = 0; i < saltHex.length; i += COUNT_PAIR) {
+      const seg = saltHex.slice(i, i + COUNT_PAIR);
+      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+    }
+    return out;
+  })());
 
   // Derive key from password
   const passwordKey = await crypto.subtle.importKey(
@@ -314,8 +322,8 @@ export async function decryptData(
 /**
  * Generate a secure random key for encryption
  */
-export async function generateEncryptionKey(): Promise<CryptoKey> {
-  return await crypto.subtle.generateKey(
+export function generateEncryptionKey(): Promise<CryptoKey> {
+  return crypto.subtle.generateKey(
     { name: 'AES-GCM', length: COUNT_256 },
     true,
     ['encrypt', 'decrypt'],
@@ -335,12 +343,17 @@ export async function exportKey(key: CryptoKey): Promise<string> {
 /**
  * Import encryption key from raw format
  */
-export async function importKey(keyHex: string): Promise<CryptoKey> {
-  const keyBytes = new Uint8Array(
-    keyHex.match(/.{COUNT_PAIR}/g)?.map((byte) => parseInt(byte, MAGIC_16)) || [],
-  );
+export function importKey(keyHex: string): Promise<CryptoKey> {
+  const keyBytes = new Uint8Array((() => {
+    const out: number[] = [];
+    for (let i = 0; i < keyHex.length; i += COUNT_PAIR) {
+      const seg = keyHex.slice(i, i + COUNT_PAIR);
+      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+    }
+    return out;
+  })());
 
-  return await crypto.subtle.importKey(
+  return crypto.subtle.importKey(
     'raw',
     keyBytes,
     { name: 'AES-GCM' },

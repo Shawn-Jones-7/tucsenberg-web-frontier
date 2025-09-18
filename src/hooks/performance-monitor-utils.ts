@@ -55,12 +55,19 @@ export const checkMemoryUsageAlert = (
 /**
  * 辅助函数：创建性能警告系统
  */
-export const createPerformanceAlertSystem = (
-  alerts: PerformanceAlert[],
-  alertHistory: React.MutableRefObject<PerformanceAlert[]>,
-  addAlert: (_alert: Omit<PerformanceAlert, 'id' | 'timestamp'>) => void,
-  setAlerts: React.Dispatch<React.SetStateAction<PerformanceAlert[]>>,
-): PerformanceAlertSystem => ({
+interface CreatePerformanceAlertSystemArgs {
+  alerts: PerformanceAlert[];
+  alertHistory: React.MutableRefObject<PerformanceAlert[]>;
+  addAlert: (_alert: Omit<PerformanceAlert, 'id' | 'timestamp'>) => void;
+  setAlerts: React.Dispatch<React.SetStateAction<PerformanceAlert[]>>;
+}
+
+export const createPerformanceAlertSystem = ({
+  alerts,
+  alertHistory,
+  addAlert,
+  setAlerts,
+}: CreatePerformanceAlertSystemArgs): PerformanceAlertSystem => ({
   addAlert,
   getAlerts: () => alerts,
   getAlertHistory: () => alertHistory.current,
@@ -73,29 +80,56 @@ export const createPerformanceAlertSystem = (
 /**
  * 辅助函数：创建监控控制函数
  */
-export const createMonitoringControls = (
-  setIsMonitoring: React.Dispatch<React.SetStateAction<boolean>>,
-  _setError: React.Dispatch<React.SetStateAction<string | null>>,
-  startTime: React.MutableRefObject<number | null>,
-  setMetrics: React.Dispatch<React.SetStateAction<PerformanceMetrics | null>>,
-): MonitoringControls => ({
+interface CreateMonitoringControlsArgs {
+  setIsMonitoring: React.Dispatch<React.SetStateAction<boolean>>;
+  setError: React.Dispatch<React.SetStateAction<string | null>>;
+  startTime: React.MutableRefObject<number | null>;
+  setMetrics: React.Dispatch<React.SetStateAction<PerformanceMetrics | null>>;
+  monitoringInterval: number;
+  refreshMetrics: () => void;
+  monitoringIntervalRef: React.MutableRefObject<NodeJS.Timeout | null>;
+}
+
+export const createMonitoringControls = ({
+  setIsMonitoring,
+  setError,
+  startTime,
+  setMetrics,
+  monitoringInterval,
+  refreshMetrics,
+  monitoringIntervalRef,
+}: CreateMonitoringControlsArgs): MonitoringControls => ({
   startMonitoring: () => {
     setIsMonitoring(true);
     startTime.current = performance.now();
-    _setError(null);
+    setError(null);
+    if (monitoringIntervalRef.current) {
+      clearInterval(monitoringIntervalRef.current);
+    }
+    monitoringIntervalRef.current = setInterval(() => {
+      refreshMetrics();
+    }, monitoringInterval);
   },
   stopMonitoring: () => {
     setIsMonitoring(false);
     startTime.current = null;
+    if (monitoringIntervalRef.current) {
+      clearInterval(monitoringIntervalRef.current);
+      monitoringIntervalRef.current = null;
+    }
   },
   resetMetrics: () => {
     setMetrics(null);
     startTime.current = null;
-    _setError(null);
+    setError(null);
+    if (monitoringIntervalRef.current) {
+      clearInterval(monitoringIntervalRef.current);
+      monitoringIntervalRef.current = null;
+    }
   },
   refreshMetrics: () => {
     // 刷新当前指标
-    _setError(null);
+    setError(null);
   },
 });
 
@@ -141,66 +175,58 @@ export const createPerformanceMonitorReturn = (
 /**
  * 验证和清理选项的辅助函数
  */
+const coerceBoolean = (v: unknown, fallback: boolean): boolean =>
+  typeof v === 'boolean' ? v : fallback;
+
+const validateThresholds = (
+  input?: PerformanceAlertThresholds,
+): Required<PerformanceAlertThresholds> => {
+  const t = input || {};
+  return {
+    loadTime:
+      typeof t.loadTime === 'number' && t.loadTime > ZERO
+        ? t.loadTime
+        : DEFAULT_ALERT_THRESHOLDS.loadTime,
+    renderTime:
+      typeof t.renderTime === 'number' && t.renderTime > ZERO
+        ? t.renderTime
+        : DEFAULT_ALERT_THRESHOLDS.renderTime,
+    memoryUsage:
+      typeof t.memoryUsage === 'number' && t.memoryUsage > ZERO
+        ? t.memoryUsage
+        : DEFAULT_ALERT_THRESHOLDS.memoryUsage,
+  };
+};
+
+const clampMonitoringInterval = (v: unknown): number => {
+  if (typeof v === 'number' && v > ZERO) {
+    return Math.max(PERCENTAGE_FULL, v);
+  }
+  return ANIMATION_DURATION_VERY_SLOW;
+};
+
+const clampMaxAlerts = (v: unknown): number => {
+  if (typeof v === 'number' && v > ZERO) {
+    const bounded = Math.max(ONE, v);
+    return Math.min(ANIMATION_DURATION_VERY_SLOW, bounded);
+  }
+  return PERCENTAGE_FULL;
+};
+
 export const validateAndSanitizeOptions = (
   options: UsePerformanceMonitorOptions,
 ): PerformanceMonitorState => {
-  // Validate and sanitize options to handle null/undefined/invalid values
-  const safeOptions = options || {};
-
-  const {
-    enableAlerts = false,
-    alertThresholds = {},
-    monitoringInterval = ANIMATION_DURATION_VERY_SLOW,
-    enableMemoryMonitoring = true,
-    enableNetworkMonitoring = false,
-    enableRenderTimeMonitoring = true,
-    enableLoadTimeMonitoring = true,
-    enableAutoBaseline = false,
-    maxAlerts = PERCENTAGE_FULL,
-  } = safeOptions;
-
-  // Validate alertThresholds with proper fallbacks
-  const safeAlertThresholds = alertThresholds || {};
-  const validatedAlertThresholds: Required<PerformanceAlertThresholds> = {
-    loadTime:
-      typeof safeAlertThresholds.loadTime === 'number' &&
-      safeAlertThresholds.loadTime > ZERO
-        ? safeAlertThresholds.loadTime
-        : DEFAULT_ALERT_THRESHOLDS.loadTime,
-    renderTime:
-      typeof safeAlertThresholds.renderTime === 'number' &&
-      safeAlertThresholds.renderTime > ZERO
-        ? safeAlertThresholds.renderTime
-        : DEFAULT_ALERT_THRESHOLDS.renderTime,
-    memoryUsage:
-      typeof safeAlertThresholds.memoryUsage === 'number' &&
-      safeAlertThresholds.memoryUsage > ZERO
-        ? safeAlertThresholds.memoryUsage
-        : DEFAULT_ALERT_THRESHOLDS.memoryUsage,
-  };
-
-  // Validate monitoringInterval
-  const validMonitoringInterval =
-    typeof monitoringInterval === 'number' && monitoringInterval > ZERO
-      ? Math.max(PERCENTAGE_FULL, monitoringInterval) // Minimum 100ms
-      : ANIMATION_DURATION_VERY_SLOW;
-
-  // Validate maxAlerts
-  const validMaxAlerts =
-    typeof maxAlerts === 'number' && maxAlerts > ZERO
-      ? Math.min(ANIMATION_DURATION_VERY_SLOW, Math.max(ONE, maxAlerts)) // Between 1 and 1000
-      : PERCENTAGE_FULL;
-
+  const o = options || {};
   return {
-    enableAlerts: Boolean(enableAlerts),
-    alertThresholds: validatedAlertThresholds,
-    enableMemoryMonitoring: Boolean(enableMemoryMonitoring),
-    enableNetworkMonitoring: Boolean(enableNetworkMonitoring),
-    enableRenderTimeMonitoring: Boolean(enableRenderTimeMonitoring),
-    enableLoadTimeMonitoring: Boolean(enableLoadTimeMonitoring),
-    enableAutoBaseline: Boolean(enableAutoBaseline),
-    maxAlerts: validMaxAlerts,
-    monitoringInterval: validMonitoringInterval,
+    enableAlerts: coerceBoolean(o.enableAlerts, false),
+    alertThresholds: validateThresholds(o.alertThresholds),
+    enableMemoryMonitoring: coerceBoolean(o.enableMemoryMonitoring, true),
+    enableNetworkMonitoring: coerceBoolean(o.enableNetworkMonitoring, false),
+    enableRenderTimeMonitoring: coerceBoolean(o.enableRenderTimeMonitoring, true),
+    enableLoadTimeMonitoring: coerceBoolean(o.enableLoadTimeMonitoring, true),
+    enableAutoBaseline: coerceBoolean(o.enableAutoBaseline, false),
+    maxAlerts: clampMaxAlerts(o.maxAlerts),
+    monitoringInterval: clampMonitoringInterval(o.monitoringInterval),
   };
 };
 

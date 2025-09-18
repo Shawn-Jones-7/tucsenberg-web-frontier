@@ -3,11 +3,7 @@
  */
 
 import { ZERO } from "@/constants";
-import type {
-  BlogPost,
-  ContentError,
-  ContentQueryOptions,
-} from '@/types/content';
+import type { BlogPost, ContentQueryOptions } from '@/types/content';
 
 /**
  * Get field value from post metadata with type safety
@@ -21,7 +17,7 @@ function getFieldValue(post: BlogPost, field: string): string {
     case 'title':
       return post.metadata.title || '';
     default:
-      throw new Error(`Unexpected sort field: ${field}`) as ContentError;
+      throw new Error(`Unexpected sort field: ${field}`);
   }
 }
 
@@ -61,7 +57,7 @@ function validateSortField(sortBy: string): void {
   ) {
     throw new Error(
       `Invalid sort field: ${sortBy}. Allowed fields: ${allowedSortFields.join(', ')}`,
-    ) as ContentError;
+    );
   }
 }
 

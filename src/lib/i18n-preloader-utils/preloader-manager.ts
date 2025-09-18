@@ -12,6 +12,7 @@ import type { IPreloader, PreloadState } from '@/lib/i18n-preloader-types';
 export class PreloaderManager {
   private preloaders = new Map<string, IPreloader>();
   private defaultPreloader?: IPreloader | undefined;
+  private static readonly allowedKey = /^[a-z0-9:_-]+$/i;
 
   /**
    * 注册预加载器
@@ -83,11 +84,13 @@ export class PreloaderManager {
    * Get all preloader states
    */
   getAllStates(): Record<string, PreloadState> {
-    const states: Record<string, PreloadState> = {};
+    const entries: Array<[string, PreloadState]> = [];
     this.preloaders.forEach((preloader, name) => {
-      states[name] = preloader.getPreloadState();
+      if (PreloaderManager.allowedKey.test(name)) {
+        entries.push([name, preloader.getPreloadState()]);
+      }
     });
-    return states;
+    return Object.fromEntries(entries) as Record<string, PreloadState>;
   }
 
   /**

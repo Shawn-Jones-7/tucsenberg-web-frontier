@@ -12,13 +12,7 @@ import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, 
 
 import { LocaleCleanupManager } from '@/lib/locale-storage-maintenance-cleanup';
 import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
-import type {
-  LocaleDetectionHistory,
-  MaintenanceOptions,
-  StorageOperationResult,
-  UserLocalePreference,
-} from '@/lib/locale-storage-types';
+import { STORAGE_KEYS, type LocaleDetectionHistory, type MaintenanceOptions, type StorageOperationResult, type UserLocalePreference } from '@/lib/locale-storage-types';
 
 /**
  * 语言存储维护操作管理器
@@ -47,103 +41,34 @@ export class LocaleMaintenanceOperationsManager {
       let totalOperations = ZERO;
       let successfulOperations = ZERO;
 
-      // 清理过期检测记录
-      if (cleanupExpired) {
-        totalOperations += ONE;
-        const cleanupResult =
-          LocaleCleanupManager.cleanupExpiredDetections(maxDetectionAge);
-        if (cleanupResult.success) {
-          successfulOperations += ONE;
-          results.push(
-            `清理过期记录成功，删除了 ${cleanupResult.data || ZERO} 条记录`,
-          );
-        } else {
-          results.push(
-            `清理过期记录失败: ${cleanupResult.error || '未知错误'}`,
-          );
-        }
-      }
+      const tasks: Array<{ enabled: boolean; run: () => { success: boolean; message: string } }> = [
+        {
+          enabled: cleanupExpired,
+          run: () => this.runCleanupExpired(maxDetectionAge),
+        },
+        { enabled: cleanupDuplicates, run: () => this.runCleanupDuplicates() },
+        { enabled: cleanupInvalid, run: () => this.runCleanupInvalid() },
+        { enabled: validateData, run: () => this.runValidation() },
+        { enabled: fixSyncIssues, run: () => this.runFixSync() },
+        { enabled: compactStorage, run: () => this.runCompact() },
+      ];
 
-      // 清理重复记录
-      if (cleanupDuplicates) {
+      for (const task of tasks) {
+        if (!task.enabled) continue;
         totalOperations += ONE;
-        const duplicateResult =
-          LocaleCleanupManager.cleanupDuplicateDetections();
-        if (duplicateResult.success) {
-          successfulOperations += ONE;
-          results.push(
-            `清理重复记录成功，删除了 ${duplicateResult.data || ZERO} 条记录`,
-          );
-        } else {
-          results.push(
-            `清理重复记录失败: ${duplicateResult.error || '未知错误'}`,
-          );
-        }
-      }
-
-      // 清理无效数据
-      if (cleanupInvalid) {
-        totalOperations += ONE;
-        const invalidResult = LocaleCleanupManager.cleanupInvalidPreferences();
-        if (invalidResult.success) {
-          successfulOperations += ONE;
-          results.push(
-            `清理无效数据成功，删除了 ${invalidResult.data || ZERO} 条记录`,
-          );
-        } else {
-          results.push(
-            `清理无效数据失败: ${invalidResult.error || '未知错误'}`,
-          );
-        }
-      }
-
-      // 验证数据完整性
-      if (validateData) {
-        totalOperations += ONE;
-        const validationResult =
-          LocaleValidationManager.validateStorageIntegrity();
-        if (validationResult.success) {
-          successfulOperations += ONE;
-          results.push(`数据验证成功`);
-        } else {
-          results.push(`数据验证失败: ${validationResult.error || '未知错误'}`);
-        }
-      }
-
-      // 修复同步问题
-      if (fixSyncIssues) {
-        totalOperations += ONE;
-        const syncResult = LocaleValidationManager.fixSyncIssues();
-        if (syncResult.success) {
-          successfulOperations += ONE;
-          results.push(`修复同步问题成功`);
-        } else {
-          results.push(`修复同步问题失败: ${syncResult.error || '未知错误'}`);
-        }
-      }
-
-      // 压缩存储空间
-      if (compactStorage) {
-        totalOperations += ONE;
-        const compactResult = this.compactStorage();
-        if (compactResult.success) {
-          successfulOperations += ONE;
-          results.push(`压缩存储成功`);
-        } else {
-          results.push(`压缩存储失败: ${compactResult.error || '未知错误'}`);
-        }
+        const { success, message } = task.run();
+        if (success) successfulOperations += ONE;
+        results.push(message);
       }
 
       return {
         success: successfulOperations === totalOperations,
-        error: `维护完成: ${successfulOperations}/${totalOperations} 操作成功`,
+        error:
+          successfulOperations === totalOperations
+            ? undefined
+            : `维护完成: ${successfulOperations}/${totalOperations} 操作成功`,
         timestamp: Date.now(),
-        data: {
-          totalOperations,
-          successfulOperations,
-          results,
-          options,
-        },
+        data: { totalOperations, successfulOperations, results },
       };
     } catch (error) {
       return {
@@ -152,6 +77,48 @@ export class LocaleMaintenanceOperationsManager {
         timestamp: Date.now(),
       };
     }
+  }
+
+  private static runCleanupExpired(maxDetectionAge: number) {
+    const r = LocaleCleanupManager.cleanupExpiredDetections(maxDetectionAge);
+    return r.success
+      ? { success: true, message: `清理过期记录成功，删除了 ${r.data || ZERO} 条记录` }
+      : { success: false, message: `清理过期记录失败: ${r.error || '未知错误'}` };
+  }
+
+  private static runCleanupDuplicates() {
+    const r = LocaleCleanupManager.cleanupDuplicateDetections();
+    return r.success
+      ? { success: true, message: `清理重复记录成功，删除了 ${r.data || ZERO} 条记录` }
+      : { success: false, message: `清理重复记录失败: ${r.error || '未知错误'}` };
+  }
+
+  private static runCleanupInvalid() {
+    const r = LocaleCleanupManager.cleanupInvalidPreferences();
+    return r.success
+      ? { success: true, message: `清理无效数据成功，删除了 ${r.data || ZERO} 条记录` }
+      : { success: false, message: `清理无效数据失败: ${r.error || '未知错误'}` };
+  }
+
+  private static runValidation() {
+    const r = LocaleValidationManager.validateStorageIntegrity();
+    return r.success
+      ? { success: true, message: '数据验证成功' }
+      : { success: false, message: `数据验证失败: ${r.error || '未知错误'}` };
+  }
+
+  private static runFixSync() {
+    const r = LocaleValidationManager.fixSyncIssues();
+    return r.success
+      ? { success: true, message: '修复同步问题成功' }
+      : { success: false, message: `修复同步问题失败: ${r.error || '未知错误'}` };
+  }
+
+  private static runCompact() {
+    const r = this.compactStorage();
+    return r.success
+      ? { success: true, message: '压缩存储成功' }
+      : { success: false, message: `压缩存储失败: ${r.error || '未知错误'}` };
   }
 
   /**
@@ -334,60 +301,47 @@ export class LocaleMaintenanceOperationsManager {
   static performDeepMaintenance(): StorageOperationResult {
     try {
       const results: string[] = [];
-      let totalOperations = ZERO;
-      let successfulOperations = ZERO;
+      let total = ZERO;
+      let ok = ZERO;
 
-      // 执行标准维护
-      totalOperations += ONE;
-      const standardResult = this.performMaintenance({
-        cleanupExpired: true,
-        validateData: true,
-        compactStorage: true,
-        fixSyncIssues: true,
-        cleanupDuplicates: true,
-        cleanupInvalid: true,
-      });
-      if (standardResult.success) {
-        successfulOperations += ONE;
-        results.push('标准维护完成');
-      } else {
-        results.push(`标准维护失败: ${standardResult.error || '未知错误'}`);
-      }
+      const tasks: Array<{ name: string; run: () => StorageOperationResult }> = [
+        {
+          name: '标准维护',
+          run: () =>
+            this.performMaintenance({
+              cleanupExpired: true,
+              validateData: true,
+              compactStorage: true,
+              fixSyncIssues: true,
+              cleanupDuplicates: true,
+              cleanupInvalid: true,
+            }),
+        },
+        { name: '优化历史', run: () => this.optimizeDetectionHistory() },
+        { name: '重建索引', run: () => this.rebuildStorageIndex() },
+      ];
 
-      // 优化检测历史
-      totalOperations += ONE;
-      const optimizeResult = this.optimizeDetectionHistory();
-      if (optimizeResult.success) {
-        successfulOperations += ONE;
-        results.push(`优化历史成功`);
-      } else {
-        results.push(`优化历史失败: ${optimizeResult.error || '未知错误'}`);
-      }
-
-      // 重建存储索引
-      totalOperations += ONE;
-      const rebuildResult = this.rebuildStorageIndex();
-      if (rebuildResult.success) {
-        successfulOperations += ONE;
-        results.push(`重建索引成功`);
-      } else {
-        results.push(`重建索引失败: ${rebuildResult.error || '未知错误'}`);
+      for (const t of tasks) {
+        total += ONE;
+        const r = t.run();
+        if (r.success) {
+          ok += ONE;
+          results.push(`${t.name}完成`);
+        } else {
+          results.push(`${t.name}失败: ${r.error || '未知错误'}`);
+        }
       }
 
       return {
-        success: successfulOperations === totalOperations,
-        error: `深度维护完成: ${successfulOperations}/${totalOperations} 操作成功`,
+        success: ok === total,
+        error: `深度维护完成: ${ok}/${total} 操作成功`,
         timestamp: Date.now(),
-        data: {
-          totalOperations,
-          successfulOperations,
-          results,
-        },
+        data: { totalOperations: total, successfulOperations: ok, results },
       };
-    } catch (error) {
+    } catch {
       return {
         success: false,
-        error: `执行深度维护失败: ${error instanceof Error ? error.message : '未知错误'}`,
+        error: '执行深度维护失败: 未知错误',
         timestamp: Date.now(),
       };
     }
@@ -405,74 +359,31 @@ export class LocaleMaintenanceOperationsManager {
     const recommendations: string[] = [];
     let priority: 'low' | 'medium' | 'high' = 'low';
 
+    const add = (msg: string, level: 'low' | 'medium' | 'high') => {
+      recommendations.push(msg);
+      if (level === 'high' || (level === 'medium' && priority === 'low')) {
+        priority = level;
+      }
+    };
+
     try {
-      // 检查清理统计
-      const cleanupStats = LocaleCleanupManager.getCleanupStats();
+      const cleanup = LocaleCleanupManager.getCleanupStats();
+      if (cleanup.expiredDetections > PERCENTAGE_HALF) add(`清理 ${cleanup.expiredDetections} 条过期检测记录`, 'medium');
+      if (cleanup.duplicateDetections > COUNT_TEN) add(`清理 ${cleanup.duplicateDetections} 条重复检测记录`, 'medium');
+      if (cleanup.invalidPreferences > ZERO) add(`修复 ${cleanup.invalidPreferences} 项无效偏好数据`, 'high');
 
-      if (cleanupStats.expiredDetections > PERCENTAGE_HALF) {
-        recommendations.push(
-          `清理 ${cleanupStats.expiredDetections} 条过期检测记录`,
-        );
-        priority = 'medium';
-      }
+      const summary = LocaleValidationManager.getValidationSummary();
+      if (summary.invalidKeys > ZERO) add(`修复 ${summary.invalidKeys} 项无效数据`, 'high');
+      if (summary.syncIssues > ZERO) add(`修复 ${summary.syncIssues} 个同步问题`, 'medium');
 
-      if (cleanupStats.duplicateDetections > COUNT_TEN) {
-        recommendations.push(
-          `清理 ${cleanupStats.duplicateDetections} 条重复检测记录`,
-        );
-        priority = 'medium';
-      }
+      const history = LocalStorageManager.get<LocaleDetectionHistory>(STORAGE_KEYS.LOCALE_DETECTION_HISTORY);
+      if (history?.detections && history.detections.length > HTTP_OK) add('优化检测历史数据（记录过多）', priority === 'low' ? 'medium' : priority);
 
-      if (cleanupStats.invalidPreferences > ZERO) {
-        recommendations.push(
-          `修复 ${cleanupStats.invalidPreferences} 项无效偏好数据`,
-        );
-        priority = 'high';
-      }
+      if (recommendations.length === ZERO) add('存储状态良好，无需特殊维护', 'low');
 
-      // 检查验证统计
-      const validationSummary = LocaleValidationManager.getValidationSummary();
-
-      if (validationSummary.invalidKeys > ZERO) {
-        recommendations.push(
-          `修复 ${validationSummary.invalidKeys} 项无效数据`,
-        );
-        priority = 'high';
-      }
-
-      if (validationSummary.syncIssues > ZERO) {
-        recommendations.push(`修复 ${validationSummary.syncIssues} 个同步问题`);
-        priority = 'medium';
-      }
-
-      // 检查历史数据大小
-      const historyData = LocalStorageManager.get<LocaleDetectionHistory>(
-        STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
-      );
-      if (historyData?.detections && historyData.detections.length > HTTP_OK) {
-        recommendations.push('优化检测历史数据（记录过多）');
-        if (priority === 'low') priority = 'medium';
-      }
-
-      if (recommendations.length === ZERO) {
-        recommendations.push('存储状态良好，无需特殊维护');
-      }
-
-      // 估算维护时间
-      let estimatedTime = '< 1分钟';
-      if (recommendations.length > COUNT_TRIPLE) {
-        estimatedTime = '1-2分钟';
-      }
-      if (priority === 'high') {
-        estimatedTime = '2-5分钟';
-      }
-
-      return {
-        recommendations,
-        priority,
-        estimatedTime,
-      };
-    } catch (error) {
+      const estimatedTime = priority === 'high' ? '2-5分钟' : recommendations.length > COUNT_TRIPLE ? '1-2分钟' : '< 1分钟';
+      return { recommendations, priority, estimatedTime };
+    } catch {
       return {
         recommendations: ['获取维护建议时出错，建议执行基础维护'],
         priority: 'medium',

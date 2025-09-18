@@ -232,42 +232,62 @@ export function validateTemplateParameter(
   const errors: string[] = [];
   const warnings: string[] = [];
 
+  const validateText = () => {
+    if (!parameter.text) {
+      errors.push('Text parameter must have text value');
+    }
+  };
+
+  const validateCurrency = () => {
+    if (!parameter.currency) {
+      errors.push('Currency parameter must have currency object');
+      return;
+    }
+    if (!parameter.currency.code) {
+      errors.push('Currency parameter must have currency code');
+    }
+    if (!parameter.currency.fallback_value) {
+      errors.push('Currency parameter must have fallback value');
+    }
+    if (typeof parameter.currency.amount_1000 !== 'number') {
+      errors.push('Currency parameter must have numeric amount_1000');
+    }
+  };
+
+  const validateDateTime = () => {
+    if (!parameter.date_time?.fallback_value) {
+      errors.push('Date time parameter must have fallback value');
+    }
+  };
+
+  const validateMedia = () => {
+    const media = parameter[parameter.type as 'image' | 'document' | 'video'];
+    if (!media?.id && !media?.link) {
+      errors.push(`${parameter.type} parameter must have either id or link`);
+    }
+  };
+
   if (!isValidTemplateParameterType(parameter.type)) {
     errors.push(`Invalid parameter type: ${parameter.type}`);
   }
 
   switch (parameter.type) {
     case 'text':
-      if (!parameter.text) {
-        errors.push('Text parameter must have text value');
-      }
+      validateText();
       break;
     case 'currency':
-      if (!parameter.currency) {
-        errors.push('Currency parameter must have currency object');
-      } else {
-        if (!parameter.currency.code) {
-          errors.push('Currency parameter must have currency code');
-        }
-        if (!parameter.currency.fallback_value) {
-          errors.push('Currency parameter must have fallback value');
-        }
-        if (typeof parameter.currency.amount_1000 !== 'number') {
-          errors.push('Currency parameter must have numeric amount_1000');
-        }
-      }
+      validateCurrency();
       break;
     case 'date_time':
-      if (!parameter.date_time?.fallback_value) {
-        errors.push('Date time parameter must have fallback value');
-      }
+      validateDateTime();
       break;
     case 'image':
     case 'document':
     case 'video':
-      if (!parameter[parameter.type]?.id && !parameter[parameter.type]?.link) {
-        errors.push(`${parameter.type} parameter must have either id or link`);
-      }
+      validateMedia();
+      break;
+    default:
+      // 其他类型目前不需要额外校验
       break;
   }
 

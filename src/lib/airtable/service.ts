@@ -10,6 +10,11 @@ import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
 // 动态引入 Airtable，避免构建期和初始化顺序问题
 // import type 仅用于类型提示，实际模块在运行时按需加载
 import type AirtableNS from 'airtable';
+
+interface AirtableLike {
+  base: (id: string) => AirtableNS.Base;
+  configure: (opts: { endpointUrl: string; apiKey: string }) => void;
+}
 import type {
   AirtableQueryOptions,
   AirtableRecord,
@@ -25,7 +30,7 @@ export class AirtableService {
   private base: AirtableNS.Base | null = null;
   private tableName: string;
   private isConfigured: boolean = false;
-  private airtableModule: any = null;
+  private airtableModule: unknown = null;
 
   constructor() {
     this.tableName = env.AIRTABLE_TABLE_NAME || 'Contacts';
@@ -50,9 +55,28 @@ export class AirtableService {
       }
       // 动态加载 airtable 模块
       if (!this.airtableModule) {
-        this.airtableModule = (await import('airtable')) as any;
+        this.airtableModule = await import('airtable');
       }
-      const Airtable: any = this.airtableModule.default || this.airtableModule;
+      const resolveAirtable = (mod: unknown): AirtableLike | null => {
+        const maybe = mod as { default?: Partial<AirtableLike> } | Partial<AirtableLike>;
+        const candidate = (maybe as { default?: Partial<AirtableLike> }).default ?? maybe;
+        if (
+          candidate &&
+          typeof candidate === 'object' &&
+          'base' in candidate &&
+          'configure' in candidate &&
+          typeof (candidate as AirtableLike).base === 'function' &&
+          typeof (candidate as AirtableLike).configure === 'function'
+        ) {
+          return candidate as AirtableLike;
+        }
+        return null;
+      };
+      const Airtable = resolveAirtable(this.airtableModule);
+      if (!Airtable) {
+        logger.warn('Airtable module did not expose expected API');
+        return;
+      }
 
       Airtable.configure({
         endpointUrl: 'https://api.airtable.com',

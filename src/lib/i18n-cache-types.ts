@@ -1,5 +1,4 @@
 // 向后兼容的重新导出
-import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
 import type {
   AdvancedCacheConfig,
   CacheClusterConfig,
@@ -21,16 +20,7 @@ import type {
   PersistentStorage,
   Preloader,
 } from '@/lib/i18n-cache-types-interfaces';
-import {
-  CacheDebugUtils,
-  CacheEventUtils,
-  CacheKeyUtils,
-  CacheSerializationUtils,
-  CacheSizeUtils,
-  CacheStatsUtils,
-  CacheTimeUtils,
-  CacheValidationUtils,
-} from '@/lib/i18n-cache-types-utils';
+// Note: re-export utils directly below without intermediate imports to avoid unused warnings
 
 /**
  * 国际化缓存基础类型定义 - 主入口

@@ -7,13 +7,8 @@ import { CACHE_LIMITS } from '@/constants/i18n-constants';
 import { COUNT_PAIR, ONE, ZERO } from '@/constants';
 
 import type { EventCollector } from '@/lib/i18n-event-collector';
-import { ErrorLevel } from '@/lib/i18n-monitoring-types';
+import { ErrorLevel, type MonitoringConfig, type MonitoringEventType, type PerformanceData } from '@/lib/i18n-monitoring-types';
 import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
-import type {
-  MonitoringConfig,
-  MonitoringEventType,
-  PerformanceData,
-} from '@/lib/i18n-monitoring-types';
 
 // 性能监控器
 export class PerformanceMonitor {

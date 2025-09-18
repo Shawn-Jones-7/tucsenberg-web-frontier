@@ -71,7 +71,7 @@ export class WhatsAppMessageService {
   /**
    * 发送文本消息
    */
-  async sendTextMessage(
+  sendTextMessage(
     to: string,
     text: string,
     previewUrl: boolean = false,
@@ -87,13 +87,13 @@ export class WhatsAppMessageService {
       },
     };
 
-    return await this.sendMessage(message);
+    return this.sendMessage(message);
   }
 
   /**
    * 发送图片消息
    */
-  async sendImageMessage(
+  sendImageMessage(
     to: string,
     imageUrl: string,
     caption?: string,
@@ -109,18 +109,19 @@ export class WhatsAppMessageService {
       },
     };
 
-    return await this.sendMessage(message);
+    return this.sendMessage(message);
   }
 
   /**
    * 发送模板消息
    */
-  async sendTemplateMessage(
-    to: string,
-    templateName: string,
-    languageCode: string,
-    parameters?: string[],
-  ): Promise<WhatsAppServiceResponse> {
+  sendTemplateMessage(args: {
+    to: string;
+    templateName: string;
+    languageCode: string;
+    parameters?: string[];
+  }): Promise<WhatsAppServiceResponse> {
+    const { to, templateName, languageCode, parameters } = args;
     const message: SendMessageRequest = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -146,19 +147,20 @@ export class WhatsAppMessageService {
       },
     };
 
-    return await this.sendMessage(message);
+    return this.sendMessage(message);
   }
 
   /**
    * 发送交互式按钮消息
    */
-  async sendButtonMessage(
-    to: string,
-    bodyText: string,
-    buttons: Array<{ id: string; title: string }>,
-    headerText?: string,
-    footerText?: string,
-  ): Promise<WhatsAppServiceResponse> {
+  sendButtonMessage(args: {
+    to: string;
+    bodyText: string;
+    buttons: Array<{ id: string; title: string }>;
+    headerText?: string;
+    footerText?: string;
+  }): Promise<WhatsAppServiceResponse> {
+    const { to, bodyText, buttons, headerText, footerText } = args;
     const message: InteractiveMessage = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -192,22 +194,23 @@ export class WhatsAppMessageService {
       },
     };
 
-    return await this.sendMessage(message);
+    return this.sendMessage(message);
   }
 
   /**
    * 发送列表消息
    */
-  async sendListMessage(
-    to: string,
-    bodyText: string,
-    buttonText: string,
+  sendListMessage(args: {
+    to: string;
+    bodyText: string;
+    buttonText: string;
     sections: Array<{
       title?: string;
       rows: Array<{ id: string; title: string; description?: string }>;
-    }>,
-    options?: { headerText?: string; footerText?: string },
-  ): Promise<WhatsAppServiceResponse> {
+    }>;
+    options?: { headerText?: string; footerText?: string };
+  }): Promise<WhatsAppServiceResponse> {
+    const { to, bodyText, buttonText, sections, options } = args;
     const message: InteractiveMessage = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
@@ -239,6 +242,6 @@ export class WhatsAppMessageService {
       },
     };
 
-    return await this.sendMessage(message);
+    return this.sendMessage(message);
   }
 }

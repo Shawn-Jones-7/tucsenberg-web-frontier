@@ -187,65 +187,76 @@ function calculateAverageMetrics(reports: DiagnosticReport[]): {
  * 生成性能洞察
  */
 function generateInsights(reports: DiagnosticReport[]): string[] {
+  if (reports.length === 0) return ['No data available for analysis'];
+
   const insights: string[] = [];
-
-  if (reports.length === 0) {
-    return ['No data available for analysis'];
-  }
-
   const averages = calculateAverageMetrics(reports);
 
-  // CLS 分析
-  if (averages.cls > MAGIC_0_25) {
-    insights.push(
-      'High Cumulative Layout Shift detected. Consider optimizing layout stability.',
-    );
-  } else if (averages.cls > MAGIC_0_1) {
-    insights.push(
-      'Moderate Cumulative Layout Shift. Room for improvement in layout stability.',
-    );
-  }
-
-  // LCP 分析
-  if (averages.lcp > MAGIC_4000) {
-    insights.push(
-      'Slow Largest Contentful Paint. Consider optimizing loading performance.',
-    );
-  } else if (averages.lcp > MAGIC_2500) {
-    insights.push(
-      'Moderate Largest Contentful Paint. Some optimization opportunities exist.',
-    );
-  }
-
-  // FID 分析
-  if (averages.fid > ANIMATION_DURATION_NORMAL) {
-    insights.push(
-      'High First Input Delay. Consider optimizing JavaScript execution.',
-    );
-  } else if (averages.fid > 100) {
-    insights.push(
-      'Moderate First Input Delay. Some interactivity improvements possible.',
-    );
-  }
-
-  // 趋势分析
-  if (reports.length >= COUNT_FIVE) {
-    const recent = reports.slice(-COUNT_FIVE);
-    const older = reports.slice(0, -COUNT_FIVE);
-
-    if (older.length > 0) {
-      const recentAvg = calculateAverageMetrics(recent);
-      const olderAvg = calculateAverageMetrics(older);
-
-      if (recentAvg.performanceScore > olderAvg.performanceScore) {
-        insights.push('Performance is improving over time.');
-      } else if (recentAvg.performanceScore < olderAvg.performanceScore) {
-        insights.push(
-          'Performance is declining over time. Consider investigating recent changes.',
-        );
-      }
+  const addClsInsights = (cls: number) => {
+    if (cls > MAGIC_0_25) {
+      insights.push(
+        'High Cumulative Layout Shift detected. Consider optimizing layout stability.',
+      );
+      return;
     }
-  }
+    if (cls > MAGIC_0_1) {
+      insights.push(
+        'Moderate Cumulative Layout Shift. Room for improvement in layout stability.',
+      );
+    }
+  };
+
+  const addLcpInsights = (lcp: number) => {
+    if (lcp > MAGIC_4000) {
+      insights.push(
+        'Slow Largest Contentful Paint. Consider optimizing loading performance.',
+      );
+      return;
+    }
+    if (lcp > MAGIC_2500) {
+      insights.push(
+        'Moderate Largest Contentful Paint. Some optimization opportunities exist.',
+      );
+    }
+  };
+
+  const addFidInsights = (fid: number) => {
+    if (fid > ANIMATION_DURATION_NORMAL) {
+      insights.push(
+        'High First Input Delay. Consider optimizing JavaScript execution.',
+      );
+      return;
+    }
+    if (fid > 100) {
+      insights.push(
+        'Moderate First Input Delay. Some interactivity improvements possible.',
+      );
+    }
+  };
+
+  const addTrendInsights = (all: DiagnosticReport[]) => {
+    if (all.length < COUNT_FIVE) return;
+    const recent = all.slice(-COUNT_FIVE);
+    const older = all.slice(0, -COUNT_FIVE);
+    if (older.length === 0) return;
+
+    const recentAvg = calculateAverageMetrics(recent);
+    const olderAvg = calculateAverageMetrics(older);
+    if (recentAvg.performanceScore > olderAvg.performanceScore) {
+      insights.push('Performance is improving over time.');
+      return;
+    }
+    if (recentAvg.performanceScore < olderAvg.performanceScore) {
+      insights.push(
+        'Performance is declining over time. Consider investigating recent changes.',
+      );
+    }
+  };
+
+  addClsInsights(averages.cls);
+  addLcpInsights(averages.lcp);
+  addFidInsights(averages.fid);
+  addTrendInsights(reports);
 
   if (insights.length === 0) {
     insights.push('Performance metrics are within acceptable ranges.');

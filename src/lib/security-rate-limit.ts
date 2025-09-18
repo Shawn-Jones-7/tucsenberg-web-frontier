@@ -185,10 +185,23 @@ export function rateLimitWithTier(
   identifier: string,
   tierName: keyof typeof defaultTiers = 'normal',
 ): boolean {
-  const tier = defaultTiers[tierName];
-  if (!tier) {
-    throw new Error(`Unknown rate limit tier: ${tierName}`);
-  }
+  const allowed = ['strict', 'normal', 'relaxed', 'premium'] as const;
+  const tierKey = allowed.includes(tierName as typeof allowed[number]) ? (tierName as typeof allowed[number]) : 'normal';
+  // 使用安全访问器避免动态对象注入
+  const tier = ((): RateLimitTier => {
+    switch (tierKey) {
+      case 'strict':
+        return defaultTiers.strict;
+      case 'normal':
+        return defaultTiers.normal;
+      case 'relaxed':
+        return defaultTiers.relaxed;
+      case 'premium':
+        return defaultTiers.premium;
+      default:
+        return defaultTiers.normal;
+    }
+  })();
 
   return rateLimit(identifier, tier.maxRequests, tier.windowMs);
 }

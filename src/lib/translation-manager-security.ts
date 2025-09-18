@@ -1,5 +1,6 @@
 import { HTTP_OK, ZERO } from "@/constants";
 import { logger } from '@/lib/logger';
+import { safeGetProperty, safeSetProperty } from '@/lib/security-object-access';
 import type { Locale } from '@/types/i18n';
 import type { QualityScore } from '@/types/translation-manager';
 
@@ -93,7 +94,7 @@ export class TranslationManagerSecurity {
     }
 
     // 安全地设置值
-    result[key] = translation;
+    safeSetProperty({ obj: result, key, value: translation });
   }
 
   /**
@@ -117,7 +118,7 @@ export class TranslationManagerSecurity {
 
     // 使用 Object.prototype.hasOwnProperty 安全检查
     if (Object.prototype.hasOwnProperty.call(flatTranslations, key)) {
-      return flatTranslations[key];
+      return safeGetProperty(flatTranslations, key);
     }
 
     return undefined;
@@ -155,13 +156,14 @@ export class TranslationManagerSecurity {
     const result = { ...target };
 
     for (const key in source) {
-      if (Object.prototype.hasOwnProperty.call(source, key)) {
-        if (this.isValidTranslationKey(key)) {
-          result[key] = source[key];
-        } else {
-          logger.warn(`Skipping invalid translation key: ${key}`);
-        }
+      if (!Object.prototype.hasOwnProperty.call(source, key)) continue;
+      if (!this.isValidTranslationKey(key)) {
+        logger.warn(`Skipping invalid translation key: ${key}`);
+        continue;
       }
+      const value = safeGetProperty(source, key);
+      if (value === undefined) continue;
+      safeSetProperty({ obj: result, key, value });
     }
 
     return result;
@@ -184,7 +186,7 @@ export class TranslationManagerSecurity {
         typeof current === 'object' &&
         Object.prototype.hasOwnProperty.call(current, key)
       ) {
-        current = current[key] as Record<string, unknown>;
+        current = (safeGetProperty(current, key) as Record<string, unknown>) ?? ({} as Record<string, unknown>);
       } else {
         return undefined;
       }

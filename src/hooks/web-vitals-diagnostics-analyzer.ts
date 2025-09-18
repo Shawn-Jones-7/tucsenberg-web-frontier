@@ -110,46 +110,63 @@ export const comparePagePerformance = (
   currentReport: DiagnosticReport,
   comparedReport: DiagnosticReport,
 ): PageComparison => {
-  const metrics: (keyof DetailedWebVitals)[] = [
-    'lcp',
-    'fid',
-    'cls',
-    'fcp',
-    'ttfb',
-  ];
+  // helper: compute comparison metrics for two numbers
+  const compute = (a?: number, b?: number) => {
+    const current = typeof a === 'number' ? a : undefined;
+    const compared = typeof b === 'number' ? b : undefined;
+    const hasBoth = typeof a === 'number' && typeof b === 'number';
+    const difference = hasBoth ? a - b : 0;
+    const percentageChange = hasBoth ? calculatePercentageChange(a, b) : 0;
+    return { current, compared, difference, percentageChange } as const;
+  };
 
-  const metricsComparison: PageComparison['metrics'] =
-    {} as PageComparison['metrics'];
+  // helper: classify relation for "lower is better" metrics
+  const classify = (a?: number, b?: number): 'better' | 'worse' | 'same' | undefined => {
+    if (typeof a !== 'number' || typeof b !== 'number') return undefined;
+    if (a < b) return 'better';
+    if (a > b) return 'worse';
+    return 'same';
+  };
+
+  // Build metrics without dynamic object indexing to satisfy security rules
+  const lcpCmp = compute(currentReport.vitals.lcp, comparedReport.vitals.lcp);
+  const fidCmp = compute(currentReport.vitals.fid, comparedReport.vitals.fid);
+  const clsCmp = compute(currentReport.vitals.cls, comparedReport.vitals.cls);
+  const fcpCmp = compute(currentReport.vitals.fcp, comparedReport.vitals.fcp);
+  const ttfbCmp = compute(
+    currentReport.vitals.ttfb,
+    comparedReport.vitals.ttfb,
+  );
+
+  const metricsComparison: PageComparison['metrics'] = {
+    // Only core metrics are populated; other keys (if any) remain undefined via type widening
+    lcp: lcpCmp,
+    fid: fidCmp,
+    cls: clsCmp,
+    fcp: fcpCmp,
+    ttfb: ttfbCmp,
+  } as PageComparison['metrics'];
+
   const betterMetrics: string[] = [];
   const worseMetrics: string[] = [];
 
-  metrics.forEach((metric) => {
-    const current = currentReport.vitals[metric];
-    const compared = comparedReport.vitals[metric];
+  // 对于性能指标，值越小越好 — evaluate per metric via helper to reduce complexity
+  const classifications: Array<{ key: 'lcp' | 'fid' | 'cls' | 'fcp' | 'ttfb'; kind?: 'better' | 'worse' | 'same' }> = [];
+  const lcpKind = classify(currentReport.vitals.lcp, comparedReport.vitals.lcp);
+  classifications.push(lcpKind ? { key: 'lcp', kind: lcpKind } : { key: 'lcp' });
+  const fidKind = classify(currentReport.vitals.fid, comparedReport.vitals.fid);
+  classifications.push(fidKind ? { key: 'fid', kind: fidKind } : { key: 'fid' });
+  const clsKind = classify(currentReport.vitals.cls, comparedReport.vitals.cls);
+  classifications.push(clsKind ? { key: 'cls', kind: clsKind } : { key: 'cls' });
+  const fcpKind = classify(currentReport.vitals.fcp, comparedReport.vitals.fcp);
+  classifications.push(fcpKind ? { key: 'fcp', kind: fcpKind } : { key: 'fcp' });
+  const ttfbKind = classify(currentReport.vitals.ttfb, comparedReport.vitals.ttfb);
+  classifications.push(ttfbKind ? { key: 'ttfb', kind: ttfbKind } : { key: 'ttfb' });
 
-    const difference =
-      current && compared ? (current as any) - (compared as any) : 0;
-    const percentageChange =
-      current && compared
-        ? calculatePercentageChange(current as any, compared as any)
-        : 0;
-
-    metricsComparison[metric] = {
-      current: typeof current === 'number' ? current : undefined,
-      compared: typeof compared === 'number' ? compared : undefined,
-      difference,
-      percentageChange,
-    };
-
-    // 对于性能指标，值越小越好
-    if (current && compared) {
-      if (current < compared) {
-        betterMetrics.push(metric);
-      } else if (current > compared) {
-        worseMetrics.push(metric);
-      }
-    }
-  });
+  for (const item of classifications) {
+    if (item.kind === 'better') betterMetrics.push(item.key);
+    if (item.kind === 'worse') worseMetrics.push(item.key);
+  }
 
   return {
     currentPage: currentReport.pageUrl,

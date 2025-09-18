@@ -1,8 +1,7 @@
 // 导入核心功能
 import { ZERO } from "@/constants";
 import { PerformanceMonitoringCore } from '@/lib/performance-monitoring-core';
-import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
-import { generateEnvironmentConfig } from '@/lib/performance-monitoring-types';
+import { generateEnvironmentConfig, type PerformanceConfig } from '@/lib/performance-monitoring-types';
 
 /**
  * 性能监控协调器 - 主入口文件
@@ -123,11 +122,9 @@ export function useWebEvalAgentIntegration() {
       }
     },
     recordNetworkRequest: (
-      url: string,
-      method: string,
-      status: number,
-      timing: number,
+      params: { url: string; method: string; status: number; timing: number },
     ) => {
+      const { url, method, status, timing } = params;
       if (config.webEvalAgent.enabled && config.webEvalAgent.captureNetwork) {
         performanceCoordinator.recordMetric({
           source: 'web-eval-agent',

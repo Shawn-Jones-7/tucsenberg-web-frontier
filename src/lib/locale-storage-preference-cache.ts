@@ -189,52 +189,16 @@ export function checkDataConsistency(): {
   const recommendations: string[] = [];
 
   try {
-    const localPreference =
-      LocalStorageManager.get<UserLocalePreference>('locale_preference');
+    const localPreference = LocalStorageManager.get<UserLocalePreference>('locale_preference');
     const cookieLocale = CookieManager.get('locale_preference');
 
-    // 检查 localStorage 数据有效性
-    if (localPreference) {
-      const validation = validatePreferenceData(localPreference);
-      if (!validation.isValid) {
-        issues.push(
-          `Invalid localStorage data: ${validation.errors.join(', ')}`,
-        );
-        recommendations.push('Clear and recreate localStorage preference data');
-      }
-    }
+    validateLocal(localPreference, issues, recommendations);
+    const m = checkMismatch(localPreference, cookieLocale);
+    issues.push(...m.issues); recommendations.push(...m.recommendations);
+    const c = checkCacheConsistency(localPreference);
+    issues.push(...c.issues); recommendations.push(...c.recommendations);
 
-    // 检查数据一致性
-    if (localPreference && cookieLocale) {
-      if (localPreference.locale !== cookieLocale) {
-        issues.push(
-          `Locale mismatch: localStorage(${localPreference.locale}) vs cookies(${cookieLocale})`,
-        );
-        recommendations.push('Sync data between localStorage and cookies');
-      }
-    } else if (!localPreference && !cookieLocale) {
-      issues.push('No preference data found in any storage');
-      recommendations.push('Initialize default preference data');
-    }
-
-    // 检查缓存一致性
-    const cachedPreference =
-      PreferenceCacheManager.getCachedPreference('locale_preference');
-    if (cachedPreference && localPreference) {
-      if (
-        cachedPreference.locale !== localPreference.locale ||
-        Math.abs(cachedPreference.timestamp - localPreference.timestamp) > ANIMATION_DURATION_VERY_SLOW
-      ) {
-        issues.push('Cache data is inconsistent with localStorage');
-        recommendations.push('Clear and refresh cache');
-      }
-    }
-
-    return {
-      isConsistent: issues.length === ZERO,
-      issues,
-      recommendations,
-    };
+    return { isConsistent: issues.length === ZERO, issues, recommendations };
   } catch (error) {
     return {
       isConsistent: false,
@@ -244,6 +208,54 @@ export function checkDataConsistency(): {
       recommendations: ['Investigate storage access issues'],
     };
   }
+}
+
+function validateLocal(
+  localPreference: UserLocalePreference | null,
+  issues: string[],
+  recommendations: string[],
+) {
+  if (!localPreference) return;
+  const validation = validatePreferenceData(localPreference);
+  if (!validation.isValid) {
+    issues.push(`Invalid localStorage data: ${validation.errors.join(', ')}`);
+    recommendations.push('Clear and recreate localStorage preference data');
+  }
+}
+
+function checkMismatch(
+  localPreference: UserLocalePreference | null,
+  cookieLocale: string | null,
+): { issues: string[]; recommendations: string[] } {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  if (localPreference && cookieLocale) {
+    if (localPreference.locale !== cookieLocale) {
+      issues.push(
+        `Locale mismatch: localStorage(${localPreference.locale}) vs cookies(${cookieLocale})`,
+      );
+      recommendations.push('Sync data between localStorage and cookies');
+    }
+  } else if (!localPreference && !cookieLocale) {
+    issues.push('No preference data found in any storage');
+    recommendations.push('Initialize default preference data');
+  }
+  return { issues, recommendations };
+}
+
+function checkCacheConsistency(
+  localPreference: UserLocalePreference | null,
+): { issues: string[]; recommendations: string[] } {
+  const issues: string[] = [];
+  const recommendations: string[] = [];
+  const cached = PreferenceCacheManager.getCachedPreference('locale_preference');
+  if (!cached || !localPreference) return { issues, recommendations };
+  const tsDiff = Math.abs(cached.timestamp - localPreference.timestamp);
+  if (cached.locale !== localPreference.locale || tsDiff > ANIMATION_DURATION_VERY_SLOW) {
+    issues.push('Cache data is inconsistent with localStorage');
+    recommendations.push('Clear and refresh cache');
+  }
+  return { issues, recommendations };
 }
 
 /**
@@ -281,39 +293,12 @@ export function fixDataInconsistency(): StorageOperationResult<{
       LocalStorageManager.get<UserLocalePreference>('locale_preference');
     const cookieLocale = CookieManager.get('locale_preference');
 
-    let authoritative: UserLocalePreference | null = null;
+    const { pref, note } = determineAuthoritative(localPreference, cookieLocale);
+    actions.push(note);
 
-    // 确定权威数据源
-    if (localPreference && validatePreferenceData(localPreference).isValid) {
-      authoritative = localPreference;
-      actions.push('Using localStorage as authoritative source');
-    } else if (cookieLocale) {
-      authoritative = {
-        locale: cookieLocale as Locale,
-        source: 'browser',
-        confidence: MAGIC_0_6,
-        timestamp: Date.now(),
-        metadata: { recoveredFrom: 'cookies' },
-      };
-      actions.push('Recovered from cookies');
-    } else {
-      // 创建默认偏好
-      authoritative = {
-        locale: 'en',
-        source: 'default',
-        confidence: MAGIC_0_5,
-        timestamp: Date.now(),
-        metadata: { createdBy: 'recovery' },
-      };
-      actions.push('Created default preference');
-    }
-
-    // 同步到所有存储
-    if (authoritative) {
-      const saveResult = saveUserPreference(authoritative);
-      if (saveResult.success) {
-        actions.push('Synced to all storage locations');
-      }
+    const saveResult = saveUserPreference(pref);
+    if (saveResult.success) {
+      actions.push('Synced to all storage locations');
     }
 
     return {
@@ -333,6 +318,37 @@ export function fixDataInconsistency(): StorageOperationResult<{
       responseTime: Date.now() - startTime,
     };
   }
+}
+
+function determineAuthoritative(
+  localPreference: UserLocalePreference | null,
+  cookieLocale: string | null,
+): { pref: UserLocalePreference; note: string } {
+  if (localPreference && validatePreferenceData(localPreference).isValid) {
+    return { pref: localPreference, note: 'Using localStorage as authoritative source' };
+  }
+  if (cookieLocale) {
+    return {
+      pref: {
+        locale: cookieLocale as Locale,
+        source: 'browser',
+        confidence: MAGIC_0_6,
+        timestamp: Date.now(),
+        metadata: { recoveredFrom: 'cookies' },
+      },
+      note: 'Recovered from cookies',
+    };
+  }
+  return {
+    pref: {
+      locale: 'en',
+      source: 'default',
+      confidence: MAGIC_0_5,
+      timestamp: Date.now(),
+      metadata: { createdBy: 'recovery' },
+    },
+    note: 'Created default preference',
+  };
 }
 
 /**
@@ -375,45 +391,10 @@ export function getStorageUsage(): {
   };
 
   // 检查 localStorage
-  try {
-    if (typeof localStorage !== 'undefined') {
-      usage.localStorage.available = true;
-
-      // 估算使用大小
-      let totalSize = ZERO;
-      for (const key in localStorage) {
-        if (localStorage.hasOwnProperty(key)) {
-          totalSize += localStorage[key].length + key.length;
-        }
-      }
-      usage.localStorage.size = totalSize;
-
-      // 尝试获取配额信息
-      if ('storage' in navigator && 'estimate' in navigator.storage) {
-        navigator.storage
-          .estimate()
-          .then((estimate) => {
-            usage.localStorage.quota = estimate.quota || ZERO;
-          })
-          .catch(() => {
-            // 忽略错误
-          });
-      }
-    }
-  } catch {
-    // localStorage 不可用
-  }
+  tryLocalStorageUsage(usage);
 
   // 检查 cookies
-  try {
-    if (typeof document !== 'undefined') {
-      usage.cookies.available = true;
-      usage.cookies.size = document.cookie.length;
-      usage.cookies.count = document.cookie.split(';').length;
-    }
-  } catch {
-    // cookies 不可用
-  }
+  tryCookiesUsage(usage);
 
   // 检查缓存
   const cacheStatus = PreferenceCacheManager.getCacheStatus();
@@ -424,6 +405,50 @@ export function getStorageUsage(): {
   };
 
   return usage;
+}
+
+function tryLocalStorageUsage(usage: {
+  localStorage: { available: boolean; size: number; quota: number };
+  cookies: { available: boolean; size: number; count: number };
+  cache: { size: number; age: number; isExpired: boolean };
+}) {
+  try {
+    if (typeof localStorage === 'undefined') return;
+    usage.localStorage.available = true;
+    let totalSize = ZERO;
+    for (let i = ZERO; i < localStorage.length; i++) {
+      const key = localStorage.key(i);
+      if (!key) continue;
+      const value = localStorage.getItem(key) ?? '';
+      totalSize += value.length + key.length;
+    }
+    usage.localStorage.size = totalSize;
+    if ('storage' in navigator && 'estimate' in navigator.storage) {
+      navigator.storage
+        .estimate()
+        .then((estimate) => {
+          usage.localStorage.quota = estimate.quota || ZERO;
+        })
+        .catch(() => { /* ignore */ });
+    }
+  } catch {
+    // ignore
+  }
+}
+
+function tryCookiesUsage(usage: {
+  localStorage: { available: boolean; size: number; quota: number };
+  cookies: { available: boolean; size: number; count: number };
+  cache: { size: number; age: number; isExpired: boolean };
+}) {
+  try {
+    if (typeof document === 'undefined') return;
+    usage.cookies.available = true;
+    usage.cookies.size = document.cookie.length;
+    usage.cookies.count = document.cookie.split(';').length;
+  } catch {
+    // ignore
+  }
 }
 
 /**

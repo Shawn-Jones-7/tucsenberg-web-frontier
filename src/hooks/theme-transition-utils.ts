@@ -94,18 +94,18 @@ export function calculateEndRadius(x: number, y: number): number {
 /**
  * 创建防抖函数
  */
-export function createDebounce<T extends (..._args: unknown[]) => void>(
-  func: T,
+export function createDebounce<TArgs extends unknown[]>(
+  func: (...args: TArgs) => void,
   delay: number,
-): T {
+): (...args: TArgs) => void {
   let timeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  return ((...args: Parameters<T>) => {
+  return (...args: TArgs) => {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
     timeoutId = setTimeout(() => func(...args), delay);
-  }) as T;
+  };
 }
 
 /**

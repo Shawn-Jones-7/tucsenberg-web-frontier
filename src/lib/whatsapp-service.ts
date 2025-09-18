@@ -46,15 +46,9 @@ export const sendWhatsAppImage = (
   caption?: string,
 ) => getWhatsAppService().sendImageMessage(to, imageUrl, caption);
 
-export const sendWhatsAppTemplate = (
-  to: string,
-  templateName: string,
-  languageCode: string,
-  parameters?: string[],
-) =>
-  getWhatsAppService().sendTemplateMessage(
-    to,
-    templateName,
-    languageCode,
-    parameters,
-  );
+export const sendWhatsAppTemplate = (args: {
+  to: string;
+  templateName: string;
+  languageCode: string;
+  parameters?: string[];
+}) => getWhatsAppService().sendTemplateMessage(args);

@@ -127,6 +127,45 @@ export interface AccessLogEntry {
   error?: string;
 }
 
+// 受控操作类型白名单（用于统计，未知类型归为 other）
+type OperationType = 'read' | 'write' | 'update' | 'remove' | 'delete' | 'clear' | 'list';
+
+interface OperationCounts {
+  read: number;
+  write: number;
+  update: number;
+  remove: number;
+  delete: number;
+  clear: number;
+  list: number;
+  other: number;
+}
+
+function createEmptyOperationCounts(): OperationCounts {
+  return { read: ZERO, write: ZERO, update: ZERO, remove: ZERO, delete: ZERO, clear: ZERO, list: ZERO, other: ZERO };
+}
+
+function incrementOperationCount(target: OperationCounts, op: string): void {
+  switch (op as OperationType) {
+    case 'read':
+      target.read += ONE; break;
+    case 'write':
+      target.write += ONE; break;
+    case 'update':
+      target.update += ONE; break;
+    case 'remove':
+      target.remove += ONE; break;
+    case 'delete':
+      target.delete += ONE; break;
+    case 'clear':
+      target.clear += ONE; break;
+    case 'list':
+      target.list += ONE; break;
+    default:
+      target.other += ONE; break;
+  }
+}
+
 /**
  * 访问日志管理器
  * Access log manager
@@ -139,13 +178,14 @@ export class AccessLogger {
    * 记录访问日志
    * Log access
    */
-  static logAccess(
-    key: string,
-    operation: string,
-    success: boolean,
-    responseTime?: number,
-    error?: string,
-  ): void {
+  static logAccess(params: {
+    key: string;
+    operation: string;
+    success: boolean;
+    responseTime?: number;
+    error?: string;
+  }): void {
+    const { key, operation, success, responseTime, error } = params;
     const logEntry: AccessLogEntry = {
       key,
       operation,
@@ -195,7 +235,7 @@ export class AccessLogger {
     totalOperations: number;
     successRate: number;
     averageResponseTime: number;
-    operationCounts: Record<string, number>;
+    operationCounts: OperationCounts;
     keyCounts: Record<string, number>;
     recentErrors: AccessLogEntry[];
   } {
@@ -213,15 +253,19 @@ export class AccessLogger {
           responseTimes.length
         : ZERO;
 
-    // 统计操作类型
-    const operationCounts: Record<string, number> = {};
-    const keyCounts: Record<string, number> = {};
+    // 统计操作类型（受控）与键访问次数（使用 Map 避免对象注入）
+    const operationCounts = createEmptyOperationCounts();
+    const keyCountsMap = new Map<string, number>();
 
     for (const entry of this.accessLog) {
-      operationCounts[entry.operation] =
-        (operationCounts[entry.operation] || ZERO) + ONE;
-      keyCounts[entry.key] = (keyCounts[entry.key] || ZERO) + ONE;
+      incrementOperationCount(operationCounts, entry.operation);
+      const prev = keyCountsMap.get(entry.key) ?? ZERO;
+      keyCountsMap.set(entry.key, prev + ONE);
     }
+
+    const keyCounts: Record<string, number> = Object.fromEntries(
+      keyCountsMap.entries(),
+    ) as Record<string, number>;
 
     // 获取最近的错误
     const recentErrors = this.accessLog
@@ -265,12 +309,13 @@ export class ErrorLogger {
    * 记录错误
    * Log error
    */
-  static logError(
-    error: string,
-    context?: string,
-    severity: ErrorLogEntry['severity'] = 'medium',
-    stack?: string,
-  ): void {
+  static logError(params: {
+    error: string;
+    context?: string;
+    severity?: ErrorLogEntry['severity'];
+    stack?: string;
+  }): void {
+    const { error, context, severity = 'medium', stack } = params;
     const errorEntry: ErrorLogEntry = {
       error,
       timestamp: Date.now(),
@@ -331,20 +376,21 @@ export class ErrorLogger {
     const {totalOperations} = AccessLogger.getAccessStats();
     const errorRate = totalOperations > ZERO ? (total / totalOperations) * PERCENTAGE_FULL : ZERO;
 
-    // 统计严重程度分布
-    const severityDistribution: Record<string, number> = {
-      low: ZERO,
-      medium: ZERO,
-      high: ZERO,
-      critical: ZERO,
+    // 统计严重程度分布（受控联合 + switch）
+    const severityDistribution = { low: ZERO, medium: ZERO, high: ZERO, critical: ZERO } as const as {
+      low: number;
+      medium: number;
+      high: number;
+      critical: number;
     };
-
+    const dist: { low: number; medium: number; high: number; critical: number } = { ...severityDistribution };
     for (const entry of this.errorLog) {
-      if (
-        entry.severity &&
-        severityDistribution[entry.severity] !== undefined
-      ) {
-        severityDistribution[entry.severity]! += ONE;
+      switch (entry.severity) {
+        case 'low': dist.low += ONE; break;
+        case 'medium': dist.medium += ONE; break;
+        case 'high': dist.high += ONE; break;
+        case 'critical': dist.critical += ONE; break;
+        default: break;
       }
     }
 
@@ -371,27 +417,27 @@ export class ErrorLogger {
     date: string;
     count: number;
   }> {
-    const trends: Record<string, number> = {};
+    const trends = new Map<string, number>();
     const now = new Date();
 
     // 初始化最近7天的数据
     for (let i = MAGIC_6; i >= ZERO; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
-      trends[dateStr] = ZERO;
+      const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+      trends.set(dateStr, ZERO);
     }
 
     // 统计错误数量
     for (const entry of this.errorLog) {
       const date = new Date(entry.timestamp);
-      const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
-      if (Object.prototype.hasOwnProperty.call(trends, dateStr)) {
-        trends[dateStr] = (trends[dateStr] || ZERO) + ONE;
+      const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+      if (trends.has(dateStr)) {
+        trends.set(dateStr, (trends.get(dateStr) ?? ZERO) + ONE);
       }
     }
 
-    return Object.entries(trends).map(([date, count]) => ({ date, count }));
+    return Array.from(trends.entries()).map(([date, count]) => ({ date, count }));
   }
 }
 
@@ -413,13 +459,13 @@ export function cleanupAnalyticsData(
   );
   AccessLogger.clearAccessLog();
   filteredAccessLog.forEach((entry) => {
-    AccessLogger.logAccess(
-      entry.key,
-      entry.operation,
-      entry.success,
-      entry.responseTime,
-      entry.error,
-    );
+    AccessLogger.logAccess({
+      key: entry.key,
+      operation: entry.operation,
+      success: entry.success,
+      ...(entry.responseTime !== undefined && { responseTime: entry.responseTime }),
+      ...(entry.error !== undefined && { error: entry.error }),
+    });
   });
 
   // 清理错误日志
@@ -429,12 +475,12 @@ export function cleanupAnalyticsData(
   );
   ErrorLogger.clearErrorLog();
   filteredErrorLog.forEach((entry) => {
-    ErrorLogger.logError(
-      entry.error,
-      entry.context,
-      entry.severity,
-      entry.stack,
-    );
+    ErrorLogger.logError({
+      error: entry.error,
+      ...(entry.context !== undefined && { context: entry.context }),
+      severity: entry.severity,
+      ...(entry.stack !== undefined && { stack: entry.stack }),
+    });
   });
 
   // 触发清理事件

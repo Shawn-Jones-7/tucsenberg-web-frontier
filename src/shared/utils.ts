@@ -17,7 +17,7 @@ import { EMAIL_VALIDATION } from '@/constants/react-scan';
  * ```
  */
 export function formatDate(date: Date): string {
-  return date.toISOString().split('T')[ZERO]!;
+  return date.toISOString().split('T')[0]!;
 }
 
 /**

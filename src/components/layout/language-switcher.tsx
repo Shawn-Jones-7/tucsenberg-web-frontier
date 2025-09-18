@@ -21,7 +21,7 @@ import { NAVIGATION_ARIA } from '@/lib/navigation';
 import { cn } from '@/lib/utils';
 import { Check, Globe, Languages, Loader2 } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { memo, useEffect, useRef, useState, useTransition } from 'react';
+import { memo, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 /**
  * Language Switcher Component

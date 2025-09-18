@@ -7,6 +7,7 @@
 
 import { ONE, ZERO } from "@/constants";
 import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
+import { safeGetArrayItem } from '@/lib/security-object-access';
 import {
   consoleLogListener,
   historyRecordingListener,
@@ -62,12 +63,12 @@ export function getEventSystemStatus(): {
 } {
   const listenerStats = PreferenceEventManager.getListenerStats();
   const eventHistory = PreferenceEventManager.getEventHistory(ONE);
+  const first = safeGetArrayItem(eventHistory, ZERO);
 
   return {
     isActive: listenerStats.totalListeners > ZERO,
     listenerStats,
     eventHistoryCount: PreferenceEventManager.getEventHistory().length,
-    lastEventTime:
-      eventHistory.length > ZERO ? eventHistory[ZERO]?.timestamp || null : null,
+    lastEventTime: first ? first.timestamp || null : null,
   };
 }

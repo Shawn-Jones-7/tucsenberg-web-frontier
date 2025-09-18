@@ -1,6 +1,5 @@
 /* eslint-disable security/detect-object-injection */
-import type { Locale } from '@/config/paths';
-import { SITE_CONFIG, type PageType } from '@/config/paths';
+import { SITE_CONFIG, type Locale, type PageType } from '@/config/paths';
 import { ONE } from "@/constants";
 import {
   generateCanonicalURL,

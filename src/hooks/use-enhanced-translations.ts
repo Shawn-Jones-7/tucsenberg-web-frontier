@@ -39,19 +39,36 @@ export function useEnhancedTranslations(
     return null;
   }, [preload, t]);
 
+  // 仅允许严格 ICU 参数类型：string | number | Date
+  type StrictICUValue = string | number | Date;
+  type InputValues = Record<string, unknown>;
+
+  const normalizeValues = useCallback((values?: InputValues) => {
+    if (!values) return undefined;
+    const normalized: Record<string, StrictICUValue> = {};
+    for (const [k, v] of Object.entries(values)) {
+      if (typeof v === 'string' || typeof v === 'number') {
+        normalized[k] = v;
+      } else if (v instanceof Date) {
+        normalized[k] = v;
+      } else if (typeof v === 'boolean') {
+        // 严格类型下不接受 boolean，统一转为字符串
+        normalized[k] = v ? 'true' : 'false';
+      } else {
+        // 其余类型（对象/数组/undefined/null）跳过，避免传入 undefined
+        // 如需富文本参数，请使用 t.rich
+      }
+    }
+    return Object.keys(normalized).length > 0 ? normalized : undefined;
+  }, []);
+
   // 增强的翻译函数
   const enhancedT = useCallback(
-    (
-      key: string,
-      values?: Record<
-        string,
-        string | number | boolean | Record<string, unknown> | unknown[]
-      >,
-    ) => {
+    (key: string, values?: InputValues) => {
       const startTime = performance.now();
 
       try {
-        const result = t(key, values as any);
+        const result = t(key, normalizeValues(values));
 
         // 记录加载时间
         if (analytics) {
@@ -74,18 +91,12 @@ export function useEnhancedTranslations(
         return fallback ? `[ERROR] ${key}` : key;
       }
     },
-    [t, locale, fallback, analytics],
+    [t, locale, fallback, analytics, normalizeValues],
   );
 
   // 批量翻译函数
   const batchT = useCallback(
-    (
-      keys: string[],
-      values?: Record<
-        string,
-        string | number | boolean | Record<string, unknown> | unknown[]
-      >,
-    ) => {
+    (keys: string[], values?: InputValues) => {
       return keys.reduce(
         (acc, key) => {
           acc[key] = enhancedT(key, values);
@@ -99,15 +110,13 @@ export function useEnhancedTranslations(
 
   // 条件翻译函数
   const conditionalT = useCallback(
-    (
-      condition: boolean,
-      trueKey: string,
-      falseKey: string,
-      values?: Record<
-        string,
-        string | number | boolean | Record<string, unknown> | unknown[]
-      >,
-    ) => {
+    (args: {
+      condition: boolean;
+      trueKey: string;
+      falseKey: string;
+      values?: InputValues;
+    }) => {
+      const { condition, trueKey, falseKey, values } = args;
       return enhancedT(condition ? trueKey : falseKey, values);
     },
     [enhancedT],

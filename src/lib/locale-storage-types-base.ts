@@ -11,7 +11,6 @@ import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, C
 import { MAGIC_0_5 } from "@/constants/decimal";
 import type { Locale } from '@/types/i18n';
 import { FILE_SECURITY_CONSTANTS } from "@/constants/security-constants";
-const {FILENAME_MAX_LENGTH} = FILE_SECURITY_CONSTANTS;
 
 /**
  * 存储键名常量

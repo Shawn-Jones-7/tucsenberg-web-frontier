@@ -63,12 +63,19 @@ function handleCacheMetrics(locale: string, loadTime: number) {
 }
 
 // 辅助函数：创建成功响应
-function createSuccessResponse(
-  locale: string,
-  messages: Record<string, unknown>,
-  loadTime: number,
-  cacheUsed: boolean,
-) {
+interface SuccessResponseArgs {
+  locale: string;
+  messages: Record<string, unknown>;
+  loadTime: number;
+  cacheUsed: boolean;
+}
+
+function createSuccessResponse({
+  locale,
+  messages,
+  loadTime,
+  cacheUsed,
+}: SuccessResponseArgs) {
   return {
     locale,
     messages,
@@ -129,12 +136,12 @@ export default getRequestConfig(async ({ requestLocale }) => {
     const cacheUsed = handleCacheMetrics(locale, loadTime);
 
     // 创建增强的响应，包含检测信息
-    const response = createSuccessResponse(
+    const response = createSuccessResponse({
       locale,
       messages,
       loadTime,
       cacheUsed,
-    );
+    });
 
     // 添加智能检测元数据
     if (detectedLocale && detectionSource && detectionConfidence) {

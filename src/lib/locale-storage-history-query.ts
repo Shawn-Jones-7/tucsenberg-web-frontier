@@ -131,100 +131,63 @@ export function queryDetections(conditions: QueryConditions): {
   hasMore: boolean;
 } {
   const historyResult = getDetectionHistory();
-
   if (!historyResult.success || !historyResult.data) {
-    return {
-      records: [],
-      totalCount: ZERO,
-      hasMore: false,
-    };
+    return { records: [], totalCount: ZERO, hasMore: false };
   }
 
   let records = historyResult.data.history;
-
-  // 应用过滤条件
-  if (conditions.locale) {
-    records = records.filter((record) => record.locale === conditions.locale);
-  }
-
-  if (conditions.source) {
-    records = records.filter((record) => record.source === conditions.source);
-  }
-
-  if (conditions.startTime !== undefined) {
-    records = records.filter(
-      (record) => record.timestamp >= conditions.startTime!,
-    );
-  }
-
-  if (conditions.endTime !== undefined) {
-    records = records.filter(
-      (record) => record.timestamp <= conditions.endTime!,
-    );
-  }
-
-  if (conditions.minConfidence !== undefined) {
-    records = records.filter(
-      (record) => record.confidence >= conditions.minConfidence!,
-    );
-  }
-
-  if (conditions.maxConfidence !== undefined) {
-    records = records.filter(
-      (record) => record.confidence <= conditions.maxConfidence!,
-    );
-  }
-
-  // 排序
-  if (conditions.sortBy) {
-    records.sort((a, b) => {
-      let aValue: string | number;
-      let bValue: string | number;
-
-      switch (conditions.sortBy) {
-        case 'timestamp':
-          aValue = a.timestamp;
-          bValue = b.timestamp;
-          break;
-        case 'confidence':
-          aValue = a.confidence;
-          bValue = b.confidence;
-          break;
-        case 'locale':
-          aValue = a.locale;
-          bValue = b.locale;
-          break;
-        case 'source':
-          aValue = a.source;
-          bValue = b.source;
-          break;
-        default:
-          return ZERO;
-      }
-
-      if (aValue < bValue) {
-        return conditions.sortOrder === 'desc' ? ONE : -ONE;
-      }
-      if (aValue > bValue) {
-        return conditions.sortOrder === 'desc' ? -ONE : ONE;
-      }
-      return ZERO;
-    });
-  }
+  records = applyFilters(records, conditions);
+  records = applySort(records, conditions.sortBy, conditions.sortOrder);
 
   const totalCount = records.length;
+  const { items, hasMore } = applyPagination(records, conditions.offset, conditions.limit);
 
-  // 应用分页
-  const offset = conditions.offset || ZERO;
-  const limit = conditions.limit || totalCount;
-  const paginatedRecords = records.slice(offset, offset + limit);
-  const hasMore = offset + limit < totalCount;
+  return { records: items, totalCount, hasMore };
+}
 
-  return {
-    records: paginatedRecords,
-    totalCount,
-    hasMore,
-  };
+function applyFilters(records: LocaleDetectionRecord[], c: QueryConditions): LocaleDetectionRecord[] {
+  let result = records;
+  if (c.locale) result = result.filter((r) => r.locale === c.locale);
+  if (c.source) result = result.filter((r) => r.source === c.source);
+  if (c.startTime !== undefined) result = result.filter((r) => r.timestamp >= c.startTime!);
+  if (c.endTime !== undefined) result = result.filter((r) => r.timestamp <= c.endTime!);
+  if (c.minConfidence !== undefined) result = result.filter((r) => r.confidence >= c.minConfidence!);
+  if (c.maxConfidence !== undefined) result = result.filter((r) => r.confidence <= c.maxConfidence!);
+  return result;
+}
+
+function applySort(
+  records: LocaleDetectionRecord[],
+  sortBy?: QueryConditions['sortBy'],
+  sortOrder: QueryConditions['sortOrder'] = 'asc',
+): LocaleDetectionRecord[] {
+  if (!sortBy) return records;
+  const sorted = [...records];
+  sorted.sort((a, b) => {
+    let aValue: string | number;
+    let bValue: string | number;
+    switch (sortBy) {
+      case 'timestamp': aValue = a.timestamp; bValue = b.timestamp; break;
+      case 'confidence': aValue = a.confidence; bValue = b.confidence; break;
+      case 'locale': aValue = a.locale; bValue = b.locale; break;
+      case 'source': aValue = a.source; bValue = b.source; break;
+      default: return ZERO;
+    }
+    if (aValue < bValue) return sortOrder === 'desc' ? ONE : -ONE;
+    if (aValue > bValue) return sortOrder === 'desc' ? -ONE : ONE;
+    return ZERO;
+  });
+  return sorted;
+}
+
+function applyPagination(
+  records: LocaleDetectionRecord[],
+  offset?: number,
+  limit?: number,
+): { items: LocaleDetectionRecord[]; hasMore: boolean } {
+  const start = offset ?? ZERO;
+  const end = start + (limit ?? records.length);
+  return { items: records.slice(start, end), hasMore: end < records.length };
 }
 
 /**
@@ -446,8 +409,7 @@ export function getTimeDistributionStats(
   // 找到时间范围
   const timestamps = records.map((r) => r.timestamp);
   const minTime = Math.min(...timestamps);
-  const _maxTime = Math.max(...timestamps);
-  // 最大时间已计算但在此处未直接使用
+  // 最大时间可用于扩展分析（此处不直接使用）
 
   // 创建时间桶
   const buckets = new Map<

@@ -1,5 +1,4 @@
-
-import { SECONDS_PER_MINUTE, MINUTES_PER_HOUR } from '@/constants';
+// 自包含的常量定义，不引入未使用的外部时间单位
 
 /**
  * 性能监控常量定义

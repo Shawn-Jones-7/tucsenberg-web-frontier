@@ -241,48 +241,10 @@ export function validateAnalyticsData(): {
   const recommendations: string[] = [];
 
   try {
-    // 检查基础数据
-    const stats = getStorageStats();
-    if (!stats.success) {
-      issues.push('无法获取存储统计信息');
-    }
-
-    const healthCheck = performHealthCheck();
-    if (!healthCheck.success) {
-      issues.push('无法执行健康检查');
-    }
-
-    // 检查日志数据
-    const accessLog = AccessLogger.getAccessLog();
-    const errorLog = ErrorLogger.getErrorLog();
-
-    if (accessLog.length === ZERO) {
-      issues.push('访问日志为空');
-      recommendations.push('开始记录存储操作以收集分析数据');
-    }
-
-    if (errorLog.length > accessLog.length * MAGIC_0_1) {
-      issues.push('错误率过高');
-      recommendations.push('检查存储操作逻辑，减少错误发生');
-    }
-
-    // 检查数据时效性
-    const now = Date.now();
-    const oneHourAgo = now - SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
-    const recentAccess = accessLog.filter(
-      (entry) => entry.timestamp > oneHourAgo,
-    );
-
-    if (recentAccess.length === ZERO && accessLog.length > ZERO) {
-      issues.push('最近一小时无活动记录');
-      recommendations.push('检查应用是否正常运行');
-    }
-
-    // 检查缓存状态
-    const cacheStats = CacheManager.getCacheStats();
-    if (cacheStats.expiredEntries > cacheStats.validEntries) {
-      recommendations.push('清理过期缓存以提高性能');
-    }
+    runBaseChecks(issues);
+    runLogChecks(issues, recommendations);
+    runRecencyChecks(issues, recommendations);
+    runCacheChecks(recommendations);
   } catch (error) {
     issues.push(
       `数据验证过程中发生错误: ${error instanceof Error ? error.message : '未知错误'}`,
@@ -294,6 +256,52 @@ export function validateAnalyticsData(): {
     issues,
     recommendations,
   };
+}
+
+function runBaseChecks(issues: string[]): void {
+  const stats = getStorageStats();
+  if (!stats.success) {
+    issues.push('无法获取存储统计信息');
+  }
+
+  const healthCheck = performHealthCheck();
+  if (!healthCheck.success) {
+    issues.push('无法执行健康检查');
+  }
+}
+
+function runLogChecks(issues: string[], recommendations: string[]): void {
+  const accessLog = AccessLogger.getAccessLog();
+  const errorLog = ErrorLogger.getErrorLog();
+
+  if (accessLog.length === ZERO) {
+    issues.push('访问日志为空');
+    recommendations.push('开始记录存储操作以收集分析数据');
+  }
+
+  if (errorLog.length > accessLog.length * MAGIC_0_1) {
+    issues.push('错误率过高');
+    recommendations.push('检查存储操作逻辑，减少错误发生');
+  }
+}
+
+function runRecencyChecks(issues: string[], recommendations: string[]): void {
+  const accessLog = AccessLogger.getAccessLog();
+  const now = Date.now();
+  const oneHourAgo = now - SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const recentAccess = accessLog.filter((entry) => entry.timestamp > oneHourAgo);
+
+  if (recentAccess.length === ZERO && accessLog.length > ZERO) {
+    issues.push('最近一小时无活动记录');
+    recommendations.push('检查应用是否正常运行');
+  }
+}
+
+function runCacheChecks(recommendations: string[]): void {
+  const cacheStats = CacheManager.getCacheStats();
+  if (cacheStats.expiredEntries > cacheStats.validEntries) {
+    recommendations.push('清理过期缓存以提高性能');
+  }
 }
 
 // ==================== 数据压缩和优化 ====================
@@ -343,66 +351,27 @@ export function optimizeAnalyticsStorage(): {
   };
   optimizationResults: string[];
 } {
+  const before = snapshotState();
   const results: string[] = [];
 
-  // 记录优化前的状态
-  const beforeAccessLog = AccessLogger.getAccessLog();
-  const beforeErrorLog = ErrorLogger.getErrorLog();
-  const beforeCacheStats = CacheManager.getCacheStats();
-
-  const before = {
-    accessLogSize: beforeAccessLog.length,
-    errorLogSize: beforeErrorLog.length,
-    cacheSize: beforeCacheStats.totalEntries,
-  };
-
-  // 执行优化
-
   // 1. 清理过期缓存
-  CacheManager.cleanExpiredCache();
-  results.push('清理了过期缓存');
+  if (cleanExpiredCache()) {
+    results.push('清理了过期缓存');
+  }
 
   // 2. 压缩访问日志（保留最近1000条）
-  if (beforeAccessLog.length > ANIMATION_DURATION_VERY_SLOW) {
-    const recentAccessLog = beforeAccessLog.slice(ZERO, ANIMATION_DURATION_VERY_SLOW);
-    AccessLogger.clearAccessLog();
-    recentAccessLog.forEach((entry) => {
-      AccessLogger.logAccess(
-        entry.key,
-        entry.operation,
-        entry.success,
-        entry.responseTime,
-        entry.error,
-      );
-    });
-    results.push(`压缩访问日志：${beforeAccessLog.length} -> 1000 条`);
+  const compressedAccess = compressAccessLog(before.accessLogSize);
+  if (compressedAccess) {
+    results.push(`压缩访问日志：${before.accessLogSize} -> 1000 条`);
   }
 
   // 3. 压缩错误日志（保留最近500条）
-  if (beforeErrorLog.length > 500) {
-    const recentErrorLog = beforeErrorLog.slice(ZERO, 500);
-    ErrorLogger.clearErrorLog();
-    recentErrorLog.forEach((entry) => {
-      ErrorLogger.logError(
-        entry.error,
-        entry.context,
-        entry.severity,
-        entry.stack,
-      );
-    });
-    results.push(`压缩错误日志：${beforeErrorLog.length} -> 500 条`);
+  const compressedError = compressErrorLog(before.errorLogSize);
+  if (compressedError) {
+    results.push(`压缩错误日志：${before.errorLogSize} -> 500 条`);
   }
 
-  // 记录优化后的状态
-  const afterAccessLog = AccessLogger.getAccessLog();
-  const afterErrorLog = ErrorLogger.getErrorLog();
-  const afterCacheStats = CacheManager.getCacheStats();
-
-  const after = {
-    accessLogSize: afterAccessLog.length,
-    errorLogSize: afterErrorLog.length,
-    cacheSize: afterCacheStats.totalEntries,
-  };
+  const after = snapshotState();
 
   if (results.length === ZERO) {
     results.push('无需优化，数据已处于最佳状态');
@@ -415,6 +384,53 @@ export function optimizeAnalyticsStorage(): {
   };
 }
 
+function snapshotState(): { accessLogSize: number; errorLogSize: number; cacheSize: number } {
+  const accessLogSize = AccessLogger.getAccessLog().length;
+  const errorLogSize = ErrorLogger.getErrorLog().length;
+  const cacheSize = CacheManager.getCacheStats().totalEntries;
+  return { accessLogSize, errorLogSize, cacheSize };
+}
+
+function cleanExpiredCache(): boolean {
+  const before = CacheManager.getCacheStats().expiredEntries;
+  CacheManager.cleanExpiredCache();
+  const after = CacheManager.getCacheStats().expiredEntries;
+  return after <= before;
+}
+
+function compressAccessLog(beforeSize: number): boolean {
+  if (beforeSize <= ANIMATION_DURATION_VERY_SLOW) return false;
+  const beforeAccessLog = AccessLogger.getAccessLog();
+  const recentAccessLog = beforeAccessLog.slice(ZERO, ANIMATION_DURATION_VERY_SLOW);
+  AccessLogger.clearAccessLog();
+  recentAccessLog.forEach((entry) => {
+    AccessLogger.logAccess({
+      key: entry.key,
+      operation: entry.operation,
+      success: entry.success,
+      ...(entry.responseTime !== undefined && { responseTime: entry.responseTime }),
+      ...(entry.error !== undefined && { error: entry.error }),
+    });
+  });
+  return true;
+}
+
+function compressErrorLog(beforeSize: number): boolean {
+  if (beforeSize <= 500) return false;
+  const beforeErrorLog = ErrorLogger.getErrorLog();
+  const recentErrorLog = beforeErrorLog.slice(ZERO, 500);
+  ErrorLogger.clearErrorLog();
+  recentErrorLog.forEach((entry) => {
+    ErrorLogger.logError({
+      error: entry.error,
+      ...(entry.context !== undefined && { context: entry.context }),
+      severity: entry.severity,
+      ...(entry.stack !== undefined && { stack: entry.stack }),
+    });
+  });
+  return true;
+}
+
 // ==================== 工具函数 ====================
 
 /**
@@ -422,16 +438,25 @@ export function optimizeAnalyticsStorage(): {
  * Format byte size
  */
 export function formatByteSize(bytes: number): string {
-  const units = ['B', 'KB', 'MB', 'GB'];
   let size = bytes;
   let unitIndex = ZERO;
 
-  while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
+  while (size >= BYTES_PER_KB && unitIndex < 3) {
     size /= BYTES_PER_KB;
     unitIndex += ONE;
   }
 
-  return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
+  const unit = ((): 'B' | 'KB' | 'MB' | 'GB' => {
+    switch (unitIndex) {
+      case 0: return 'B';
+      case 1: return 'KB';
+      case 2: return 'MB';
+      case 3: return 'GB';
+      default: return 'GB';
+    }
+  })();
+
+  return `${size.toFixed(COUNT_PAIR)} ${unit}`;
 }
 
 /**

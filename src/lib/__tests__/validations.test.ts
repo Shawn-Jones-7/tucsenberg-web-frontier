@@ -1,9 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type {
-  type ContactFormData,
-  type FormSubmissionStatus,
-  type FormValidationError,
-} from '../validations';
 import {
   airtableRecordSchema,
   apiResponseSchema,
@@ -11,6 +6,9 @@ import {
   emailTemplateDataSchema,
   validationConfig,
   validationHelpers,
+  type ContactFormData,
+  type FormSubmissionStatus,
+  type FormValidationError,
 } from '../validations';
 
 describe('validations - Schema Validation', () => {

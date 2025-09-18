@@ -70,7 +70,7 @@ export const safeDelete = <T extends object>(
   key: PropertyKey
 ): boolean => {
   if (hasOwn(obj, key)) {
-    delete (obj as any)[key];
+    Reflect.deleteProperty(obj as Record<PropertyKey, unknown>, key);
     return true;
   }
   return false;
@@ -143,7 +143,7 @@ export const safeMerge = <T extends object, U extends object>(
 
   for (const key of safeKeys(source)) {
     if (hasOwn(source, key)) {
-      (result as any)[key] = source[key];
+      (result as Record<PropertyKey, unknown>)[key as PropertyKey] = (source as Record<PropertyKey, unknown>)[key as PropertyKey];
     }
   }
 
@@ -159,15 +159,15 @@ export const safeDeepGet = <T extends object>(
   path: string
 ): unknown => {
   const keys = path.split('.');
-  let current: any = obj;
+  let current: unknown = obj;
 
   for (const key of keys) {
     if (current === null || current === undefined) {
       return undefined;
     }
 
-    if (typeof current === 'object' && hasOwn(current, key)) {
-      current = current[key];
+    if (typeof current === 'object' && hasOwn(current as Record<PropertyKey, unknown>, key)) {
+      current = (current as Record<PropertyKey, unknown>)[key as PropertyKey];
     } else {
       return undefined;
     }
@@ -196,7 +196,7 @@ export const createSafeProxy = <T extends object>(
   options: {
     allowedKeys?: (keyof T)[];
     readOnly?: boolean;
-    validator?: (key: keyof T, value: any) => boolean;
+    validator?: (key: keyof T, value: unknown) => boolean;
   } = {}
 ): T => {
   const { allowedKeys, readOnly = false, validator } = options;
@@ -263,11 +263,11 @@ export const SafeAccess = {
   /**
    * 安全访问配置对象
    */
-  config: <T extends Record<string, any>>(
+  config: <T extends Record<string, unknown>>(
     config: T,
     key: string
   ): T[keyof T] | undefined => {
-    return hasOwn(config, key) ? config[key] : undefined;
+    return hasOwn(config, key) ? (config as Record<string, unknown>)[key] as T[keyof T] : undefined;
   },
 
   /**
@@ -284,15 +284,15 @@ export const SafeAccess = {
     obj: T,
     ...keys: string[]
   ): unknown => {
-    let current: any = obj;
+    let current: unknown = obj;
 
     for (const key of keys) {
       if (current === null || current === undefined) {
         return undefined;
       }
 
-      if (typeof current === 'object' && hasOwn(current, key)) {
-        current = current[key];
+      if (typeof current === 'object' && hasOwn(current as Record<PropertyKey, unknown>, key)) {
+        current = (current as Record<PropertyKey, unknown>)[key as PropertyKey];
       } else {
         return undefined;
       }

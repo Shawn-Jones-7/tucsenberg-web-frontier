@@ -71,13 +71,14 @@ export class WhatsAppService {
   /**
    * 发送模板消息
    */
-  async sendTemplateMessage(
-    to: string,
-    templateName: string,
-    languageCode: string = 'en',
-    components?: Array<Record<string, unknown>>,
-  ) {
+  async sendTemplateMessage(args: {
+    to: string;
+    templateName: string;
+    languageCode?: string;
+    components?: Array<Record<string, unknown>>;
+  }) {
     try {
+      const { to, templateName, languageCode = 'en', components } = args;
       // WhatsApp API expects recipient as second parameter
       const recipient = parseInt(to, COUNT_TEN);
       // WhatsApp template message with correct structure
@@ -122,24 +123,25 @@ export class WhatsAppService {
    */
   async handleIncomingMessage(body: WhatsAppWebhookBody) {
     try {
-      const entry = body.entry?.[ZERO];
-      const changes = entry?.changes?.[ZERO];
-      const value = changes?.value;
+      const messages = body.entry?.[0]?.changes?.[0]?.value?.messages;
+      if (!messages || messages.length === 0) {
+        return { success: true };
+      }
 
-      if (value?.messages) {
-        const [message] = value.messages;
-        if (message) {
-          const { from } = message;
-          const messageBody = message.text?.body;
+      const [message] = messages;
+      if (!message) {
+        return { success: true };
+      }
 
-          // 使用logger替代console.log
-          logger.info(`Received WhatsApp message from ${from}: ${messageBody}`);
+      const { from } = message;
+      const messageBody = message.text?.body;
 
-          // 这里可以添加自动回复逻辑
-          if (messageBody) {
-            await this.sendAutoReply(from, messageBody);
-          }
-        }
+      // 使用logger替代console.log
+      logger.info(`Received WhatsApp message from ${from}: ${messageBody}`);
+
+      // 这里可以添加自动回复逻辑
+      if (messageBody) {
+        await this.sendAutoReply(from, messageBody);
       }
 
       return { success: true };
@@ -216,13 +218,22 @@ export function sendWhatsAppMessage(message: WhatsAppMessage) {
     case 'text':
       return service.sendTextMessage(message.to, message.content.body!);
 
-    case 'template':
-      return service.sendTemplateMessage(
-        message.to,
-        message.content.templateName!,
-        message.content.languageCode,
-        message.content.components,
-      );
+    case 'template': {
+      const payload: {
+        to: string;
+        templateName: string;
+        languageCode?: string;
+        components?: Array<Record<string, unknown>>;
+      } = {
+        to: message.to,
+        templateName: message.content.templateName!,
+      };
+      if (message.content.languageCode) payload.languageCode = message.content.languageCode;
+      if (message.content.components && message.content.components.length > 0) {
+        payload.components = message.content.components;
+      }
+      return service.sendTemplateMessage(payload);
+    }
 
     default:
       throw new Error(`Unsupported message type: ${message.type}`);

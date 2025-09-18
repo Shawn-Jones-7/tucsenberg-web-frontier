@@ -11,14 +11,14 @@ import { ONE, ZERO } from "@/constants";
 import { MINUTE_MS } from "@/constants/time";
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
-import type { Locale } from '@/types/i18n';
-import type {
-  LocaleDetectionHistory,
-  StorageOperationResult,
-  UserLocalePreference,
-  ValidationResult,
+import {
+  STORAGE_KEYS,
+  type LocaleDetectionHistory,
+  type StorageOperationResult,
+  type UserLocalePreference,
+  type ValidationResult,
 } from '@/lib/locale-storage-types';
+import type { Locale } from '@/types/i18n';
 
 /**
  * 存储验证数据结构
@@ -36,6 +36,93 @@ interface StorageValidationData {
  * Locale storage validation manager
  */
 export class LocaleValidationManager {
+  // 局部工具：校验 local 数据
+  private static updateLocalValidation(
+    key: keyof typeof STORAGE_KEYS,
+    localData: unknown,
+    result: ValidationResult<StorageValidationData>,
+  ): void {
+    if (localData === null) return;
+    if (key === 'LOCALE_PREFERENCE') {
+      const isValid = this.validatePreferenceData(
+        localData as UserLocalePreference,
+      );
+      result.data!.localDataValid = isValid;
+      if (!isValid) {
+        result.isValid = false;
+        result.errors.push('localStorage中的偏好数据格式无效');
+      }
+      return;
+    }
+    if (key === 'LOCALE_DETECTION_HISTORY') {
+      const isValid = this.validateHistoryData(
+        localData as LocaleDetectionHistory,
+      );
+      result.data!.localDataValid = isValid;
+      if (!isValid) {
+        result.isValid = false;
+        result.errors.push('localStorage中的历史数据格式无效');
+      }
+    }
+  }
+
+  // 局部工具：校验 cookie 数据
+  private static updateCookieValidation(
+    key: keyof typeof STORAGE_KEYS,
+    cookieData: string | null,
+    result: ValidationResult<StorageValidationData>,
+  ): void {
+    if (cookieData === null) return;
+    try {
+      if (key === 'LOCALE_PREFERENCE') {
+        const parsed = JSON.parse(cookieData) as UserLocalePreference;
+        const isValid = this.validatePreferenceData(parsed);
+        result.data!.cookieDataValid = isValid;
+        if (!isValid) {
+          result.isValid = false;
+          result.errors.push('Cookie中的偏好数据格式无效');
+        }
+      }
+    } catch {
+      result.isValid = false;
+      result.data!.cookieDataValid = false;
+      result.errors.push('Cookie数据JSON格式错误');
+    }
+  }
+
+  // 局部工具：生成存在性告警
+  private static addPresenceWarnings(
+    localData: unknown,
+    cookieData: string | null,
+    result: ValidationResult<StorageValidationData>,
+  ): void {
+    if (localData !== null && cookieData === null) {
+      result.warnings.push('数据仅存在于localStorage中，Cookie中缺失');
+    } else if (localData === null && cookieData !== null) {
+      result.warnings.push('数据仅存在于Cookie中，localStorage中缺失');
+    }
+  }
+  private static getStorageKeyByName(
+    key: keyof typeof STORAGE_KEYS,
+  ): (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS] {
+    switch (key) {
+      case 'LOCALE_PREFERENCE':
+        return STORAGE_KEYS.LOCALE_PREFERENCE;
+      case 'LOCALE_DETECTION_HISTORY':
+        return STORAGE_KEYS.LOCALE_DETECTION_HISTORY;
+      case 'USER_LOCALE_OVERRIDE':
+        return STORAGE_KEYS.USER_LOCALE_OVERRIDE;
+      case 'LOCALE_ANALYTICS':
+        return STORAGE_KEYS.LOCALE_ANALYTICS;
+      case 'LOCALE_CACHE':
+        return STORAGE_KEYS.LOCALE_CACHE;
+      case 'LOCALE_SETTINGS':
+        return STORAGE_KEYS.LOCALE_SETTINGS;
+      default:
+        // 不应到达此分支，返回一个安全默认值
+        return STORAGE_KEYS.LOCALE_PREFERENCE;
+    }
+  }
   /**
    * 验证存储数据完整性
    * Validate storage data integrity
@@ -170,7 +257,7 @@ export class LocaleValidationManager {
     key: keyof typeof STORAGE_KEYS,
   ): ValidationResult<StorageValidationData> {
     try {
-      const storageKey = STORAGE_KEYS[key];
+      const storageKey = this.getStorageKeyByName(key);
       const localData = LocalStorageManager.get(storageKey);
       const cookieData = CookieManager.get(storageKey);
 
@@ -186,54 +273,10 @@ export class LocaleValidationManager {
         },
       };
 
-      // 验证localStorage数据
-      if (localData !== null) {
-        if (key === 'LOCALE_PREFERENCE') {
-          const isValid = this.validatePreferenceData(
-            localData as UserLocalePreference,
-          );
-          result.data!.localDataValid = isValid;
-          if (!isValid) {
-            result.isValid = false;
-            result.errors.push('localStorage中的偏好数据格式无效');
-          }
-        } else if (key === 'LOCALE_DETECTION_HISTORY') {
-          const isValid = this.validateHistoryData(
-            localData as LocaleDetectionHistory,
-          );
-          result.data!.localDataValid = isValid;
-          if (!isValid) {
-            result.isValid = false;
-            result.errors.push('localStorage中的历史数据格式无效');
-          }
-        }
-      }
-
-      // 验证Cookie数据
-      if (cookieData !== null) {
-        try {
-          if (key === 'LOCALE_PREFERENCE') {
-            const parsed = JSON.parse(cookieData) as UserLocalePreference;
-            const isValid = this.validatePreferenceData(parsed);
-            result.data!.cookieDataValid = isValid;
-            if (!isValid) {
-              result.isValid = false;
-              result.errors.push('Cookie中的偏好数据格式无效');
-            }
-          }
-        } catch {
-          result.isValid = false;
-          result.data!.cookieDataValid = false;
-          result.errors.push('Cookie数据JSON格式错误');
-        }
-      }
-
-      // 检查同步状态
-      if (localData !== null && cookieData === null) {
-        result.warnings.push('数据仅存在于localStorage中，Cookie中缺失');
-      } else if (localData === null && cookieData !== null) {
-        result.warnings.push('数据仅存在于Cookie中，localStorage中缺失');
-      }
+      // 应用拆分的校验与提示
+      this.updateLocalValidation(key, localData, result);
+      this.updateCookieValidation(key, cookieData, result);
+      this.addPresenceWarnings(localData, cookieData, result);
 
       return result;
     } catch (error) {
@@ -258,15 +301,10 @@ export class LocaleValidationManager {
    * Validate all storage data
    */
   static validateAllData(): Record<string, ValidationResult> {
-    const results: Record<string, ValidationResult> = {};
-
-    Object.keys(STORAGE_KEYS).forEach((key) => {
-      results[key] = this.validateSpecificData(
-        key as keyof typeof STORAGE_KEYS,
-      );
-    });
-
-    return results;
+    const entries = (Object.keys(STORAGE_KEYS) as Array<
+      keyof typeof STORAGE_KEYS
+    >).map((key) => [key as string, this.validateSpecificData(key)] as const);
+    return Object.fromEntries(entries) as Record<string, ValidationResult>;
   }
 
   /**
@@ -278,35 +316,8 @@ export class LocaleValidationManager {
       const issues: string[] = [];
       const warnings: string[] = [];
 
-      // 检查偏好数据一致性
-      const localPreference = LocalStorageManager.get<UserLocalePreference>(
-        STORAGE_KEYS.LOCALE_PREFERENCE,
-      );
-      const cookiePreferenceStr = CookieManager.get(
-        STORAGE_KEYS.LOCALE_PREFERENCE,
-      );
-
-      if (localPreference && cookiePreferenceStr) {
-        try {
-          const cookiePreference = JSON.parse(
-            cookiePreferenceStr,
-          ) as UserLocalePreference;
-
-          if (localPreference.locale !== cookiePreference.locale) {
-            issues.push('localStorage和Cookie中的语言偏好不一致');
-          }
-
-          if (
-            Math.abs(localPreference.timestamp - cookiePreference.timestamp) >
-            MINUTE_MS
-          ) {
-            // 1分钟差异
-            warnings.push('localStorage和Cookie中的偏好时间戳差异较大');
-          }
-        } catch {
-          issues.push('Cookie中的偏好数据格式错误');
-        }
-      }
+      // 偏好数据一致性
+      this.analyzePreferenceConsistency(issues, warnings);
 
       // 检查覆盖设置一致性
       const localOverride = LocalStorageManager.get<Locale>(
@@ -340,6 +351,37 @@ export class LocaleValidationManager {
         error: `数据一致性检查失败: ${error instanceof Error ? error.message : '未知错误'}`,
         timestamp: Date.now(),
       };
+    }
+  }
+
+  // 偏好一致性拆分
+  private static analyzePreferenceConsistency(
+    issues: string[],
+    warnings: string[],
+  ): void {
+    const localPreference = LocalStorageManager.get<UserLocalePreference>(
+      STORAGE_KEYS.LOCALE_PREFERENCE,
+    );
+    const cookiePreferenceStr = CookieManager.get(
+      STORAGE_KEYS.LOCALE_PREFERENCE,
+    );
+    if (localPreference && cookiePreferenceStr) {
+      try {
+        const cookiePreference = JSON.parse(
+          cookiePreferenceStr,
+        ) as UserLocalePreference;
+        if (localPreference.locale !== cookiePreference.locale) {
+          issues.push('localStorage和Cookie中的语言偏好不一致');
+        }
+        if (
+          Math.abs(localPreference.timestamp - cookiePreference.timestamp) >
+          MINUTE_MS
+        ) {
+          warnings.push('localStorage和Cookie中的偏好时间戳差异较大');
+        }
+      } catch {
+        issues.push('Cookie中的偏好数据格式错误');
+      }
     }
   }
 

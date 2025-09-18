@@ -26,7 +26,7 @@ describe('TranslationValidators', () => {
     it('should detect empty translation with whitespace only', () => {
       const result = TranslationValidators.performBasicValidation(
         'Hello world',
-        '   \n\_t  ',
+        '   \n_t  ',
       );
 
       expect(result.issues).toHaveLength(1);

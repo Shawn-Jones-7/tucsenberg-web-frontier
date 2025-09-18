@@ -7,13 +7,13 @@
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import type {
-  ContentMetadata,
-  ContentType,
-  Locale,
-  ParsedContent,
+import {
+  ContentError,
+  type ContentMetadata,
+  type ContentType,
+  type Locale,
+  type ParsedContent,
 } from '@/types/content';
-import { ContentError } from '@/types/content';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
 import { CONTENT_DIR, validateFilePath } from '@/lib/content-utils';

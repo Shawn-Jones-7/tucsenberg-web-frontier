@@ -15,47 +15,29 @@ import {
   fixDataInconsistency,
   getStorageUsage,
   optimizeStoragePerformance,
-  PreferenceCacheManager,
   syncPreferenceData,
 } from '@/lib/locale-storage-preference-cache';
 import {
-  clearUserPreference,
-  comparePreferences,
-  createDefaultPreference,
   getPreferenceSummary,
   getUserPreference,
   hasUserPreference,
-  normalizePreference,
   saveUserPreference,
   updatePreferenceConfidence,
   validatePreferenceData,
 } from '@/lib/locale-storage-preference-core';
 import {
-  cleanupEventSystem,
-  clearPreferenceHistory,
   createOverrideClearedEvent,
   createOverrideSetEvent,
   createPreferenceErrorEvent,
   createPreferenceLoadedEvent,
   createPreferenceSavedEvent,
   createSyncEvent,
-  getEventSystemStatus,
   getPreferenceChangeStats,
   getPreferenceHistory,
   PreferenceEventManager,
   recordPreferenceHistory,
-  setupDefaultListeners,
 } from '@/lib/locale-storage-preference-events';
-import {
-  clearUserOverride,
-  exportOverrideData,
-  getOverrideHistory,
-  getOverrideStats,
-  getUserOverride,
-  hasUserOverride,
-  importOverrideData,
-  setUserOverride,
-} from '@/lib/locale-storage-preference-override';
+import { clearUserOverride, getOverrideStats, getUserOverride, hasUserOverride, setUserOverride } from '@/lib/locale-storage-preference-override';
 import type {
   StorageEventListener,
   StorageOperationResult,

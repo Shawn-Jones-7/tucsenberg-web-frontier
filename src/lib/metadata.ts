@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
-import type { Locale, PageType } from '@/lib/seo-metadata';
-import { createPageSEOConfig, generateLocalizedMetadata } from '@/lib/seo-metadata';
+import { createPageSEOConfig, generateLocalizedMetadata, type Locale, type PageType } from '@/lib/seo-metadata';
 
 /**
  * 生成页面元数据的便捷函数

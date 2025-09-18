@@ -208,22 +208,22 @@ describe('useEnhancedTranslations', () => {
     it('should return true key when condition is true', () => {
       const { result } = renderHook(() => useEnhancedTranslations());
 
-      const translation = result.current.conditionalT(
-        true,
-        'true.key',
-        'false.key',
-      );
+      const translation = result.current.conditionalT({
+        condition: true,
+        trueKey: 'true.key',
+        falseKey: 'false.key',
+      });
       expect(translation).toBe('translated-true.key');
     });
 
     it('should return false key when condition is false', () => {
       const { result } = renderHook(() => useEnhancedTranslations());
 
-      const translation = result.current.conditionalT(
-        false,
-        'true.key',
-        'false.key',
-      );
+      const translation = result.current.conditionalT({
+        condition: false,
+        trueKey: 'true.key',
+        falseKey: 'false.key',
+      });
       expect(translation).toBe('translated-false.key');
     });
 
@@ -231,12 +231,12 @@ describe('useEnhancedTranslations', () => {
       const { result } = renderHook(() => useEnhancedTranslations());
       const values = { status: 'active' };
 
-      const translation = result.current.conditionalT(
-        true,
-        'active.key',
-        'inactive.key',
+      const translation = result.current.conditionalT({
+        condition: true,
+        trueKey: 'active.key',
+        falseKey: 'inactive.key',
         values,
-      );
+      });
       expect(translation).toBe(
         `translated-active.key-${JSON.stringify(values)}`,
       );

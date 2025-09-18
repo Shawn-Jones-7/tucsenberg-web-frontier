@@ -322,11 +322,11 @@ export class BundleAnalyzerAnalyzer {
     });
 
     const duplicateModules = Array.from(moduleChunkMap.entries())
-      .filter(([, chunks]) => chunks.length > ONE)
-      .map(([module, chunks]) => ({
+      .filter(([, chunkList]) => chunkList.length > ONE)
+      .map(([module, chunkList]) => ({
         module,
-        chunks,
-        totalSize: chunks.length * ANIMATION_DURATION_VERY_SLOW, // 估算大小
+        chunks: chunkList,
+        totalSize: chunkList.length * ANIMATION_DURATION_VERY_SLOW, // 估算大小
       }))
       .sort((a, b) => b.totalSize - a.totalSize)
       .slice(ZERO, COUNT_TEN);
@@ -344,16 +344,28 @@ export class BundleAnalyzerAnalyzer {
    * Format file size
    */
   private formatSize(bytes: number): string {
-    const units = ['B', 'KB', 'MB', 'GB'];
+    const getUnit = (index: number): 'B' | 'KB' | 'MB' | 'GB' => {
+      switch (true) {
+        case index <= 0:
+          return 'B';
+        case index === 1:
+          return 'KB';
+        case index === 2:
+          return 'MB';
+        default:
+          return 'GB';
+      }
+    };
+
     let size = bytes;
     let unitIndex = ZERO;
 
-    while (size >= BYTES_PER_KB && unitIndex < units.length - ONE) {
+    while (size >= BYTES_PER_KB && unitIndex < 3) {
       size /= BYTES_PER_KB;
       unitIndex += ONE;
     }
 
-    return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
+    return `${size.toFixed(COUNT_PAIR)} ${getUnit(unitIndex)}`;
   }
 
   /**
@@ -373,7 +385,7 @@ export class BundleAnalyzerAnalyzer {
     }
 
     if (bundleReport.largestBundles.length > ZERO) {
-      const largest = bundleReport.largestBundles[ZERO];
+      const largest = bundleReport.largestBundles.at(ZERO);
       if (largest && largest.size > COUNT_PAIR * BYTES_PER_KB * BYTES_PER_KB) {
         suggestions.push(
           `Bundle "${largest.name}" is very large (${this.formatSize(largest.size)}). Consider splitting it.`,
@@ -442,12 +454,17 @@ export const BundleAnalyzerUtils = {
     size: number,
     connectionSpeed: 'slow' | 'fast' | 'average' = 'average',
   ): number {
-    const speeds = {
-      slow: (BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // 1 Mbps in bytes per second
-      average: (COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // COUNT_FIVE Mbps
-      fast: (PERCENTAGE_QUARTER * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8, // PERCENTAGE_QUARTER Mbps
-    };
+    const speedBps = (() => {
+      switch (connectionSpeed) {
+        case 'slow':
+          return (BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8; // 1 Mbps in Bps
+        case 'fast':
+          return (PERCENTAGE_QUARTER * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8;
+        default:
+          return (COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) / MAGIC_8; // average
+      }
+    })();
 
-    return (size / speeds[connectionSpeed]) * ANIMATION_DURATION_VERY_SLOW; // Return in milliseconds
+    return (size / speedBps) * ANIMATION_DURATION_VERY_SLOW; // Return in milliseconds
   },
 } as const;

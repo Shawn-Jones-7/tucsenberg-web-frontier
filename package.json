@@ -37,7 +37,9 @@
     "test:codemods": "vitest run -c scripts/vitest.config.ts",
     "ci:quality": "pnpm run type-check && pnpm run lint:check && pnpm run quality:gate",
     "ci:metrics": "pnpm run arch:metrics",
-    "perf:check": "pnpm run size:check"
+    "perf:check": "pnpm run size:check",
+    "config:check": "node scripts/check-config-consistency.js",
+    "i18n:sync:check": "node scripts/check-i18n-sync.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
@@ -120,6 +122,7 @@
     "eslint-config-next": "15.5.3",
     "eslint-config-prettier": "10.1.8",
     "eslint-plugin-import": "2.32.0",
+    "eslint-import-resolver-typescript": "^3.6.1",
     "eslint-plugin-promise": "7.2.1",
     "eslint-plugin-react": "7.37.5",
     "eslint-plugin-react-hooks": "5.2.0",

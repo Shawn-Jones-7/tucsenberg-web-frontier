@@ -157,6 +157,8 @@ export class I18nAnalytics {
             loadTimes.push(event.metadata.loadTime);
           }
           break;
+        default:
+          break;
       }
     }
 
@@ -195,7 +197,10 @@ export class I18nAnalytics {
     try {
       // Google Analytics 4
       if (typeof window !== 'undefined' && 'gtag' in window) {
-        (window as any).gtag('event', eventType, data);
+        const win = window as Window & { gtag?: (type: string, action: string, data: unknown) => void };
+        if (typeof win.gtag === 'function') {
+          win.gtag('event', eventType, data);
+        }
       }
 
       // 自定义分析服务

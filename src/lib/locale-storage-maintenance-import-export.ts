@@ -12,14 +12,9 @@ import { COUNT_FIVE, COUNT_PAIR, ONE, ZERO } from '@/constants';
 
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
-import { STORAGE_KEYS } from '@/lib/locale-storage-types';
+import { STORAGE_KEYS, type LocaleDetectionHistory, type StorageOperationResult, type UserLocalePreference } from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
 import type { Locale } from '@/types/i18n';
-import type {
-  LocaleDetectionHistory,
-  StorageOperationResult,
-  UserLocalePreference
-} from '@/lib/locale-storage-types';
 
 /**
  * 导出数据接口
@@ -42,7 +37,7 @@ export interface ExportData {
  * 导入数据接口
  * Import data interface
  */
-export interface ImportData extends ExportData {}
+export type ImportData = ExportData;
 
 /**
  * 语言存储导入导出管理器
@@ -102,48 +97,13 @@ export class LocaleImportExportManager {
       }
 
       // 导入用户偏好数据
-      if (data.preference) {
-        if (LocaleValidationManager.validatePreferenceData(data.preference)) {
-          LocalStorageManager.set(
-            STORAGE_KEYS.LOCALE_PREFERENCE,
-            data.preference,
-          );
-          CookieManager.set(
-            STORAGE_KEYS.LOCALE_PREFERENCE,
-            JSON.stringify(data.preference),
-          );
-          importedItems += ONE;
-        } else {
-          errors.push('用户偏好数据格式无效');
-        }
-      }
+      importedItems += this.importPreference(data, errors);
 
       // 导入用户覆盖设置
-      if (data.override) {
-        if (typeof data.override === 'string') {
-          LocalStorageManager.set(
-            STORAGE_KEYS.USER_LOCALE_OVERRIDE,
-            data.override,
-          );
-          CookieManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, data.override);
-          importedItems += ONE;
-        } else {
-          errors.push('用户覆盖设置格式无效');
-        }
-      }
+      importedItems += this.importOverride(data, errors);
 
       // 导入检测历史数据
-      if (data.history) {
-        if (LocaleValidationManager.validateHistoryData(data.history)) {
-          LocalStorageManager.set(
-            STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
-            data.history,
-          );
-          importedItems += ONE;
-        } else {
-          errors.push('检测历史数据格式无效');
-        }
-      }
+      importedItems += this.importHistory(data, errors);
 
       return {
         success: errors.length === ZERO,
@@ -160,6 +120,59 @@ export class LocaleImportExportManager {
         error: error instanceof Error ? error.message : '未知错误',
       };
     }
+  }
+
+  private static importPreference(
+    data: ImportData,
+    errors: string[],
+  ): number {
+    if (!data.preference) return ZERO;
+    if (LocaleValidationManager.validatePreferenceData(data.preference)) {
+      LocalStorageManager.set(
+        STORAGE_KEYS.LOCALE_PREFERENCE,
+        data.preference,
+      );
+      CookieManager.set(
+        STORAGE_KEYS.LOCALE_PREFERENCE,
+        JSON.stringify(data.preference),
+      );
+      return ONE;
+    }
+    errors.push('用户偏好数据格式无效');
+    return ZERO;
+  }
+
+  private static importOverride(
+    data: ImportData,
+    errors: string[],
+  ): number {
+    if (!data.override) return ZERO;
+    if (typeof data.override === 'string') {
+      LocalStorageManager.set(
+        STORAGE_KEYS.USER_LOCALE_OVERRIDE,
+        data.override,
+      );
+      CookieManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, data.override);
+      return ONE;
+    }
+    errors.push('用户覆盖设置格式无效');
+    return ZERO;
+  }
+
+  private static importHistory(
+    data: ImportData,
+    errors: string[],
+  ): number {
+    if (!data.history) return ZERO;
+    if (LocaleValidationManager.validateHistoryData(data.history)) {
+      LocalStorageManager.set(
+        STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
+        data.history,
+      );
+      return ONE;
+    }
+    errors.push('检测历史数据格式无效');
+    return ZERO;
   }
 
   /**
@@ -267,31 +280,23 @@ export class LocaleImportExportManager {
 
     try {
       // 遍历localStorage查找备份
-      if (typeof localStorage !== 'undefined') {
-        for (let i = ZERO; i < localStorage.length; i++) {
-          const key = localStorage.key(i);
-          if (key && key.startsWith('locale_backup_')) {
-            try {
-              const data = localStorage.getItem(key);
-              if (data) {
-                const parsed = JSON.parse(data) as ExportData;
-                backups.push({
-                  key,
-                  timestamp: parsed.timestamp || ZERO,
-                  size: data.length,
-                  isValid: this.validateExportData(parsed),
-                });
-              }
-            } catch {
-              // 忽略无效的备份数据
-              backups.push({
-                key,
-                timestamp: ZERO,
-                size: ZERO,
-                isValid: false,
-              });
-            }
-          }
+      if (typeof localStorage === 'undefined') return backups;
+
+      for (let i = ZERO; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (!key || !key.startsWith('locale_backup_')) continue;
+        const data = localStorage.getItem(key);
+        if (!data) continue;
+        try {
+          const parsed = JSON.parse(data) as ExportData;
+          backups.push({
+            key,
+            timestamp: parsed.timestamp || ZERO,
+            size: data.length,
+            isValid: this.validateExportData(parsed),
+          });
+        } catch {
+          backups.push({ key, timestamp: ZERO, size: ZERO, isValid: false });
         }
       }
     } catch (error) {

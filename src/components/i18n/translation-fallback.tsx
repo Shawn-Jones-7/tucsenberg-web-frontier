@@ -87,9 +87,15 @@ export const SafeTranslation = memo(
     const locale = useLocale();
 
     try {
+      // 某些严格消息类型配置下，useTranslations 第二参数在未声明消息形状时会被推断为不可用
+      // 通过宽松的局部签名适配（不使用 any）避免类型不匹配，同时保留运行时安全
+      const tAny = t as unknown as (
+        key: string,
+        params?: Record<string, unknown>
+      ) => string;
       const translation = values
-        ? t(translationKey as never, values)
-        : t(translationKey as never);
+        ? tAny(translationKey, values as Record<string, unknown>)
+        : tAny(translationKey);
 
       // Check if translation actually exists (not just returning the key)
       if (translation === translationKey && !fallbackText) {

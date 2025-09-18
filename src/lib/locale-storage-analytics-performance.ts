@@ -13,7 +13,7 @@ import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_
 import { DEC_0_75, MAGIC_0_2, MAGIC_0_25, MAGIC_0_3, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
 import { DAYS_PER_WEEK } from "@/constants/time";
 import { calculateStorageStats } from '@/lib/locale-storage-analytics-core';
-import { hasOwn, safeGet, safeGetWithDefault } from '@/lib/security/object-guards';
+
 import type { StorageStats } from '@/lib/locale-storage-types';
 import {
   AccessLogger,
@@ -52,15 +52,17 @@ export function getUsagePatterns(): UsagePatterns {
   const mostAccessedKeys = keyEntries.slice(ZERO, COUNT_FIVE);
   const leastAccessedKeys = keyEntries.slice(-COUNT_FIVE).reverse();
 
-  // 分析峰值使用时间
-  const hourlyUsage: Record<number, number> = {};
+  // 分析峰值使用时间（Map 避免对象注入）
+  const hourlyUsage = new Map<number, number>();
   for (const entry of accessLog) {
     const hour = new Date(entry.timestamp).getHours();
-    hourlyUsage[hour] = safeGetWithDefault(hourlyUsage, hour, ZERO) + ONE;
+    if (hour >= ZERO && hour < 24) {
+      hourlyUsage.set(hour, (hourlyUsage.get(hour) ?? ZERO) + ONE);
+    }
   }
 
-  const peakUsageHours = Object.entries(hourlyUsage)
-    .map(([hour, count]) => ({ hour: parseInt(hour), count }))
+  const peakUsageHours = Array.from(hourlyUsage.entries())
+    .map(([hour, count]) => ({ hour, count }))
     .sort((a, b) => b.count - a.count)
     .slice(ZERO, COUNT_FIVE);
 
@@ -78,7 +80,7 @@ export function getUsagePatterns(): UsagePatterns {
     mostAccessedKeys,
     leastAccessedKeys,
     peakUsageHours,
-    operationDistribution: accessStats.operationCounts,
+    operationDistribution: { ...accessStats.operationCounts } as Record<string, number>,
     averageSessionDuration,
     userBehaviorInsights,
   };
@@ -92,14 +94,14 @@ function calculateAverageSessionDuration(accessLog: AccessLogEntry[]): number {
   if (accessLog.length < COUNT_PAIR) return ZERO;
 
   const sessions: number[] = [];
-  let sessionStart = accessLog[accessLog.length - ONE]?.timestamp ?? Date.now();
+  let sessionStart = accessLog.at(-ONE)?.timestamp ?? Date.now();
   let lastActivity = sessionStart;
 
   // 会话间隔阈值：30分钟
   const sessionGap = DAYS_PER_MONTH * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
 
-  for (let i = accessLog.length - COUNT_PAIR; i >= ZERO; i--) {
-    const currentTime = accessLog[i]?.timestamp ?? Date.now();
+  for (const entry of accessLog.slice(0, -ONE).reverse()) {
+    const currentTime = entry?.timestamp ?? Date.now();
 
     if (currentTime - lastActivity > sessionGap) {
       // 新会话开始
@@ -129,52 +131,58 @@ function generateBehaviorInsights(
 ): string[] {
   const insights: string[] = [];
 
-  // 成功率分析
-  if (accessStats.successRate < MAGIC_95) {
-    insights.push(
-      `存储操作成功率较低 (${accessStats.successRate.toFixed(ONE)}%)，建议检查存储配置`,
-    );
-  } else if (accessStats.successRate > MAGIC_99) {
-    insights.push('存储操作成功率优秀，系统运行稳定');
-  }
-
-  // 响应时间分析
-  if (accessStats.averageResponseTime > PERCENTAGE_FULL) {
-    insights.push(
-      `平均响应时间较慢 (${accessStats.averageResponseTime.toFixed(ONE)}ms)，可能需要优化`,
-    );
-  } else if (accessStats.averageResponseTime < COUNT_TEN) {
-    insights.push('响应时间优秀，存储性能良好');
-  }
-
-  // 使用时间模式分析
-  if (peakUsageHours.length > ZERO) {
-    const peakHour = peakUsageHours[ZERO]?.hour ?? MAGIC_12;
-    if (peakHour >= MAGIC_9 && peakHour <= MAGIC_17) {
-      insights.push('主要在工作时间使用，符合办公场景');
-    } else if (peakHour >= MAGIC_18 && peakHour <= COUNT_23) {
-      insights.push('主要在晚间使用，可能为个人用户');
+  function analyzeSuccessRate() {
+    if (accessStats.successRate < MAGIC_95) {
+      insights.push(`存储操作成功率较低 (${accessStats.successRate.toFixed(ONE)}%)，建议检查存储配置`);
+    } else if (accessStats.successRate > MAGIC_99) {
+      insights.push('存储操作成功率优秀，系统运行稳定');
     }
   }
 
-  // 会话持续时间分析
-  const sessionMinutes = averageSessionDuration / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
-  if (sessionMinutes > SECONDS_PER_MINUTE) {
-    insights.push('用户会话时间较长，表明深度使用');
-  } else if (sessionMinutes < COUNT_FIVE) {
-    insights.push('用户会话时间较短，可能为快速访问');
-  }
-
-  // 操作类型分析
-  const operations = Object.entries(accessStats.operationCounts);
-  const totalOps = operations.reduce((sum, [, count]) => sum + count, ZERO);
-
-  for (const [operation, count] of operations) {
-    const percentage = (count / totalOps) * PERCENTAGE_FULL;
-    if (percentage > PERCENTAGE_HALF) {
-      insights.push(`${operation}操作占主导地位 (${percentage.toFixed(ONE)}%)`);
+  function analyzeResponseTime() {
+    if (accessStats.averageResponseTime > PERCENTAGE_FULL) {
+      insights.push(`平均响应时间较慢 (${accessStats.averageResponseTime.toFixed(ONE)}ms)，可能需要优化`);
+    } else if (accessStats.averageResponseTime < COUNT_TEN) {
+      insights.push('响应时间优秀，存储性能良好');
     }
   }
+
+  function analyzeUsageTimePattern() {
+    if (peakUsageHours.length > ZERO) {
+      const peakHour = peakUsageHours.at(ZERO)?.hour ?? MAGIC_12;
+      if (peakHour >= MAGIC_9 && peakHour <= MAGIC_17) {
+        insights.push('主要在工作时间使用，符合办公场景');
+      } else if (peakHour >= MAGIC_18 && peakHour <= COUNT_23) {
+        insights.push('主要在晚间使用，可能为个人用户');
+      }
+    }
+  }
+
+  function analyzeSessionDuration() {
+    const sessionMinutes = averageSessionDuration / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    if (sessionMinutes > SECONDS_PER_MINUTE) {
+      insights.push('用户会话时间较长，表明深度使用');
+    } else if (sessionMinutes < COUNT_FIVE) {
+      insights.push('用户会话时间较短，可能为快速访问');
+    }
+  }
+
+  function analyzeOperationDistribution() {
+    const entries = Object.entries(accessStats.operationCounts);
+    const totalOps = entries.reduce((sum, [, count]) => sum + count, ZERO);
+    for (const [operation, count] of entries) {
+      const percentage = (count / (totalOps || ONE)) * PERCENTAGE_FULL;
+      if (percentage > PERCENTAGE_HALF) {
+        insights.push(`${operation}操作占主导地位 (${percentage.toFixed(ONE)}%)`);
+      }
+    }
+  }
+
+  analyzeSuccessRate();
+  analyzeResponseTime();
+  analyzeUsageTimePattern();
+  analyzeSessionDuration();
+  analyzeOperationDistribution();
 
   return insights;
 }
@@ -348,27 +356,27 @@ function calculateDailyOperations(
   accessLog: AccessLogEntry[],
   days: number,
 ): Array<{ date: string; operations: number }> {
-  const dailyOps: Record<string, number> = {};
+  const dailyOps = new Map<string, number>();
   const now = new Date();
 
   // 初始化日期
   for (let i = days - ONE; i >= ZERO; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
-    dailyOps[dateStr] = ZERO;
+    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    dailyOps.set(dateStr, ZERO);
   }
 
   // 统计操作数
   for (const entry of accessLog) {
     const date = new Date(entry.timestamp);
-    const dateStr = date.toISOString().split('T')[ZERO] || date.toISOString();
-    if (hasOwn(dailyOps, dateStr)) {
-      dailyOps[dateStr] = safeGetWithDefault(dailyOps, dateStr, ZERO) + ONE;
+    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    if (dailyOps.has(dateStr)) {
+      dailyOps.set(dateStr, (dailyOps.get(dateStr) ?? ZERO) + ONE);
     }
   }
 
-  return Object.entries(dailyOps).map(([date, operations]) => ({
+  return Array.from(dailyOps.entries()).map(([date, operations]) => ({
     date,
     operations,
   }));
@@ -460,7 +468,7 @@ function generatePredictions(
   // 计算趋势斜率
   const trend =
     recent.length > ONE
-      ? (recent[recent.length - ONE]!.operations - recent[ZERO]!.operations) /
+      ? ((recent.at(-ONE)?.operations ?? ZERO) - (recent.at(ZERO)?.operations ?? ZERO)) /
         (recent.length - ONE)
       : ZERO;
 
@@ -470,7 +478,7 @@ function generatePredictions(
     const futureDate = new Date();
     futureDate.setDate(futureDate.getDate() + i);
     const dateStr =
-      futureDate.toISOString().split('T')[ZERO] || futureDate.toISOString();
+      futureDate.toISOString().split('T').at(ZERO) || futureDate.toISOString();
 
     const predictedOperations = Math.max(
       ZERO,

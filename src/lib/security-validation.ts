@@ -1,7 +1,5 @@
 import { INPUT_VALIDATION_CONSTANTS } from "@/constants/security-constants";
 import { ANIMATION_DURATION_VERY_SLOW, ZERO  } from '@/constants';
-
-const {EMAIL_MAX_LENGTH} = INPUT_VALIDATION_CONSTANTS;
 /**
  * 安全验证工具
  * Security validation utilities
@@ -138,14 +136,29 @@ export function sanitizeHtml(html: string): string {
     return '';
   }
 
-  // Basic HTML sanitization - remove script tags and dangerous attributes
-  return html
-    .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
-    .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
-    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '')
+  // 移除特定标签（非正则实现，避免不安全正则）
+  const stripTag = (input: string, tag: 'script' | 'iframe'): string => {
+    let out = input;
+    let lower = out.toLowerCase();
+    let start = lower.indexOf(`<${tag}`);
+    while (start !== -1) {
+      const end = lower.indexOf(`</${tag}>`, start);
+      const endIdx = end === -1 ? out.length : end + tag.length + 3; // include closing tag
+      out = out.slice(0, start) + out.slice(endIdx);
+      lower = out.toLowerCase();
+      start = lower.indexOf(`<${tag}`);
+    }
+    return out;
+  };
+
+  let sanitized = stripTag(html, 'script');
+  sanitized = stripTag(sanitized, 'iframe');
+  sanitized = sanitized
+    .replace(/on\w+\s*=\s*["'][^"']*["']/gi, '') // 移除事件处理属性
     .replace(/javascript:/gi, '')
     .replace(/data:/gi, '')
     .trim();
+  return sanitized;
 }
 
 /**

@@ -31,31 +31,24 @@ export const calculatePerformanceTrends = (
 
   if (previousReports.length === 0) return null;
 
-  const metrics: (keyof DetailedWebVitals)[] = [
-    'lcp',
-    'fid',
-    'cls',
-    'fcp',
-    'ttfb',
-  ];
+  // helpers to avoid dynamic object indexing
+  const extractValues = (
+    reports: DiagnosticReport[],
+    pick: (v: DetailedWebVitals) => number | undefined,
+  ): number[] =>
+    reports
+      .map((r) => pick(r.vitals))
+      .filter((v): v is number => typeof v === 'number');
 
-  return metrics.map((metric) => {
-    const recentValues = recentReports
-      .map((report) => report.vitals[metric])
-      .filter((value): value is number => value !== undefined);
-
-    const previousValues = previousReports
-      .map((report) => report.vitals[metric])
-      .filter((value): value is number => value !== undefined);
+  const buildTrend = (
+    metric: 'lcp' | 'fid' | 'cls' | 'fcp' | 'ttfb',
+    pick: (v: DetailedWebVitals) => number | undefined,
+  ): PerformanceTrend => {
+    const recentValues = extractValues(recentReports, pick);
+    const previousValues = extractValues(previousReports, pick);
 
     if (recentValues.length === 0 || previousValues.length === 0) {
-      return {
-        metric,
-        trend: 'stable' as const,
-        change: 0,
-        recent: 0,
-        previous: 0,
-      };
+      return { metric, trend: 'stable', change: 0, recent: 0, previous: 0 };
     }
 
     const recentAvg =
@@ -65,28 +58,32 @@ export const calculatePerformanceTrends = (
 
     const change = recentAvg - previousAvg;
     const percentageChange = Math.abs(change / previousAvg) * 100;
-
-    let trend: 'improving' | 'declining' | 'stable';
-
-    // 对于CLS，值越小越好；对于其他指标，值越小也越好
-    if (percentageChange < WEB_VITALS_CONSTANTS.TREND_THRESHOLD) {
-      trend = 'stable';
-    } else if (change < 0) {
-      trend = 'improving'; // 值减少是改善
-    } else {
-      trend = 'declining'; // 值增加是恶化
-    }
+    const trend:
+      | 'improving'
+      | 'declining'
+      | 'stable' =
+      percentageChange < WEB_VITALS_CONSTANTS.TREND_THRESHOLD
+        ? 'stable'
+        : change < 0
+          ? 'improving'
+          : 'declining';
 
     return {
       metric,
       trend,
       change: Number(change.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
       recent: Number(recentAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
-      previous: Number(
-        previousAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
-      ),
+      previous: Number(previousAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
     };
-  });
+  };
+
+  return [
+    buildTrend('lcp', (v) => v.lcp),
+    buildTrend('fid', (v) => v.fid),
+    buildTrend('cls', (v) => v.cls),
+    buildTrend('fcp', (v) => v.fcp),
+    buildTrend('ttfb', (v) => v.ttfb),
+  ];
 };
 
 /**
@@ -100,41 +97,37 @@ export const calculatePerformanceScore = (
   const FID_THRESHOLD_GOOD = 50;
   const CLS_THRESHOLD_GOOD = 0.05;
 
-  let score = PERFECT_SCORE;
+  const lcpDeduction = !vitals.lcp
+    ? 0
+    : vitals.lcp > WEB_VITALS_CONSTANTS.LCP_POOR
+      ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MAJOR
+      : vitals.lcp > WEB_VITALS_CONSTANTS.LCP_GOOD
+        ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR
+        : vitals.lcp > LCP_THRESHOLD_GOOD
+          ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY
+          : 0;
 
-  // LCP评分 (权重40%)
-  if (vitals.lcp) {
-    if (vitals.lcp > WEB_VITALS_CONSTANTS.LCP_POOR) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MAJOR;
-    } else if (vitals.lcp > WEB_VITALS_CONSTANTS.LCP_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR;
-    } else if (vitals.lcp > LCP_THRESHOLD_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY;
-    }
-  }
+  const fidDeduction = !vitals.fid
+    ? 0
+    : vitals.fid > WEB_VITALS_CONSTANTS.FID_POOR
+      ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR
+      : vitals.fid > WEB_VITALS_CONSTANTS.FID_GOOD
+        ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_SMALL
+        : vitals.fid > FID_THRESHOLD_GOOD
+          ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY
+          : 0;
 
-  // FID评分 (权重30%)
-  if (vitals.fid) {
-    if (vitals.fid > WEB_VITALS_CONSTANTS.FID_POOR) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR;
-    } else if (vitals.fid > WEB_VITALS_CONSTANTS.FID_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_SMALL;
-    } else if (vitals.fid > FID_THRESHOLD_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY;
-    }
-  }
+  const clsDeduction = !vitals.cls
+    ? 0
+    : vitals.cls > WEB_VITALS_CONSTANTS.CLS_POOR
+      ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR
+      : vitals.cls > WEB_VITALS_CONSTANTS.CLS_GOOD
+        ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_SMALL
+        : vitals.cls > CLS_THRESHOLD_GOOD
+          ? WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY
+          : 0;
 
-  // CLS评分 (权重30%)
-  if (vitals.cls) {
-    if (vitals.cls > WEB_VITALS_CONSTANTS.CLS_POOR) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_MINOR;
-    } else if (vitals.cls > WEB_VITALS_CONSTANTS.CLS_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_SMALL;
-    } else if (vitals.cls > CLS_THRESHOLD_GOOD) {
-      score -= WEB_VITALS_CONSTANTS.SCORE_DEDUCTION_TINY;
-    }
-  }
-
+  const score = PERFECT_SCORE - lcpDeduction - fidDeduction - clsDeduction;
   return Math.max(0, score);
 };
 
@@ -174,15 +167,16 @@ export const calculateMedian = (values: number[]): number => {
   const middle = Math.floor(sorted.length / COUNT_PAIR);
 
   if (sorted.length % COUNT_PAIR === 0) {
-    const left = sorted[middle - 1] ?? 0;
-    const right = sorted[middle] ?? 0;
+    const [left = 0, right = 0] = sorted.slice(middle - 1, middle + 1);
     return Number(
       ((left + right) / COUNT_PAIR).toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
     );
   }
 
   return Number(
-    (sorted[middle] ?? 0).toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
+    (sorted.slice(middle, middle + 1)[0] ?? 0).toFixed(
+      WEB_VITALS_CONSTANTS.DECIMAL_PLACES,
+    ),
   );
 };
 
@@ -196,7 +190,7 @@ export const calculateP95 = (values: number[]): number => {
   const index = Math.ceil(sorted.length * MAGIC_0_95) - 1;
 
   return Number(
-    (sorted[Math.max(0, index)] ?? 0).toFixed(
+    (sorted.slice(Math.max(0, index), Math.max(0, index) + 1)[0] ?? 0).toFixed(
       WEB_VITALS_CONSTANTS.DECIMAL_PLACES,
     ),
   );

@@ -26,7 +26,7 @@ export interface SendMessageResponse {
  * WhatsApp API 原始响应类型（与 SendMessageResponse 相同）
  * WhatsApp API raw response type (same as SendMessageResponse)
  */
-export interface WhatsAppApiResponse extends SendMessageResponse {}
+export type WhatsAppApiResponse = SendMessageResponse;
 
 /**
  * 服务层响应包装类型

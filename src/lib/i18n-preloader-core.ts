@@ -17,17 +17,15 @@ import type {
   MetricsCollector,
   Preloader,
 } from '@/lib/i18n-cache-types';
-import type {
-  IPreloader,
-  PreloaderConfig,
-  PreloadOptions,
-  PreloadState,
-  PreloadStats,
-} from '@/lib/i18n-preloader-types';
 import {
   PreloaderError,
   PreloaderNetworkError,
   PreloaderTimeoutError,
+  type IPreloader,
+  type PreloaderConfig,
+  type PreloadOptions,
+  type PreloadState,
+  type PreloadStats,
 } from '@/lib/i18n-preloader-types';
 
 /**
@@ -116,7 +114,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
       const preloaderError =
         error instanceof Error
           ? new PreloaderNetworkError(locale, error)
-          : new PreloaderError(`Failed to preload locale ${locale}`, locale);
+          : new PreloaderError({ message: `Failed to preload locale ${locale}`, locale });
 
       options?.onError?.(preloaderError, locale);
       throw preloaderError;
@@ -168,7 +166,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
     options?: PreloadOptions,
   ): Promise<CacheOperationResult<Messages>[]> {
     if (this.preloadState.isPreloading) {
-      throw new PreloaderError('Preloading is already in progress');
+      throw new PreloaderError({ message: 'Preloading is already in progress' });
     }
 
     this.preloadState = {
@@ -187,32 +185,17 @@ export class TranslationPreloader implements Preloader, IPreloader {
       // 分批处理
       const batches = this.createBatches(locales, this.preloadConfig.batchSize);
 
-      for (let i = ZERO; i < batches.length; i++) {
+      for (const [i, batch] of batches.entries()) {
         if (this.abortController.signal.aborted) {
           break;
         }
 
-        const batch = batches[i];
         if (!batch) continue;
         const batchResults = await this.processBatch(batch, options);
         results.push(...batchResults);
 
-        // 更新进度
-        this.preloadState.completedLocales += batch.length;
-        this.preloadState.progress =
-          (this.preloadState.completedLocales /
-            this.preloadState.totalLocales) *
-          PERCENTAGE_FULL;
-
-        options?.onProgress?.(this.preloadState.progress);
-
-        // 批次间延迟
-        if (
-          i < batches.length - ONE &&
-          this.preloadConfig.delayBetweenBatches > ZERO
-        ) {
-          await this.delay(this.preloadConfig.delayBetweenBatches);
-        }
+        this.updateProgress(batch.length, options);
+        await this.delayBetweenBatchesIfNeeded(i, batches.length);
       }
     } catch (error) {
       logger.error('Preloading failed:', error);
@@ -221,6 +204,20 @@ export class TranslationPreloader implements Preloader, IPreloader {
     }
 
     return results;
+  }
+
+  private updateProgress(completedDelta: number, options?: PreloadOptions): void {
+    this.preloadState.completedLocales += completedDelta;
+    this.preloadState.progress =
+      (this.preloadState.completedLocales / this.preloadState.totalLocales) *
+      PERCENTAGE_FULL;
+    options?.onProgress?.(this.preloadState.progress);
+  }
+
+  private async delayBetweenBatchesIfNeeded(index: number, total: number): Promise<void> {
+    if (index < total - 1 && this.preloadConfig.delayBetweenBatches > ZERO) {
+      await this.delay(this.preloadConfig.delayBetweenBatches);
+    }
   }
 
   /**
@@ -421,7 +418,7 @@ export class TranslationPreloader implements Preloader, IPreloader {
       return await response.json();
     } catch (error) {
       if (error instanceof Error && error.name === 'AbortError') {
-        throw new PreloaderError('Load was cancelled', locale);
+        throw new PreloaderError({ message: 'Load was cancelled', locale });
       }
       throw error;
     }
@@ -472,7 +469,8 @@ export class TranslationPreloader implements Preloader, IPreloader {
       },
     );
 
-    return Promise.all(promises);
+    const results = await Promise.all(promises);
+    return results;
   }
 
   /**
@@ -480,12 +478,9 @@ export class TranslationPreloader implements Preloader, IPreloader {
    * Get related locales
    */
   private getRelatedLocales(locale: Locale): Locale[] {
-    const relatedMap: Record<Locale, Locale[]> = {
-      en: ['zh'],
-      zh: ['en'],
-    };
-
-    return relatedMap[locale] || [];
+    if (locale === 'en') return ['zh'];
+    if (locale === 'zh') return ['en'];
+    return [];
   }
 
   /**

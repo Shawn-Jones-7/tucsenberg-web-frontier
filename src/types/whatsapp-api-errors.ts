@@ -419,7 +419,7 @@ export const ErrorUtils = {
 
     let retryAfter: number | undefined;
     if (isRateLimitError(error)) {
-      retryAfter = error.retryAfter;
+      ({ retryAfter } = error);
     }
 
     const suggestions = ErrorUtils.generateSuggestions(error);
@@ -443,37 +443,39 @@ export const ErrorUtils = {
     const suggestions: string[] = [];
 
     if (isAuthenticationError(error)) {
-      suggestions.push('Check your access token');
-      suggestions.push('Verify token permissions');
-      suggestions.push('Ensure token has not expired');
+      suggestions.push(
+        ...['Check your access token', 'Verify token permissions', 'Ensure token has not expired'],
+      );
     }
 
     if (isValidationError(error)) {
-      suggestions.push('Check request parameters');
-      suggestions.push('Validate input format');
-      suggestions.push('Review API documentation');
+      suggestions.push(
+        ...['Check request parameters', 'Validate input format', 'Review API documentation'],
+      );
     }
 
     if (isRateLimitError(error)) {
-      suggestions.push('Implement exponential backoff');
-      suggestions.push('Reduce request frequency');
-      suggestions.push('Consider upgrading your plan');
+      suggestions.push(
+        ...['Implement exponential backoff', 'Reduce request frequency', 'Consider upgrading your plan'],
+      );
     }
 
     if (isNetworkError(error)) {
-      suggestions.push('Check network connectivity');
-      suggestions.push('Verify API endpoint URL');
-      suggestions.push('Try again later');
+      suggestions.push(
+        ...['Check network connectivity', 'Verify API endpoint URL', 'Try again later'],
+      );
     }
 
     if (isBusinessLogicError(error)) {
       if (error.code === 'INVALID_PHONE_NUMBER') {
-        suggestions.push('Verify phone number format');
-        suggestions.push('Include country code');
+        suggestions.push(
+          ...['Verify phone number format', 'Include country code'],
+        );
       }
       if (error.code === 'MESSAGE_UNDELIVERABLE') {
-        suggestions.push('Check recipient status');
-        suggestions.push('Verify phone number is active');
+        suggestions.push(
+          ...['Check recipient status', 'Verify phone number is active'],
+        );
       }
     }
 

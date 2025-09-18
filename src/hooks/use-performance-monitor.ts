@@ -81,29 +81,36 @@ export function usePerformanceMonitor(
   );
 
   // 性能测量函数
-  const measurements = usePerformanceMeasurements(
+  const measurements = usePerformanceMeasurements({
     enableAlerts,
     alertThresholds,
     addAlert,
     setMetrics,
-    startTime as any,
-  );
+    startTime,
+  });
 
   // 监控控制函数
-  const controls = createMonitoringControls(
+  const controls = createMonitoringControls({
     setIsMonitoring,
     setError,
     startTime,
     setMetrics,
-  );
+    monitoringInterval,
+    refreshMetrics: () => {
+      if (enableLoadTimeMonitoring) measurements.measureLoadTime();
+      if (enableRenderTimeMonitoring) measurements.measureRenderTime();
+      if (enableMemoryMonitoring) measurements.measureMemoryUsage();
+    },
+    monitoringIntervalRef,
+  });
 
   // 性能警告系统
-  const performanceAlertSystem = createPerformanceAlertSystem(
+  const performanceAlertSystem = createPerformanceAlertSystem({
     alerts,
     alertHistory,
     addAlert,
     setAlerts,
-  );
+  });
 
   // 获取当前指标
   const getMetrics = useCallback(() => metrics, [metrics]);
@@ -126,22 +133,7 @@ export function usePerformanceMonitor(
     measurements,
   ]);
 
-  // 自动监控效果
-  useEffect(() => {
-    if (isMonitoring) {
-      monitoringIntervalRef.current = setInterval(() => {
-        refreshMetrics();
-      }, monitoringInterval);
-
-      return () => {
-        if (monitoringIntervalRef.current) {
-          clearInterval(monitoringIntervalRef.current);
-          monitoringIntervalRef.current = null;
-        }
-      };
-    }
-    return undefined;
-  }, [isMonitoring, monitoringInterval, refreshMetrics]);
+  // 自动监控逻辑已移动至 controls.startMonitoring/stopMonitoring
 
   // 组件卸载时清理
   useEffect(() => {

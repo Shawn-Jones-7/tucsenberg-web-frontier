@@ -1,7 +1,7 @@
 import { MAGIC_0_8 } from "@/constants/decimal";
 import { BYTES_PER_KB, COUNT_FIVE, ZERO } from '@/constants';
 
-'use client';
+
 
 /**
  * LocalStorage 操作工具类
@@ -80,26 +80,21 @@ export class LocalStorageManager {
    */
   static getAll(): Record<string, unknown> {
     if (typeof window === 'undefined') return {};
-
-    const items: Record<string, unknown> = {};
+    const entries: Array<[string, unknown]> = [];
 
     try {
       for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key) {
-          const value = this.get(key);
-          if (value !== null) {
-            items[key] = value;
-          }
-        }
+        if (!key) continue;
+        const value = this.get(key);
+        if (value !== null) entries.push([key, value]);
       }
     } catch {
       if (process.env.NODE_ENV === 'development') {
         // console.warn('Failed to get all localStorage items:', error);
       }
     }
-
-    return items;
+    return Object.fromEntries(entries);
   }
 
   /**
@@ -129,12 +124,10 @@ export class LocalStorageManager {
     try {
       for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key) {
-          const value = localStorage.getItem(key);
-          if (value) {
-            totalSize += new Blob([key + value]).size;
-          }
-        }
+        if (!key) continue;
+        const value = localStorage.getItem(key);
+        if (!value) continue;
+        totalSize += new Blob([key + value]).size;
       }
     } catch {
       if (process.env.NODE_ENV === 'development') {
@@ -255,13 +248,8 @@ export class LocalStorageManager {
    * Get multiple items in batch
    */
   static getMultiple<T>(keys: string[]): Record<string, T | null> {
-    const result: Record<string, T | null> = {};
-
-    keys.forEach((key) => {
-      result[key] = this.get<T>(key);
-    });
-
-    return result;
+    const entries = keys.map((key) => [key, this.get<T>(key)] as const);
+    return Object.fromEntries(entries) as Record<string, T | null>;
   }
 
   /**
@@ -279,27 +267,23 @@ export class LocalStorageManager {
    * Get items by key prefix
    */
   static getByPrefix<T>(prefix: string): Record<string, T> {
-    const items: Record<string, T> = {};
+    const entries: Array<[string, T]> = [];
 
-    if (typeof window === 'undefined') return items;
+    if (typeof window === 'undefined') return {} as Record<string, T>;
 
     try {
       for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith(prefix)) {
-          const value = this.get<T>(key);
-          if (value !== null) {
-            items[key] = value;
-          }
-        }
+        if (!key || !key.startsWith(prefix)) continue;
+        const value = this.get<T>(key);
+        if (value !== null) entries.push([key, value]);
       }
     } catch {
       if (process.env.NODE_ENV === 'development') {
         // console.warn('Failed to get items by prefix:', error);
       }
     }
-
-    return items;
+    return Object.fromEntries(entries) as Record<string, T>;
   }
 
   /**
@@ -314,14 +298,10 @@ export class LocalStorageManager {
     try {
       for (let i = ZERO; i < localStorage.length; i++) {
         const key = localStorage.key(i);
-        if (key && key.startsWith(prefix)) {
-          keysToRemove.push(key);
-        }
+        if (key && key.startsWith(prefix)) keysToRemove.push(key);
       }
 
-      keysToRemove.forEach((key) => {
-        this.remove(key);
-      });
+      keysToRemove.forEach((key) => this.remove(key));
     } catch {
       if (process.env.NODE_ENV === 'development') {
         // console.warn('Failed to remove items by prefix:', error);

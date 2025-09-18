@@ -1,4 +1,5 @@
 import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { safeGetArrayItem } from '@/lib/security-object-access';
 
 /**
  * 语言存储系统格式化工具函数
@@ -19,7 +20,8 @@ export function formatByteSize(bytes: number): string {
     unitIndex += ONE;
   }
 
-  return `${size.toFixed(COUNT_PAIR)} ${units[unitIndex]}`;
+  const unit = safeGetArrayItem(units, unitIndex) ?? 'B';
+  return `${size.toFixed(COUNT_PAIR)} ${unit}`;
 }
 
 /**

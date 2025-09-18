@@ -5,6 +5,22 @@
 import { routing } from '@/i18n/routing';
 import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
+type KnownLocale = 'en' | 'zh';
+type TranslationsMap = Partial<Record<KnownLocale, Record<string, unknown>>>;
+
+function isKnownLocale(l: string): l is KnownLocale {
+  return l === 'en' || l === 'zh';
+}
+
+function getByLocale(
+  translations: TranslationsMap,
+  locale: string,
+): Record<string, unknown> | undefined {
+  if (locale === 'en') return translations.en;
+  if (locale === 'zh') return translations.zh;
+  return undefined;
+}
+
 export interface TranslationValidationResult {
   isValid: boolean;
   errors: TranslationError[];
@@ -39,14 +55,16 @@ export interface TranslationWarning {
  */
 async function loadTranslations(
   errors: TranslationError[],
-): Promise<Record<string, Record<string, unknown>>> {
-  const translations: Record<string, Record<string, unknown>> = {};
+): Promise<TranslationsMap> {
+  const translations: TranslationsMap = {};
 
   for (const locale of routing.locales) {
     try {
       const messages = await import(`../../messages/${locale}.json`);
-      translations[locale] = messages.default;
-    } catch (_error) {
+      if (!isKnownLocale(locale)) continue;
+      if (locale === 'en') translations.en = messages.default;
+      else translations.zh = messages.default;
+    } catch {
       errors.push({
         type: 'missing_key',
         key: 'translation_file',
@@ -79,13 +97,13 @@ export async function validateTranslations(): Promise<TranslationValidationResul
     });
 
     // 验证每个语言的翻译完整性
-    validateTranslationCompleteness(
+    validateTranslationCompleteness({
       translations,
       allKeys,
       errors,
       warnings,
       missingKeys,
-    );
+    });
 
     // 计算覆盖率
     const totalKeys = allKeys.size * routing.locales.length;
@@ -146,18 +164,23 @@ function extractKeys(obj: Record<string, unknown>, prefix = ''): string[] {
  * 获取嵌套对象的值
  */
 function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
-  return path
-    .split('.')
-    .reduce(
-      (current: Record<string, unknown> | unknown, key) =>
-        current &&
-        typeof current === 'object' &&
-        current !== null &&
-        !Array.isArray(current)
-          ? (current as Record<string, unknown>)[key]
-          : undefined,
-      obj,
-    );
+  const segments = path.split('.');
+  let current: unknown = obj;
+  const safe = /^[a-z0-9_-]+$/i;
+  for (const seg of segments) {
+    if (!safe.test(seg)) return undefined;
+    if (
+      current &&
+      typeof current === 'object' &&
+      current !== null &&
+      !Array.isArray(current)
+    ) {
+      current = Reflect.get(current as Record<string, unknown>, seg);
+    } else {
+      return undefined;
+    }
+  }
+  return current;
 }
 
 /**
@@ -205,15 +228,16 @@ export function generateTranslationReport(
 /**
  * 验证翻译完整性
  */
-function validateTranslationCompleteness(
-  translations: Record<string, Record<string, unknown>>,
-  allKeys: Set<string>,
-  errors: TranslationError[],
-  warnings: TranslationWarning[],
-  missingKeys: string[],
-): void {
+function validateTranslationCompleteness(params: {
+  translations: TranslationsMap;
+  allKeys: Set<string>;
+  errors: TranslationError[];
+  warnings: TranslationWarning[];
+  missingKeys: string[];
+}): void {
+  const { translations, allKeys, errors, warnings, missingKeys } = params;
   for (const locale of routing.locales) {
-    const translation = translations[locale];
+    const translation = getByLocale(translations, locale);
     if (!translation) continue;
 
     const localeKeys = new Set(extractKeys(translation));
@@ -233,28 +257,29 @@ function validateTranslationCompleteness(
     }
 
     // 检查翻译质量
-    validateTranslationQuality(
+    validateTranslationQuality({
       translation,
       locale,
       localeKeys,
       translations,
       errors,
       warnings,
-    );
+    });
   }
 }
 
 /**
  * 验证翻译质量
  */
-function validateTranslationQuality(
-  translation: Record<string, unknown>,
-  locale: string,
-  localeKeys: Set<string>,
-  translations: Record<string, Record<string, unknown>>,
-  errors: TranslationError[],
-  warnings: TranslationWarning[],
-): void {
+function validateTranslationQuality(params: {
+  translation: Record<string, unknown>;
+  locale: string;
+  localeKeys: Set<string>;
+  translations: TranslationsMap;
+  errors: TranslationError[];
+  warnings: TranslationWarning[];
+}): void {
+  const { translation, locale, localeKeys, translations, errors, warnings } = params;
   for (const key of localeKeys) {
     const value = getNestedValue(translation, key);
 
@@ -271,8 +296,8 @@ function validateTranslationQuality(
 
     // 检查是否未翻译（与其他语言相同）
     if (typeof value === 'string') {
-      checkUntranslatedContent(value, key, locale, translations, warnings);
-      checkPlaceholderConsistency(value, key, locale, translations, warnings);
+      checkUntranslatedContent({ value, key, locale, translations, warnings });
+      checkPlaceholderConsistency({ value, key, locale, translations, warnings });
     }
   }
 }
@@ -280,16 +305,18 @@ function validateTranslationQuality(
 /**
  * 检查未翻译内容
  */
-function checkUntranslatedContent(
-  value: string,
-  key: string,
-  locale: string,
-  translations: Record<string, Record<string, unknown>>,
-  warnings: TranslationWarning[],
-): void {
+function checkUntranslatedContent(params: {
+  value: string;
+  key: string;
+  locale: string;
+  translations: TranslationsMap;
+  warnings: TranslationWarning[];
+}): void {
+  const { value, key, locale, translations, warnings } = params;
   const otherLocales = routing.locales.filter((l) => l !== locale);
   for (const otherLocale of otherLocales) {
-    const otherValue = getNestedValue(translations[otherLocale] || {}, key);
+    const otherTrans = getByLocale(translations, otherLocale) || {};
+    const otherValue = getNestedValue(otherTrans, key);
     if (value === otherValue && key !== 'home.title') {
       warnings.push({
         type: 'untranslated',
@@ -305,16 +332,19 @@ function checkUntranslatedContent(
 /**
  * 检查占位符一致性
  */
-function checkPlaceholderConsistency(
-  value: string,
-  key: string,
-  locale: string,
-  translations: Record<string, Record<string, unknown>>,
-  warnings: TranslationWarning[],
-): void {
+function checkPlaceholderConsistency(params: {
+  value: string;
+  key: string;
+  locale: string;
+  translations: TranslationsMap;
+  warnings: TranslationWarning[];
+}): void {
+  const { value, key, locale, translations, warnings } = params;
   const placeholders = value.match(/\{[^}]+\}/g) || [];
+  const refLocale: KnownLocale = routing.locales.includes('en') ? 'en' : 'zh';
+  const refTrans = getByLocale(translations, refLocale) || {};
   const referencePlaceholders = getNestedValue(
-    translations[routing.locales[ZERO]] || {},
+    refTrans,
     key,
   );
   if (typeof referencePlaceholders === 'string') {

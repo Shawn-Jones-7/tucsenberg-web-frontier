@@ -4,7 +4,7 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import { COUNT_PAIR, MAGIC_999, ONE, ZERO } from '@/constants';
+import { COUNT_PAIR, HALF_SECOND_MS, MAGIC_999, ONE, ZERO } from '@/constants';
 
 import type {
   IPreloader,
@@ -49,7 +49,7 @@ export const progressiveStrategy: PreloadStrategy = async (
     if (preloader.isPreloading()) {
       await preloader.preloadLocale(locale, options);
       // 添加延迟以避免阻塞主线程
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, HALF_SECOND_MS));
     }
   }
 };
@@ -63,24 +63,31 @@ export const priorityStrategy: PreloadStrategy = async (
   locales: Locale[],
   options?: PreloadOptions,
 ) => {
-  // 定义语言优先级
-  const priorityMap: Record<Locale, number> = {
-    en: ONE,
-    zh: COUNT_PAIR,
+  // 定义语言优先级（使用受控映射）
+  const getPriority = (l: Locale): number => {
+    switch (l) {
+      case 'en':
+        return ONE;
+      case 'zh':
+        return COUNT_PAIR;
+      default:
+        return MAGIC_999;
+    }
   };
 
   // 按优先级排序
   const sortedLocales = locales.sort((a, b) => {
-    const priorityA = priorityMap[a] || MAGIC_999;
-    const priorityB = priorityMap[b] || MAGIC_999;
+    const priorityA = getPriority(a);
+    const priorityB = getPriority(b);
     return priorityA - priorityB;
   });
 
   // 高优先级的语言先预加载
   for (const locale of sortedLocales) {
+    const p = getPriority(locale);
     await preloader.preloadLocale(locale, {
       ...options,
-      priority: priorityMap[locale] <= COUNT_PAIR ? 'high' : 'normal',
+      priority: p <= COUNT_PAIR ? 'high' : 'normal',
     });
   }
 };
@@ -96,6 +103,9 @@ export const lazyStrategy: PreloadStrategy = async (
 ) => {
   // 只预加载当前最需要的语言
   if (locales.length > ZERO) {
-    await preloader.preloadLocale(locales[ZERO]!, options);
+    const [firstLocale] = locales;
+    if (firstLocale) {
+      await preloader.preloadLocale(firstLocale, options);
+    }
   }
 };

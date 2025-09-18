@@ -12,13 +12,8 @@ import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } fro
 
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { isUserLocalePreference } from '@/lib/locale-storage-types';
+import { isUserLocalePreference, type StorageOperationResult, type UserLocalePreference, type ValidationResult } from '@/lib/locale-storage-types';
 import type { Locale } from '@/types/i18n';
-import type {
-  StorageOperationResult,
-  UserLocalePreference,
-  ValidationResult,
-} from '@/lib/locale-storage-types';
 
 // ==================== 数据验证功能 ====================
 
@@ -191,7 +186,7 @@ export function getUserPreference(): StorageOperationResult<UserLocalePreference
       };
 
       // 同步到 localStorage
-      const _syncResult = saveUserPreference(cookiePreference);
+      saveUserPreference(cookiePreference);
       // 同步结果已保存但在此处未直接使用
 
       return {
@@ -378,10 +373,10 @@ export function clearUserPreference(): StorageOperationResult<void> {
 
   try {
     // 清除 localStorage
-    const _localResult = LocalStorageManager.remove('locale_preference');
+    LocalStorageManager.remove('locale_preference');
 
     // 清除 cookies
-    const _cookieResult = CookieManager.remove('locale_preference');
+    CookieManager.remove('locale_preference');
     // 清除结果已保存但在此处未直接使用
 
     return {

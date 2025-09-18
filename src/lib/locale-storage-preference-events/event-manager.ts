@@ -142,18 +142,18 @@ export class PreferenceEventManager {
     listenersByType: Record<string, number>;
   } {
     let totalListeners = ZERO;
-    const listenersByType: Record<string, number> = {};
+    const byType = new Map<string, number>();
 
     for (const [eventType, listeners] of this.eventListeners.entries()) {
       const count = listeners.length;
       totalListeners += count;
-      listenersByType[eventType] = count;
+      byType.set(eventType, count);
     }
 
     return {
       totalListeners,
       eventTypes: Array.from(this.eventListeners.keys()),
-      listenersByType,
+      listenersByType: Object.fromEntries(byType) as Record<string, number>,
     };
   }
 }

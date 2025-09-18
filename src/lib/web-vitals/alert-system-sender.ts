@@ -76,12 +76,13 @@ export class AlertSystemSender {
   /**
    * 发送单个警报 (测试方法)
    */
-  async sendAlert(
-    severity: 'warning' | 'critical',
-    message: string,
-    config: PerformanceAlertConfig,
-    data?: Record<string, unknown>,
-  ): Promise<void> {
+  async sendAlert(args: {
+    severity: 'warning' | 'critical';
+    message: string;
+    config: PerformanceAlertConfig;
+    data?: Record<string, unknown>;
+  }): Promise<void> {
+    const { severity, message, config, data } = args;
     const alert: AlertInfo = {
       type: 'metric',
       severity,

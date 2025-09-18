@@ -60,9 +60,9 @@ export function createBaseLocaleDetector(): BaseLocaleDetector {
  * 快速检测当前用户语言
  * Quick detection of current user locale
  */
-export async function detectCurrentLocale(): Promise<LocaleDetectionResult> {
+export function detectCurrentLocale(): Promise<LocaleDetectionResult> {
   const detector = new SmartLocaleDetector();
-  return await detector.detectSmartLocale();
+  return detector.detectSmartLocale();
 }
 
 /**

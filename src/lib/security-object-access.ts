@@ -46,12 +46,13 @@ export function safeGetProperty<T extends object>(
  * @param allowedKeys - 允许的键白名单（可选）
  * @returns 是否设置成功
  */
-export function safeSetProperty<T extends object>(
-  obj: T,
-  key: string | number | symbol,
-  value: unknown,
-  allowedKeys?: readonly (string | number | symbol)[],
-): boolean {
+export function safeSetProperty<T extends object>(params: {
+  obj: T;
+  key: string | number | symbol;
+  value: unknown;
+  allowedKeys?: readonly (string | number | symbol)[];
+}): boolean {
+  const { obj, key, value, allowedKeys } = params;
   // 如果提供了白名单，进行验证
   if (allowedKeys && !allowedKeys.includes(key)) {
     return false;

@@ -1,5 +1,4 @@
-
-import { PERCENTAGE_FULL, SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY } from '@/constants';
+// Note: This module defines its own base numbers; avoid importing unused constants.
 
 /**
  * 应用程序常量定义

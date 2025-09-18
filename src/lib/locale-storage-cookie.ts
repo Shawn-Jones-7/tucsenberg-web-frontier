@@ -96,7 +96,7 @@ export class CookieManager {
   static getAll(): Record<string, string> {
     if (typeof document === 'undefined') return {};
 
-    const cookies: Record<string, string> = {};
+    const map = new Map<string, string>();
     const cookieStrings = document.cookie.split(';');
 
     for (const cookie of cookieStrings) {
@@ -107,16 +107,15 @@ export class CookieManager {
       if (!value) continue;
 
       try {
-        cookies[name] = decodeURIComponent(value);
+        map.set(name, decodeURIComponent(value));
       } catch {
-        // 静默处理解码错误
         if (process.env.NODE_ENV === 'development') {
           // console.warn(`Failed to decode cookie ${name}:`, error);
         }
       }
     }
 
-    return cookies;
+    return Object.fromEntries(map.entries()) as Record<string, string>;
   }
 
   /**
@@ -136,12 +135,13 @@ export class CookieManager {
    * 设置带有过期时间的 Cookie
    * Set cookie with expiration date
    */
-  static setWithExpiry(
-    name: string,
-    value: string,
-    expiryDays: number,
-    options: Partial<typeof COOKIE_CONFIG> = {},
-  ): void {
+  static setWithExpiry(params: {
+    name: string;
+    value: string;
+    expiryDays: number;
+    options?: Partial<typeof COOKIE_CONFIG>;
+  }): void {
+    const { name, value, expiryDays, options = {} } = params;
     const expiryDate = new Date();
     expiryDate.setTime(expiryDate.getTime() + expiryDays * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
 
@@ -149,7 +149,7 @@ export class CookieManager {
       ...COOKIE_CONFIG,
       ...options,
       expires: expiryDate.toUTCString(),
-    };
+    } as const;
 
     const optionsStr = Object.entries(cookieOptions)
       .map(([key, val]) => {

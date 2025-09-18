@@ -6,7 +6,7 @@ description: "Quality gates, CI/CD processes, and performance budgets for Next.j
 
 ## Quality Gates Overview
 ```bash
-npm run quality-gate # type-check:strict + lint:strict + test:coverage + test:a11y + turbopack:check
+pnpm quality-gate # type-check:strict + lint:strict + test:coverage + test:a11y + turbopack:check
 ```
 
 ### Quality Metrics Thresholds
@@ -17,7 +17,7 @@ npm run quality-gate # type-check:strict + lint:strict + test:coverage + test:a1
 
 ### Pre-commit Quality Checks
 ```bash
-npm run lint-staged && npm run type-check && npm run test:coverage && npm run turbopack:validate
+pnpm lint-staged && pnpm type-check && pnpm test:coverage && pnpm turbopack:validate
 ```
 
 ### GitHub Actions Workflow
@@ -30,8 +30,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
-        with: { node-version: '20', cache: 'npm' }
-      - run: npm ci && npm run quality-gate && npm run lighthouse:ci && npm run turbopack:analyze
+        with: { node-version: '20', cache: 'pnpm' }
+      - run: pnpm install && pnpm quality-gate && pnpm lighthouse:ci && pnpm turbopack:analyze
 ```
 
 ## Performance Budget Management
@@ -59,7 +59,7 @@ module.exports = {
 
 ## Quality Gate Scripts
 ```json
-{ "scripts": { "quality-gate": "npm run type-check:strict && npm run lint:strict && npm run test:coverage && npm run test:a11y", "type-check:strict": "tsc --noEmit --strict", "lint:strict": "eslint --ext .js,.jsx,.ts,.tsx . --max-warnings 0", "test:coverage": "jest --coverage", "lighthouse:ci": "lhci autorun" } }
+{ "scripts": { "quality-gate": "pnpm type-check:strict && pnpm lint:strict && pnpm test:coverage && pnpm test:a11y", "type-check:strict": "tsc --noEmit --strict", "lint:strict": "eslint --ext .js,.jsx,.ts,.tsx . --max-warnings 0", "test:coverage": "jest --coverage", "lighthouse:ci": "lhci autorun" } }
 ```
 
 ## Coverage Reporting for React 19
@@ -70,7 +70,7 @@ module.exports = { collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'], coverageTh
 ## Deployment Quality Checks
 ### Pre-deployment Validation for Next.js 15
 ```bash
-npm run build && npm run quality-gate && npm run react19:validate && npm run lighthouse:ci && npm audit --audit-level moderate
+pnpm build && pnpm quality-gate && pnpm react19:validate && pnpm lighthouse:ci && pnpm audit --audit-level moderate
 ```
 
 ## Next.js 15 Turbopack Performance Optimization

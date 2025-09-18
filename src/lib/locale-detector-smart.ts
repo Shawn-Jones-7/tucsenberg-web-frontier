@@ -10,15 +10,10 @@ import { ONE, ZERO  } from '@/constants';
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
 import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
 import { BaseLocaleDetector } from '@/lib/locale-detector-base';
-import type { DetectionSource } from '@/lib/locale-detector-constants';
 import { LocaleStorageManager } from '@/lib/locale-storage';
 import { logger } from '@/lib/logger';
 import type { Locale } from '@/types/i18n';
-import {
-  CONFIDENCE_WEIGHTS,
-  DETECTION_SOURCES,
-  QUALITY_THRESHOLDS,
-} from '@/lib/locale-detector-constants';
+import { type DetectionSource, CONFIDENCE_WEIGHTS, DETECTION_SOURCES, QUALITY_THRESHOLDS } from '@/lib/locale-detector-constants';
 
 /**
  * 检测结果接口
@@ -223,17 +218,39 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
   private analyzeBestLocale(
     detectionResults: DetectionResult[],
   ): LocaleDetectionResult {
-    // 统计每种语言的出现次数和权重
+    const localeStats = this.buildLocaleStats(detectionResults);
+    const {
+      bestLocale,
+      bestScore,
+      bestSources,
+      bestConfidence,
+    } = this.computeBestScore(localeStats, detectionResults.length);
+
+    const details = this.buildDetails(detectionResults);
+    const consistentCount = this.getStatsForLocale(localeStats, bestLocale)?.count ?? ZERO;
+    details.detectionStats = JSON.stringify({
+      totalSources: detectionResults.length,
+      consistentSources: consistentCount,
+      score: bestScore,
+    });
+
+    const [firstSource] = bestSources;
+    return {
+      locale: bestLocale,
+      source:
+        bestSources.length > QUALITY_THRESHOLDS.MIN_SOURCES_FOR_COMBINED
+          ? DETECTION_SOURCES.COMBINED
+          : firstSource || DETECTION_SOURCES.DEFAULT,
+      confidence: bestConfidence,
+      details,
+    };
+  }
+
+  private buildLocaleStats(detectionResults: DetectionResult[]) {
     const localeStats = new Map<
       Locale,
-      {
-        count: number;
-        totalWeight: number;
-        sources: DetectionSource[];
-        maxConfidence: number;
-      }
+      { count: number; totalWeight: number; sources: DetectionSource[]; maxConfidence: number }
     >();
-
     for (const result of detectionResults) {
       const current = localeStats.get(result.locale) || {
         count: ZERO,
@@ -241,72 +258,59 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
         sources: [],
         maxConfidence: ZERO,
       };
-
       current.count += ONE;
       current.totalWeight += result.weight;
       current.sources.push(result.source);
-      current.maxConfidence = Math.max(
-        current.maxConfidence,
-        result.confidence,
-      );
-
+      current.maxConfidence = Math.max(current.maxConfidence, result.confidence);
       localeStats.set(result.locale, current);
     }
+    return localeStats;
+  }
 
-    // 计算每种语言的综合得分
-    let bestLocale = DEFAULT_LOCALE;
+  private computeBestScore(
+    localeStats: Map<Locale, { count: number; totalWeight: number; sources: DetectionSource[]; maxConfidence: number }>,
+    total: number,
+  ) {
+    let bestLocale: Locale = DEFAULT_LOCALE;
     let bestScore = ZERO;
     let bestSources: DetectionSource[] = [];
     let bestConfidence: number = CONFIDENCE_WEIGHTS.DEFAULT_FALLBACK;
-
     for (const [locale, stats] of localeStats.entries()) {
-      // 综合得分 = 权重总和 + 一致性奖励
-      const consistencyBonus =
-        stats.count > ONE ? QUALITY_THRESHOLDS.CONSISTENCY_BONUS : ZERO;
+      const consistencyBonus = stats.count > ONE ? QUALITY_THRESHOLDS.CONSISTENCY_BONUS : ZERO;
       const score = stats.totalWeight + consistencyBonus;
-
       if (score > bestScore) {
         bestScore = score;
         bestLocale = locale;
         bestSources = stats.sources;
-
-        // 计算最终置信度
-        const baseConfidence = Math.min(
-          stats.totalWeight / detectionResults.length,
-          QUALITY_THRESHOLDS.HIGH_CONFIDENCE,
-        );
+        const baseConfidence = Math.min(stats.totalWeight / total, QUALITY_THRESHOLDS.HIGH_CONFIDENCE);
         bestConfidence = Math.min(baseConfidence + consistencyBonus, ONE);
       }
     }
+    return { bestLocale, bestScore, bestSources, bestConfidence };
+  }
 
-    // 构建详细信息
+  private buildDetails(detectionResults: DetectionResult[]) {
     const details: Record<string, string | number | boolean> = {};
     for (const result of detectionResults) {
-      if (result.source === DETECTION_SOURCES.GEO) {
-        details.geoLocale = result.locale;
-      } else if (result.source === DETECTION_SOURCES.BROWSER) {
-        details.browserLocale = result.locale;
-      } else if (result.source === DETECTION_SOURCES.TIMEZONE) {
-        details.timeZoneLocale = result.locale;
-      }
+      if (result.source === DETECTION_SOURCES.GEO) details.geoLocale = result.locale;
+      else if (result.source === DETECTION_SOURCES.BROWSER) details.browserLocale = result.locale;
+      else if (result.source === DETECTION_SOURCES.TIMEZONE) details.timeZoneLocale = result.locale;
     }
+    return details;
+  }
 
-    // 添加统计信息
-    details.detectionStats = JSON.stringify({
-      totalSources: detectionResults.length,
-      consistentSources: localeStats.get(bestLocale)?.count || ZERO,
-      score: bestScore,
-    });
-
-    return {
-      locale: bestLocale,
-      source:
-        bestSources.length > QUALITY_THRESHOLDS.MIN_SOURCES_FOR_COMBINED
-          ? DETECTION_SOURCES.COMBINED
-          : bestSources[ZERO] || DETECTION_SOURCES.DEFAULT,
-      confidence: bestConfidence,
-      details,
-    };
+  private getStatsForLocale(
+    stats: Map<Locale, { count: number }>,
+    locale: Locale,
+  ) {
+    switch (locale) {
+      case 'en':
+        return stats.get('en');
+      case 'zh':
+        return stats.get('zh');
+      default:
+        return undefined;
+    }
   }
 
   /**
@@ -366,41 +370,51 @@ export class SmartLocaleDetector extends BaseLocaleDetector {
     recommendations: string[];
   } {
     const { confidence, source, details } = result;
-    const recommendations: string[] = [];
+    const quality = this.computeQuality(confidence);
+    const reliability = this.computeReliability({ quality, source, details, confidence });
+    const recommendations = this.buildRecommendations(quality, source, details);
+    return { quality, reliability, recommendations };
+  }
 
-    // 评估质量等级
-    let quality: 'high' | 'medium' | 'low';
-    if (confidence >= QUALITY_THRESHOLDS.HIGH_CONFIDENCE) {
-      quality = 'high';
-    } else if (confidence >= QUALITY_THRESHOLDS.MEDIUM_CONFIDENCE) {
-      quality = 'medium';
-    } else {
-      quality = 'low';
-    }
+  private computeQuality(confidence: number): 'high' | 'medium' | 'low' {
+    if (confidence >= QUALITY_THRESHOLDS.HIGH_CONFIDENCE) return 'high';
+    if (confidence >= QUALITY_THRESHOLDS.MEDIUM_CONFIDENCE) return 'medium';
+    return 'low';
+  }
 
-    // 计算可靠性
+  private computeReliability(
+    params: {
+      quality: 'high' | 'medium' | 'low';
+      source: DetectionSource;
+      details: Record<string, unknown> | undefined;
+      confidence: number;
+    },
+  ): number {
+    const { source, details, confidence } = params;
     let reliability = confidence;
-    if (source === DETECTION_SOURCES.COMBINED) {
-      reliability += MAGIC_0_1; // 组合检测更可靠
-    }
-    if ((details?.detectionStats?.consistentSources ?? ZERO) > ONE) {
-      reliability += DEC_0_05; // 一致性检测更可靠
-    }
-    reliability = Math.min(reliability, ONE);
+    if (source === DETECTION_SOURCES.COMBINED) reliability += MAGIC_0_1;
+    const consistent = (details as { detectionStats?: { consistentSources?: number } })?.detectionStats?.consistentSources ?? ZERO;
+    if (consistent > ONE) reliability += DEC_0_05;
+    return Math.min(reliability, ONE);
+  }
 
-    // 生成建议
+  private buildRecommendations(
+    quality: 'high' | 'medium' | 'low',
+    source: DetectionSource,
+    details: Record<string, unknown> | undefined,
+  ): string[] {
+    const recs: string[] = [];
     if (quality === 'low') {
-      recommendations.push('建议用户手动选择语言');
-      recommendations.push('可以尝试启用地理位置权限以提高检测准确性');
+      recs.push('建议用户手动选择语言');
+      recs.push('可以尝试启用地理位置权限以提高检测准确性');
     }
     if (source === DETECTION_SOURCES.DEFAULT) {
-      recommendations.push('检测失败，使用了默认语言');
-      recommendations.push('建议检查浏览器语言设置');
+      recs.push('检测失败，使用了默认语言');
+      recs.push('建议检查浏览器语言设置');
     }
-    if (!details?.geoLocale && quality !== 'high') {
-      recommendations.push('地理位置检测未成功，可能影响准确性');
+    if (!(details as { geoLocale?: string })?.geoLocale && quality !== 'high') {
+      recs.push('地理位置检测未成功，可能影响准确性');
     }
-
-    return { quality, reliability, recommendations };
+    return recs;
   }
 }

@@ -3,7 +3,7 @@ import {
   WEB_VITALS_THRESHOLDS,
 } from '@/constants/performance-constants';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { HOURS_PER_DAY, MINUTES_PER_HOUR, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 import { logger } from '@/lib/logger';
 import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';

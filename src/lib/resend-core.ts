@@ -201,17 +201,19 @@ export class ResendService {
    * 检查API连接状态
    * Check API connection status
    */
-  public async checkConnection(): Promise<boolean> {
+  public checkConnection(): boolean {
     if (!this.isReady()) {
       return false;
     }
 
+    let ok = true;
     try {
       // 尝试获取域名信息来测试连接
       // Note: This is a placeholder - Resend doesn't have a ping endpoint
-      return true;
+      ok = true;
     } catch {
-      return false;
+      ok = false;
     }
+    return ok;
   }
 }

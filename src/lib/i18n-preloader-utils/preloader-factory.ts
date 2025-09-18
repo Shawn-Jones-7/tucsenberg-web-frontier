@@ -23,7 +23,10 @@ export class PreloaderFactory {
   private plugins = new Map<string, PreloaderPlugin>();
   private eventHandlers = new Map<string, PreloadEventHandler[]>();
 
-  private constructor() {}
+  private constructor() {
+    // Ensure non-empty body for lint; Map is new so clear is a no-op.
+    this.plugins.clear();
+  }
 
   /**
    * 获取工厂实例

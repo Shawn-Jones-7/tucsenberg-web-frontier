@@ -259,9 +259,12 @@ export class LRUCache<T> implements CacheStorage<T> {
       if (stored) {
         const data = JSON.parse(stored);
         if (data && typeof data === 'object') {
+          const allowedKey = /^[a-z0-9:_-]+$/i;
           Object.entries(data).forEach(([key, item]) => {
-            if (this.isValidCacheItem(item)) {
-              this.cache.set(key, item as CacheItem<T>);
+            if (typeof key === 'string' && allowedKey.test(key)) {
+              if (this.isValidCacheItem(item)) {
+                this.cache.set(key, item as CacheItem<T>);
+              }
             }
           });
         }
@@ -351,19 +354,18 @@ export class LRUCache<T> implements CacheStorage<T> {
     const mid = Math.floor(sorted.length / 2);
 
     return sorted.length % COUNT_PAIR === ZERO
-      ? ((sorted[mid - ONE] || ZERO) + (sorted[mid] || ZERO)) / COUNT_PAIR
-      : sorted[mid] || ZERO;
+      ? (((sorted.at(mid - ONE) ?? ZERO) + (sorted.at(mid) ?? ZERO)) /
+          COUNT_PAIR)
+      : (sorted.at(mid) ?? ZERO);
   }
 
   // 发出事件
-  private emitEvent(type: string, key?: string, data?: T): void {
+  private emitEvent(_type: string, _key?: string, _data?: T): void {
     // 这里可以添加事件发射逻辑
     // 由于 MetricsCollector 已经处理了基本事件，这里主要用于扩展
     // TODO: 实现事件发射逻辑
     // 当前暂时不创建事件对象，避免未使用变量警告
-    void type;
-    void key;
-    void data; // 避免参数未使用警告
+    // no-op placeholder for future event pipeline
   }
 }
 

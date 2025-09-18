@@ -4,6 +4,7 @@
  */
 
 import { hasOwn } from '@/lib/security/object-guards';
+import { safeGetProperty, safeSetProperty } from '@/lib/security-object-access';
 
 /**
  * 深度克隆对象
@@ -23,13 +24,12 @@ export function deepClone<T>(obj: T): T {
   }
 
   if (typeof obj === 'object') {
-    const cloned = {} as T;
-    for (const key in obj) {
-      if (hasOwn(obj, key)) {
-        cloned[key] = deepClone(obj[key]);
-      }
-    }
-    return cloned;
+    const src = obj as unknown as Record<string, unknown>;
+    const entries = Object.keys(src).map((key) => {
+      const value = safeGetProperty(src, key);
+      return [key, deepClone(value as unknown)] as const;
+    });
+    return Object.fromEntries(entries) as unknown as T;
   }
 
   return obj;
@@ -46,28 +46,24 @@ export function mergeObjects<T extends Record<string, unknown>>(
   const result = { ...target };
 
   for (const key in source) {
-    if (hasOwn(source, key)) {
-      const sourceValue = source[key];
-      const targetValue = result[key];
+    if (!hasOwn(source, key)) continue;
+    const sourceValue = safeGetProperty(source, key as string);
+    if (sourceValue === undefined) continue;
+    const targetValue = safeGetProperty(result, key as string);
 
-      if (sourceValue !== undefined) {
-        if (
-          typeof sourceValue === 'object' &&
-          sourceValue !== null &&
-          !Array.isArray(sourceValue) &&
-          typeof targetValue === 'object' &&
-          targetValue !== null &&
-          !Array.isArray(targetValue)
-        ) {
-          result[key] = mergeObjects(
-            targetValue as Record<string, unknown>,
-            sourceValue as Record<string, unknown>,
-          ) as T[Extract<keyof T, string>];
-        } else {
-          result[key] = sourceValue as T[Extract<keyof T, string>];
-        }
-      }
+    const isSourcePlain = typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue);
+    const isTargetPlain = typeof targetValue === 'object' && targetValue !== null && !Array.isArray(targetValue);
+
+    if (isSourcePlain && isTargetPlain) {
+      const mergedNested = mergeObjects(
+        targetValue as Record<string, unknown>,
+        sourceValue as Record<string, unknown>,
+      );
+      safeSetProperty({ obj: result, key, value: mergedNested });
+      continue;
     }
+
+    safeSetProperty({ obj: result, key, value: sourceValue });
   }
 
   return result;
@@ -98,7 +94,10 @@ export function compareObjects(obj1: unknown, obj2: unknown): boolean {
     if (obj1.length !== obj2.length) {
       return false;
     }
-    return obj1.every((item, index) => compareObjects(item, obj2[index]));
+    return obj1.every((item, index) => {
+      const other = Array.isArray(obj2) ? obj2.at(index) : undefined;
+      return compareObjects(item, other);
+    });
   }
 
   const keys1 = Object.keys(obj1 as Record<string, unknown>);
@@ -109,8 +108,8 @@ export function compareObjects(obj1: unknown, obj2: unknown): boolean {
   }
 
   return keys1.every((key) => {
-    const val1 = (obj1 as Record<string, unknown>)[key];
-    const val2 = (obj2 as Record<string, unknown>)[key];
+    const val1 = safeGetProperty(obj1 as Record<string, unknown>, key);
+    const val2 = safeGetProperty(obj2 as Record<string, unknown>, key);
     return compareObjects(val1, val2);
   });
 }

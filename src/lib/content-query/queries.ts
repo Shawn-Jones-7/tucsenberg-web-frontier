@@ -7,7 +7,6 @@ import type {
   BlogPost,
   BlogPostMetadata,
   ContentMetadata,
-  ContentNotFoundError,
   ContentQueryOptions,
   ContentType,
   Locale,
@@ -70,7 +69,7 @@ export function getContentBySlug<T extends ContentMetadata = ContentMetadata>(
   });
 
   if (!matchingFile) {
-    throw new Error(`Content not found: ${slug}`) as ContentNotFoundError;
+    throw new Error(`Content not found: ${slug}`);
   }
 
   return parseContentFile<T>(matchingFile, type);

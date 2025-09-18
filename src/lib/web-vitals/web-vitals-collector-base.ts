@@ -85,7 +85,7 @@ export class WebVitalsCollectorBase {
   protected collectNavigationTiming() {
     const navigation = performance.getEntriesByType(
       'navigation',
-    )[ZERO] as PerformanceNavigationTiming;
+    )[0] as PerformanceNavigationTiming;
     if (navigation) {
       // 使用 startTime 作为基准时间点（相当于 navigationStart）
       this.metrics.fcp = navigation.responseEnd - navigation.startTime;
@@ -111,7 +111,7 @@ export class WebVitalsCollectorBase {
         type: this.getResourceType(resource.name),
       }))
       .sort((a, b) => b.duration - a.duration)
-      .slice(ZERO, COUNT_TEN); // 只保留前COUNT_TEN个最慢的资源
+      .slice(0, COUNT_TEN); // 只保留前COUNT_TEN个最慢的资源
 
     this.metrics.resourceTiming = {
       totalResources: resources.length,

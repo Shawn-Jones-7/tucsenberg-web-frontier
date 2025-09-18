@@ -3,7 +3,6 @@ import { COUNT_PAIR, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 import { formatMetricValue } from '@/lib/web-vitals/alert-helpers';
 import { ALERT_SYSTEM_CONSTANTS } from "@/constants/performance-constants";
-const {RANDOM_ID_BASE} = ALERT_SYSTEM_CONSTANTS;
 import { MAGIC_9 } from "@/constants/count";
 
 // 常量定义

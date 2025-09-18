@@ -71,10 +71,13 @@ export function generateUUID(): string {
   if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
     const array = new Uint8Array(MAGIC_16);
     crypto.getRandomValues(array);
+    const dv = new DataView(array.buffer);
 
-    // Set version (4) and variant bits
-    array[MAGIC_6] = (array[MAGIC_6]! & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6;
-    array[MAGIC_8] = (array[MAGIC_8]! & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT;
+    // Set version (4) and variant bits via DataView to avoid dynamic indexing
+    const b6 = dv.getUint8(MAGIC_6);
+    dv.setUint8(MAGIC_6, (b6 & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6);
+    const b8 = dv.getUint8(MAGIC_8);
+    dv.setUint8(MAGIC_8, (b8 & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT);
 
     const hex = Array.from(array, (byte) =>
       byte.toString(MAGIC_16).padStart(COUNT_PAIR, '0'),
@@ -137,13 +140,15 @@ export function generateOTP(length: number = MAGIC_6): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
 
+    const dv = new DataView(array.buffer);
     for (let i = ZERO; i < length; i++) {
-      result += digits[array[i]! % digits.length];
+      const idx = (dv.getUint8(i) % digits.length) >>> 0;
+      result += digits.charAt(idx);
     }
   } else {
     // Fallback
     for (let i = ZERO; i < length; i++) {
-      result += digits[Math.floor(Math.random() * digits.length)];
+      result += digits.charAt(Math.floor(Math.random() * digits.length));
     }
   }
 
@@ -161,13 +166,15 @@ export function generateVerificationCode(length: number = MAGIC_8): string {
     const array = new Uint8Array(length);
     crypto.getRandomValues(array);
 
+    const dv = new DataView(array.buffer);
     for (let i = ZERO; i < length; i++) {
-      result += chars[array[i]! % chars.length];
+      const idx = (dv.getUint8(i) % chars.length) >>> 0;
+      result += chars.charAt(idx);
     }
   } else {
     // Fallback
     for (let i = ZERO; i < length; i++) {
-      result += chars[Math.floor(Math.random() * chars.length)];
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
   }
 
@@ -200,8 +207,9 @@ export function isValidToken(token: string, expectedLength?: number): boolean {
  * Validate UUID format
  */
 export function isValidUUID(uuid: string): boolean {
+  // RFC 4122 version 4 UUID
   const uuidRegex =
-    /^[0-9a-f]{MAGIC_8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{MAGIC_12}$/i;
+    /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
   return uuidRegex.test(uuid);
 }
 

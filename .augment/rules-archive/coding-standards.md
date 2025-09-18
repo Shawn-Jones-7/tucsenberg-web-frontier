@@ -72,7 +72,7 @@ function MessageComponent({ messagePromise }) { if (condition) { const message =
 ## Standards Summary
 - **Import/Export**: Use @/ path aliases, import only what you use, group imports: external first then internal, use named exports for components
 - **Naming**: Files: kebab-case, Components: PascalCase, Variables: camelCase, Constants: UPPERCASE, Booleans: descriptive verbs
-- **Organization**: Components in src/components, Utilities in src/lib, Types in src/types, Server Actions in src/app/actions.ts
+- **Organization**: 采用按功能/领域划分的组件目录结构（例如 `components/forms/`、`components/layout/`、`components/monitoring/` 等），保持复用组件放在 `components/shared/`，Utilities in src/lib, Types in src/types, Server Actions in src/app/actions.ts
 - **Code Generation**: Use const declarations, prefix event handlers with "handle", use early returns, include ARIA attributes
 - **Functions**: Keep under 20 lines, start with verbs, use default parameters, prefer map/filter/reduce, single abstraction level
 

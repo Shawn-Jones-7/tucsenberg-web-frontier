@@ -1,11 +1,11 @@
 import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, PERCENTAGE_FULL } from '@/constants';
 
-interface ViewTransitionDocument extends Document {
-  startViewTransition(callback: () => void): void;
-}
+type ViewTransitionCapable = Document & {
+  startViewTransition?: (callback: () => void) => unknown;
+};
 
-const supportsViewTransition = (doc: Document): doc is ViewTransitionDocument =>
-  'startViewTransition' in doc;
+const supportsViewTransition = (doc: Document): doc is ViewTransitionCapable =>
+  typeof (doc as ViewTransitionCapable).startViewTransition === 'function';
 
 /**
  * 主题切换动画工具函数
@@ -76,7 +76,7 @@ export const applyThemeAnimation = ({
     style.textContent = createCircleBlurAnimation(buttonElement);
     document.head.appendChild(style);
 
-    document.startViewTransition(() => {
+    (document as ViewTransitionCapable).startViewTransition?.(() => {
       setTheme(newTheme);
     });
 

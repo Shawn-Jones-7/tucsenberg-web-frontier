@@ -48,7 +48,7 @@ export class AccessibilityTester {
 
       // 测试Tab键导航顺序
       const tabOrder: HTMLElement[] = [];
-      const currentElement = focusableElements[ZERO];
+      const currentElement = focusableElements.at(0) ?? null;
 
       if (!currentElement) {
         return {
@@ -58,7 +58,7 @@ export class AccessibilityTester {
         };
       }
 
-      for (let i = ZERO; i < focusableElements.length; i++) {
+      for (let i = 0; i < focusableElements.length; i++) {
         currentElement.focus();
         tabOrder.push(document.activeElement as HTMLElement);
 
@@ -116,44 +116,12 @@ export class AccessibilityTester {
       );
       const links = document.querySelectorAll('a[href]');
 
-      let activationTests = ZERO;
-      let passedTests = ZERO;
+      const triggerResults = await this.runActivationTestsOnTriggers(triggers);
+      const linkResults = await this.runActivationTestsOnLinks(links, COUNT_TRIPLE);
+      const activationTests = triggerResults.activationTests + linkResults.activationTests;
+      const passedTests = triggerResults.passedTests + linkResults.passedTests;
 
-      // 测试下拉菜单触发器
-      for (const trigger of triggers) {
-        const element = trigger as HTMLElement;
-        element.focus();
-
-        // 测试Enter键
-        const enterResult = await this.testElementKeyActivation(
-          element,
-          'Enter',
-        );
-        activationTests += ONE;
-        if (enterResult) passedTests += ONE;
-
-        // 测试Space键
-        const spaceResult = await this.testElementKeyActivation(element, ' ');
-        activationTests += ONE;
-        if (spaceResult) passedTests += ONE;
-      }
-
-      // 测试导航链接
-      for (const link of Array.from(links).slice(ZERO, COUNT_TRIPLE)) {
-        // 限制测试数量
-        const element = link as HTMLElement;
-        element.focus();
-
-        const enterResult = await this.testElementKeyActivation(
-          element,
-          'Enter',
-        );
-        activationTests += ONE;
-        if (enterResult) passedTests += ONE;
-      }
-
-      const successRate =
-        activationTests > ZERO ? passedTests / activationTests : ZERO;
+      const successRate = activationTests > ZERO ? passedTests / activationTests : ZERO;
 
       return {
         testName,
@@ -180,6 +148,36 @@ export class AccessibilityTester {
     }
   }
 
+  private async runActivationTestsOnTriggers(triggers: NodeListOf<Element>): Promise<{ activationTests: number; passedTests: number }> {
+    let activationTests = 0;
+    let passedTests = 0;
+    for (const trigger of triggers) {
+      const element = trigger as HTMLElement;
+      element.focus();
+      const enterResult = await this.testElementKeyActivation(element, 'Enter');
+      activationTests += 1;
+      if (enterResult) passedTests += 1;
+      const spaceResult = await this.testElementKeyActivation(element, ' ');
+      activationTests += 1;
+      if (spaceResult) passedTests += 1;
+    }
+    return { activationTests, passedTests };
+  }
+
+  private async runActivationTestsOnLinks(links: NodeListOf<Element>, maxCount: number): Promise<{ activationTests: number; passedTests: number }> {
+    let activationTests = 0;
+    let passedTests = 0;
+    const list = Array.from(links).slice(0, maxCount);
+    for (const link of list) {
+      const element = link as HTMLElement;
+      element.focus();
+      const enterResult = await this.testElementKeyActivation(element, 'Enter');
+      activationTests += 1;
+      if (enterResult) passedTests += 1;
+    }
+    return { activationTests, passedTests };
+  }
+
   /**
    * 测试Escape键关闭功能
    */
@@ -195,36 +193,10 @@ export class AccessibilityTester {
 
       for (const trigger of triggers) {
         const element = trigger as HTMLElement;
-
-        // 先打开菜单
-        element.focus();
-        element.click();
-        await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
-
-        // 检查菜单是否打开
-        const isOpen =
-          element.getAttribute('data-state') === 'open' ||
-          element.getAttribute('aria-expanded') === 'true';
-
-        if (isOpen) {
-          // 测试Escape键关闭
-          const escapeEvent = new KeyboardEvent('keydown', {
-            key: 'Escape',
-            bubbles: true,
-            cancelable: true,
-          });
-          element.dispatchEvent(escapeEvent);
-
-          await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
-
-          // 检查菜单是否关闭
-          const isClosed =
-            element.getAttribute('data-state') !== 'open' &&
-            element.getAttribute('aria-expanded') !== 'true';
-
-          escapeTests += ONE;
-          if (isClosed) passedTests += ONE;
-        }
+        const closed = await this.testEscapeOnTrigger(element);
+        if (closed === null) continue;
+        escapeTests += 1;
+        if (closed) passedTests += 1;
       }
 
       const successRate = escapeTests > ZERO ? passedTests / escapeTests : ZERO;
@@ -252,6 +224,19 @@ export class AccessibilityTester {
         suggestions: ['检查菜单状态管理', '验证键盘事件处理'],
       };
     }
+  }
+
+  private async testEscapeOnTrigger(element: HTMLElement): Promise<boolean | null> {
+    element.focus();
+    element.click();
+    await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
+    const isOpen = element.getAttribute('data-state') === 'open' || element.getAttribute('aria-expanded') === 'true';
+    if (!isOpen) return null;
+    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    element.dispatchEvent(escapeEvent);
+    await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
+    const isClosed = element.getAttribute('data-state') !== 'open' && element.getAttribute('aria-expanded') !== 'true';
+    return isClosed;
   }
 
   /**

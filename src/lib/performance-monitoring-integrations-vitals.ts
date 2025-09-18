@@ -7,11 +7,9 @@ import { COUNT_PAIR, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO, MAGIC_0_9, MAG
  * 提供与Web Vitals工具的集成钩子和环境兼容性检查功能
  */
 
-import type {
-  PerformanceConfig,
-  PerformanceMetrics,
-} from '@/lib/performance-monitoring-types';
 import {
+  type PerformanceConfig,
+  type PerformanceMetrics,
   isDevelopmentEnvironment,
   isTestEnvironment,
 } from '@/lib/performance-monitoring-types';
@@ -97,6 +95,47 @@ export interface EnvironmentCompatibilityResult {
  * 环境兼容性检查
  * Environment compatibility check
  */
+function checkTestEnv(
+  issues: string[],
+  warnings: string[],
+  recommendations: string[],
+): void {
+  if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
+    issues.push('测试环境中 React Scan 未被禁用');
+    recommendations.push('设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true');
+  }
+
+  if (process.env.NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT !== 'true') {
+    warnings.push('测试环境中 Web Eval Agent 未启用');
+    recommendations.push('考虑设置 NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT=true');
+  }
+}
+
+function checkDevEnv(warnings: string[], recommendations: string[]): void {
+  if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN === 'true') {
+    warnings.push('开发环境中 React Scan 被禁用');
+    recommendations.push('考虑启用 React Scan 以获得性能监控');
+  }
+
+  if (!process.env.ANALYZE && process.env.NODE_ENV === 'development') {
+    recommendations.push(
+      '考虑定期运行 ANALYZE=true npm run build 来分析包大小',
+    );
+  }
+}
+
+function checkProdEnv(issues: string[], warnings: string[], recommendations: string[]): void {
+  if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
+    issues.push('生产环境中 React Scan 未被禁用');
+    recommendations.push('在生产环境中设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true');
+  }
+
+  if (process.env.ANALYZE === 'true') {
+    warnings.push('生产环境中启用了 Bundle Analyzer');
+    recommendations.push('生产环境中应禁用 Bundle Analyzer');
+  }
+}
+
 export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult {
   const issues: string[] = [];
   const recommendations: string[] = [];
@@ -104,54 +143,19 @@ export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult 
   const environment = process.env.NODE_ENV || 'development';
 
   // 检查测试环境配置
-  if (isTestEnvironment()) {
-    if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
-      issues.push('测试环境中 React Scan 未被禁用');
-      recommendations.push('设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true');
-    }
-
-    if (process.env.NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT !== 'true') {
-      warnings.push('测试环境中 Web Eval Agent 未启用');
-      recommendations.push('考虑设置 NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT=true');
-    }
-  }
+  if (isTestEnvironment()) checkTestEnv(issues, warnings, recommendations);
 
   // 检查开发环境配置
-  if (isDevelopmentEnvironment()) {
-    if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN === 'true') {
-      warnings.push('开发环境中 React Scan 被禁用');
-      recommendations.push('考虑启用 React Scan 以获得性能监控');
-    }
-
-    if (!process.env.ANALYZE && process.env.NODE_ENV === 'development') {
-      recommendations.push(
-        '考虑定期运行 ANALYZE=true npm run build 来分析包大小',
-      );
-    }
-  }
+  if (isDevelopmentEnvironment()) checkDevEnv(warnings, recommendations);
 
   // 检查生产环境配置
-  if (environment === 'production') {
-    if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
-      issues.push('生产环境中 React Scan 未被禁用');
-      recommendations.push(
-        '在生产环境中设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true',
-      );
-    }
-
-    if (process.env.ANALYZE === 'true') {
-      warnings.push('生产环境中启用了 Bundle Analyzer');
-      recommendations.push('生产环境中应禁用 Bundle Analyzer');
-    }
-  }
+  if (environment === 'production') checkProdEnv(issues, warnings, recommendations);
 
   // 检查必要的环境变量
-  const requiredEnvVars = ['NODE_ENV'];
-  for (const envVar of requiredEnvVars) {
-    if (!process.env[envVar]) {
-      issues.push(`缺少必要的环境变量: ${envVar}`);
-      recommendations.push(`设置环境变量 ${envVar}`);
-    }
+  // 仅白名单检查，避免动态对象索引
+  if (!process.env.NODE_ENV) {
+    issues.push('缺少必要的环境变量: NODE_ENV');
+    recommendations.push('设置环境变量 NODE_ENV');
   }
 
   return {
@@ -167,6 +171,49 @@ export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult 
  * 性能监控健康检查
  * Performance monitoring health check
  */
+function analyzeReactScan(config: PerformanceConfig): {
+  status: 'healthy' | 'warning' | 'error';
+  detail: string;
+} {
+  if (config.reactScan.enabled) {
+    if (isTestEnvironment())
+      return { status: 'error', detail: 'React Scan should be disabled in test environment' };
+    if (isDevelopmentEnvironment())
+      return { status: 'healthy', detail: 'React Scan is properly configured for development' };
+    return { status: 'warning', detail: 'React Scan is enabled in non-development environment' };
+  }
+  return { status: 'healthy', detail: 'React Scan is disabled' };
+}
+
+function analyzeWebEval(config: PerformanceConfig): {
+  status: 'healthy' | 'warning';
+  detail: string;
+} {
+  if (config.webEvalAgent.enabled) {
+    if (isTestEnvironment())
+      return { status: 'healthy', detail: 'Web Eval Agent is properly configured for testing' };
+    return { status: 'warning', detail: 'Web Eval Agent is enabled outside test environment' };
+  }
+  return { status: 'healthy', detail: 'Web Eval Agent is disabled' };
+}
+
+function analyzeBundleAndSize(config: PerformanceConfig): {
+  bundle: 'healthy';
+  bundleDetail: string;
+  size: 'healthy' | 'warning';
+  sizeDetail: string;
+} {
+  const bundle = 'healthy' as const;
+  const bundleDetail = config.bundleAnalyzer.enabled
+    ? 'Bundle Analyzer is enabled'
+    : 'Bundle Analyzer is disabled';
+  const size = config.sizeLimit.enabled ? 'healthy' : 'warning';
+  const sizeDetail = config.sizeLimit.enabled
+    ? 'Size Limit monitoring is active'
+    : 'Size Limit monitoring is disabled';
+  return { bundle, bundleDetail, size, sizeDetail };
+}
+
 export function performHealthCheck(config: PerformanceConfig): {
   isHealthy: boolean;
   status: Record<string, 'healthy' | 'warning' | 'error'>;
@@ -175,51 +222,19 @@ export function performHealthCheck(config: PerformanceConfig): {
   const status: Record<string, 'healthy' | 'warning' | 'error'> = {};
   const details: Record<string, string> = {};
 
-  // 检查 React Scan 状态
-  if (config.reactScan.enabled) {
-    if (isTestEnvironment()) {
-      status.reactScan = 'error';
-      details.reactScan = 'React Scan should be disabled in test environment';
-    } else if (isDevelopmentEnvironment()) {
-      status.reactScan = 'healthy';
-      details.reactScan = 'React Scan is properly configured for development';
-    } else {
-      status.reactScan = 'warning';
-      details.reactScan =
-        'React Scan is enabled in non-development environment';
-    }
-  } else {
-    status.reactScan = 'healthy';
-    details.reactScan = 'React Scan is disabled';
-  }
+  const reactScan = analyzeReactScan(config);
+  status.reactScan = reactScan.status;
+  details.reactScan = reactScan.detail;
 
-  // 检查 Web Eval Agent 状态
-  if (config.webEvalAgent.enabled) {
-    if (isTestEnvironment()) {
-      status.webEvalAgent = 'healthy';
-      details.webEvalAgent =
-        'Web Eval Agent is properly configured for testing';
-    } else {
-      status.webEvalAgent = 'warning';
-      details.webEvalAgent =
-        'Web Eval Agent is enabled outside test environment';
-    }
-  } else {
-    status.webEvalAgent = 'healthy';
-    details.webEvalAgent = 'Web Eval Agent is disabled';
-  }
+  const webEval = analyzeWebEval(config);
+  status.webEvalAgent = webEval.status;
+  details.webEvalAgent = webEval.detail;
 
-  // 检查 Bundle Analyzer 状态
-  status.bundleAnalyzer = config.bundleAnalyzer.enabled ? 'healthy' : 'healthy';
-  details.bundleAnalyzer = config.bundleAnalyzer.enabled
-    ? 'Bundle Analyzer is enabled'
-    : 'Bundle Analyzer is disabled';
-
-  // 检查 Size Limit 状态
-  status.sizeLimit = config.sizeLimit.enabled ? 'healthy' : 'warning';
-  details.sizeLimit = config.sizeLimit.enabled
-    ? 'Size Limit monitoring is active'
-    : 'Size Limit monitoring is disabled';
+  const bundleSize = analyzeBundleAndSize(config);
+  status.bundleAnalyzer = bundleSize.bundle;
+  details.bundleAnalyzer = bundleSize.bundleDetail;
+  status.sizeLimit = bundleSize.size;
+  details.sizeLimit = bundleSize.sizeDetail;
 
   const isHealthy = Object.values(status).every((s) => s !== 'error');
 
@@ -234,6 +249,32 @@ export function performHealthCheck(config: PerformanceConfig): {
  * Web Vitals 配置验证
  * Web Vitals configuration validation
  */
+function validateThresholds(
+  thresholds: Record<string, number>,
+  warnings: string[],
+): void {
+  if (
+    thresholds.lcp &&
+    (typeof thresholds.lcp !== 'number' || thresholds.lcp <= ZERO)
+  ) {
+    warnings.push('Web Vitals LCP threshold should be a positive number');
+  }
+
+  if (
+    thresholds.fid &&
+    (typeof thresholds.fid !== 'number' || thresholds.fid <= ZERO)
+  ) {
+    warnings.push('Web Vitals FID threshold should be a positive number');
+  }
+
+  if (
+    thresholds.cls &&
+    (typeof thresholds.cls !== 'number' || thresholds.cls <= ZERO)
+  ) {
+    warnings.push('Web Vitals CLS threshold should be a positive number');
+  }
+}
+
 export function validateWebVitalsConfig(config: PerformanceConfig): {
   isValid: boolean;
   errors: string[];
@@ -256,28 +297,8 @@ export function validateWebVitalsConfig(config: PerformanceConfig): {
       }
 
       if (config.webVitals.thresholds) {
-        const {thresholds} = config.webVitals;
-
-        if (
-          thresholds.lcp &&
-          (typeof thresholds.lcp !== 'number' || thresholds.lcp <= ZERO)
-        ) {
-          warnings.push('Web Vitals LCP threshold should be a positive number');
-        }
-
-        if (
-          thresholds.fid &&
-          (typeof thresholds.fid !== 'number' || thresholds.fid <= ZERO)
-        ) {
-          warnings.push('Web Vitals FID threshold should be a positive number');
-        }
-
-        if (
-          thresholds.cls &&
-          (typeof thresholds.cls !== 'number' || thresholds.cls <= ZERO)
-        ) {
-          warnings.push('Web Vitals CLS threshold should be a positive number');
-        }
+        const { thresholds } = config.webVitals;
+        validateThresholds(thresholds as Record<string, number>, warnings);
       }
     }
   }
@@ -316,6 +337,18 @@ export class WebVitalsAnalyzer {
 
   constructor(config: PerformanceConfig) {
     this.config = config;
+  }
+
+  private evaluateTrend(values: number[]): 'improving' | 'stable' | 'degrading' {
+    if (values.length < COUNT_PAIR) return 'stable';
+    const recent = values.slice(OFFSET_NEGATIVE_MEDIUM);
+    const older = values.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM);
+    if (recent.length === ZERO || older.length === ZERO) return 'stable';
+    const recentAvg = recent.reduce((s, v) => s + v, ZERO) / recent.length;
+    const olderAvg = older.reduce((s, v) => s + v, ZERO) / older.length;
+    if (recentAvg < olderAvg * MAGIC_0_9) return 'improving';
+    if (recentAvg > olderAvg * MAGIC_1_1) return 'degrading';
+    return 'stable';
   }
 
   /**
@@ -389,7 +422,7 @@ export class WebVitalsAnalyzer {
     score: number;
     recommendations: string[];
   } {
-    const vitals: Record<
+    const vitalsMap = new Map<
       string,
       {
         average: number;
@@ -397,7 +430,7 @@ export class WebVitalsAnalyzer {
         trend: 'improving' | 'stable' | 'degrading';
         rating: 'good' | 'needs-improvement' | 'poor';
       }
-    > = {};
+    >();
     let totalScore = ZERO;
     let vitalCount = ZERO;
 
@@ -410,27 +443,14 @@ export class WebVitalsAnalyzer {
       const latestRating = data.ratings[data.ratings.length - ONE] ?? 'poor';
 
       // 计算趋势
-      let trend: 'improving' | 'stable' | 'degrading' = 'stable';
-      if (data.values.length >= COUNT_PAIR) {
-        const recent = data.values.slice(OFFSET_NEGATIVE_MEDIUM);
-        const older = data.values.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM);
-        if (recent.length > ZERO && older.length > ZERO) {
-          const recentAvg =
-            recent.reduce((sum, val) => sum + val, ZERO) / recent.length;
-          const olderAvg =
-            older.reduce((sum, val) => sum + val, ZERO) / older.length;
+      const trend = this.evaluateTrend(data.values);
 
-          if (recentAvg < olderAvg * MAGIC_0_9) trend = 'improving';
-          else if (recentAvg > olderAvg * MAGIC_1_1) trend = 'degrading';
-        }
-      }
-
-      vitals[name] = {
+      vitalsMap.set(name, {
         average,
         latest,
         trend,
         rating: latestRating,
-      };
+      });
 
       // 计算分数
       const ratingScore =
@@ -445,9 +465,36 @@ export class WebVitalsAnalyzer {
 
     const score = vitalCount > ZERO ? totalScore / vitalCount : ZERO;
 
-    // 生成建议
+    const recommendations = this.buildRecommendations(vitalsMap);
+
+    return {
+      vitals: Object.fromEntries(vitalsMap) as Record<
+        string,
+        {
+          average: number;
+          latest: number;
+          trend: 'improving' | 'stable' | 'degrading';
+          rating: 'good' | 'needs-improvement' | 'poor';
+        }
+      >,
+      score,
+      recommendations,
+    };
+  }
+
+  private buildRecommendations(
+    vitalsMap: Map<
+      string,
+      {
+        average: number;
+        latest: number;
+        trend: 'improving' | 'stable' | 'degrading';
+        rating: 'good' | 'needs-improvement' | 'poor';
+      }
+    >,
+  ): string[] {
     const recommendations: string[] = [];
-    for (const [name, data] of Object.entries(vitals)) {
+    for (const [name, data] of vitalsMap.entries()) {
       if (data.rating === 'poor') {
         recommendations.push(
           `${name} needs improvement (current: ${data.latest.toFixed(COUNT_PAIR)})`,
@@ -457,12 +504,7 @@ export class WebVitalsAnalyzer {
         recommendations.push(`${name} performance is degrading over time`);
       }
     }
-
-    return {
-      vitals,
-      score,
-      recommendations,
-    };
+    return recommendations;
   }
 
   /**

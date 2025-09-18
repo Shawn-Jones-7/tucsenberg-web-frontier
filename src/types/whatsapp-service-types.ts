@@ -1,32 +1,11 @@
 // 导入主要类型用于向后兼容
-import { DEFAULT_SERVICE_OPTIONS } from '@/types/whatsapp-service-config';
+import { DEFAULT_SERVICE_OPTIONS, type Cache, type CacheConfig, type CacheEntry, type CircuitBreakerConfig, type CircuitBreakerState, type DEFAULT_CACHE_CONFIG, type DEFAULT_CIRCUIT_BREAKER_CONFIG, type DEFAULT_RETRY_CONFIG, type LogEntry, type Logger, type LogLevel, type MessageStatus, type MessageType, type RetryConfig, type ServiceEnvironment, type ServiceEnvironmentConfig, type WhatsAppConfig, type WhatsAppServiceOptions } from '@/types/whatsapp-service-config';
 import { PERCENTAGE_FULL, ZERO } from '@/constants';
 
-import type {
-  Cache,
-  CacheConfig,
-  CacheEntry,
-  CircuitBreakerConfig,
-  CircuitBreakerState,
-  DEFAULT_CACHE_CONFIG,
-  DEFAULT_CIRCUIT_BREAKER_CONFIG,
-  DEFAULT_RETRY_CONFIG,
-  LogEntry,
-  Logger,
-  LogLevel,
-  MessageStatus,
-  MessageType,
-  RetryConfig,
-  ServiceEnvironment,
-  ServiceEnvironmentConfig,
-  WhatsAppConfig,
-  WhatsAppServiceOptions,
-} from '@/types/whatsapp-service-config';
-import type {
-  WhatsAppError,
-  WhatsAppValidationError,
-} from '@/types/whatsapp-service-errors';
+// merged above
 import {
+  type WhatsAppError,
+  type WhatsAppValidationError,
   WhatsAppApiError,
   WhatsAppAuthError,
   WhatsAppNetworkError,

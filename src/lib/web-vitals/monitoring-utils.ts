@@ -4,7 +4,7 @@
  */
 
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { MINUTES_PER_HOUR, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { ZERO } from '@/constants';
 
 import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
@@ -30,42 +30,25 @@ export class MonitoringUtils {
    * 获取指标状态
    */
   static getMetricStatus(metric: string, value: number): string {
-    const thresholds = PERFORMANCE_THRESHOLDS;
-
-    // 定义指标阈值映射
-    const metricThresholds = {
-      cls: {
-        good: thresholds.CLS_GOOD,
-        needsImprovement: thresholds.CLS_NEEDS_IMPROVEMENT,
-      },
-      fid: {
-        good: thresholds.FID_GOOD,
-        needsImprovement: thresholds.FID_NEEDS_IMPROVEMENT,
-      },
-      lcp: {
-        good: thresholds.LCP_GOOD,
-        needsImprovement: thresholds.LCP_NEEDS_IMPROVEMENT,
-      },
-      fcp: {
-        good: thresholds.FCP_GOOD,
-        needsImprovement: WEB_VITALS_CONSTANTS.FCP_NEEDS_IMPROVEMENT_THRESHOLD,
-      },
-      ttfb: {
-        good: thresholds.TTFB_GOOD,
-        needsImprovement: thresholds.TTFB_NEEDS_IMPROVEMENT,
-      },
-    };
-
-    const threshold = metricThresholds[metric as keyof typeof metricThresholds];
-    if (!threshold) {
-      return '';
+    const t = PERFORMANCE_THRESHOLDS;
+    switch (metric) {
+      case 'cls':
+        return MonitoringUtils.getStandardMetricStatus(value, t.CLS_GOOD, t.CLS_NEEDS_IMPROVEMENT);
+      case 'fid':
+        return MonitoringUtils.getStandardMetricStatus(value, t.FID_GOOD, t.FID_NEEDS_IMPROVEMENT);
+      case 'lcp':
+        return MonitoringUtils.getStandardMetricStatus(value, t.LCP_GOOD, t.LCP_NEEDS_IMPROVEMENT);
+      case 'fcp':
+        return MonitoringUtils.getStandardMetricStatus(
+          value,
+          t.FCP_GOOD,
+          WEB_VITALS_CONSTANTS.FCP_NEEDS_IMPROVEMENT_THRESHOLD,
+        );
+      case 'ttfb':
+        return MonitoringUtils.getStandardMetricStatus(value, t.TTFB_GOOD, t.TTFB_NEEDS_IMPROVEMENT);
+      default:
+        return '';
     }
-
-    return MonitoringUtils.getStandardMetricStatus(
-      value,
-      threshold.good,
-      threshold.needsImprovement,
-    );
   }
 
   /**
@@ -110,7 +93,7 @@ export class MonitoringUtils {
    */
   static extractLocale(url: string): string {
     const match = url.match(/\/([a-z]{2})(?:\/|$)/);
-    return match?.[ONE] ?? 'en';
+    return match?.[1] ?? 'en';
   }
 
   /**

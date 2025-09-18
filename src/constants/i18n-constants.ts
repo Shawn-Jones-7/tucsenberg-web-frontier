@@ -1,5 +1,4 @@
-
-import { SECONDS_PER_MINUTE, MINUTES_PER_HOUR, HOURS_PER_DAY } from '@/constants';
+// 自包含的常量定义，不引入未使用的外部时间单位
 
 /**
  * i18n系统常量定义

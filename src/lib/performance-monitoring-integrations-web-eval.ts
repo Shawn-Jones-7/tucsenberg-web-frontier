@@ -12,21 +12,21 @@ import type {
  */
 export interface WebEvalAgentIntegration {
   enabled: boolean;
-  recordUserInteraction: (
-    action: string,
-    timing: number,
-    success: boolean,
-    details?: Record<string, unknown>,
-  ) => void;
-  recordNetworkRequest: (
-    url: string,
-    method: string,
-    status: number,
-    timing: number,
-    size?: number,
-  ) => void;
-  recordPageLoad: (url: string, timing: Record<string, number>) => void;
-  recordError: (error: Error, context?: Record<string, unknown>) => void;
+  recordUserInteraction: (params: {
+    action: string;
+    timing: number;
+    success: boolean;
+    details?: Record<string, unknown>;
+  }) => void;
+  recordNetworkRequest: (params: {
+    url: string;
+    method: string;
+    status: number;
+    timing: number;
+    size?: number;
+  }) => void;
+  recordPageLoad: (params: { url: string; timing: Record<string, number> }) => void;
+  recordError: (params: { error: Error; context?: Record<string, unknown> }) => void;
 }
 
 /**
@@ -40,12 +40,7 @@ export function useWebEvalAgentIntegration(
   return {
     enabled: config.webEvalAgent.enabled,
 
-    recordUserInteraction: (
-      action: string,
-      timing: number,
-      success: boolean,
-      details = {},
-    ) => {
+    recordUserInteraction: ({ action, timing, success, details = {} }) => {
       if (!config.webEvalAgent.enabled) return;
 
       recordMetric({
@@ -63,13 +58,7 @@ export function useWebEvalAgentIntegration(
       });
     },
 
-    recordNetworkRequest: (
-      url: string,
-      method: string,
-      status: number,
-      timing: number,
-      size = ZERO,
-    ) => {
+    recordNetworkRequest: ({ url, method, status, timing, size = ZERO }) => {
       if (!config.webEvalAgent.enabled || !config.webEvalAgent.captureNetwork)
         return;
 
@@ -82,15 +71,15 @@ export function useWebEvalAgentIntegration(
           status,
           timing,
           size,
-          isSuccess: status >= 200 && status < ANIMATION_DURATION_NORMAL,
+          isSuccess: status >= HTTP_OK_CONST && status < HTTP_BAD_REQUEST_CONST,
           timestamp: Date.now(),
         },
         tags: ['web-eval-agent', 'network-request'],
-        priority: timing > 1000 ? 'high' : 'medium',
+        priority: timing > ANIMATION_DURATION_NORMAL ? 'high' : 'medium',
       });
     },
 
-    recordPageLoad: (url: string, timing: Record<string, number>) => {
+    recordPageLoad: ({ url, timing }: { url: string; timing: Record<string, number> }) => {
       if (!config.webEvalAgent.enabled) return;
 
       recordMetric({
@@ -106,7 +95,7 @@ export function useWebEvalAgentIntegration(
       });
     },
 
-    recordError: (error: Error, context = {}) => {
+    recordError: ({ error, context = {} }: { error: Error; context?: Record<string, unknown> }) => {
       if (!config.webEvalAgent.enabled || !config.webEvalAgent.captureLogs)
         return;
 
@@ -223,12 +212,13 @@ export class WebEvalAgentAnalyzer {
    * 记录用户交互
    * Record user interaction
    */
-  recordInteraction(
-    action: string,
-    timing: number,
-    success: boolean,
-    _details?: Record<string, unknown>,
-  ): void {
+  recordInteraction(params: {
+    action: string;
+    timing: number;
+    success: boolean;
+    details?: Record<string, unknown>;
+  }): void {
+    const { action, timing, success } = params;
     if (!this.config.webEvalAgent.enabled) return;
 
     const current = this.interactions.get(action) || {
@@ -259,13 +249,14 @@ export class WebEvalAgentAnalyzer {
    * 记录网络请求
    * Record network request
    */
-  recordNetworkRequest(
-    url: string,
-    method: string,
-    status: number,
-    timing: number,
-    size = ZERO,
-  ): void {
+  recordNetworkRequest(params: {
+    url: string;
+    method: string;
+    status: number;
+    timing: number;
+    size?: number;
+  }): void {
+    const { url, method, status, timing, size = ZERO } = params;
     if (
       !this.config.webEvalAgent.enabled ||
       !this.config.webEvalAgent.captureNetwork
@@ -374,7 +365,7 @@ export class WebEvalAgentAnalyzer {
 
     // 生成建议
     if (topSlowActions.length > ZERO) {
-      const slowestAction = topSlowActions[ZERO];
+      const slowestAction = topSlowActions.at(ZERO);
       if (slowestAction && slowestAction.averageTime > ANIMATION_DURATION_VERY_SLOW) {
         recommendations.push(
           `Action "${slowestAction.action}" is slow (${slowestAction.averageTime.toFixed(ZERO)}ms average)`,

@@ -11,14 +11,8 @@ import { CACHE_LIMITS } from '@/constants/i18n-constants';
 import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
 
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { isLocaleDetectionHistory } from '@/lib/locale-storage-types';
 import type { Locale } from '@/types/i18n';
-import type {
-  LocaleDetectionHistory,
-  LocaleDetectionRecord,
-  LocaleSource,
-  StorageOperationResult,
-} from '@/lib/locale-storage-types';
+import { isLocaleDetectionHistory, type LocaleDetectionHistory, type LocaleDetectionRecord, type LocaleSource, type StorageOperationResult } from '@/lib/locale-storage-types';
 
 // ==================== 缓存管理 ====================
 
@@ -89,15 +83,16 @@ export class HistoryCacheManager {
  * 添加检测记录
  * Add detection record
  */
-export function addDetectionRecord(
-  locale: Locale,
-  source: LocaleSource,
-  confidence: number,
-  metadata?: Record<string, unknown>,
-): StorageOperationResult<LocaleDetectionHistory> {
+export function addDetectionRecord(params: {
+  locale: Locale;
+  source: LocaleSource;
+  confidence: number;
+  metadata?: Record<string, unknown>;
+}): StorageOperationResult<LocaleDetectionHistory> {
   const startTime = Date.now();
 
   try {
+    const { locale, source, confidence, metadata } = params;
     const detection: LocaleDetectionRecord = {
       locale,
       source,
@@ -154,40 +149,7 @@ export function getDetectionHistory(): StorageOperationResult<LocaleDetectionHis
     );
 
     if (!stored) {
-      // 创建默认历史记录
-      const defaultHistory: LocaleDetectionHistory = {
-        detections: [],
-        history: [],
-        lastUpdated: Date.now(),
-        totalDetections: ZERO,
-      };
-
-      try {
-        LocalStorageManager.set('locale_detection_history', defaultHistory);
-        const saveResult = { success: true };
-
-        if (saveResult.success) {
-          HistoryCacheManager.updateCache(defaultHistory);
-          return {
-            success: true,
-            data: defaultHistory,
-            source: 'localStorage',
-            timestamp: Date.now(),
-            responseTime: Date.now() - startTime,
-          };
-        }
-      } catch (error) {
-        return {
-          success: false,
-          error:
-            error instanceof Error
-              ? error.message
-              : 'Failed to create default history',
-          source: 'localStorage',
-          timestamp: Date.now(),
-          responseTime: Date.now() - startTime,
-        };
-      }
+      return createAndCacheDefaultHistory(startTime);
     }
 
     // 验证数据格式
@@ -292,6 +254,49 @@ export function validateHistoryData(
   return isLocaleDetectionHistory(history);
 }
 
+function createAndCacheDefaultHistory(startTime: number): StorageOperationResult<LocaleDetectionHistory> {
+  const defaultHistory: LocaleDetectionHistory = {
+    detections: [],
+    history: [],
+    lastUpdated: Date.now(),
+    totalDetections: ZERO,
+  };
+
+  try {
+    LocalStorageManager.set('locale_detection_history', defaultHistory);
+    const saveResult = { success: true };
+    if (saveResult.success) {
+      HistoryCacheManager.updateCache(defaultHistory);
+      return {
+        success: true,
+        data: defaultHistory,
+        source: 'localStorage',
+        timestamp: Date.now(),
+        responseTime: Date.now() - startTime,
+      };
+    }
+  } catch (error) {
+    return {
+      success: false,
+      error:
+        error instanceof Error
+          ? error.message
+          : 'Failed to create default history',
+      source: 'localStorage',
+      timestamp: Date.now(),
+      responseTime: Date.now() - startTime,
+    };
+  }
+
+  return {
+    success: false,
+    error: 'Unknown error occurred',
+    source: 'localStorage',
+    timestamp: Date.now(),
+    responseTime: Date.now() - startTime,
+  };
+}
+
 /**
  * 创建默认历史记录
  * Create default history
@@ -334,9 +339,8 @@ export function getHistorySummary(): {
   return {
     totalRecords: records.length,
     lastUpdated: history.lastUpdated,
-    oldestRecord:
-      records.length > ZERO ? records[records.length - ONE]!.timestamp : ZERO,
-    newestRecord: records.length > ZERO ? records[ZERO]!.timestamp : ZERO,
+    oldestRecord: records.length > ZERO ? (records.at(-ONE)?.timestamp ?? ZERO) : ZERO,
+    newestRecord: records.length > ZERO ? (records.at(ZERO)?.timestamp ?? ZERO) : ZERO,
     cacheStatus: HistoryCacheManager.getCacheStatus(),
   };
 }
@@ -365,7 +369,7 @@ export function needsCleanup(maxAge: number = DAYS_PER_MONTH * HOURS_PER_DAY * S
   const history = historyResult.data;
   const cutoffTime = Date.now() - maxAge;
   const expiredRecords = history.history.filter(
-    (record: any) => record.timestamp < cutoffTime,
+    (record: LocaleDetectionRecord) => record.timestamp < cutoffTime,
   );
   const totalCount = history.history.length;
   const expiredCount = expiredRecords.length;

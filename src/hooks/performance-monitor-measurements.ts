@@ -1,5 +1,5 @@
 import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
-import { FIVE_SECONDS_MS, MAGIC_10000, ONE, ZERO } from '@/constants';
+import { FIVE_SECONDS_MS, MAGIC_10000, ZERO } from '@/constants';
 
 import { logger } from '@/lib/logger';
 import React from 'react';
@@ -13,36 +13,43 @@ import type {
 /**
  * 创建性能测量函数的辅助函数
  */
-export function usePerformanceMeasurements(
-  enableAlerts: boolean,
-  alertThresholds: Required<PerformanceAlertThresholds>,
-  addAlert: (_alert: Omit<PerformanceAlert, 'id' | 'timestamp'>) => void,
-  setMetrics: React.Dispatch<React.SetStateAction<PerformanceMetrics | null>>,
-  startTime: React.MutableRefObject<number>,
-): PerformanceMeasurements {
+interface UsePerformanceMeasurementsArgs {
+  enableAlerts: boolean;
+  alertThresholds: Required<PerformanceAlertThresholds>;
+  addAlert: (_alert: Omit<PerformanceAlert, 'id' | 'timestamp'>) => void;
+  setMetrics: React.Dispatch<React.SetStateAction<PerformanceMetrics | null>>;
+  startTime: React.MutableRefObject<number | null>;
+}
+
+export function usePerformanceMeasurements({
+  enableAlerts,
+  alertThresholds,
+  addAlert,
+  setMetrics,
+  startTime,
+}: UsePerformanceMeasurementsArgs): PerformanceMeasurements {
   const measureLoadTime = React.useCallback(() => {
     try {
-      if (typeof window !== 'undefined' && window.performance) {
-        const navigation = performance.getEntriesByType(
-          'navigation',
-        )[ZERO] as PerformanceNavigationTiming;
-        if (navigation) {
-          const loadTime = navigation.loadEventEnd - navigation.startTime;
+      if (typeof window === 'undefined' || !window.performance) return;
 
-          setMetrics((prev) => ({
-            renderTime: ZERO,
-            ...(prev || {}),
-            loadTime,
-          }));
+      const entries = performance.getEntriesByType('navigation');
+      const navigation = entries[0] as PerformanceNavigationTiming | undefined;
+      if (!navigation) return;
 
-          if (enableAlerts && loadTime > alertThresholds.loadTime) {
-            addAlert({
-              level: 'warning',
-              message: `Slow page load detected: ${Math.round(loadTime)}ms`,
-              data: { loadTime },
-            });
-          }
-        }
+      const loadTime = navigation.loadEventEnd - navigation.startTime;
+
+      setMetrics((prev) => ({
+        renderTime: ZERO,
+        ...(prev || {}),
+        loadTime,
+      }));
+
+      if (enableAlerts && loadTime > alertThresholds.loadTime) {
+        addAlert({
+          level: 'warning',
+          message: `Slow page load detected: ${Math.round(loadTime)}ms`,
+          data: { loadTime },
+        });
       }
     } catch (error) {
       logger.warn('Failed to measure load time', { error: error as Error });
@@ -51,22 +58,21 @@ export function usePerformanceMeasurements(
 
   const measureRenderTime = React.useCallback(() => {
     try {
-      if (startTime.current !== null) {
-        const renderTime = performance.now() - startTime.current;
+      if (startTime.current === null) return;
+      const renderTime = performance.now() - startTime.current;
 
-        setMetrics((prev) => ({
-          loadTime: ZERO,
-          ...(prev || {}),
-          renderTime,
-        }));
+      setMetrics((prev) => ({
+        loadTime: ZERO,
+        ...(prev || {}),
+        renderTime,
+      }));
 
-        if (enableAlerts && renderTime > alertThresholds.renderTime) {
-          addAlert({
-            level: 'warning',
-            message: `Slow render detected: ${Math.round(renderTime)}ms`,
-            data: { renderTime },
-          });
-        }
+      if (enableAlerts && renderTime > alertThresholds.renderTime) {
+        addAlert({
+          level: 'warning',
+          message: `Slow render detected: ${Math.round(renderTime)}ms`,
+          data: { renderTime },
+        });
       }
     } catch (error) {
       logger.warn('Failed to measure render time', { error: error as Error });
@@ -81,23 +87,18 @@ export function usePerformanceMeasurements(
 
   const measureMemoryUsage = React.useCallback(() => {
     try {
-      if (typeof window !== 'undefined' && window.performance?.memory) {
-        const memoryUsage = window.performance.memory.usedJSHeapSize;
+      if (typeof window === 'undefined' || !window.performance?.memory) return;
+      const memoryUsage = window.performance.memory.usedJSHeapSize;
 
-        setMetrics((prev) => ({
-          loadTime: ZERO,
-          renderTime: ZERO,
-          ...(prev || {}),
-          memoryUsage,
-        }));
+      setMetrics((prev) => ({
+        loadTime: ZERO,
+        renderTime: ZERO,
+        ...(prev || {}),
+        memoryUsage,
+      }));
 
-        if (enableAlerts) {
-          checkMemoryUsageAlert(
-            memoryUsage,
-            alertThresholds.memoryUsage,
-            addAlert,
-          );
-        }
+      if (enableAlerts) {
+        checkMemoryUsageAlert(memoryUsage, alertThresholds.memoryUsage, addAlert);
       }
     } catch (error) {
       logger.warn('Failed to measure memory usage', { error: error as Error });
@@ -116,15 +117,12 @@ export function usePerformanceMeasurements(
  */
 export const measureNetworkLatency = async (): Promise<number | null> => {
   try {
-    if (typeof window !== 'undefined' && (navigator as any).connection) {
-      // 使用 Network Information API (如果可用)
-      const connection = (navigator as any).connection as {
-        rtt?: number;
-        effectiveType?: string;
-        downlink?: number;
+    if (typeof window !== 'undefined') {
+      const nav = navigator as Navigator & {
+        connection?: { rtt?: number; effectiveType?: string; downlink?: number };
       };
-      if (connection.rtt) {
-        return connection.rtt;
+      if (nav.connection?.rtt) {
+        return nav.connection.rtt;
       }
     }
 
@@ -171,7 +169,7 @@ export const measureLargestContentfulPaint = (): Promise<number | null> => {
       if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const lastEntry = entries[entries.length - ONE];
+          const lastEntry = entries[entries.length - 1];
           resolve(lastEntry ? lastEntry.startTime : null);
           observer.disconnect();
         });
@@ -258,7 +256,7 @@ export const measureFirstInputDelay = (): Promise<number | null> => {
       if (typeof window !== 'undefined' && 'PerformanceObserver' in window) {
         const observer = new PerformanceObserver((list) => {
           const entries = list.getEntries();
-          const firstEntry = entries[ZERO];
+          const firstEntry = entries[0];
           if (firstEntry) {
             const firstInputEntry = firstEntry as unknown as {
               processingStart: number;
@@ -301,9 +299,7 @@ export const measureComprehensivePerformance = async (): Promise<
     // 测量基本指标
     if (typeof window !== 'undefined' && window.performance) {
       // 加载时间
-      const navigation = performance.getEntriesByType(
-        'navigation',
-      )[ZERO] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
       if (navigation) {
         metrics.loadTime = navigation.loadEventEnd - navigation.startTime;
       }

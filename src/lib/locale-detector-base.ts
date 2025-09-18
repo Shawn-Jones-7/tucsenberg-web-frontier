@@ -5,7 +5,7 @@
  */
 
 import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, SECONDS_PER_MINUTE } from '@/constants';
 
 import type { Locale } from '@/types/i18n';
 import {
@@ -91,8 +91,8 @@ export class BaseLocaleDetector {
         }
 
         // 尝试提取主要语言代码 (例如: 'zh-CN' -> 'zh')
-        const primaryLang = normalizedLang.split('-')[ZERO];
-        const primaryLocale = this.getLocaleFromLanguageCode(primaryLang!);
+        const [primaryLang] = normalizedLang.split('-');
+        const primaryLocale = this.getLocaleFromLanguageCode(primaryLang);
 
         if (primaryLocale) {
           return primaryLocale;
@@ -260,29 +260,8 @@ export class BaseLocaleDetector {
     try {
       // 尝试多个IP地理位置API
       for (const endpoint of GEO_API_CONFIG.ENDPOINTS) {
-        try {
-          const response = await fetch(endpoint, {
-            signal: controller.signal,
-            headers: {
-              Accept: 'application/json',
-            },
-          });
-
-          if (!response.ok) {
-            continue; // 尝试下一个端点
-          }
-
-          const data = await response.json();
-          const countryCode =
-            data.country || data.country_code || data.countryCode;
-
-          if (countryCode) {
-            return countryCode;
-          }
-        } catch (error) {
-          // 继续尝试下一个端点
-          continue;
-        }
+        const cc = await this.fetchCountryCode(endpoint, controller.signal);
+        if (cc) return cc;
       }
 
       throw new Error('All IP geolocation endpoints failed');
@@ -293,6 +272,27 @@ export class BaseLocaleDetector {
       throw error;
     } finally {
       clearTimeout(timeoutId);
+    }
+  }
+
+  /**
+   * 单个端点获取国家代码（早返回，降低嵌套）
+   */
+  private async fetchCountryCode(
+    endpoint: string,
+    signal: AbortSignal,
+  ): Promise<string | undefined> {
+    try {
+      const response = await fetch(endpoint, {
+        signal,
+        headers: { Accept: 'application/json' },
+      });
+      if (!response.ok) return undefined;
+      const data = await response.json();
+      const cc = data.country || data.country_code || data.countryCode;
+      return typeof cc === 'string' ? cc : undefined;
+    } catch {
+      return undefined;
     }
   }
 

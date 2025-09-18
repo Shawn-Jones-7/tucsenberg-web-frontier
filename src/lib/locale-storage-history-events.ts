@@ -146,18 +146,18 @@ export class HistoryEventManager {
     listenersByType: Record<string, number>;
   } {
     let totalListeners = ZERO;
-    const listenersByType: Record<string, number> = {};
+    const byType = new Map<string, number>();
 
     for (const [eventType, listeners] of this.eventListeners.entries()) {
       const count = listeners.length;
       totalListeners += count;
-      listenersByType[eventType] = count;
+      byType.set(eventType, count);
     }
 
     return {
       totalListeners,
       eventTypes: Array.from(this.eventListeners.keys()),
-      listenersByType,
+      listenersByType: Object.fromEntries(byType.entries()) as Record<string, number>,
     };
   }
 }
@@ -474,6 +474,6 @@ export function getEventSystemStatus(): {
     isActive: listenerStats.totalListeners > ZERO,
     listenerStats,
     eventHistoryCount: HistoryEventManager.getEventHistory().length,
-    lastEventTime: eventHistory.length > ZERO ? eventHistory[ZERO]!.timestamp : null,
+    lastEventTime: eventHistory.length > ZERO ? (eventHistory.at(ZERO)?.timestamp ?? null) : null,
   };
 }

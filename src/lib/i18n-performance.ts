@@ -113,7 +113,13 @@ export const getCachedTranslations = cache(
     const messages = await getCachedMessages(locale);
 
     if (namespace) {
-      return messages[namespace] || {};
+      if (messages && typeof messages === 'object') {
+        const entry = Object.entries(messages as Record<string, unknown>).find(
+          ([k]) => k === namespace,
+        );
+        return (entry ? entry[1] : {}) as unknown;
+      }
+      return {};
     }
 
     return messages;

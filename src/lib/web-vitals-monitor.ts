@@ -1,7 +1,7 @@
 'use client';
 
 import { COUNT_800, MAGIC_1800, MAGIC_2500, MAGIC_4000 } from "@/constants/count";
-import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_SLOW, HTTP_OK, ONE, PERCENTAGE_FULL, THREE_SECONDS_MS, ZERO } from '@/constants';
+import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_SLOW, HTTP_OK, PERCENTAGE_FULL, THREE_SECONDS_MS, ZERO } from '@/constants';
 
 import { MAGIC_0_1, MAGIC_0_25 } from "@/constants/decimal";
 import { logger } from '@/lib/logger';
@@ -106,80 +106,72 @@ export class WebVitalsMonitor {
    * 设置性能观察器
    */
   private setupPerformanceObservers(): void {
+    if (!('PerformanceObserver' in window)) return;
+
+    const trySetupObserver = (
+      name: 'CLS' | 'LCP' | 'FID' | 'FCP',
+      setup: () => PerformanceObserver,
+    ) => {
+      try {
+        const obs = setup();
+        this.observers.push(obs);
+      } catch (error) {
+        logger.warn(`${name} observer setup failed`, {
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
+    };
+
     // CLS (Cumulative Layout Shift)
-    if ('PerformanceObserver' in window) {
-      try {
-        const clsObserver = new PerformanceObserver((list) => {
-          let clsValue = ZERO;
-          for (const entry of list.getEntries()) {
-            const layoutShiftEntry = entry as LayoutShiftEntry;
-            if (!layoutShiftEntry.hadRecentInput) {
-              clsValue += layoutShiftEntry.value;
-            }
+    trySetupObserver('CLS', () => {
+      const clsObserver = new PerformanceObserver((list) => {
+        let clsValue = ZERO;
+        for (const entry of list.getEntries()) {
+          const layoutShiftEntry = entry as LayoutShiftEntry;
+          if (!layoutShiftEntry.hadRecentInput) {
+            clsValue += layoutShiftEntry.value;
           }
-          this.recordCLS(clsValue);
-        });
-        clsObserver.observe({ type: 'layout-shift', buffered: true });
-        this.observers.push(clsObserver);
-      } catch (error) {
-        logger.warn('CLS observer setup failed', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+        }
+        this.recordCLS(clsValue);
+      });
+      clsObserver.observe({ type: 'layout-shift', buffered: true });
+      return clsObserver;
+    });
 
-      // LCP (Largest Contentful Paint)
-      try {
-        const lcpObserver = new PerformanceObserver((list) => {
-          const entries = list.getEntries();
-          const lastEntry = entries[entries.length - ONE];
-          if (lastEntry) {
-            this.recordLCP(lastEntry.startTime);
-          }
-        });
-        lcpObserver.observe({
-          type: 'largest-contentful-paint',
-          buffered: true,
-        });
-        this.observers.push(lcpObserver);
-      } catch (error) {
-        logger.warn('LCP observer setup failed', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+    // LCP (Largest Contentful Paint)
+    trySetupObserver('LCP', () => {
+      const lcpObserver = new PerformanceObserver((list) => {
+        const lastEntry = list.getEntries().at(-1);
+        if (lastEntry) this.recordLCP(lastEntry.startTime);
+      });
+      lcpObserver.observe({ type: 'largest-contentful-paint', buffered: true });
+      return lcpObserver;
+    });
 
-      // FID (First Input Delay)
-      try {
-        const fidObserver = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            const firstInputEntry = entry as FirstInputEntry;
-            this.recordFID(firstInputEntry.processingStart - entry.startTime);
-          }
-        });
-        fidObserver.observe({ type: 'first-input', buffered: true });
-        this.observers.push(fidObserver);
-      } catch (error) {
-        logger.warn('FID observer setup failed', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
+    // FID (First Input Delay)
+    trySetupObserver('FID', () => {
+      const fidObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          const firstInputEntry = entry as FirstInputEntry;
+          this.recordFID(firstInputEntry.processingStart - entry.startTime);
+        }
+      });
+      fidObserver.observe({ type: 'first-input', buffered: true });
+      return fidObserver;
+    });
 
-      // FCP (First Contentful Paint)
-      try {
-        const fcpObserver = new PerformanceObserver((list) => {
-          for (const entry of list.getEntries()) {
-            if (entry.name === 'first-contentful-paint') {
-              this.recordFCP(entry.startTime);
-            }
+    // FCP (First Contentful Paint)
+    trySetupObserver('FCP', () => {
+      const fcpObserver = new PerformanceObserver((list) => {
+        for (const entry of list.getEntries()) {
+          if (entry.name === 'first-contentful-paint') {
+            this.recordFCP(entry.startTime);
           }
-        });
-        fcpObserver.observe({ type: 'paint', buffered: true });
-        this.observers.push(fcpObserver);
-      } catch (error) {
-        logger.warn('FCP observer setup failed', {
-          error: error instanceof Error ? error.message : String(error),
-        });
-      }
-    }
+        }
+      });
+      fcpObserver.observe({ type: 'paint', buffered: true });
+      return fcpObserver;
+    });
   }
 
   /**

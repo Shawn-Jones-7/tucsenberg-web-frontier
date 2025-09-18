@@ -3,7 +3,7 @@
  * Translation Preloader Strategy Factory and Collections
  */
 
-import type { PreloaderMetrics } from '@/lib/i18n-preloader-types';
+import type { PreloadStrategy, PreloadStrategyName, PreloaderMetrics } from '@/lib/i18n-preloader-types';
 import {
   adaptiveStrategy,
   batchStrategy,
@@ -26,7 +26,7 @@ import { PreloadStrategyManager } from '@/lib/i18n-preloader-strategies/manager'
  * 预加载策略集合
  * Preload strategies collection
  */
-export const PreloadStrategies = {
+export const PreloadStrategies: Record<PreloadStrategyName, PreloadStrategy> = {
   immediate: immediateStrategy,
   smart: smartStrategy,
   progressive: progressiveStrategy,
@@ -37,7 +37,7 @@ export const PreloadStrategies = {
   networkAware: networkAwareStrategy,
   timeAware: timeAwareStrategy,
   memoryAware: memoryAwareStrategy,
-};
+} as const;
 
 /**
  * 创建策略管理器
@@ -47,10 +47,63 @@ export function createStrategyManager(): PreloadStrategyManager {
   const manager = new PreloadStrategyManager();
 
   // 注册所有策略
-  Object.entries(PreloadStrategies).forEach(([name, strategy]) => {
-    const config = strategyConfigs[name];
-    manager.registerStrategy(name, strategy, config);
-  });
+  const keys: ReadonlyArray<PreloadStrategyName> = [
+    'immediate',
+    'smart',
+    'progressive',
+    'priority',
+    'lazy',
+    'batch',
+    'adaptive',
+    'networkAware',
+    'timeAware',
+    'memoryAware',
+  ];
+
+  for (const key of keys) {
+    switch (key) {
+      case 'immediate':
+        manager.registerStrategy('immediate', immediateStrategy, strategyConfigs.immediate);
+        break;
+      case 'smart':
+        manager.registerStrategy('smart', smartStrategy, strategyConfigs.smart);
+        break;
+      case 'progressive':
+        manager.registerStrategy('progressive', progressiveStrategy, strategyConfigs.progressive);
+        break;
+      case 'priority':
+        manager.registerStrategy('priority', priorityStrategy, strategyConfigs.priority);
+        break;
+      case 'lazy':
+        manager.registerStrategy('lazy', lazyStrategy, strategyConfigs.lazy);
+        break;
+      case 'batch':
+        manager.registerStrategy('batch', batchStrategy, strategyConfigs.batch);
+        break;
+      case 'adaptive':
+        manager.registerStrategy('adaptive', adaptiveStrategy, strategyConfigs.adaptive);
+        break;
+      case 'networkAware':
+        manager.registerStrategy(
+          'networkAware',
+          networkAwareStrategy,
+          strategyConfigs.networkAware,
+        );
+        break;
+      case 'timeAware':
+        manager.registerStrategy('timeAware', timeAwareStrategy, strategyConfigs.timeAware);
+        break;
+      case 'memoryAware':
+        manager.registerStrategy(
+          'memoryAware',
+          memoryAwareStrategy,
+          strategyConfigs.memoryAware,
+        );
+        break;
+      default:
+        break;
+    }
+  }
 
   return manager;
 }

@@ -35,7 +35,7 @@
  * delay(seconds(2.5));                  // 2500ms
  * ```
  */
-export const seconds = (seconds: number): number => seconds * 1_000;
+export const seconds = (value: number): number => value * 1000;
 
 /**
  * 将分钟转换为毫秒
@@ -48,7 +48,7 @@ export const seconds = (seconds: number): number => seconds * 1_000;
  * setTimeout(cleanup, minutes(0.5));    // 30000ms
  * ```
  */
-export const minutes = (minutes: number): number => minutes * 60_000;
+export const minutes = (value: number): number => value * (60 * 1000);
 
 /**
  * 将小时转换为毫秒
@@ -61,7 +61,7 @@ export const minutes = (minutes: number): number => minutes * 60_000;
  * const sessionTimeout = hours(2);      // 7200000ms
  * ```
  */
-export const hours = (hours: number): number => hours * 3_600_000;
+export const hours = (value: number): number => value * (60 * 60 * 1000);
 
 /**
  * 将天转换为毫秒
@@ -74,7 +74,7 @@ export const hours = (hours: number): number => hours * 3_600_000;
  * const monthInMs = days(30);           // 2592000000ms
  * ```
  */
-export const days = (days: number): number => days * 86_400_000;
+export const days = (value: number): number => value * (24 * 60 * 60 * 1000);
 
 // ============================================================================
 // 百分比和比例转换
@@ -136,7 +136,7 @@ export const fraction = (numerator: number, denominator: number): number =>
  * margin: pixels(8);                    // 8
  * ```
  */
-export const pixels = (px: number): number => px;
+export const pixels = (value: number): number => value;
 
 /**
  * rem单位值（语义化标识）
@@ -149,7 +149,7 @@ export const pixels = (px: number): number => px;
  * lineHeight: rem(1.2);                 // 1.2
  * ```
  */
-export const rem = (rem: number): number => rem;
+export const rem = (value: number): number => value;
 
 /**
  * em单位值（语义化标识）
@@ -162,7 +162,7 @@ export const rem = (rem: number): number => rem;
  * margin: em(1);                        // 1
  * ```
  */
-export const em = (em: number): number => em;
+export const em = (value: number): number => value;
 
 // ============================================================================
 // 角度单位转换
@@ -179,7 +179,7 @@ export const em = (em: number): number => em;
  * transform: `rotate(${degrees(90)}deg)`;   // rotate(90deg)
  * ```
  */
-export const degrees = (degrees: number): number => degrees;
+export const degrees = (value: number): number => value;
 
 /**
  * 弧度转角度
@@ -192,8 +192,7 @@ export const degrees = (degrees: number): number => degrees;
  * const rotation = radiansToDegrees(Math.PI / 2); // 90
  * ```
  */
-export const radiansToDegrees = (radians: number): number => 
-  radians * (180 / Math.PI);
+export const radiansToDegrees = (value: number): number => value * ((360 / 2) / Math.PI);
 
 /**
  * 角度转弧度
@@ -206,8 +205,7 @@ export const radiansToDegrees = (radians: number): number =>
  * const halfPi = degreesToRadians(90);      // Math.PI / 2
  * ```
  */
-export const degreesToRadians = (degrees: number): number => 
-  degrees * (Math.PI / 180);
+export const degreesToRadians = (value: number): number => value * (Math.PI / (360 / 2));
 
 // ============================================================================
 // 数据大小单位转换
@@ -218,28 +216,28 @@ export const degreesToRadians = (degrees: number): number =>
  * @param bytes 字节数
  * @returns 字节数（原样返回，用于语义标识）
  */
-export const bytes = (bytes: number): number => bytes;
+export const bytes = (value: number): number => value;
 
 /**
  * KB转字节
  * @param kb KB数值
  * @returns 字节数
  */
-export const kilobytes = (kb: number): number => kb * 1_024;
+export const kilobytes = (value: number): number => value * 1024;
 
 /**
  * MB转字节
  * @param mb MB数值
  * @returns 字节数
  */
-export const megabytes = (mb: number): number => mb * 1_048_576;
+export const megabytes = (value: number): number => value * (1024 * 1024);
 
 /**
  * GB转字节
  * @param gb GB数值
  * @returns 字节数
  */
-export const gigabytes = (gb: number): number => gb * 1_073_741_824;
+export const gigabytes = (value: number): number => value * (1024 * 1024 * 1024);
 
 // ============================================================================
 // 常用数学常量和比例
@@ -261,7 +259,7 @@ export const RATIOS = {
   /** 16:9 宽屏比例 */
   WIDESCREEN: 16 / 9,
   /** 21:9 超宽屏比例 */
-  ULTRAWIDE: 21 / 9,
+  ULTRAWIDE: (7 * 3) / 9,
   /** 黄金比例 */
   GOLDEN: GOLDEN_RATIO,
 } as const;

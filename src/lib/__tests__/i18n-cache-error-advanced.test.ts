@@ -293,15 +293,15 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
       console.error = vi.fn();
 
       // Create a cascade of operations that might fail
-      const cascadeOperations = [];
+      const cascadeOperations: Array<Promise<unknown>> = [];
+      const runCascade = (mgr: I18nCacheManager) =>
+        mgr
+          .getMessages('invalid' as Locale)
+          .catch(() => mgr.getMessages('en'))
+          .catch(() => mgr.getMessages('zh'));
 
       for (let i = 0; i < 5; i++) {
-        cascadeOperations.push(
-          cacheManager
-            .getMessages('invalid' as Locale)
-            .catch(() => cacheManager.getMessages('en'))
-            .catch(() => cacheManager.getMessages('zh')),
-        );
+        cascadeOperations.push(runCascade(cacheManager));
       }
 
       const results = await Promise.allSettled(cascadeOperations);

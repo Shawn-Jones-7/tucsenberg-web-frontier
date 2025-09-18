@@ -29,20 +29,14 @@ export class WhatsAppError extends Error {
   constructor(
     message: string,
     code: number = 500,
-    type: string = 'WhatsAppError',
-    subcode?: number,
-    traceId?: string,
+    options?: { type?: string; subcode?: number; traceId?: string },
   ) {
     super(message);
     this.name = 'WhatsAppError';
     this.code = code;
-    this.type = type;
-    if (subcode !== undefined) {
-      this.subcode = subcode;
-    }
-    if (traceId !== undefined) {
-      this.traceId = traceId;
-    }
+    this.type = options?.type ?? 'WhatsAppError';
+    if (options?.subcode !== undefined) this.subcode = options.subcode;
+    if (options?.traceId !== undefined) this.traceId = options.traceId;
     this.timestamp = Date.now();
 
     // Ensure proper prototype chain for instanceof checks
@@ -104,19 +98,17 @@ export class WhatsAppApiError extends WhatsAppError {
   constructor(
     message: string,
     code: number,
-    apiError?: WhatsAppApiError['apiError'],
-    traceId?: string,
+    options?: { apiError?: WhatsAppApiError['apiError']; traceId?: string },
   ) {
-    super(
-      message,
-      code,
-      'ApiError',
-      apiError?.error_subcode,
-      traceId || apiError?.fbtrace_id,
-    );
+    const base: { type: string; subcode?: number; traceId?: string } = { type: 'ApiError' };
+    const sub = options?.apiError?.error_subcode;
+    if (typeof sub === 'number') base.subcode = sub;
+    const tid = options?.traceId || options?.apiError?.fbtrace_id;
+    if (typeof tid === 'string') base.traceId = tid;
+    super(message, code, base);
     this.name = 'WhatsAppApiError';
-    if (apiError !== undefined) {
-      this.apiError = apiError;
+    if (options?.apiError !== undefined) {
+      this.apiError = options.apiError;
     }
   }
 
@@ -152,7 +144,7 @@ export class WhatsAppValidationError extends WhatsAppError {
   public readonly value?: unknown;
 
   constructor(message: string, field?: string, value?: unknown) {
-    super(message, HTTP_BAD_REQUEST, 'ValidationError');
+    super(message, HTTP_BAD_REQUEST, { type: 'ValidationError' });
     this.name = 'WhatsAppValidationError';
     if (field !== undefined) {
       this.field = field;
@@ -214,21 +206,13 @@ export class WhatsAppRateLimitError extends WhatsAppError {
 
   constructor(
     message: string,
-    retryAfter?: number,
-    limit?: number,
-    remaining?: number,
+    options?: { retryAfter?: number; limit?: number; remaining?: number },
   ) {
-    super(message, MAGIC_429, 'RateLimitError');
+    super(message, MAGIC_429, { type: 'RateLimitError' });
     this.name = 'WhatsAppRateLimitError';
-    if (retryAfter !== undefined) {
-      this.retryAfter = retryAfter;
-    }
-    if (limit !== undefined) {
-      this.limit = limit;
-    }
-    if (remaining !== undefined) {
-      this.remaining = remaining;
-    }
+    if (options?.retryAfter !== undefined) this.retryAfter = options.retryAfter;
+    if (options?.limit !== undefined) this.limit = options.limit;
+    if (options?.remaining !== undefined) this.remaining = options.remaining;
   }
 
   /**
@@ -270,7 +254,7 @@ export class WhatsAppNetworkError extends WhatsAppError {
   public readonly isTimeout?: boolean;
 
   constructor(message: string, originalError?: Error, isTimeout?: boolean) {
-    super(message, 500, 'NetworkError');
+    super(message, 500, { type: 'NetworkError' });
     this.name = 'WhatsAppNetworkError';
     if (originalError !== undefined) {
       this.originalError = originalError;
@@ -325,7 +309,7 @@ export class WhatsAppAuthError extends WhatsAppError {
   public readonly tokenInvalid?: boolean;
 
   constructor(message: string, tokenExpired?: boolean, tokenInvalid?: boolean) {
-    super(message, HTTP_UNAUTHORIZED, 'AuthError');
+    super(message, HTTP_UNAUTHORIZED, { type: 'AuthError' });
     this.name = 'WhatsAppAuthError';
     if (tokenExpired !== undefined) {
       this.tokenExpired = tokenExpired;
@@ -437,7 +421,9 @@ export function createErrorFromApiResponse(
         : undefined;
     const retryAfterNumber =
       typeof retryAfter === 'number' ? retryAfter : undefined;
-    return new WhatsAppRateLimitError('Rate limit exceeded', retryAfterNumber);
+    const opts: { retryAfter?: number; limit?: number; remaining?: number } = {};
+    if (typeof retryAfterNumber === 'number') opts.retryAfter = retryAfterNumber;
+    return new WhatsAppRateLimitError('Rate limit exceeded', opts);
   }
 
   if (data?.error) {
@@ -447,21 +433,15 @@ export function createErrorFromApiResponse(
       'message' in data.error
         ? (data.error as Record<string, unknown>).message || 'API Error'
         : 'API Error';
-    return new WhatsAppApiError(
-      errorMessage as string,
-      status,
-      data.error,
-      traceId,
-    );
+    const opts: { apiError?: WhatsAppApiError['apiError']; traceId?: string } = {};
+    opts.apiError = data.error as WhatsAppApiError['apiError'];
+    if (typeof traceId === 'string') opts.traceId = traceId;
+    return new WhatsAppApiError(errorMessage as string, status, opts);
   }
 
-  return new WhatsAppError(
-    `HTTP ${status} Error`,
-    status,
-    'HttpError',
-    undefined,
-    traceId,
-  );
+  const base: { type: string; traceId?: string } = { type: 'HttpError' };
+  if (typeof traceId === 'string') base.traceId = traceId;
+  return new WhatsAppError(`HTTP ${status} Error`, status, base);
 }
 
 /**

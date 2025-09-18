@@ -1,11 +1,7 @@
 import React from 'react';
 import { logger } from '@/lib/logger';
 import { themeAnalytics } from '@/lib/theme-analytics';
-import type {
-  ThemeTransitionConfig,
-  ViewTransition,
-  ViewTransitionAPI,
-} from '@/hooks/theme-transition-types';
+import type { ViewTransition, ViewTransitionAPI } from '@/hooks/theme-transition-types';
 import {
   calculateEndRadius,
   DEFAULT_CONFIG,
@@ -17,13 +13,58 @@ import {
 /**
  * 执行主题切换的核心逻辑
  */
-export function executeThemeTransition(
-  originalSetTheme: (_theme: string) => void,
-  newTheme: string,
-  _currentTheme: string = 'unknown',
-  _config: ThemeTransitionConfig = DEFAULT_CONFIG,
-  _animationSetup?: (_transition: ViewTransition) => void,
-): void {
+function performViewTransition(args: {
+  originalSetTheme: (_theme: string) => void;
+  newTheme: string;
+  currentTheme: string;
+  startTime: number;
+  animationSetup?: (_transition: ViewTransition) => void;
+}) {
+  const { originalSetTheme, newTheme, currentTheme, startTime, animationSetup } = args;
+  const documentWithTransition = document as Document & ViewTransitionAPI;
+  const transition = documentWithTransition.startViewTransition(() => {
+    originalSetTheme(newTheme);
+  });
+
+  if (animationSetup) {
+    animationSetup(transition);
+  }
+
+  transition.finished
+    .then(() => {
+      recordThemeTransition({
+        fromTheme: currentTheme,
+        toTheme: newTheme,
+        startTime,
+        endTime: performance.now(),
+        hasViewTransition: true,
+      });
+    })
+    .catch((error: Error) => {
+      logger.error('View transition failed', { error, newTheme });
+      recordThemeTransition({
+        fromTheme: currentTheme,
+        toTheme: newTheme,
+        startTime,
+        endTime: performance.now(),
+        hasViewTransition: true,
+        error,
+      });
+    });
+}
+
+export function executeThemeTransition(args: {
+  originalSetTheme: (_theme: string) => void;
+  newTheme: string;
+  currentTheme?: string;
+  animationSetup?: (_transition: ViewTransition) => void;
+}): void {
+  const {
+    originalSetTheme,
+    newTheme,
+    currentTheme = 'unknown',
+    animationSetup,
+  } = args;
   const startTime = performance.now();
 
   try {
@@ -32,58 +73,24 @@ export function executeThemeTransition(
 
     // 标记性能开始点
     if (typeof window !== 'undefined' && window.performance) {
-      performance.mark(`theme-transition-${_currentTheme}-start`);
+      performance.mark(`theme-transition-${currentTheme}-start`);
     }
 
     // 检查是否支持 View Transitions API
     if (!supportsViewTransitions()) {
       logger.debug('View Transitions API not supported, using fallback');
-      originalSetTheme(newTheme);
-
-      recordThemeTransition({
-        fromTheme: _currentTheme,
-        toTheme: newTheme,
-        startTime,
-        endTime: performance.now(),
-        hasViewTransition: false,
-      });
+      fallbackThemeChange({ originalSetTheme, newTheme, currentTheme, startTime });
       return;
     }
 
     // 使用 View Transitions API
     try {
-      const documentWithTransition = document as Document & ViewTransitionAPI;
-      const transition = documentWithTransition.startViewTransition(() => {
-        originalSetTheme(newTheme);
-      });
-
-      // 如果提供了动画设置函数，则调用它
-      if (_animationSetup) {
-        _animationSetup(transition);
+      const baseArgs = { originalSetTheme, newTheme, currentTheme, startTime };
+      if (animationSetup) {
+        performViewTransition({ ...baseArgs, animationSetup });
+      } else {
+        performViewTransition(baseArgs);
       }
-
-      // 监听转换完成
-      transition.finished
-        .then(() => {
-          recordThemeTransition({
-            fromTheme: _currentTheme,
-            toTheme: newTheme,
-            startTime,
-            endTime: performance.now(),
-            hasViewTransition: true,
-          });
-        })
-        .catch((error: Error) => {
-          logger.error('View transition failed', { error, newTheme });
-          recordThemeTransition({
-            fromTheme: _currentTheme,
-            toTheme: newTheme,
-            startTime,
-            endTime: performance.now(),
-            hasViewTransition: true,
-            error,
-          });
-        });
     } catch (transitionError) {
       logger.error('Failed to start view transition', {
         error: transitionError,
@@ -91,13 +98,11 @@ export function executeThemeTransition(
       });
 
       // 降级到普通切换
-      originalSetTheme(newTheme);
-      recordThemeTransition({
-        fromTheme: _currentTheme,
-        toTheme: newTheme,
+      fallbackThemeChange({
+        originalSetTheme,
+        newTheme,
+        currentTheme,
         startTime,
-        endTime: performance.now(),
-        hasViewTransition: false,
         error: transitionError as Error,
       });
     }
@@ -114,15 +119,33 @@ export function executeThemeTransition(
       });
     }
 
-    recordThemeTransition({
-      fromTheme: _currentTheme,
-      toTheme: newTheme,
+    fallbackThemeChange({
+      originalSetTheme,
+      newTheme,
+      currentTheme,
       startTime,
-      endTime: performance.now(),
-      hasViewTransition: false,
       error: error as Error,
     });
   }
+}
+
+function fallbackThemeChange(args: {
+  originalSetTheme: (_theme: string) => void;
+  newTheme: string;
+  currentTheme: string;
+  startTime: number;
+  error?: Error;
+}) {
+  const { originalSetTheme, newTheme, currentTheme, startTime, error } = args;
+  originalSetTheme(newTheme);
+  recordThemeTransition({
+    fromTheme: currentTheme,
+    toTheme: newTheme,
+    startTime,
+    endTime: performance.now(),
+    hasViewTransition: false,
+    ...(error ? { error } : {}),
+  });
 }
 
 /**
@@ -131,21 +154,24 @@ export function executeThemeTransition(
 export function executeBasicThemeTransition(
   originalSetTheme: (_theme: string) => void,
   newTheme: string,
-  _currentTheme?: string,
+  currentTheme?: string,
 ): void {
-  executeThemeTransition(originalSetTheme, newTheme, _currentTheme);
+  const base = { originalSetTheme, newTheme } as { originalSetTheme: (_theme: string) => void; newTheme: string; currentTheme?: string };
+  if (currentTheme) base.currentTheme = currentTheme;
+  executeThemeTransition(base);
 }
 
 /**
  * 执行圆形动画主题切换
  */
-export function executeCircularThemeTransition(
-  originalSetTheme: (_theme: string) => void,
-  newTheme: string,
-  _currentTheme?: string,
-  _clickEvent?: React.MouseEvent<HTMLElement>,
-): void {
-  const { x, y } = getClickCoordinates(_clickEvent);
+export function executeCircularThemeTransition(args: {
+  originalSetTheme: (_theme: string) => void;
+  newTheme: string;
+  currentTheme?: string;
+  clickEvent?: React.MouseEvent<HTMLElement>;
+}): void {
+  const { originalSetTheme, newTheme, currentTheme, clickEvent } = args;
+  const { x, y } = getClickCoordinates(clickEvent);
   const endRadius = calculateEndRadius(x, y);
 
   const animationSetup = (transition: ViewTransition) => {
@@ -173,11 +199,13 @@ export function executeCircularThemeTransition(
       });
   };
 
-  executeThemeTransition(
-    originalSetTheme,
-    newTheme,
-    _currentTheme,
-    DEFAULT_CONFIG,
-    animationSetup,
-  );
+  const base = { originalSetTheme, newTheme } as {
+    originalSetTheme: (_theme: string) => void;
+    newTheme: string;
+    currentTheme?: string;
+    animationSetup?: (_transition: ViewTransition) => void;
+  };
+  if (currentTheme) base.currentTheme = currentTheme;
+  if (animationSetup) base.animationSetup = animationSetup;
+  executeThemeTransition(base);
 }

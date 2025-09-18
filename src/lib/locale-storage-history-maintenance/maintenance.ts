@@ -35,33 +35,9 @@ export function performMaintenance(options: {
   const startTime = Date.now();
 
   try {
-    let expiredRemoved = ZERO;
-    let duplicatesRemoved = ZERO;
-    let sizeReduced = ZERO;
-
-    // 清理过期记录
-    if (options.cleanupExpired !== false) {
-      const expiredResult = cleanupExpiredDetections(options.maxAge);
-      if (expiredResult.success) {
-        expiredRemoved = expiredResult.data || ZERO;
-      }
-    }
-
-    // 移除重复记录
-    if (options.removeDuplicates !== false) {
-      const duplicateResult = cleanupDuplicateDetections();
-      if (duplicateResult.success) {
-        duplicatesRemoved = duplicateResult.data || ZERO;
-      }
-    }
-
-    // 限制大小
-    if (options.limitSize !== false) {
-      const limitResult = limitHistorySize(options.maxRecords);
-      if (limitResult.success) {
-        sizeReduced = limitResult.data || ZERO;
-      }
-    }
+    const expiredRemoved = applyExpiredCleanup(options);
+    const duplicatesRemoved = applyDuplicateCleanup(options);
+    const sizeReduced = applySizeLimit(options);
 
     // 获取最终计数
     const historyResult = getDetectionHistory();
@@ -116,58 +92,11 @@ export function getMaintenanceRecommendations(): {
   const recommendations: string[] = [];
   let urgency: 'low' | 'medium' | 'high' = 'low';
 
-  // 检查记录数量
-  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL;
-  if (records.length > maxRecords * MAGIC_1_5) {
-    recommendations.push(`历史记录过多 (${records.length})，建议清理`);
-    urgency = 'high';
-  } else if (records.length > maxRecords) {
-    recommendations.push(`历史记录较多 (${records.length})，考虑清理`);
-    urgency = urgency === 'low' ? 'medium' : urgency;
-  }
-
-  // 检查过期记录
-  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
-  const expiredCount = records.filter(
-    (r) => r.timestamp < thirtyDaysAgo,
-  ).length;
-
-  if (expiredCount > ZERO) {
-    recommendations.push(`发现 ${expiredCount} 条过期记录，建议清理`);
-    urgency = urgency === 'low' ? 'medium' : urgency;
-  }
-
-  // 检查重复记录
-  const uniqueKeys = new Set();
-  let duplicateCount = ZERO;
-
-  records.forEach((record) => {
-    const key = `${record.locale}-${record.source}-${record.timestamp}`;
-    if (uniqueKeys.has(key)) {
-      duplicateCount += ONE;
-    } else {
-      uniqueKeys.add(key);
-    }
-  });
-
-  if (duplicateCount > ZERO) {
-    recommendations.push(`发现 ${duplicateCount} 条重复记录，建议清理`);
-  }
-
-  // 检查数据完整性
-  const invalidRecords = records.filter(
-    (record) =>
-      !record.locale ||
-      !record.source ||
-      !record.timestamp ||
-      record.confidence < ZERO ||
-      record.confidence > ONE,
-  );
-
-  if (invalidRecords.length > ZERO) {
-    recommendations.push(`发现 ${invalidRecords.length} 条无效记录，建议清理`);
-    urgency = 'high';
-  }
+  // 分项评估
+  urgency = assessCount(records, recommendations, urgency);
+  urgency = assessExpired(records, recommendations, urgency);
+  assessDuplicates(records, recommendations);
+  urgency = assessIntegrity(records, recommendations, urgency);
 
   if (recommendations.length === ZERO) {
     recommendations.push('历史记录状态良好，无需维护');
@@ -180,9 +109,84 @@ export function getMaintenanceRecommendations(): {
         ? '改善存储效率'
         : '保持系统整洁';
 
-  return {
-    recommendations,
-    urgency,
-    estimatedBenefit,
-  };
+  return { recommendations, urgency, estimatedBenefit };
+}
+
+function applyExpiredCleanup(options: { cleanupExpired?: boolean; maxAge?: number }): number {
+  if (options.cleanupExpired === false) return ZERO;
+  const res = cleanupExpiredDetections(options.maxAge);
+  return res.success ? res.data || ZERO : ZERO;
+}
+
+function applyDuplicateCleanup(options: { removeDuplicates?: boolean }): number {
+  if (options.removeDuplicates === false) return ZERO;
+  const res = cleanupDuplicateDetections();
+  return res.success ? res.data || ZERO : ZERO;
+}
+
+function applySizeLimit(options: { limitSize?: boolean; maxRecords?: number }): number {
+  if (options.limitSize === false) return ZERO;
+  const res = limitHistorySize(options.maxRecords);
+  return res.success ? res.data || ZERO : ZERO;
+}
+
+function assessCount(
+  records: Array<{ timestamp: number } & Record<string, unknown>>,
+  recommendations: string[],
+  currentUrgency: 'low' | 'medium' | 'high',
+): 'low' | 'medium' | 'high' {
+  const maxRecords = CACHE_LIMITS.MAX_DETECTION_HISTORY || PERCENTAGE_FULL;
+  if (records.length > maxRecords * MAGIC_1_5) {
+    recommendations.push(`历史记录过多 (${records.length})，建议清理`);
+    return 'high';
+  }
+  if (records.length > maxRecords) {
+    recommendations.push(`历史记录较多 (${records.length})，考虑清理`);
+    return currentUrgency === 'low' ? 'medium' : currentUrgency;
+  }
+  return currentUrgency;
+}
+
+function assessExpired(
+  records: Array<{ timestamp: number }>,
+  recommendations: string[],
+  currentUrgency: 'low' | 'medium' | 'high',
+): 'low' | 'medium' | 'high' {
+  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const expiredCount = records.filter((r) => r.timestamp < thirtyDaysAgo).length;
+  if (expiredCount > ZERO) {
+    recommendations.push(`发现 ${expiredCount} 条过期记录，建议清理`);
+    return currentUrgency === 'low' ? 'medium' : currentUrgency;
+  }
+  return currentUrgency;
+}
+
+function assessDuplicates(
+  records: Array<{ locale: unknown; source: unknown; timestamp: number }>,
+  recommendations: string[],
+): void {
+  const uniqueKeys = new Set<string>();
+  let duplicateCount = ZERO;
+  for (const record of records) {
+    const key = `${String(record.locale)}-${String(record.source)}-${record.timestamp}`;
+    if (uniqueKeys.has(key)) duplicateCount += ONE; else uniqueKeys.add(key);
+  }
+  if (duplicateCount > ZERO) {
+    recommendations.push(`发现 ${duplicateCount} 条重复记录，建议清理`);
+  }
+}
+
+function assessIntegrity(
+  records: Array<{ locale: unknown; source: unknown; timestamp: number; confidence: number }>,
+  recommendations: string[],
+  currentUrgency: 'low' | 'medium' | 'high',
+): 'low' | 'medium' | 'high' {
+  const invalidRecords = records.filter(
+    (record) => !record.locale || !record.source || !record.timestamp || record.confidence < ZERO || record.confidence > ONE,
+  );
+  if (invalidRecords.length > ZERO) {
+    recommendations.push(`发现 ${invalidRecords.length} 条无效记录，建议清理`);
+    return 'high';
+  }
+  return currentUrgency;
 }

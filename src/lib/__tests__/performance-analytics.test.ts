@@ -611,14 +611,11 @@ describe('PerformanceAlertSystem', () => {
       const { logger } = await vi.importMock('@/lib/logger');
       const loggerSpy = vi.mocked((logger as DetailedWebVitals).error);
 
-      (alertSystem as DetailedWebVitals).sendAlert(
-        'critical',
-        'Test alert message',
-        {
-          metric: 'cls',
-          value: 0.5,
-        },
-      );
+      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({
+        severity: 'critical',
+        message: 'Test alert message',
+        data: { metric: 'cls', value: 0.5 },
+      });
 
       // 检查logger.error被调用
       expect(loggerSpy).toHaveBeenCalledWith(
@@ -642,14 +639,7 @@ describe('PerformanceAlertSystem', () => {
         },
       });
 
-      await (alertSystem as DetailedWebVitals).sendAlert(
-        'warning',
-        'Test webhook alert',
-        {
-          metric: 'lcp',
-          value: 3500,
-        },
-      );
+      await (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test webhook alert', data: { metric: 'lcp', value: 3500 } });
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://example.com/webhook',
@@ -672,25 +662,14 @@ describe('PerformanceAlertSystem', () => {
         },
       });
 
-      await expect(
-        (alertSystem as DetailedWebVitals).sendAlert('critical', 'Test alert', {
-          metric: 'cls',
-          value: 0.5,
-        }),
-      ).resolves.not.toThrow();
+      await expect((alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'critical', message: 'Test alert', data: { metric: 'cls', value: 0.5 } })).resolves.not.toThrow();
     });
   });
 
   describe('警报历史记录', () => {
     it('should track alert history', () => {
-      (alertSystem as DetailedWebVitals).sendAlert('warning', 'Test alert 1', {
-        metric: 'cls',
-        value: 0.2,
-      });
-      (alertSystem as DetailedWebVitals).sendAlert('critical', 'Test alert 2', {
-        metric: 'lcp',
-        value: 5000,
-      });
+      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test alert 1', data: { metric: 'cls', value: 0.2 } });
+      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'critical', message: 'Test alert 2', data: { metric: 'lcp', value: 5000 } });
 
       const history = (alertSystem as DetailedWebVitals).getAlertHistory();
 
@@ -702,10 +681,7 @@ describe('PerformanceAlertSystem', () => {
     it('should limit alert history size', () => {
       // Send many alerts
       for (let i = 0; i < WEB_VITALS_CONSTANTS.TEST_ALERT_HISTORY_LIMIT; i++) {
-        (alertSystem as DetailedWebVitals).sendAlert('warning', `Alert ${i}`, {
-          metric: 'cls',
-          value: 0.2,
-        });
+        (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: `Alert ${i}`, data: { metric: 'cls', value: 0.2 } });
       }
 
       const history = (alertSystem as DetailedWebVitals).getAlertHistory();
@@ -714,10 +690,7 @@ describe('PerformanceAlertSystem', () => {
     });
 
     it('should clear alert history', () => {
-      (alertSystem as DetailedWebVitals).sendAlert('warning', 'Test alert', {
-        metric: 'cls',
-        value: 0.2,
-      });
+      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test alert', data: { metric: 'cls', value: 0.2 } });
 
       expect((alertSystem as DetailedWebVitals).getAlertHistory()).toHaveLength(
         1,

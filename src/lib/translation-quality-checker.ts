@@ -6,7 +6,6 @@ import {
 import type { Locale } from '@/types/i18n';
 import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
-import '@/types/translation-manager';
 import type {
   LocaleQualityReport,
   QualityIssue,
@@ -60,60 +59,13 @@ export class TranslationQualityChecker {
     let score = PERCENTAGE_FULL;
 
     // 基础质量检查
-    if (aiTranslation.trim().length === ZERO) {
-      issues.push({
-        type: 'length',
-        severity: 'critical',
-        message: 'Translation is empty',
-        suggestion: 'Provide a non-empty translation',
-      });
-      score -= VALIDATION_THRESHOLDS.EMPTY_TRANSLATION_PENALTY;
-    }
+    score -= this.checkBasicQuality(aiTranslation, issues);
 
     // 占位符检查
-    const aiPlaceholders = extractPlaceholders(aiTranslation);
-    if (humanTranslation) {
-      const humanPlaceholders = extractPlaceholders(humanTranslation);
-
-      if (
-        JSON.stringify(aiPlaceholders.sort()) !==
-        JSON.stringify(humanPlaceholders.sort())
-      ) {
-        issues.push({
-          type: 'placeholder',
-          severity: 'high',
-          message: 'Placeholder mismatch between AI and human translation',
-          suggestion: 'Ensure all placeholders are preserved',
-        });
-        score -= VALIDATION_THRESHOLDS.PLACEHOLDER_MISMATCH_PENALTY;
-      }
-    }
-
-    // 长度比例检查
-    if (humanTranslation) {
-      const lengthRatio = aiTranslation.length / humanTranslation.length;
-      if (
-        lengthRatio > VALIDATION_THRESHOLDS.MAX_LENGTH_RATIO ||
-        lengthRatio < VALIDATION_THRESHOLDS.MIN_LENGTH_RATIO
-      ) {
-        issues.push({
-          type: 'length',
-          severity: 'medium',
-          message: `Translation length ratio is unusual: ${lengthRatio.toFixed(QUALITY_WEIGHTS.LENGTH_PENALTY / QUALITY_WEIGHTS.LENGTH_PENALTY)}`,
-          suggestion: 'Review translation for completeness and accuracy',
-        });
-        score -= QUALITY_WEIGHTS.GRAMMAR_PENALTY;
-      }
-    }
+    score -= this.checkPlaceholderConsistency(aiTranslation, humanTranslation, issues);
 
     // 术语一致性检查
-    const terminologyIssues = await checkTerminologyConsistency(
-      key,
-      aiTranslation,
-      this.terminologyMap,
-    );
-    issues.push(...terminologyIssues);
-    score -= terminologyIssues.length * QUALITY_WEIGHTS.LENGTH_PENALTY;
+    score -= await this.checkTerminology(key, aiTranslation, issues);
 
     const qualityScore: QualityScore = {
       score: Math.max(ZERO, score),
@@ -126,6 +78,65 @@ export class TranslationQualityChecker {
     this.qualityCache.set(cacheKey, qualityScore);
 
     return qualityScore;
+  }
+
+  private checkBasicQuality(translation: string, issues: QualityIssue[]): number {
+    if (translation.trim().length === ZERO) {
+      issues.push({
+        type: 'length',
+        severity: 'critical',
+        message: 'Translation is empty',
+        suggestion: 'Provide a non-empty translation',
+      });
+      return VALIDATION_THRESHOLDS.EMPTY_TRANSLATION_PENALTY;
+    }
+    return ZERO;
+  }
+
+  private checkPlaceholderConsistency(
+    ai: string,
+    human: string | undefined,
+    issues: QualityIssue[],
+  ): number {
+    let penalty = ZERO;
+    const aiPlaceholders = extractPlaceholders(ai);
+    if (human) {
+      const humanPlaceholders = extractPlaceholders(human);
+      if (JSON.stringify(aiPlaceholders.sort()) !== JSON.stringify(humanPlaceholders.sort())) {
+        issues.push({
+          type: 'placeholder',
+          severity: 'high',
+          message: 'Placeholder mismatch between AI and human translation',
+          suggestion: 'Ensure all placeholders are preserved',
+        });
+        penalty += VALIDATION_THRESHOLDS.PLACEHOLDER_MISMATCH_PENALTY;
+      }
+
+      const lengthRatio = ai.length / human.length;
+      if (
+        lengthRatio > VALIDATION_THRESHOLDS.MAX_LENGTH_RATIO ||
+        lengthRatio < VALIDATION_THRESHOLDS.MIN_LENGTH_RATIO
+      ) {
+        issues.push({
+          type: 'length',
+          severity: 'medium',
+          message: `Translation length ratio is unusual: ${lengthRatio.toFixed(1)}`,
+          suggestion: 'Review translation for completeness and accuracy',
+        });
+        penalty += QUALITY_WEIGHTS.GRAMMAR_PENALTY;
+      }
+    }
+    return penalty;
+  }
+
+  private async checkTerminology(
+    key: string,
+    translation: string,
+    issues: QualityIssue[],
+  ): Promise<number> {
+    const terminologyIssues = await checkTerminologyConsistency(key, translation, this.terminologyMap);
+    issues.push(...terminologyIssues);
+    return terminologyIssues.length * QUALITY_WEIGHTS.LENGTH_PENALTY;
   }
 
   /**

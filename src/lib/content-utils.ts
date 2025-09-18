@@ -7,8 +7,7 @@
 import { COUNT_160 } from "@/constants/count";
 import { COUNT_TEN } from "@/constants";
 import { logger } from '@/lib/logger';
-import type { ContentConfig } from '@/types/content';
-import { ContentError } from '@/types/content';
+import { ContentError, type ContentConfig } from '@/types/content';
 import fs from 'fs';
 import path from 'path';
 

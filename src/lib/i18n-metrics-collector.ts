@@ -14,6 +14,7 @@ import type { I18nMetrics, Locale } from '@/types/i18n';
 import type {
   CacheEvent,
   CacheEventListener,
+  CacheEventType,
   MetricsCollector,
 } from '@/lib/i18n-cache-types';
 
@@ -31,8 +32,26 @@ export class I18nMetricsCollector implements MetricsCollector {
   private cacheHits = ZERO;
   private errors = ZERO;
   private loadTimes: number[] = [];
-  private localeUsageCount: Record<string, number> = {};
-  private eventListeners: Map<string, CacheEventListener[]> = new Map();
+  private localeUsageCount: { en: number; zh: number } = { en: ZERO, zh: ZERO };
+  private eventListeners: Map<CacheEventType | '*', CacheEventListener[]> = new Map();
+
+  private static isAllowedEventType(type: string): type is CacheEventType | '*' {
+    switch (type) {
+      case 'hit':
+      case 'miss':
+      case 'set':
+      case 'delete':
+      case 'clear':
+      case 'expire':
+      case 'preload_start':
+      case 'preload_complete':
+      case 'preload_error':
+      case '*':
+        return true;
+      default:
+        return false;
+    }
+  }
   private startTime = Date.now();
 
   // 记录加载时间
@@ -103,7 +122,11 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 记录语言使用情况
   recordLocaleUsage(locale: Locale): void {
-    this.localeUsageCount[locale] = (this.localeUsageCount[locale] || ZERO) + ONE;
+    if (locale === 'en') {
+      this.localeUsageCount.en += ONE;
+    } else if (locale === 'zh') {
+      this.localeUsageCount.zh += ONE;
+    }
     this.updateLocaleUsage();
 
     this.emitEvent({
@@ -111,7 +134,7 @@ export class I18nMetricsCollector implements MetricsCollector {
       timestamp: Date.now(),
       metadata: {
         locale,
-        usageCount: this.localeUsageCount[locale],
+        usageCount: locale === 'en' ? this.localeUsageCount.en : this.localeUsageCount.zh,
         totalUsage: this.getTotalLocaleUsage(),
       },
     });
@@ -136,7 +159,7 @@ export class I18nMetricsCollector implements MetricsCollector {
     this.cacheHits = ZERO;
     this.errors = ZERO;
     this.loadTimes = [];
-    this.localeUsageCount = {};
+    this.localeUsageCount = { en: ZERO, zh: ZERO };
     this.startTime = Date.now();
 
     this.emitEvent({
@@ -167,7 +190,8 @@ export class I18nMetricsCollector implements MetricsCollector {
   }
 
   // 添加事件监听器
-  addEventListener(eventType: string, listener: CacheEventListener): void {
+  addEventListener(eventType: CacheEventType | '*', listener: CacheEventListener): void {
+    if (!I18nMetricsCollector.isAllowedEventType(eventType)) return;
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
     }
@@ -175,7 +199,8 @@ export class I18nMetricsCollector implements MetricsCollector {
   }
 
   // 移除事件监听器
-  removeEventListener(eventType: string, listener: CacheEventListener): void {
+  removeEventListener(eventType: CacheEventType | '*', listener: CacheEventListener): void {
+    if (!I18nMetricsCollector.isAllowedEventType(eventType)) return;
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
       const index = listeners.indexOf(listener);
@@ -187,7 +212,9 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 发出事件
   private emitEvent(event: CacheEvent): void {
-    const listeners = this.eventListeners.get(event.type);
+    const listeners = I18nMetricsCollector.isAllowedEventType(event.type)
+      ? this.eventListeners.get(event.type)
+      : undefined;
     if (listeners) {
       listeners.forEach((listener) => {
         try {
@@ -226,16 +253,12 @@ export class I18nMetricsCollector implements MetricsCollector {
   // 更新语言使用情况
   private updateLocaleUsage(): void {
     const total = this.getTotalLocaleUsage();
-    if (total > ZERO) {
-      this.metrics.localeUsage = Object.keys(this.localeUsageCount).reduce(
-        (acc, locale) => {
-          acc[locale as Locale] =
-            ((this.localeUsageCount[locale] ?? ZERO) / total) * PERCENTAGE_FULL;
-          return acc;
-        },
-        {} as Record<Locale, number>,
-      );
-    }
+    const enCount = this.localeUsageCount.en;
+    const zhCount = this.localeUsageCount.zh;
+    this.metrics.localeUsage = {
+      en: total > ZERO ? (enCount / total) * PERCENTAGE_FULL : ZERO,
+      zh: total > ZERO ? (zhCount / total) * PERCENTAGE_FULL : ZERO,
+    };
   }
 
   // 获取总语言使用次数
@@ -256,10 +279,10 @@ export class I18nMetricsCollector implements MetricsCollector {
     const len = sorted.length;
 
     return {
-      p50: sorted[Math.floor(len * MAGIC_0_5)],
-      p90: sorted[Math.floor(len * MAGIC_0_9)],
-      p95: sorted[Math.floor(len * MAGIC_0_95)],
-      p99: sorted[Math.floor(len * MAGIC_0_99)],
+      p50: sorted.at(Math.floor(len * MAGIC_0_5)) ?? ZERO,
+      p90: sorted.at(Math.floor(len * MAGIC_0_9)) ?? ZERO,
+      p95: sorted.at(Math.floor(len * MAGIC_0_95)) ?? ZERO,
+      p99: sorted.at(Math.floor(len * MAGIC_0_99)) ?? ZERO,
     };
   }
 

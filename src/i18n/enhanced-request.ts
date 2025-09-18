@@ -60,12 +60,19 @@ function handleEnhancedCacheMetrics(locale: string, loadTime: number) {
   return Boolean(cached);
 }
 
-function createEnhancedResponse(
-  locale: string,
-  messages: Record<string, unknown>,
-  loadTime: number,
-  cacheUsed: boolean,
-) {
+interface EnhancedResponseArgs {
+  locale: string;
+  messages: Record<string, unknown>;
+  loadTime: number;
+  cacheUsed: boolean;
+}
+
+function createEnhancedResponse({
+  locale,
+  messages,
+  loadTime,
+  cacheUsed,
+}: EnhancedResponseArgs) {
   return {
     locale,
     messages,
@@ -109,7 +116,7 @@ export default getRequestConfig(async ({ requestLocale }) => {
     const loadTime = performance.now() - startTime;
     const cacheUsed = handleEnhancedCacheMetrics(locale, loadTime);
 
-    return createEnhancedResponse(locale, messages, loadTime, cacheUsed);
+    return createEnhancedResponse({ locale, messages, loadTime, cacheUsed });
   } catch {
     I18nPerformanceMonitor.recordError();
     return createEnhancedFallbackResponse(locale, startTime);

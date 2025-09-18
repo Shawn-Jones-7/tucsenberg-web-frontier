@@ -1,8 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { ContentType } from '@/types/content';
-import { ContentError } from '@/types/content';
+import { ContentError, type ContentType } from '@/types/content';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
 import { getContentFiles, parseContentFile } from '@/lib/content-parser';

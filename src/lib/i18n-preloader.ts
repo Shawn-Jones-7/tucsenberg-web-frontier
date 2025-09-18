@@ -1,5 +1,4 @@
 // 向后兼容的重新导出
-import type { Locale, Messages } from '@/types/i18n';
 import type { PreloadConfig } from '@/lib/i18n-cache-types';
 import { TranslationPreloader } from '@/lib/i18n-preloader-core';
 import {
@@ -13,7 +12,6 @@ import type {
   IPreloader,
   PreloaderConfig,
   PreloaderEvents,
-  PreloaderFactory,
   PreloaderMetrics,
   PreloaderPlugin,
   PreloadOptions,
@@ -28,7 +26,6 @@ import {
   getDefaultPreloader,
   globalPreloaderFactory,
   globalPreloaderManager,
-  PreloaderFactory as PreloaderFactoryClass,
   PreloaderManager,
   PreloaderUtils,
   preloadLocale,
@@ -69,6 +66,10 @@ export type {
   PreloadStrategy,
   PreloaderMiddleware,
   PreloaderPlugin,
+} from '@/lib/i18n-preloader-types';
+
+// 错误类需要以值导出，避免仅类型导出导致运行时不可用
+export {
   PreloaderError,
   PreloaderTimeoutError,
   PreloaderNetworkError,
@@ -87,8 +88,38 @@ export type {
   PreloadStatsKey,
 } from '@/lib/i18n-preloader-types';
 export { TranslationPreloader as CorePreloader } from '@/lib/i18n-preloader-core';
-export * from '@/lib/i18n-preloader-strategies';
-export * from '@/lib/i18n-preloader-utils';
+export { TranslationPreloader } from '@/lib/i18n-preloader-core';
+export {
+  PreloadStrategyManager,
+  immediateStrategy,
+  smartStrategy,
+  progressiveStrategy,
+  priorityStrategy,
+  lazyStrategy,
+  batchStrategy,
+  adaptiveStrategy,
+  networkAwareStrategy,
+  timeAwareStrategy,
+  memoryAwareStrategy,
+  strategyConfigs,
+  PreloadStrategies,
+  createStrategyManager,
+  getRecommendedStrategy,
+  StrategyUtils,
+} from '@/lib/i18n-preloader-strategies';
+export {
+  createTranslationPreloader,
+  PreloaderFactory as PreloaderFactoryClass,
+  PreloaderManager,
+  PreloaderUtils,
+  globalPreloaderManager,
+  globalPreloaderFactory,
+  setupPreloader,
+  getDefaultPreloader,
+  preloadLocale,
+  smartPreload,
+  cleanupPreloaders,
+} from '@/lib/i18n-preloader-utils';
 
 // ==================== 向后兼容的类型别名 ====================
 
@@ -96,63 +127,32 @@ export * from '@/lib/i18n-preloader-utils';
  * 向后兼容的类型别名
  * Backward compatible type aliases
  */
+// 核心类型（别名，避免与上方同名导出冲突）
 export type {
-  // 核心类型
-  TranslationPreloader as Preloader,
   IPreloader as PreloaderInterface,
   PreloadState as State,
   PreloadStats as Stats,
   PreloadResult as Result,
   PreloadOptions as Options,
-
-  // 配置类型
   PreloaderConfig as Config,
-  PreloadConfig as LegacyConfig,
-  // PreloaderFactoryConfig as FactoryConfig, // 注释掉不存在的类型
-
-  // 策略类型
   PreloadStrategy as Strategy,
-  PreloadStrategyManager as StrategyManager,
-
-  // 工厂类型
-  PreloaderFactory as Factory,
-  PreloaderManager as Manager,
   PreloaderPlugin as Plugin,
-
-  // 事件类型
   PreloaderEvents as Events,
   PreloaderMetrics as Metrics,
-};
+} from '@/lib/i18n-preloader-types';
+
+// 旧版配置别名来源于缓存配置模块
+export type { PreloadConfig as LegacyConfig } from '@/lib/i18n-cache-types';
+
+// 来自策略/工具模块的类型别名（导出类型）
+export type { PreloadStrategyManager as StrategyManager } from '@/lib/i18n-preloader-strategies';
+export type { PreloaderManager as Manager } from '@/lib/i18n-preloader-utils';
+
+// 兼容别名：类类型别名（从核心导出）
+export type { TranslationPreloader as Preloader } from '@/lib/i18n-preloader-core';
 
 /**
  * 向后兼容的导出别名
  * Backward compatible export aliases
  */
-export {
-  // 核心类
-  TranslationPreloader,
-
-  // 策略
-  PreloadStrategies,
-  PreloadStrategyManager,
-  createStrategyManager,
-  getRecommendedStrategy,
-  StrategyUtils,
-
-  // 工厂和管理器
-  // PreloaderFactoryClass as PreloaderFactory, // 注释掉重复的导出
-  PreloaderManager,
-  PreloaderUtils,
-
-  // 全局实例
-  globalPreloaderManager,
-  globalPreloaderFactory,
-
-  // 便捷函数
-  createTranslationPreloader,
-  setupPreloader,
-  getDefaultPreloader,
-  preloadLocale,
-  smartPreload,
-  cleanupPreloaders,
-};
+// 为避免重复标识符，移除重复的值导出别名块

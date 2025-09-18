@@ -7,7 +7,7 @@
  */
 
 import { DEC_0_4, MAGIC_0_2 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_20, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO, MAGIC_0_5, MAGIC_80, MAGIC_40, MAGIC_0_3, MAGIC_0_6, MAGIC_1_5 } from '@/constants';
+import { ANIMATION_DURATION_SLOW, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_20, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO, MAGIC_0_5, MAGIC_80, MAGIC_40, MAGIC_0_3, MAGIC_0_6, MAGIC_1_5 } from '@/constants';
 
 import type {
   BundlePerformanceData,
@@ -151,100 +151,12 @@ export class PerformanceReportGenerator {
   private generateRecommendations(metrics: PerformanceMetrics[]): string[] {
     const recommendations: string[] = [];
 
-    // 组件性能建议
-    const componentMetrics = metrics.filter((m) => m.type === 'component');
-    if (componentMetrics.length > ZERO) {
-      const slowComponents = componentMetrics.filter((m) => {
-        if (this.isComponentData(m.data)) {
-          return (
-            (Number(m.data.renderTime) || ZERO) >
-            (this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL)
-          );
-        }
-        return false;
-      });
-
-      if (slowComponents.length > ZERO) {
-        recommendations.push(
-          `发现 ${slowComponents.length} 个组件渲染时间超过阈值，建议优化组件性能`,
-        );
-      }
-
-      const avgRenderTime =
-        componentMetrics.reduce((sum, m) => {
-          if (this.isComponentData(m.data)) {
-            return sum + (Number(m.data.renderTime) || ZERO);
-          }
-          return sum;
-        }, ZERO) / componentMetrics.length;
-      if (avgRenderTime > PERCENTAGE_HALF) {
-        recommendations.push(
-          '组件平均渲染时间较高，考虑使用 React.memo 或 useMemo 优化',
-        );
-      }
-    }
-
-    // 网络性能建议
-    const networkMetrics = metrics.filter((m) => m.type === 'network');
-    if (networkMetrics.length > ZERO) {
-      const slowRequests = networkMetrics.filter((m) => {
-        if (this.isNetworkData(m.data)) {
-          return (
-            (Number(m.data.responseTime) || ZERO) >
-            (this.config.network?.thresholds?.responseTime || 1000)
-          );
-        }
-        return false;
-      });
-
-      if (slowRequests.length > ZERO) {
-        recommendations.push(
-          `发现 ${slowRequests.length} 个网络请求响应时间超过阈值，建议优化API性能`,
-        );
-      }
-
-      const avgResponseTime =
-        networkMetrics.reduce((sum, m) => {
-          if (this.isNetworkData(m.data)) {
-            return sum + (Number(m.data.responseTime) || ZERO);
-          }
-          return sum;
-        }, ZERO) / networkMetrics.length;
-      if (avgResponseTime > 500) {
-        recommendations.push('网络请求平均响应时间较高，考虑使用缓存或CDN优化');
-      }
-    }
-
-    // 打包大小建议
-    const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
-    if (bundleMetrics.length > ZERO) {
-      const largeBundles = bundleMetrics.filter((m) => {
-        if (this.isBundleData(m.data)) {
-          return (
-            (Number(m.data.size) || ZERO) >
-            (this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB)
-          );
-        }
-        return false;
-      });
-
-      if (largeBundles.length > ZERO) {
-        recommendations.push(
-          `发现 ${largeBundles.length} 个打包文件大小超过阈值，建议进行代码分割`,
-        );
-      }
-
-      const totalBundleSize = bundleMetrics.reduce((sum, m) => {
-        if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || ZERO);
-        }
-        return sum;
-      }, ZERO);
-      if (totalBundleSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
-        // 5MB
-        recommendations.push('总打包大小较大，建议使用动态导入和懒加载优化');
-      }
-    }
+    // 分模块生成建议，降低单个函数语句数
+    recommendations.push(
+      ...this.generateComponentRecommendations(metrics),
+      ...this.generateNetworkRecommendations(metrics),
+      ...this.generateBundleRecommendations(metrics),
+    );
 
     // 通用建议
     if (metrics.length > PERCENTAGE_FULL) {
@@ -256,6 +168,97 @@ export class PerformanceReportGenerator {
     }
 
     return recommendations;
+  }
+
+  private generateComponentRecommendations(metrics: PerformanceMetrics[]): string[] {
+    const recs: string[] = [];
+    const componentMetrics = metrics.filter((m) => m.type === 'component');
+    if (componentMetrics.length === ZERO) return recs;
+
+    const slowComponents = componentMetrics.filter((m) => {
+      if (this.isComponentData(m.data)) {
+        return (
+          (Number(m.data.renderTime) || ZERO) >
+          (this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL)
+        );
+      }
+      return false;
+    });
+    if (slowComponents.length > ZERO) {
+      recs.push(`发现 ${slowComponents.length} 个组件渲染时间超过阈值，建议优化组件性能`);
+    }
+
+    const avgRenderTime =
+      componentMetrics.reduce((sum, m) => {
+        if (this.isComponentData(m.data)) {
+          return sum + (Number(m.data.renderTime) || ZERO);
+        }
+        return sum;
+      }, ZERO) / componentMetrics.length;
+    if (avgRenderTime > PERCENTAGE_HALF) {
+      recs.push('组件平均渲染时间较高，考虑使用 React.memo 或 useMemo 优化');
+    }
+    return recs;
+  }
+
+  private generateNetworkRecommendations(metrics: PerformanceMetrics[]): string[] {
+    const recs: string[] = [];
+    const networkMetrics = metrics.filter((m) => m.type === 'network');
+    if (networkMetrics.length === ZERO) return recs;
+    const slowRequests = networkMetrics.filter((m) => {
+      if (this.isNetworkData(m.data)) {
+        return (
+          (Number(m.data.responseTime) || ZERO) >
+          (this.config.network?.thresholds?.responseTime || 1000)
+        );
+      }
+      return false;
+    });
+    if (slowRequests.length > ZERO) {
+      recs.push(`发现 ${slowRequests.length} 个网络请求响应时间超过阈值，建议优化API性能`);
+    }
+
+    const avgResponseTime =
+      networkMetrics.reduce((sum, m) => {
+        if (this.isNetworkData(m.data)) {
+          return sum + (Number(m.data.responseTime) || ZERO);
+        }
+        return sum;
+      }, ZERO) / networkMetrics.length;
+    if (avgResponseTime > ANIMATION_DURATION_SLOW) {
+      recs.push('网络请求平均响应时间较高，考虑使用缓存或CDN优化');
+    }
+    return recs;
+  }
+
+  private generateBundleRecommendations(metrics: PerformanceMetrics[]): string[] {
+    const recs: string[] = [];
+    const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
+    if (bundleMetrics.length === ZERO) return recs;
+
+    const largeBundles = bundleMetrics.filter((m) => {
+      if (this.isBundleData(m.data)) {
+        return (
+          (Number(m.data.size) || ZERO) >
+          (this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB)
+        );
+      }
+      return false;
+    });
+    if (largeBundles.length > ZERO) {
+      recs.push(`发现 ${largeBundles.length} 个打包文件大小超过阈值，建议进行代码分割`);
+    }
+
+    const totalBundleSize = bundleMetrics.reduce((sum, m) => {
+      if (this.isBundleData(m.data)) {
+        return sum + (Number(m.data.size) || ZERO);
+      }
+      return sum;
+    }, ZERO);
+    if (totalBundleSize > COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB) {
+      recs.push('总打包大小较大，建议使用动态导入和懒加载优化');
+    }
+    return recs;
   }
 
   /**
@@ -362,6 +365,25 @@ export class PerformanceReportGenerator {
    * 生成详细的性能分析报告
    * Generate detailed performance analysis report
    */
+  // 小函数化：按类型过滤，降低 generateDetailedReport 语句数与复杂度
+  private getComponentMetrics(metrics: PerformanceMetrics[]) {
+    return metrics.filter((m) => m.type === 'component');
+  }
+  private getNetworkMetrics(metrics: PerformanceMetrics[]) {
+    return metrics.filter((m) => m.type === 'network');
+  }
+  private getBundleMetrics(metrics: PerformanceMetrics[]) {
+    return metrics.filter((m) => m.type === 'bundle');
+  }
+
+  // 小函数化：统一指标取值逻辑，降低 calculateTrend 的分支复杂度
+  private getMetricValue(m: PerformanceMetrics): number {
+    if (this.isComponentData(m.data)) return Number(m.data.renderTime) || ZERO;
+    if (this.isNetworkData(m.data)) return Number(m.data.responseTime) || ZERO;
+    if (this.isBundleData(m.data)) return Number(m.data.size) || ZERO;
+    return ZERO;
+  }
+
   generateDetailedReport(metrics: PerformanceMetrics[]): {
     overview: PerformanceReport;
     analysis: {
@@ -401,122 +423,102 @@ export class PerformanceReportGenerator {
   } {
     const overview = this.generateReport(metrics);
 
-    // 组件分析
-    const componentMetrics = metrics.filter((m) => m.type === 'component');
-    const componentThreshold =
-      this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
-    const slowestComponents = componentMetrics
-      .filter((m) => {
-        if (this.isComponentData(m.data)) {
-          return (Number(m.data.renderTime) || ZERO) > componentThreshold;
-        }
-        return false;
-      })
-      .map((m) => {
-        if (this.isComponentData(m.data)) {
-          return {
-            name: m.id || m.type,
-            value: Number(m.data.renderTime) || ZERO,
-            threshold: componentThreshold,
-          };
-        }
-        return {
-          name: m.id || m.type,
-          value: ZERO,
-          threshold: componentThreshold,
-        };
-      })
-      .sort((a, b) => b.value - a.value)
-      .slice(ZERO, COUNT_FIVE);
-
-    // 网络分析
-    const networkMetrics = metrics.filter((m) => m.type === 'network');
-    const networkThreshold =
-      this.config.network?.thresholds?.responseTime || 1000;
-    const slowestRequests = networkMetrics
-      .filter((m) => {
-        if (this.isNetworkData(m.data)) {
-          return (Number(m.data.responseTime) || ZERO) > networkThreshold;
-        }
-        return false;
-      })
-      .map((m) => {
-        if (this.isNetworkData(m.data)) {
-          return {
-            name: m.id || m.type,
-            value: Number(m.data.responseTime) || ZERO,
-            threshold: networkThreshold,
-          };
-        }
-        return { name: m.id || m.type, value: ZERO, threshold: networkThreshold };
-      })
-      .sort((a, b) => b.value - a.value)
-      .slice(ZERO, COUNT_FIVE);
-
-    // 打包分析
-    const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
-    const bundleThreshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB;
-    const largestBundles = bundleMetrics
-      .filter((m) => {
-        if (this.isBundleData(m.data)) {
-          return (Number(m.data.size) || ZERO) > bundleThreshold;
-        }
-        return false;
-      })
-      .map((m) => {
-        if (this.isBundleData(m.data)) {
-          return {
-            name: m.id || m.type,
-            value: Number(m.data.size) || ZERO,
-            threshold: bundleThreshold,
-          };
-        }
-        return { name: m.id || m.type, value: ZERO, threshold: bundleThreshold };
-      })
-      .sort((a, b) => b.value - a.value)
-      .slice(ZERO, COUNT_FIVE);
+    const componentMetrics = this.getComponentMetrics(metrics);
+    const networkMetrics = this.getNetworkMetrics(metrics);
+    const bundleMetrics = this.getBundleMetrics(metrics);
 
     return {
       overview,
       analysis: {
-        componentAnalysis: {
-          slowestComponents,
-          renderTimeDistribution: this.calculateDistribution(componentMetrics),
-          averageRenderTime:
-            componentMetrics.reduce((sum, m) => {
-              if (this.isComponentData(m.data)) {
-                return sum + (Number(m.data.renderTime) || ZERO);
-              }
-              return sum;
-            }, ZERO) / componentMetrics.length || ZERO,
-        },
-        networkAnalysis: {
-          slowestRequests,
-          responseTimeDistribution: this.calculateDistribution(networkMetrics),
-          averageResponseTime:
-            networkMetrics.reduce((sum, m) => {
-              if (this.isNetworkData(m.data)) {
-                return sum + (Number(m.data.responseTime) || ZERO);
-              }
-              return sum;
-            }, ZERO) / networkMetrics.length || ZERO,
-        },
-        bundleAnalysis: {
-          largestBundles,
-          sizeDistribution: this.calculateDistribution(bundleMetrics),
-          totalSize: bundleMetrics.reduce((sum, m) => {
-            if (this.isBundleData(m.data)) {
-              return sum + (Number(m.data.size) || ZERO);
-            }
-            return sum;
-          }, ZERO),
-        },
+        componentAnalysis: this.buildComponentAnalysis(componentMetrics),
+        networkAnalysis: this.buildNetworkAnalysis(networkMetrics),
+        bundleAnalysis: this.buildBundleAnalysis(bundleMetrics),
       },
       trends: {
         componentTrend: this.calculateTrend(componentMetrics),
         networkTrend: this.calculateTrend(networkMetrics),
         bundleTrend: this.calculateTrend(bundleMetrics),
       },
+    };
+  }
+
+  private buildComponentAnalysis(componentMetrics: PerformanceMetrics[]) {
+    const componentThreshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
+    const slowestComponents = componentMetrics
+      .filter((m) => this.isComponentData(m.data) && (Number(m.data.renderTime) || ZERO) > componentThreshold)
+      .map((m) => ({
+        name: m.id || m.type,
+        value: this.isComponentData(m.data) ? (Number(m.data.renderTime) || ZERO) : ZERO,
+        threshold: componentThreshold,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(ZERO, COUNT_FIVE);
+
+    const averageRenderTime =
+      componentMetrics.reduce((sum, m) => {
+        if (this.isComponentData(m.data)) {
+          return sum + (Number(m.data.renderTime) || ZERO);
+        }
+        return sum;
+      }, ZERO) / componentMetrics.length || ZERO;
+
+    return {
+      slowestComponents,
+      renderTimeDistribution: this.calculateDistribution(componentMetrics),
+      averageRenderTime,
+    };
+  }
+
+  private buildNetworkAnalysis(networkMetrics: PerformanceMetrics[]) {
+    const networkThreshold = this.config.network?.thresholds?.responseTime || 1000;
+    const slowestRequests = networkMetrics
+      .filter((m) => this.isNetworkData(m.data) && (Number(m.data.responseTime) || ZERO) > networkThreshold)
+      .map((m) => ({
+        name: m.id || m.type,
+        value: this.isNetworkData(m.data) ? (Number(m.data.responseTime) || ZERO) : ZERO,
+        threshold: networkThreshold,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(ZERO, COUNT_FIVE);
+
+    const averageResponseTime =
+      networkMetrics.reduce((sum, m) => {
+        if (this.isNetworkData(m.data)) {
+          return sum + (Number(m.data.responseTime) || ZERO);
+        }
+        return sum;
+      }, ZERO) / networkMetrics.length || ZERO;
+
+    return {
+      slowestRequests,
+      responseTimeDistribution: this.calculateDistribution(networkMetrics),
+      averageResponseTime,
+    };
+  }
+
+  private buildBundleAnalysis(bundleMetrics: PerformanceMetrics[]) {
+    const bundleThreshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB;
+    const largestBundles = bundleMetrics
+      .filter((m) => this.isBundleData(m.data) && (Number(m.data.size) || ZERO) > bundleThreshold)
+      .map((m) => ({
+        name: m.id || m.type,
+        value: this.isBundleData(m.data) ? (Number(m.data.size) || ZERO) : ZERO,
+        threshold: bundleThreshold,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(ZERO, COUNT_FIVE);
+
+    const totalSize = bundleMetrics.reduce((sum, m) => {
+      if (this.isBundleData(m.data)) {
+        return sum + (Number(m.data.size) || ZERO);
+      }
+      return sum;
+    }, ZERO);
+
+    return {
+      largestBundles,
+      sizeDistribution: this.calculateDistribution(bundleMetrics),
+      totalSize,
     };
   }
 
@@ -527,14 +529,13 @@ export class PerformanceReportGenerator {
   private calculateDistribution(
     metrics: PerformanceMetrics[],
   ): Record<string, number> {
-    const distribution: Record<string, number> = {};
-
-    metrics.forEach((metric) => {
+    const map = new Map<string, number>();
+    for (const metric of metrics) {
       const key = metric.id || metric.type;
-      distribution[key] = (distribution[key] || ZERO) + ONE;
-    });
-
-    return distribution;
+      const current = map.get(key) ?? ZERO;
+      map.set(key, current + ONE);
+    }
+    return Object.fromEntries(map);
   }
 
   /**
@@ -553,29 +554,9 @@ export class PerformanceReportGenerator {
     const firstHalf = sortedMetrics.slice(ZERO, midPoint);
     const secondHalf = sortedMetrics.slice(midPoint);
 
-    const firstAvg =
-      firstHalf.reduce((sum, m) => {
-        if (this.isComponentData(m.data)) {
-          return sum + (Number(m.data.renderTime) || ZERO);
-        } else if (this.isNetworkData(m.data)) {
-          return sum + (Number(m.data.responseTime) || ZERO);
-        } else if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || ZERO);
-        }
-        return sum;
-      }, ZERO) / firstHalf.length;
+    const firstAvg = firstHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) / firstHalf.length;
 
-    const secondAvg =
-      secondHalf.reduce((sum, m) => {
-        if (this.isComponentData(m.data)) {
-          return sum + (Number(m.data.renderTime) || ZERO);
-        } else if (this.isNetworkData(m.data)) {
-          return sum + (Number(m.data.responseTime) || ZERO);
-        } else if (this.isBundleData(m.data)) {
-          return sum + (Number(m.data.size) || ZERO);
-        }
-        return sum;
-      }, ZERO) / secondHalf.length;
+    const secondAvg = secondHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) / secondHalf.length;
 
     const changePercent = ((secondAvg - firstAvg) / firstAvg) * PERCENTAGE_FULL;
 

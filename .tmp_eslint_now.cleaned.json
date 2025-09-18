@@ -1,0 +1,2072 @@
+[
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/accessibility-manager-core.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/accessibility-manager-exports.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/accessibility-manager-static-methods.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/accessibility/setup.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-advanced.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-configuration.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-create-operations.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-error-handling.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-operations.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable-read-operations.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/airtable.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/colors-contrast-compliance.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/colors-oklch-conversion.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/colors-theme-validation.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/colors.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/content-parser.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/content-utils.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/content-validation-advanced.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/content-validation-basic.test.ts",
+    "errorCount": 0,
+    "warningCount": 2,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 13,
+        "column": 3,
+        "message": "'TEST_CONTENT_LIMITS' is defined but never used. Allowed unused vars must match /^_/u."
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 14,
+        "column": 3,
+        "message": "'TEST_COUNT_CONSTANTS' is defined but never used. Allowed unused vars must match /^_/u."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/content-validation.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/enhanced-web-vitals-core.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/enhanced-web-vitals.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/footer-config.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache-advanced.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache-basic.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache-error-advanced.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache-error-basic.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache-error-handling.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-cache.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-monitoring.test.ts",
+    "errorCount": 0,
+    "warningCount": 1,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 225,
+        "column": 18,
+        "message": "'_error' is defined but never used."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-performance-cache.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-performance-monitor.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-performance.test.ts",
+    "errorCount": 0,
+    "warningCount": 2,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 1,
+        "line": 66,
+        "column": 16,
+        "message": "Generic Object Injection Sink"
+      },
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 1,
+        "line": 108,
+        "column": 18,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-validation-advanced-scenarios.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-validation-advanced.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-validation-basic.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-validation-edge-cases.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/i18n-validation.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/locale-detection-exports.test.ts",
+    "errorCount": 0,
+    "warningCount": 1,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 1,
+        "line": 81,
+        "column": 14,
+        "message": "Function Call Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/locale-detection-hooks.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/locale-detection.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/locale-detector.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/locale-storage.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/logger.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/metadata.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/airtable-env.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/airtable-validations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/env.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/logger.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/translations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/mocks/validations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/navigation.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/performance-analytics.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/resend.test.ts",
+    "errorCount": 0,
+    "warningCount": 2,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 110,
+        "column": 7,
+        "message": "'ResendService' is assigned a value but never used. Allowed unused vars must match /^_/u."
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 243,
+        "column": 7,
+        "message": "'ResendService' is assigned a value but never used. Allowed unused vars must match /^_/u."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/security.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/seo-metadata.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/site-config.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/structured-data.test.ts",
+    "errorCount": 0,
+    "warningCount": 1,
+    "messages": [
+      {
+        "ruleId": "max-lines-per-function",
+        "severity": 1,
+        "line": 67,
+        "column": 40,
+        "message": "Arrow function has too many lines (616). Maximum allowed is 600."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/tech-stack-data.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/theme-analytics.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/theme-analytics/setup.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/translation-benchmarks.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/translation-manager-core.test.ts",
+    "errorCount": 0,
+    "warningCount": 1,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 1,
+        "line": 5,
+        "column": 3,
+        "message": "'UnsafeLocaleCode' is defined but never used. Allowed unused vars must match /^_/u."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/translation-manager.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/translation-validators.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/utils.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/validations.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/web-vitals-collector.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/__tests__/web-vitals-monitor.test.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility-hooks.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility-tester.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/accessibility.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/airtable.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/airtable/instance.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/airtable/service.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/airtable/types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors/color-system.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors/dark-theme.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors/light-theme.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors/types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/colors/utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-parser.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-query.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-query/filters.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-query/queries.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-query/sorting.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-query/stats.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content-validation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/content.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/dev-tools-positioning.ts",
+    "errorCount": 0,
+    "warningCount": 3,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/ban-ts-comment",
+        "severity": 1,
+        "line": 1,
+        "column": 1,
+        "message": "Do not use \"@ts-nocheck\" because it alters compilation errors."
+      },
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 136,
+        "column": 5,
+        "message": "Unexpected console statement."
+      },
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 231,
+        "column": 11,
+        "message": "Unexpected console statement."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/enhanced-web-vitals.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/footer-config.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-analytics.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-types-advanced.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-types-base.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-types-interfaces.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-types-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-cache.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-event-collector.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-lru-cache.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-metrics-collector.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-monitor-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-monitoring-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-monitoring.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-performance-monitor.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-performance.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/advanced-strategies.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/basic-strategies.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/configs.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/factory.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-strategies/utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils/factory-functions.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils/global-instances.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils/preloader-factory.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils/preloader-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader-utils/preloader-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-preloader.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/i18n-validation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/index.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-constants.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detection-hooks.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detection-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detection.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detector-base.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detector-constants.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detector-smart.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-detector.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-analytics-core.ts",
+    "errorCount": 0,
+    "warningCount": 1,
+    "messages": [
+      {
+        "ruleId": "complexity",
+        "severity": 1,
+        "line": 35,
+        "column": 8,
+        "message": "Function 'calculateStorageStats' has a complexity of 27. Maximum allowed is 20."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-analytics-events.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-analytics-performance.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-analytics-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-analytics.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-cookie.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-events.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-maintenance.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-maintenance/backup.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-maintenance/cleanup.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-maintenance/import-export.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-maintenance/maintenance.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 23,
+        "column": 8,
+        "message": "Function 'performMaintenance' has too many statements (21). Maximum allowed is 20."
+      },
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 99,
+        "column": 8,
+        "message": "Function 'getMaintenanceRecommendations' has too many statements (31). Maximum allowed is 20."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-query.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history-stats.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-history.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-hooks.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-local.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-maintenance-cleanup.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-maintenance-import-export.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-maintenance-operations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-maintenance-validation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-maintenance.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-cache.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/event-creators.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/event-listeners.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/event-manager.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 150,
+        "column": 7,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/history-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/stats-analyzer.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 56,
+        "column": 22,
+        "message": "Generic Object Injection Sink"
+      },
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 61,
+        "column": 8,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-events/system-manager.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 71,
+        "column": 36,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference-override.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 302,
+        "column": 30,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-preference.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-base.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 2,
+        "line": 14,
+        "column": 8,
+        "message": "'FILENAME_MAX_LENGTH' is assigned a value but never used. Allowed unused vars must match /^_/u."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/defaults.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/factory.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/interfaces.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/migrations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/presets.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-config/validation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-data.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/async-utils.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "no-throw-literal",
+        "severity": 2,
+        "line": 84,
+        "column": 3,
+        "message": "Expected an error object to be thrown."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/format-utils.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 22,
+        "column": 41,
+        "message": "Generic Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/json-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/object-utils.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-depth",
+        "severity": 2,
+        "line": 54,
+        "column": 9,
+        "message": "Blocks are nested too deeply (4). Maximum allowed is 3."
+      },
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 102,
+        "column": 61,
+        "message": "Function Call Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/storage-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/type-guards.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types-utils/validators.ts",
+    "errorCount": 3,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 24,
+        "column": 8,
+        "message": "Function 'validatePreference' has too many statements (26). Maximum allowed is 20."
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 2,
+        "line": 24,
+        "column": 8,
+        "message": "Function 'validatePreference' has a complexity of 19. Maximum allowed is 15."
+      },
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 142,
+        "column": 23,
+        "message": "Variable Assigned to Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/locale-storage.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/logger.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/metadata.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "no-duplicate-imports",
+        "severity": 2,
+        "line": 3,
+        "column": 1,
+        "message": "'@/lib/seo-metadata' import is duplicated."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/navigation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-constants.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-coordinator.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "no-duplicate-imports",
+        "severity": 2,
+        "line": 5,
+        "column": 1,
+        "message": "'@/lib/performance-monitoring-types' import is duplicated."
+      },
+      {
+        "ruleId": "max-params",
+        "severity": 2,
+        "line": 125,
+        "column": 5,
+        "message": "Method 'recordNetworkRequest' has too many parameters (4). Maximum allowed is 3."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-core-config.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-core-conflicts.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 67,
+        "column": 28,
+        "message": "Method 'detectGlobalTools' has too many statements (23). Maximum allowed is 20."
+      },
+      {
+        "ruleId": "complexity",
+        "severity": 2,
+        "line": 67,
+        "column": 28,
+        "message": "Method 'detectGlobalTools' has a complexity of 16. Maximum allowed is 15."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-core-metrics.ts",
+    "errorCount": 3,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "complexity",
+        "severity": 2,
+        "line": 159,
+        "column": 32,
+        "message": "Method 'analyzeRealtimeMetric' has a complexity of 25. Maximum allowed is 15."
+      },
+      {
+        "ruleId": "default-case",
+        "severity": 2,
+        "line": 164,
+        "column": 5,
+        "message": "Expected a default case."
+      },
+      {
+        "ruleId": "@typescript-eslint/no-explicit-any",
+        "severity": 2,
+        "line": 385,
+        "column": 12,
+        "message": "Unexpected any. Specify a different type."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-core-reports.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 151,
+        "column": 34,
+        "message": "Method 'generateRecommendations' has too many statements (30). Maximum allowed is 20."
+      },
+      {
+        "ruleId": "max-lines-per-function",
+        "severity": 2,
+        "line": 365,
+        "column": 3,
+        "message": "Method 'generateDetailedReport' has too many lines (150). Maximum allowed is 120."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-integrations-bundle.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-integrations-react-scan.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-integrations-vitals.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-integrations-web-eval.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-integrations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/performance-monitoring-types.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "complexity",
+        "severity": 2,
+        "line": 478,
+        "column": 8,
+        "message": "Function 'validateConfig' has a complexity of 16. Maximum allowed is 15."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/react-scan-config.ts",
+    "errorCount": 0,
+    "warningCount": 4,
+    "messages": [
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 68,
+        "column": 7,
+        "message": "Unexpected console statement."
+      },
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 87,
+        "column": 5,
+        "message": "Unexpected console statement."
+      },
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 88,
+        "column": 5,
+        "message": "Unexpected console statement."
+      },
+      {
+        "ruleId": "no-console",
+        "severity": 1,
+        "line": 90,
+        "column": 5,
+        "message": "Unexpected console statement."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend-core.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "require-await",
+        "severity": 2,
+        "line": 204,
+        "column": 3,
+        "message": "Async method 'checkConnection' has no 'await' expression."
+      },
+      {
+        "ruleId": "no-unreachable",
+        "severity": 2,
+        "line": 213,
+        "column": 13,
+        "message": "Unreachable code."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend-templates.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend-utils.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "no-duplicate-imports",
+        "severity": 2,
+        "line": 7,
+        "column": 1,
+        "message": "'@/lib/validations' import is duplicated."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-crypto.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-file-upload.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-headers.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-object-access.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-rate-limit.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "security/detect-object-injection",
+        "severity": 2,
+        "line": 188,
+        "column": 16,
+        "message": "Variable Assigned to Object Injection Sink"
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-tokens.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security-validation.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/security/object-guards.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/seo-metadata.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/site-config.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/structured-data-generators.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/structured-data-helpers.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/structured-data-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/structured-data.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/tech-stack-data.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/theme-analytics-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/theme-analytics-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/theme-analytics-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/theme-analytics.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-benchmarks.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-manager-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-manager-quality.ts",
+    "errorCount": 3,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 41,
+        "column": 29,
+        "message": "Async method 'validateTranslations' has too many statements (22). Maximum allowed is 20."
+      },
+      {
+        "ruleId": "@typescript-eslint/no-unused-vars",
+        "severity": 2,
+        "line": 98,
+        "column": 13,
+        "message": "'localeReport' is assigned a value but never used. Allowed unused vars must match /^_/u."
+      },
+      {
+        "ruleId": "require-await",
+        "severity": 2,
+        "line": 323,
+        "column": 3,
+        "message": "Async method 'getQualityTrends' has no 'await' expression."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-manager-security.ts",
+    "errorCount": 1,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-depth",
+        "severity": 2,
+        "line": 162,
+        "column": 11,
+        "message": "Blocks are nested too deeply (4). Maximum allowed is 3."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-quality-checker.ts",
+    "errorCount": 2,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "no-duplicate-imports",
+        "severity": 2,
+        "line": 10,
+        "column": 1,
+        "message": "'@/types/translation-manager' import is duplicated."
+      },
+      {
+        "ruleId": "max-statements",
+        "severity": 2,
+        "line": 47,
+        "column": 30,
+        "message": "Async method 'checkLingoTranslation' has too many statements (25). Maximum allowed is 20."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-quality-types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-quality.ts",
+    "errorCount": 3,
+    "warningCount": 0,
+    "messages": [
+      {
+        "ruleId": "max-params",
+        "severity": 2,
+        "line": 52,
+        "column": 3,
+        "message": "Async method 'validateAITranslation' has too many parameters (5). Maximum allowed is 3."
+      },
+      {
+        "ruleId": "require-await",
+        "severity": 2,
+        "line": 168,
+        "column": 3,
+        "message": "Async method 'generateQualityReport' has no 'await' expression."
+      },
+      {
+        "ruleId": "require-await",
+        "severity": 2,
+        "line": 175,
+        "column": 3,
+        "message": "Async method 'validateContextConsistency' has no 'await' expression."
+      }
+    ]
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/translation-validators.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/units.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/validations.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals-monitor.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-helpers.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-notifications.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-system-checker.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-system-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-system-sender.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/alert-system.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/baseline-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/collector.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/constants.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/index.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/monitoring-manager-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/monitoring-manager.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/monitoring-report-generator.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/monitoring-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/observers.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/regression-detector.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/types.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/web-vitals-collector-analyzer.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/web-vitals/web-vitals-collector-base.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp-core.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp-media.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp-messages.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp-service.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp-utils.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  },
+  {
+    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/whatsapp.ts",
+    "errorCount": 0,
+    "warningCount": 0,
+    "messages": []
+  }
+]

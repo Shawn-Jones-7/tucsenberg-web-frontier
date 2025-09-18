@@ -56,7 +56,7 @@ export class I18nCacheManager implements CacheManager {
   }
 
   // 获取消息
-  async getMessages(locale: Locale): Promise<Messages> {
+  getMessages(locale: Locale): Promise<Messages> {
     this.metricsCollector.recordLocaleUsage(locale);
     return this.preloader.preloadLocale(locale);
   }
@@ -102,7 +102,7 @@ export class I18nCacheManager implements CacheManager {
   }
 
   // 健康检查
-  async performHealthCheck(): Promise<CacheHealthCheck> {
+  performHealthCheck(): CacheHealthCheck {
     const metrics = this.getMetrics();
     const stats = this.getCacheStats();
     const issues: string[] = [];
@@ -245,24 +245,30 @@ export class I18nCacheManager implements CacheManager {
 
   // 添加事件监听器
   addEventListener(
-    eventType: string,
+    eventType: import('@/lib/i18n-cache-types').CacheEventType | '*',
     listener: (event: Record<string, unknown>) => void,
   ): void {
     // 创建适配器函数来转换事件类型
-    const adaptedListener = (cacheEvent: any) => {
-      listener(cacheEvent as Record<string, unknown>);
+    const adaptedListener = (cacheEvent: unknown) => {
+      const safeEvent = (cacheEvent && typeof cacheEvent === 'object')
+        ? (cacheEvent as Record<string, unknown>)
+        : {} as Record<string, unknown>;
+      listener(safeEvent);
     };
     this.metricsCollector.addEventListener(eventType, adaptedListener);
   }
 
   // 移除事件监听器
   removeEventListener(
-    eventType: string,
+    eventType: import('@/lib/i18n-cache-types').CacheEventType | '*',
     listener: (event: Record<string, unknown>) => void,
   ): void {
     // 创建适配器函数来转换事件类型
-    const adaptedListener = (cacheEvent: any) => {
-      listener(cacheEvent as Record<string, unknown>);
+    const adaptedListener = (cacheEvent: unknown) => {
+      const safeEvent = (cacheEvent && typeof cacheEvent === 'object')
+        ? (cacheEvent as Record<string, unknown>)
+        : {} as Record<string, unknown>;
+      listener(safeEvent);
     };
     this.metricsCollector.removeEventListener(eventType, adaptedListener);
   }
@@ -281,8 +287,8 @@ export class I18nCacheManager implements CacheManager {
   private setupPeriodicTasks(): void {
     // 定期健康检查
     this.healthCheckInterval = setInterval(
-      async () => {
-        const health = await this.performHealthCheck();
+      () => {
+        const health = this.performHealthCheck();
         if (!health.isHealthy) {
           console.warn('Cache health check failed:', health.issues);
         }
@@ -333,7 +339,14 @@ export class I18nCacheManager implements CacheManager {
   // 获取所有缓存的语言
   getCachedLocales(): Locale[] {
     const keys = Array.from(this.cache.keys());
-    return [...new Set(keys.map((key) => key.split(':')[ZERO] as Locale))];
+    return [
+      ...new Set(
+        keys.map((key) => {
+          const [first] = key.split(':');
+          return first as Locale;
+        }),
+      ),
+    ];
   }
 
   // 获取缓存大小（字节）

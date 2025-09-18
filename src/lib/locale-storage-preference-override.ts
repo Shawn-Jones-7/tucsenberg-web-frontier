@@ -9,6 +9,7 @@
 
 import { MAGIC_0_8 } from "@/constants/decimal";
 import { ONE, PERCENTAGE_HALF, ZERO } from '@/constants';
+import { safeGetArrayItem } from '@/lib/security-object-access';
 
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
@@ -299,17 +300,19 @@ export function getOverrideStats(): {
   stats.totalOverrides = setOperations.length;
 
   if (setOperations.length > ZERO) {
-    stats.lastOverrideTime = setOperations[ZERO]?.timestamp || null;
+    const first = safeGetArrayItem(setOperations, ZERO);
+    stats.lastOverrideTime = first ? first.timestamp || null : null;
 
-    // 统计语言使用频率
+    // 统计语言使用频率（使用 Map 避免动态对象索引）
+    const freqMap = new Map<Locale, number>();
     setOperations.forEach((entry) => {
-      stats.overrideFrequency[entry.locale] =
-        (stats.overrideFrequency[entry.locale] || ZERO) + ONE;
+      freqMap.set(entry.locale, (freqMap.get(entry.locale) || ZERO) + ONE);
     });
+    stats.overrideFrequency = Object.fromEntries(freqMap) as Record<Locale, number>;
 
     // 找出最常用的语言
     let maxCount = ZERO;
-    for (const [locale, count] of Object.entries(stats.overrideFrequency)) {
+    for (const [locale, count] of freqMap.entries()) {
       if (count > maxCount) {
         maxCount = count;
         stats.mostUsedLocale = locale as Locale;

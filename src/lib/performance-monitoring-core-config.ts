@@ -10,8 +10,8 @@ import { COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 import { MB } from '@/constants/units';
 import { logger } from '@/lib/logger';
-import type { PerformanceConfig } from '@/lib/performance-monitoring-types';
 import {
+  type PerformanceConfig,
   generateEnvironmentConfig,
   validateConfig,
 } from '@/lib/performance-monitoring-types';
@@ -191,10 +191,54 @@ export class PerformanceConfigManager {
   getModuleConfig<T extends keyof PerformanceConfig>(
     module: T,
   ): PerformanceConfig[T] {
-    const moduleConfig = this.config[module];
-    return typeof moduleConfig === 'object' && moduleConfig !== null
-      ? ({ ...moduleConfig } as PerformanceConfig[T])
-      : moduleConfig;
+    // 优先匹配主要模块，降低分支复杂度
+    const primary = this.getPrimaryModuleConfig(module);
+    if (primary !== undefined) return primary as PerformanceConfig[T];
+
+    switch (module) {
+      case 'webVitals':
+        return this.config.webVitals
+          ? ({ ...this.config.webVitals } as PerformanceConfig[T])
+          : (undefined as unknown as PerformanceConfig[T]);
+      case 'component':
+        return this.config.component
+          ? ({ ...this.config.component } as PerformanceConfig[T])
+          : (undefined as unknown as PerformanceConfig[T]);
+      case 'network':
+        return this.config.network
+          ? ({ ...this.config.network } as PerformanceConfig[T])
+          : (undefined as unknown as PerformanceConfig[T]);
+      case 'bundle':
+        return this.config.bundle
+          ? ({ ...this.config.bundle } as PerformanceConfig[T])
+          : (undefined as unknown as PerformanceConfig[T]);
+      case 'debug':
+        return this.config.debug as PerformanceConfig[T];
+      case 'global':
+        return this.config.global
+          ? ({ ...this.config.global } as PerformanceConfig[T])
+          : (undefined as unknown as PerformanceConfig[T]);
+      default:
+        // 兜底：返回 undefined（不应触达）
+        return undefined as unknown as PerformanceConfig[T];
+    }
+  }
+
+  private getPrimaryModuleConfig<T extends keyof PerformanceConfig>(
+    module: T,
+  ): PerformanceConfig[T] | undefined {
+    switch (module) {
+      case 'reactScan':
+        return { ...this.config.reactScan } as PerformanceConfig[T];
+      case 'webEvalAgent':
+        return { ...this.config.webEvalAgent } as PerformanceConfig[T];
+      case 'bundleAnalyzer':
+        return { ...this.config.bundleAnalyzer } as PerformanceConfig[T];
+      case 'sizeLimit':
+        return { ...this.config.sizeLimit } as PerformanceConfig[T];
+      default:
+        return undefined;
+    }
   }
 
   /**
@@ -205,11 +249,46 @@ export class PerformanceConfigManager {
     module: T,
     config: Partial<PerformanceConfig[T]>,
   ): void {
-    const currentConfig = this.config[module];
-    this.config[module] =
-      typeof currentConfig === 'object' && currentConfig !== null
-        ? ({ ...currentConfig, ...config } as PerformanceConfig[T])
+    const current = this.getModuleConfig(module);
+    const nextValue =
+      typeof current === 'object' && current !== null
+        ? ({ ...(current as Record<string, unknown>), ...(config as Record<string, unknown>) } as PerformanceConfig[T])
         : (config as PerformanceConfig[T]);
+
+    switch (module) {
+      case 'reactScan':
+        this.config.reactScan = nextValue as PerformanceConfig['reactScan'];
+        break;
+      case 'webEvalAgent':
+        this.config.webEvalAgent = nextValue as PerformanceConfig['webEvalAgent'];
+        break;
+      case 'bundleAnalyzer':
+        this.config.bundleAnalyzer = nextValue as PerformanceConfig['bundleAnalyzer'];
+        break;
+      case 'sizeLimit':
+        this.config.sizeLimit = nextValue as PerformanceConfig['sizeLimit'];
+        break;
+      case 'webVitals':
+        this.config.webVitals = nextValue as PerformanceConfig['webVitals'];
+        break;
+      case 'component':
+        this.config.component = nextValue as PerformanceConfig['component'];
+        break;
+      case 'network':
+        this.config.network = nextValue as PerformanceConfig['network'];
+        break;
+      case 'bundle':
+        this.config.bundle = nextValue as PerformanceConfig['bundle'];
+        break;
+      case 'debug':
+        this.config.debug = nextValue as PerformanceConfig['debug'];
+        break;
+      case 'global':
+        this.config.global = nextValue as PerformanceConfig['global'];
+        break;
+      default:
+        break;
+    }
 
     // 验证更新后的配置
     const validation = validateConfig(this.config);
@@ -264,29 +343,50 @@ export class PerformanceConfigManager {
     maxMetrics: number;
     thresholds: Record<string, number>;
   } {
-    const {global} = this.config;
-    const {component} = this.config;
-    const {network} = this.config;
-    const {bundle} = this.config;
+    const { global, component, network, bundle } = this.config;
 
-    const enabledModules: string[] = [];
-    if (component?.enabled) enabledModules.push('component');
-    if (network?.enabled) enabledModules.push('network');
-    if (bundle?.enabled) enabledModules.push('bundle');
+    const enabledModules = this.getEnabledModules(component?.enabled, network?.enabled, bundle?.enabled);
+
+    const isEnabled = Boolean(global?.enabled);
+    const dataRetentionTime =
+      global?.dataRetentionTime ?? PERFORMANCE_CONSTANTS.DEFAULT_RETENTION_TIME;
+    const maxMetrics =
+      global?.maxMetrics ?? PERFORMANCE_CONSTANTS.DEFAULT_MAX_METRICS;
 
     return {
-      isEnabled: global?.enabled || false,
+      isEnabled,
       enabledModules,
-      dataRetentionTime:
-        global?.dataRetentionTime ||
-        PERFORMANCE_CONSTANTS.DEFAULT_RETENTION_TIME,
-      maxMetrics:
-        global?.maxMetrics || PERFORMANCE_CONSTANTS.DEFAULT_MAX_METRICS,
-      thresholds: {
-        componentRenderTime: component?.thresholds?.renderTime || PERCENTAGE_FULL,
-        networkResponseTime: network?.thresholds?.responseTime || 1000,
-        bundleSize: bundle?.thresholds?.size || MB, // 1MB
-      },
+      dataRetentionTime,
+      maxMetrics,
+      thresholds: this.buildThresholds(
+        component?.thresholds?.renderTime,
+        network?.thresholds?.responseTime,
+        bundle?.thresholds?.size,
+      ),
+    };
+  }
+
+  private getEnabledModules(
+    componentEnabled?: boolean,
+    networkEnabled?: boolean,
+    bundleEnabled?: boolean,
+  ): string[] {
+    const list: string[] = [];
+    if (componentEnabled) list.push('component');
+    if (networkEnabled) list.push('network');
+    if (bundleEnabled) list.push('bundle');
+    return list;
+  }
+
+  private buildThresholds(
+    componentRenderTime?: number,
+    networkResponseTime?: number,
+    bundleSize?: number,
+  ): Record<string, number> {
+    return {
+      componentRenderTime: componentRenderTime || PERCENTAGE_FULL,
+      networkResponseTime: networkResponseTime || ANIMATION_DURATION_NORMAL,
+      bundleSize: bundleSize || MB,
     };
   }
 
@@ -301,21 +401,35 @@ export class PerformanceConfigManager {
     const differences: string[] = [];
     const current = this.config;
 
-    // 比较全局配置
+    this.compareGlobalConfig(current, otherConfig, differences);
+    this.compareComponentConfig(current, otherConfig, differences);
+    this.compareNetworkConfig(current, otherConfig, differences);
+    this.compareBundleConfig(current, otherConfig, differences);
+
+    return { isDifferent: differences.length > ZERO, differences };
+  }
+
+  private compareGlobalConfig(
+    current: PerformanceConfig,
+    otherConfig: PerformanceConfig,
+    differences: string[],
+  ): void {
     if (current.global?.enabled !== otherConfig.global?.enabled) {
       differences.push('global.enabled');
     }
-    if (
-      current.global?.dataRetentionTime !==
-      otherConfig.global?.dataRetentionTime
-    ) {
+    if (current.global?.dataRetentionTime !== otherConfig.global?.dataRetentionTime) {
       differences.push('global.dataRetentionTime');
     }
     if (current.global?.maxMetrics !== otherConfig.global?.maxMetrics) {
       differences.push('global.maxMetrics');
     }
+  }
 
-    // 比较组件配置
+  private compareComponentConfig(
+    current: PerformanceConfig,
+    otherConfig: PerformanceConfig,
+    differences: string[],
+  ): void {
     if (current.component?.enabled !== otherConfig.component?.enabled) {
       differences.push('component.enabled');
     }
@@ -325,8 +439,13 @@ export class PerformanceConfigManager {
     ) {
       differences.push('component.thresholds.renderTime');
     }
+  }
 
-    // 比较网络配置
+  private compareNetworkConfig(
+    current: PerformanceConfig,
+    otherConfig: PerformanceConfig,
+    differences: string[],
+  ): void {
     if (current.network?.enabled !== otherConfig.network?.enabled) {
       differences.push('network.enabled');
     }
@@ -336,21 +455,19 @@ export class PerformanceConfigManager {
     ) {
       differences.push('network.thresholds.responseTime');
     }
+  }
 
-    // 比较打包配置
+  private compareBundleConfig(
+    current: PerformanceConfig,
+    otherConfig: PerformanceConfig,
+    differences: string[],
+  ): void {
     if (current.bundle?.enabled !== otherConfig.bundle?.enabled) {
       differences.push('bundle.enabled');
     }
-    if (
-      current.bundle?.thresholds?.size !== otherConfig.bundle?.thresholds?.size
-    ) {
+    if (current.bundle?.thresholds?.size !== otherConfig.bundle?.thresholds?.size) {
       differences.push('bundle.thresholds.size');
     }
-
-    return {
-      isDifferent: differences.length > ZERO,
-      differences,
-    };
   }
 
   /**
@@ -397,18 +514,13 @@ export class PerformanceConfigManager {
       return false;
     }
 
-    const targetConfig =
-      this.configHistory[this.configHistory.length - steps - ONE];
-    const newConfig: any = {};
+    const targetConfig = this.configHistory[
+      this.configHistory.length - steps - ONE
+    ];
     if (targetConfig?.config) {
-      Object.keys(targetConfig.config).forEach((key) => {
-        const value = (targetConfig.config as any)[key];
-        if (value !== undefined) {
-          newConfig[key] = value;
-        }
-      });
+      // 直接回滚到目标配置，避免动态对象索引
+      this.config = { ...targetConfig.config };
     }
-    this.config = newConfig;
     this.recordConfigChange(`Rollback ${steps} steps`);
 
     return true;

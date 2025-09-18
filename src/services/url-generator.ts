@@ -5,14 +5,7 @@
 
 /* eslint-disable security/detect-object-injection */
 
-import type { Locale } from '@/config/paths';
-import {
-  getLocalizedPath,
-  LOCALES_CONFIG,
-  PATHS_CONFIG,
-  SITE_CONFIG,
-  type PageType,
-} from '@/config/paths';
+import { type Locale, getLocalizedPath, LOCALES_CONFIG, PATHS_CONFIG, SITE_CONFIG, type PageType } from '@/config/paths';
 import { ONE, ZERO } from "@/constants";
 import { SEO_CONSTANTS } from '@/constants/seo-constants';
 

@@ -37,9 +37,13 @@ export function useEnhancedTheme(): EnhancedThemeHook {
     (newTheme: string) => {
       if (!debouncedSetThemeRef.current) {
         debouncedSetThemeRef.current = createDebounce(
-          ((themeToSet: string) => {
-            executeBasicThemeTransition(originalSetTheme, themeToSet, theme);
-          }) as any,
+          (themeToSet: string) => {
+            if (theme !== undefined) {
+              executeBasicThemeTransition(originalSetTheme, themeToSet, theme);
+            } else {
+              executeBasicThemeTransition(originalSetTheme, themeToSet);
+            }
+          },
           DEFAULT_CONFIG.debounceDelay,
         );
       }
@@ -53,14 +57,20 @@ export function useEnhancedTheme(): EnhancedThemeHook {
     (newTheme: string, clickEvent?: React.MouseEvent<HTMLElement>) => {
       if (!debouncedSetCircularThemeRef.current) {
         debouncedSetCircularThemeRef.current = createDebounce(
-          ((themeToSet: string, event?: React.MouseEvent<HTMLElement>) => {
-            executeCircularThemeTransition(
+          (themeToSet: string, event?: React.MouseEvent<HTMLElement>) => {
+            const base = {
               originalSetTheme,
-              themeToSet,
-              theme,
-              event,
-            );
-          }) as any,
+              newTheme: themeToSet,
+            } as {
+              originalSetTheme: (_theme: string) => void;
+              newTheme: string;
+              currentTheme?: string;
+              clickEvent?: React.MouseEvent<HTMLElement>;
+            };
+            if (theme !== undefined) base.currentTheme = theme;
+            if (event) base.clickEvent = event;
+            executeCircularThemeTransition(base);
+          },
           DEFAULT_CONFIG.debounceDelay,
         );
       }

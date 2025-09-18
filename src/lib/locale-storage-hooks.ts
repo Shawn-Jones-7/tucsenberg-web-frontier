@@ -1,16 +1,12 @@
 'use client';
 
-import { LocaleStorageManager } from '@/lib/locale-storage-manager';
+import { LocaleStorageManager, type LocaleDetectionHistory, type UserLocalePreference } from '@/lib/locale-storage-manager';
 import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants';
 
 import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
 import type { Locale } from '@/types/i18n';
 import { useCallback, useEffect, useState } from 'react';
-import type {
-  LocaleDetectionHistory,
-  UserLocalePreference,
-} from '@/lib/locale-storage-manager';
 
 /**
  * React Hook: 使用语言偏好存储
@@ -288,7 +284,12 @@ export function useAutoCleanup(
   } = options;
 
   useEffect(() => {
-    if (!enabled) return;
+    if (!enabled) {
+      // 一致返回清理函数，保持 consistent-return
+      return () => {
+        /* noop when disabled */
+      };
+    }
 
     const cleanup = () => {
       try {
@@ -324,7 +325,7 @@ export function useStorageEvents() {
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key && Object.values(STORAGE_KEYS).includes(event.key as any)) {
+      if (event.key && (Object.values(STORAGE_KEYS) as string[]).includes(event.key)) {
         setLastStorageEvent({
           key: event.key,
           newValue: event.newValue,

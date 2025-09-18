@@ -6,7 +6,7 @@
 import { strategyConfigs } from '@/lib/i18n-preloader-strategies/configs';
 import { COUNT_PAIR, MAGIC_0_5, MAGIC_0_9, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, ONE, ZERO } from '@/constants';
 
-import type { PreloaderMetrics } from '@/lib/i18n-preloader-types';
+import type { PreloadStrategyName, PreloaderMetrics } from '@/lib/i18n-preloader-types';
 
 /**
  * 策略工具函数
@@ -70,11 +70,36 @@ export const StrategyUtils = {
    * Calculate strategy priority
    */
   calculateStrategyPriority(
-    strategy: string,
+    strategy: PreloadStrategyName,
     metrics: PreloaderMetrics,
     conditions: { network: string; memory: number; time: string },
   ): number {
-    const config = strategyConfigs[strategy];
+    const config = (() => {
+      switch (strategy) {
+        case 'immediate':
+          return strategyConfigs.immediate;
+        case 'smart':
+          return strategyConfigs.smart;
+        case 'progressive':
+          return strategyConfigs.progressive;
+        case 'priority':
+          return strategyConfigs.priority;
+        case 'lazy':
+          return strategyConfigs.lazy;
+        case 'batch':
+          return strategyConfigs.batch;
+        case 'adaptive':
+          return strategyConfigs.adaptive;
+        case 'networkAware':
+          return strategyConfigs.networkAware;
+        case 'timeAware':
+          return strategyConfigs.timeAware;
+        case 'memoryAware':
+          return strategyConfigs.memoryAware;
+        default:
+          return undefined;
+      }
+    })();
     if (!config) return ZERO;
 
     let score = config.priority;
