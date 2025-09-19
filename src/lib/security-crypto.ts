@@ -1,5 +1,5 @@
-import { COUNT_100000, COUNT_256 } from "@/constants/count";
 import { COUNT_PAIR, MAGIC_12, MAGIC_16, ZERO } from '@/constants';
+import { COUNT_256, COUNT_100000 } from '@/constants/count';
 
 /**
  * 加密和密码哈希工具
@@ -262,30 +262,36 @@ export async function decryptData(params: {
   const encoder = new TextEncoder();
 
   // Convert hex strings back to bytes
-  const encrypted = new Uint8Array((() => {
-    const out: number[] = [];
-    for (let i = 0; i < encryptedHex.length; i += COUNT_PAIR) {
-      const seg = encryptedHex.slice(i, i + COUNT_PAIR);
-      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
-    }
-    return out;
-  })());
-  const iv = new Uint8Array((() => {
-    const out: number[] = [];
-    for (let i = 0; i < ivHex.length; i += COUNT_PAIR) {
-      const seg = ivHex.slice(i, i + COUNT_PAIR);
-      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
-    }
-    return out;
-  })());
-  const salt = new Uint8Array((() => {
-    const out: number[] = [];
-    for (let i = 0; i < saltHex.length; i += COUNT_PAIR) {
-      const seg = saltHex.slice(i, i + COUNT_PAIR);
-      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
-    }
-    return out;
-  })());
+  const encrypted = new Uint8Array(
+    (() => {
+      const out: number[] = [];
+      for (let i = 0; i < encryptedHex.length; i += COUNT_PAIR) {
+        const seg = encryptedHex.slice(i, i + COUNT_PAIR);
+        if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+      }
+      return out;
+    })(),
+  );
+  const iv = new Uint8Array(
+    (() => {
+      const out: number[] = [];
+      for (let i = 0; i < ivHex.length; i += COUNT_PAIR) {
+        const seg = ivHex.slice(i, i + COUNT_PAIR);
+        if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+      }
+      return out;
+    })(),
+  );
+  const salt = new Uint8Array(
+    (() => {
+      const out: number[] = [];
+      for (let i = 0; i < saltHex.length; i += COUNT_PAIR) {
+        const seg = saltHex.slice(i, i + COUNT_PAIR);
+        if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+      }
+      return out;
+    })(),
+  );
 
   // Derive key from password
   const passwordKey = await crypto.subtle.importKey(
@@ -344,22 +350,21 @@ export async function exportKey(key: CryptoKey): Promise<string> {
  * Import encryption key from raw format
  */
 export function importKey(keyHex: string): Promise<CryptoKey> {
-  const keyBytes = new Uint8Array((() => {
-    const out: number[] = [];
-    for (let i = 0; i < keyHex.length; i += COUNT_PAIR) {
-      const seg = keyHex.slice(i, i + COUNT_PAIR);
-      if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
-    }
-    return out;
-  })());
-
-  return crypto.subtle.importKey(
-    'raw',
-    keyBytes,
-    { name: 'AES-GCM' },
-    true,
-    ['encrypt', 'decrypt'],
+  const keyBytes = new Uint8Array(
+    (() => {
+      const out: number[] = [];
+      for (let i = 0; i < keyHex.length; i += COUNT_PAIR) {
+        const seg = keyHex.slice(i, i + COUNT_PAIR);
+        if (seg.length === COUNT_PAIR) out.push(parseInt(seg, MAGIC_16));
+      }
+      return out;
+    })(),
   );
+
+  return crypto.subtle.importKey('raw', keyBytes, { name: 'AES-GCM' }, true, [
+    'encrypt',
+    'decrypt',
+  ]);
 }
 
 /**

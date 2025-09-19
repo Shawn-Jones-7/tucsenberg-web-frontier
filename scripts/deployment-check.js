@@ -145,23 +145,22 @@ class DeploymentChecker {
 
         console.log('❌ 安全检查失败');
         return false;
-      } 
-        // 轻微安全问题，警告但不阻塞
-        this.report.checks.security = {
-          status: 'WARN',
-          message: `发现轻微安全问题: ${error.message.slice(0, 200)}...`,
-        };
+      }
+      // 轻微安全问题，警告但不阻塞
+      this.report.checks.security = {
+        status: 'WARN',
+        message: `发现轻微安全问题: ${error.message.slice(0, 200)}...`,
+      };
 
-        this.report.deployment.warnings.push({
-          type: 'security',
-          severity: 'medium',
-          message: '发现轻微安全问题',
-          action: '建议在下次更新中修复',
-        });
+      this.report.deployment.warnings.push({
+        type: 'security',
+        severity: 'medium',
+        message: '发现轻微安全问题',
+        action: '建议在下次更新中修复',
+      });
 
-        console.log('⚠️  安全检查有警告');
-        return true;
-      
+      console.log('⚠️  安全检查有警告');
+      return true;
     }
   }
 

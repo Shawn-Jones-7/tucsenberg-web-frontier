@@ -1,5 +1,16 @@
-import { MINUTE_MS } from "@/constants/time";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, MAGIC_300000, PERCENTAGE_FULL, TEN_SECONDS_MS, THIRTY_SECONDS_MS, ZERO } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  MAGIC_300000,
+  PERCENTAGE_FULL,
+  TEN_SECONDS_MS,
+  THIRTY_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import { MINUTE_MS } from '@/constants/time';
 
 /**
  * WhatsApp Service Configuration Types
@@ -309,12 +320,14 @@ export const DEFAULT_CACHE_CONFIG: CacheConfig = {
 export function validateWhatsAppConfig(
   config: Partial<WhatsAppConfig>,
 ): config is WhatsAppConfig {
-  return Boolean(config.accessToken &&
-    config.phoneNumberId &&
-    config.verifyToken &&
-    typeof config.accessToken === 'string' &&
-    typeof config.phoneNumberId === 'string' &&
-    typeof config.verifyToken === 'string');
+  return Boolean(
+    config.accessToken &&
+      config.phoneNumberId &&
+      config.verifyToken &&
+      typeof config.accessToken === 'string' &&
+      typeof config.phoneNumberId === 'string' &&
+      typeof config.verifyToken === 'string',
+  );
 }
 
 /**
@@ -324,11 +337,18 @@ export function validateWhatsAppConfig(
 export function validateServiceOptions(
   options: WhatsAppServiceOptions,
 ): boolean {
-  if (options.timeout && (options.timeout < ANIMATION_DURATION_VERY_SLOW || options.timeout > MAGIC_300000)) {
+  if (
+    options.timeout &&
+    (options.timeout < ANIMATION_DURATION_VERY_SLOW ||
+      options.timeout > MAGIC_300000)
+  ) {
     return false; // Timeout should be between 1s and 5min
   }
 
-  if (options.retries && (options.retries < ZERO || options.retries > COUNT_TEN)) {
+  if (
+    options.retries &&
+    (options.retries < ZERO || options.retries > COUNT_TEN)
+  ) {
     return false; // Retries should be between 0 and COUNT_TEN
   }
 

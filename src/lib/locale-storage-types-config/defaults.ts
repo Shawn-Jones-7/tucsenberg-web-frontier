@@ -3,10 +3,15 @@
  * Locale Storage System Default Configuration Constants
  */
 
-import { MAGIC_16 } from "@/constants/count";
-import { COUNT_TEN, COUNT_TRIPLE, PERCENTAGE_FULL, TEN_SECONDS_MS } from "@/constants";
 import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
 import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
+import {
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  PERCENTAGE_FULL,
+  TEN_SECONDS_MS,
+} from '@/constants';
+import { MAGIC_16 } from '@/constants/count';
 
 /**
  * 默认存储配置

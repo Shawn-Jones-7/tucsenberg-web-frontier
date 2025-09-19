@@ -1,9 +1,8 @@
 import { logger } from '@/lib/logger';
-import { COUNT_PAIR, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import { formatMetricValue } from '@/lib/web-vitals/alert-helpers';
-import { ALERT_SYSTEM_CONSTANTS } from "@/constants/performance-constants";
-import { MAGIC_9 } from "@/constants/count";
+import { COUNT_PAIR, PERCENTAGE_FULL, ZERO } from '@/constants';
+import { MAGIC_9 } from '@/constants/count';
+import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
 
 // 常量定义
 const ALERT_ID_CONSTANTS = {

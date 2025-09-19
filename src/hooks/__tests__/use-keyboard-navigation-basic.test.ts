@@ -135,7 +135,7 @@ describe('useKeyboardNavigation Basic Tests', () => {
       const { result } = renderHook(() => useKeyboardNavigation());
 
       act(() => {
-        result.current.focusIndex(0);
+        result.current.setFocusIndex(0);
       });
 
       expect(result.current.getCurrentFocusIndex()).toBeGreaterThanOrEqual(-1);
@@ -145,7 +145,7 @@ describe('useKeyboardNavigation Basic Tests', () => {
       const { result } = renderHook(() => useKeyboardNavigation());
 
       act(() => {
-        result.current.focusIndex(-5); // Invalid negative index
+        result.current.setFocusIndex(-5); // Invalid negative index
       });
 
       expect(result.current.getCurrentFocusIndex()).toBe(-1); // Should remain unchanged

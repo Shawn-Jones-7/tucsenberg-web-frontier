@@ -10,7 +10,7 @@ const path = require('path');
 
 const filesToFix = [
   'src/types/whatsapp-service-types.ts',
-  'src/types/whatsapp-webhook-events.ts', 
+  'src/types/whatsapp-webhook-events.ts',
   'src/types/whatsapp-webhook-types.ts',
   'src/types/whatsapp-api-requests/api-types.ts',
   'src/types/whatsapp-api-config.ts',
@@ -19,7 +19,7 @@ const filesToFix = [
   'src/types/whatsapp.ts',
   'src/types/index.ts',
   'src/types/whatsapp-service-interface.ts',
-  'src/types/whatsapp-webhook-utils/webhook-utils.ts'
+  'src/types/whatsapp-webhook-utils/webhook-utils.ts',
 ];
 
 function fixRelativeImports(filePath) {
@@ -39,7 +39,7 @@ function fixRelativeImports(filePath) {
     (match, moduleName) => {
       changeCount++;
       return `from '@/types/whatsapp-${moduleName}'`;
-    }
+    },
   );
 
   // 修复相对路径导入 - 处理子目录情况
@@ -49,7 +49,7 @@ function fixRelativeImports(filePath) {
     (match, modulePath) => {
       changeCount++;
       return `from '@/types/whatsapp-${modulePath}'`;
-    }
+    },
   );
 
   // 修复其他相对路径导入
@@ -60,15 +60,15 @@ function fixRelativeImports(filePath) {
       () => {
         changeCount++;
         return `from '@/types/whatsapp-webhook-utils/interfaces'`;
-      }
+      },
     );
-    
+
     modifiedContent = modifiedContent.replace(
       /from\s+['"]\.\/functions['"]/g,
       () => {
         changeCount++;
         return `from '@/types/whatsapp-webhook-utils/functions'`;
-      }
+      },
     );
   }
 
@@ -79,7 +79,7 @@ function fixRelativeImports(filePath) {
     (match, moduleName) => {
       changeCount++;
       return `from '@/types/whatsapp-${moduleName}'`;
-    }
+    },
   );
 
   if (changeCount > 0) {
@@ -92,10 +92,10 @@ function fixRelativeImports(filePath) {
 
 function main() {
   console.log('🔧 开始修复WhatsApp类型文件的相对路径导入...\n');
-  
+
   let totalFixed = 0;
-  
-  filesToFix.forEach(filePath => {
+
+  filesToFix.forEach((filePath) => {
     try {
       fixRelativeImports(filePath);
       totalFixed++;
@@ -103,7 +103,7 @@ function main() {
       console.error(`❌ 修复失败 ${filePath}:`, error.message);
     }
   });
-  
+
   console.log(`\n🎉 修复完成! 处理了 ${totalFixed} 个文件`);
 }
 

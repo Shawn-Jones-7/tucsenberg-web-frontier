@@ -1,9 +1,13 @@
 #!/usr/bin/env tsx
-
-import { Project, ts, SourceFile } from 'ts-morph';
-import { resolve, join } from 'node:path';
-import { writeFileSync, readdirSync, statSync } from 'node:fs';
-import { loadEnhancedMapping, ensureConstDefined, mergeAndAliasImports, shouldSkipNode } from './utils';
+import { readdirSync, statSync, writeFileSync } from 'node:fs';
+import { join, resolve } from 'node:path';
+import { Project, SourceFile, ts } from 'ts-morph';
+import {
+  ensureConstDefined,
+  loadEnhancedMapping,
+  mergeAndAliasImports,
+  shouldSkipNode,
+} from './utils';
 
 export interface ReplaceLogEntry {
   file: string;
@@ -80,7 +84,9 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
     // 检查是否是单个文件
     if (opts.files.endsWith('.ts') || opts.files.endsWith('.tsx')) {
       // 单个文件模式
-      const filePath = opts.files.startsWith('/') ? opts.files : resolve(rootDir, opts.files);
+      const filePath = opts.files.startsWith('/')
+        ? opts.files
+        : resolve(rootDir, opts.files);
       filePaths = [filePath];
       console.log(`🎯 单个文件模式: ${filePath}`);
     } else {
@@ -103,7 +109,7 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
 
       if (filePaths.length > 0) {
         console.log(`📋 前5个文件示例:`);
-        filePaths.slice(0, 5).forEach(file => {
+        filePaths.slice(0, 5).forEach((file) => {
           console.log(`  ${file.replace(rootDir, '.')}`);
         });
       }
@@ -135,7 +141,7 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
 
   for (const sourceFile of targetFiles) {
     const filePath = sourceFile.getFilePath();
-    const relativePath = filePath.replace(`${process.cwd()  }/`, '');
+    const relativePath = filePath.replace(`${process.cwd()}/`, '');
 
     const fileLog: ReplaceLogEntry = {
       file: relativePath,
@@ -144,7 +150,8 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
     };
 
     const newConstants = new Set<string>();
-    const constantsWithModules: Array<{ constant: string; module: string }> = [];
+    const constantsWithModules: Array<{ constant: string; module: string }> =
+      [];
 
     // 直接进行替换，但先处理导入
     sourceFile.forEachDescendant((node) => {
@@ -156,7 +163,10 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
           return;
         }
 
-        const { constantName, isSupported, module } = ensureConstDefined(mapping, text);
+        const { constantName, isSupported, module } = ensureConstDefined(
+          mapping,
+          text,
+        );
 
         if (!isSupported) {
           return;
@@ -165,9 +175,11 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
         const parent = node.getParent();
 
         // 处理负号前缀
-        if (parent && ts.isPrefixUnaryExpression(parent.compilerNode) &&
-            parent.compilerNode.operator === ts.SyntaxKind.MinusToken) {
-
+        if (
+          parent &&
+          ts.isPrefixUnaryExpression(parent.compilerNode) &&
+          parent.compilerNode.operator === ts.SyntaxKind.MinusToken
+        ) {
           fileLog.changes.push({
             start: node.getStart(),
             end: node.getEnd(),
@@ -181,7 +193,6 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
           newConstants.add(constantName);
           constantsWithModules.push({ constant: constantName, module });
           totalReplacements++;
-
         } else {
           fileLog.changes.push({
             start: node.getStart(),
@@ -207,8 +218,10 @@ export async function run(opts: Options): Promise<ReplaceLogEntry[]> {
 
     if (newConstants.size > 0) {
       console.log(`🔧 ${relativePath}: ${newConstants.size} 个替换`);
-      newConstants.forEach(constName => {
-        console.log(`    ${mapping[Object.keys(mapping).find(k => mapping[k] === constName) || '']} → ${constName}`);
+      newConstants.forEach((constName) => {
+        console.log(
+          `    ${mapping[Object.keys(mapping).find((k) => mapping[k] === constName) || '']} → ${constName}`,
+        );
       });
     }
 
@@ -264,22 +277,22 @@ if (require.main === module) {
   };
 
   // 解析 --files 参数
-  const filesIndex = args.findIndex(arg => arg === '--files');
+  const filesIndex = args.findIndex((arg) => arg === '--files');
   if (filesIndex !== -1 && filesIndex + 1 < args.length) {
     options.files = args[filesIndex + 1];
   } else {
-    const filesArg = args.find(arg => arg.startsWith('--files='));
+    const filesArg = args.find((arg) => arg.startsWith('--files='));
     if (filesArg) {
       options.files = filesArg.split('=')[1];
     }
   }
 
   // 解析 --limit 参数
-  const limitIndex = args.findIndex(arg => arg === '--limit');
+  const limitIndex = args.findIndex((arg) => arg === '--limit');
   if (limitIndex !== -1 && limitIndex + 1 < args.length) {
     options.limit = parseInt(args[limitIndex + 1]);
   } else {
-    const limitArg = args.find(arg => arg.startsWith('--limit='));
+    const limitArg = args.find((arg) => arg.startsWith('--limit='));
     if (limitArg) {
       options.limit = parseInt(limitArg.split('=')[1]);
     }

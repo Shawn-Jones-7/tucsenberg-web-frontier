@@ -5,12 +5,24 @@
  * 提供预加载器相关的类型定义和接口
  */
 
-import { COUNT_4 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS } from '@/constants';
-
-import { MAGIC_0_1, MAGIC_0_8 } from "@/constants/decimal";
-import type { CacheOperationResult } from '@/lib/i18n-cache-types';
 import type { Locale, Messages } from '@/types/i18n';
+import type { CacheOperationResult } from '@/lib/i18n-cache-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+} from '@/constants';
+import { COUNT_4 } from '@/constants/count';
+import { MAGIC_0_1, MAGIC_0_8 } from '@/constants/decimal';
 
 /**
  * 预加载状态
@@ -455,7 +467,11 @@ export const PRELOADER_CONSTANTS = {
   DEFAULT_TIMEOUT: TEN_SECONDS_MS,
   DEFAULT_RETRY_COUNT: COUNT_TRIPLE,
   DEFAULT_RETRY_DELAY: ANIMATION_DURATION_VERY_SLOW,
-  DEFAULT_CACHE_TTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24 hours
+  DEFAULT_CACHE_TTL:
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 24 hours
   DEFAULT_MEMORY_LIMIT: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
   MIN_USAGE_THRESHOLD: MAGIC_0_1,
   MAX_PRELOAD_LOCALES: COUNT_TEN,

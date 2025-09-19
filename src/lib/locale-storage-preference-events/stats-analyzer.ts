@@ -5,11 +5,16 @@
 
 'use client';
 
-import { getPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
-import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-import { safeGetArrayItem } from '@/lib/security-object-access';
-
 import type { Locale } from '@/types/i18n';
+import { getPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
+import { safeGetArrayItem } from '@/lib/security-object-access';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  HOURS_PER_DAY,
+  ONE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 /**
  * 获取偏好变化统计
@@ -63,9 +68,15 @@ export function getPreferenceChangeStats(): {
   // 计算变化频率
   if (history.length > ONE) {
     const start = safeGetArrayItem(history, ZERO)?.timestamp || ZERO;
-    const end = safeGetArrayItem(history, history.length - ONE)?.timestamp || ZERO;
+    const end =
+      safeGetArrayItem(history, history.length - ONE)?.timestamp || ZERO;
     const timeSpan = start - end;
-    const days = timeSpan / (HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    const days =
+      timeSpan /
+      (HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW);
     stats.changeFrequency = days > ZERO ? history.length / days : ZERO;
   }
 

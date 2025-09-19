@@ -5,12 +5,25 @@
  * 提供语言偏好存储系统所需的基础类型定义和常量
  */
 
-import { MAGIC_32, MAGIC_4096 } from "@/constants/count";
-import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { MAGIC_0_5 } from "@/constants/decimal";
 import type { Locale } from '@/types/i18n';
-import { FILE_SECURITY_CONSTANTS } from "@/constants/security-constants";
+import {
+  ANGLE_90_DEG,
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_32, MAGIC_4096 } from '@/constants/count';
+import { MAGIC_0_5 } from '@/constants/decimal';
+import { FILE_SECURITY_CONSTANTS } from '@/constants/security-constants';
 
 /**
  * 存储键名常量
@@ -78,9 +91,23 @@ export const STORAGE_CONSTANTS = {
   MAX_INDEXEDDB_SIZE: PERCENTAGE_HALF * BYTES_PER_KB * BYTES_PER_KB, // 50MB
 
   // 数据保留时间
-  DEFAULT_RETENTION_TIME: DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 30天
-  CACHE_RETENTION_TIME: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24小时
-  ANALYTICS_RETENTION_TIME: ANGLE_90_DEG * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 90天
+  DEFAULT_RETENTION_TIME:
+    DAYS_PER_MONTH *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 30天
+  CACHE_RETENTION_TIME:
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 24小时
+  ANALYTICS_RETENTION_TIME:
+    ANGLE_90_DEG *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 90天
 
   // 性能限制
   MAX_HISTORY_ENTRIES: PERCENTAGE_FULL,
@@ -103,7 +130,11 @@ export const STORAGE_CONSTANTS = {
 
   // 备份配置
   MAX_BACKUP_FILES: COUNT_FIVE,
-  BACKUP_INTERVAL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24小时
+  BACKUP_INTERVAL:
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 24小时
 
   // 错误重试
   MAX_RETRY_ATTEMPTS: COUNT_TRIPLE,
@@ -396,7 +427,9 @@ export const BaseValidators = {
    */
   isValidTimestamp(timestamp: number): boolean {
     return (
-      typeof timestamp === 'number' && timestamp > ZERO && timestamp <= Date.now()
+      typeof timestamp === 'number' &&
+      timestamp > ZERO &&
+      timestamp <= Date.now()
     );
   },
 
@@ -405,6 +438,10 @@ export const BaseValidators = {
    * Validate storage key
    */
   isValidStorageKey(key: string): boolean {
-    return typeof key === 'string' && key.length > ZERO && key.length <= FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH;
+    return (
+      typeof key === 'string' &&
+      key.length > ZERO &&
+      key.length <= FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH
+    );
   },
 } as const;

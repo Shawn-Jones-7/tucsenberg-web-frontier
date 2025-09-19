@@ -1,4 +1,4 @@
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 
 // Auth feature module
 export const authConfig = {

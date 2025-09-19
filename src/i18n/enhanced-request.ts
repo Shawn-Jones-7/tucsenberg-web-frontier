@@ -1,12 +1,11 @@
-import { routing } from '@/i18n/routing';
-import { COUNT_FIVE, ONE } from '@/constants';
-
+import { getRequestConfig } from 'next-intl/server';
 import {
   getCachedMessages,
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { getRequestConfig } from 'next-intl/server';
+import { COUNT_FIVE, ONE } from '@/constants';
+import { routing } from '@/i18n/routing';
 
 // 重用 request.ts 中的辅助函数
 function getEnhancedFormats(locale: string) {

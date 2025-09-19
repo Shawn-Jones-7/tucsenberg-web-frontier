@@ -3,11 +3,17 @@
  * Contact form API utility functions
  */
 
-import { MINUTE_MS } from "@/constants/time";
-import { ONE, ZERO, COUNT_FIVE, MAGIC_36, COUNT_PAIR, MAGIC_9 } from '@/constants';
-
-import { logger } from '@/lib/logger';
 import { NextRequest } from 'next/server';
+import { logger } from '@/lib/logger';
+import {
+  COUNT_FIVE,
+  COUNT_PAIR,
+  MAGIC_9,
+  MAGIC_36,
+  ONE,
+  ZERO,
+} from '@/constants';
+import { MINUTE_MS } from '@/constants/time';
 
 // 常量定义
 export const RATE_LIMIT_CONFIG = {
@@ -150,7 +156,10 @@ export function getRateLimitStatus(ip: string): {
     };
   }
 
-  const remaining = Math.max(ZERO, RATE_LIMIT_CONFIG.MAX_REQUESTS - current.count);
+  const remaining = Math.max(
+    ZERO,
+    RATE_LIMIT_CONFIG.MAX_REQUESTS - current.count,
+  );
   return {
     remaining,
     resetTime: current.resetTime,

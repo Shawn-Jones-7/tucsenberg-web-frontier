@@ -401,8 +401,8 @@ describe('useBreakpoint', () => {
       const originalInnerHeight = mockWindowDimensions.innerHeight;
 
       try {
-        mockWindowDimensions.innerWidth = NaN;
-        mockWindowDimensions.innerHeight = undefined as number;
+        mockWindowDimensions.innerWidth = Number.NaN;
+        delete (mockWindowDimensions as { innerHeight?: number }).innerHeight;
 
         const { result } = renderHook(() => useBreakpoint());
 

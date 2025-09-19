@@ -56,13 +56,10 @@ describe('CSP Report API Route - 集成测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
       expect(console.warn).toHaveBeenCalledWith(
-        'CSP Violation:',
-        expect.objectContaining({
-          'document-uri': 'https://example.com/page',
-          'violated-directive': 'script-src',
-        }),
+        'CSP Violation Report:',
+        expect.any(String),
       );
     });
 
@@ -101,7 +98,7 @@ describe('CSP Report API Route - 集成测试', () => {
         );
 
         const response = await POST(request);
-        expect(response.status).toBe(204);
+        expect(response.status).toBe(200);
       }
 
       expect(console.warn).toHaveBeenCalledTimes(3);

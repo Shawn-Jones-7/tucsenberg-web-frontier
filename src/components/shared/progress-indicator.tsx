@@ -1,10 +1,15 @@
 'use client';
 
-import { cn } from '@/lib/utils';
-import { COUNT_PAIR, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
-import { useTranslations } from 'next-intl';
 import React from 'react';
+import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
+import {
+  COUNT_PAIR,
+  COUNT_TRIPLE,
+  ONE,
+  PERCENTAGE_FULL,
+  ZERO,
+} from '@/constants';
 
 interface ProgressStep {
   key: 'planning' | 'development' | 'testing' | 'launch';

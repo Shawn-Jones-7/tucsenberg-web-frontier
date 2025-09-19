@@ -1,10 +1,21 @@
 import { logger } from '@/lib/logger';
-import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HTTP_BAD_REQUEST_CONST, HTTP_OK_CONST, ONE, PERCENTAGE_FULL, ZERO, OFFSET_NEGATIVE_EXTRA_LARGE, OFFSET_NEGATIVE_MASSIVE, MAGIC_0_9 } from '@/constants';
-
 import type {
   PerformanceConfig,
   PerformanceMetrics,
 } from '@/lib/performance-monitoring-types';
+import {
+  ANIMATION_DURATION_NORMAL,
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  HTTP_BAD_REQUEST_CONST,
+  HTTP_OK_CONST,
+  MAGIC_0_9,
+  OFFSET_NEGATIVE_EXTRA_LARGE,
+  OFFSET_NEGATIVE_MASSIVE,
+  ONE,
+  PERCENTAGE_FULL,
+  ZERO,
+} from '@/constants';
 
 /**
  * Web Eval Agent 集成钩子返回类型
@@ -25,8 +36,14 @@ export interface WebEvalAgentIntegration {
     timing: number;
     size?: number;
   }) => void;
-  recordPageLoad: (params: { url: string; timing: Record<string, number> }) => void;
-  recordError: (params: { error: Error; context?: Record<string, unknown> }) => void;
+  recordPageLoad: (params: {
+    url: string;
+    timing: Record<string, number>;
+  }) => void;
+  recordError: (params: {
+    error: Error;
+    context?: Record<string, unknown>;
+  }) => void;
 }
 
 /**
@@ -79,7 +96,13 @@ export function useWebEvalAgentIntegration(
       });
     },
 
-    recordPageLoad: ({ url, timing }: { url: string; timing: Record<string, number> }) => {
+    recordPageLoad: ({
+      url,
+      timing,
+    }: {
+      url: string;
+      timing: Record<string, number>;
+    }) => {
       if (!config.webEvalAgent.enabled) return;
 
       recordMetric({
@@ -95,7 +118,13 @@ export function useWebEvalAgentIntegration(
       });
     },
 
-    recordError: ({ error, context = {} }: { error: Error; context?: Record<string, unknown> }) => {
+    recordError: ({
+      error,
+      context = {},
+    }: {
+      error: Error;
+      context?: Record<string, unknown>;
+    }) => {
       if (!config.webEvalAgent.enabled || !config.webEvalAgent.captureLogs)
         return;
 
@@ -237,7 +266,8 @@ export class WebEvalAgentAnalyzer {
 
     // 检查是否超过会话限制
     const maxInteractions =
-      this.config.webEvalAgent.maxInteractionsPerSession || ANIMATION_DURATION_VERY_SLOW;
+      this.config.webEvalAgent.maxInteractionsPerSession ||
+      ANIMATION_DURATION_VERY_SLOW;
     if (current.count > maxInteractions) {
       logger.warn(`Interaction ${action} has exceeded session limit`, {
         maxInteractions,
@@ -274,7 +304,9 @@ export class WebEvalAgentAnalyzer {
 
     // 保持数组大小在合理范围内
     if (this.networkRequests.length > 1000) {
-      this.networkRequests = this.networkRequests.slice(OFFSET_NEGATIVE_MASSIVE);
+      this.networkRequests = this.networkRequests.slice(
+        OFFSET_NEGATIVE_MASSIVE,
+      );
     }
   }
 
@@ -366,14 +398,19 @@ export class WebEvalAgentAnalyzer {
     // 生成建议
     if (topSlowActions.length > ZERO) {
       const slowestAction = topSlowActions.at(ZERO);
-      if (slowestAction && slowestAction.averageTime > ANIMATION_DURATION_VERY_SLOW) {
+      if (
+        slowestAction &&
+        slowestAction.averageTime > ANIMATION_DURATION_VERY_SLOW
+      ) {
         recommendations.push(
           `Action "${slowestAction.action}" is slow (${slowestAction.averageTime.toFixed(ZERO)}ms average)`,
         );
       }
     }
 
-    const lowSuccessActions = topSlowActions.filter((a) => a.successRate < MAGIC_0_9);
+    const lowSuccessActions = topSlowActions.filter(
+      (a) => a.successRate < MAGIC_0_9,
+    );
     if (lowSuccessActions.length > ZERO) {
       recommendations.push(
         `${lowSuccessActions.length} actions have low success rates. Consider improving error handling.`,
@@ -418,7 +455,8 @@ export class WebEvalAgentAnalyzer {
       ZERO,
     );
     const successfulRequests = this.networkRequests.filter(
-      (req) => req.status >= HTTP_OK_CONST && req.status < ANIMATION_DURATION_NORMAL,
+      (req) =>
+        req.status >= HTTP_OK_CONST && req.status < ANIMATION_DURATION_NORMAL,
     );
     const totalDataTransferred = this.networkRequests.reduce(
       (sum, req) => sum + req.size,
@@ -477,7 +515,8 @@ export class WebEvalAgentAnalyzer {
     const slowestPages = this.pageLoads
       .map((page) => ({
         url: page.url,
-        loadTime: page.timing.loadComplete || page.timing.domContentLoaded || ZERO,
+        loadTime:
+          page.timing.loadComplete || page.timing.domContentLoaded || ZERO,
         timestamp: page.timestamp,
       }))
       .sort((a, b) => b.loadTime - a.loadTime)

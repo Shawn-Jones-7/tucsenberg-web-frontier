@@ -4,10 +4,22 @@
  * 包含性能监控相关的接口定义、配置类型和环境配置逻辑
  */
 
-import { MAGIC_2500 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, MAGIC_0_1, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS, THREE_SECONDS_MS, ZERO } from '@/constants';
-
-import { MAGIC_0_9 } from "@/constants/decimal";
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  MAGIC_0_1,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+  THIRTY_SECONDS_MS,
+  THREE_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import { MAGIC_2500 } from '@/constants/count';
+import { MAGIC_0_9 } from '@/constants/decimal';
 import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
 
 // ==================== 基础类型定义 ====================
@@ -462,7 +474,8 @@ export function generateEnvironmentConfig(): PerformanceConfig {
     debug: isDevelopment,
     global: {
       enabled: true,
-      dataRetentionTime: COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // COUNT_FIVE分钟
+      dataRetentionTime:
+        COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // COUNT_FIVE分钟
       maxMetrics: ANIMATION_DURATION_VERY_SLOW,
       enableInProduction: false,
     },
@@ -500,7 +513,10 @@ function validateSizeLimits(config: PerformanceConfig, errors: string[]): void {
   }
 }
 
-function validateWebVitalsConfig(config: PerformanceConfig, errors: string[]): void {
+function validateWebVitalsConfig(
+  config: PerformanceConfig,
+  errors: string[],
+): void {
   if (!config.webVitals?.enabled) return;
   const rate = config.webVitals.sampleRate;
   if (rate && (rate < ZERO || rate > ONE)) {
@@ -508,7 +524,10 @@ function validateWebVitalsConfig(config: PerformanceConfig, errors: string[]): v
   }
 }
 
-function validateGlobalConfig(config: PerformanceConfig, errors: string[]): void {
+function validateGlobalConfig(
+  config: PerformanceConfig,
+  errors: string[],
+): void {
   if (!config.global?.enabled) return;
   if (config.global.dataRetentionTime <= ZERO) {
     errors.push('Data retention time must be positive');
@@ -522,7 +541,11 @@ function collectWarnings(config: PerformanceConfig, warnings: string[]): void {
   if (config.reactScan.enabled && isProductionEnvironment()) {
     warnings.push('React Scan is enabled in production environment');
   }
-  if (config.bundleAnalyzer.enabled && config.bundleAnalyzer.openAnalyzer && isProductionEnvironment()) {
+  if (
+    config.bundleAnalyzer.enabled &&
+    config.bundleAnalyzer.openAnalyzer &&
+    isProductionEnvironment()
+  ) {
     warnings.push('Bundle analyzer auto-open is enabled in production');
   }
 }

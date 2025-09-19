@@ -4,14 +4,13 @@
  */
 
 import { BaseValidators } from '@/lib/locale-storage-types-base';
-import { safeGetArrayItem } from '@/lib/security-object-access';
-import { MAGIC_0_3, MAGIC_0_9, ONE, ZERO } from '@/constants';
-
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,
   ValidationResult,
 } from '@/lib/locale-storage-types-data';
+import { safeGetArrayItem } from '@/lib/security-object-access';
+import { MAGIC_0_3, MAGIC_0_9, ONE, ZERO } from '@/constants';
 
 /**
  * 验证函数
@@ -42,7 +41,10 @@ export function validatePreference(
   return { isValid: errors.length === ZERO, errors, warnings };
 }
 
-function validateRequiredFields(preference: UserLocalePreference, errors: string[]): void {
+function validateRequiredFields(
+  preference: UserLocalePreference,
+  errors: string[],
+): void {
   if (!BaseValidators.isValidLocale(preference.locale)) {
     errors.push('Invalid locale');
   }
@@ -67,16 +69,28 @@ function validateMetadata(
     errors.push('Metadata must be an object');
     return;
   }
-  if (preference.metadata.userAgent && typeof preference.metadata.userAgent !== 'string') {
+  if (
+    preference.metadata.userAgent &&
+    typeof preference.metadata.userAgent !== 'string'
+  ) {
     warnings.push('User agent should be a string');
   }
-  if (preference.metadata.ipCountry && typeof preference.metadata.ipCountry !== 'string') {
+  if (
+    preference.metadata.ipCountry &&
+    typeof preference.metadata.ipCountry !== 'string'
+  ) {
     warnings.push('IP country should be a string');
   }
-  if (preference.metadata.browserLanguages && !Array.isArray(preference.metadata.browserLanguages)) {
+  if (
+    preference.metadata.browserLanguages &&
+    !Array.isArray(preference.metadata.browserLanguages)
+  ) {
     warnings.push('Browser languages should be an array');
   }
-  if (preference.metadata.timezone && typeof preference.metadata.timezone !== 'string') {
+  if (
+    preference.metadata.timezone &&
+    typeof preference.metadata.timezone !== 'string'
+  ) {
     warnings.push('Timezone should be a string');
   }
 }

@@ -1,8 +1,12 @@
-import { logger } from '@/lib/logger';
-import { BREAKPOINT_MD, BYTES_PER_KB, COUNT_PAIR, PERCENTAGE_FULL } from '@/constants';
-
-import { recordThemeSwitch } from '@/lib/theme-analytics';
 import React from 'react';
+import { logger } from '@/lib/logger';
+import { recordThemeSwitch } from '@/lib/theme-analytics';
+import {
+  BREAKPOINT_MD,
+  BYTES_PER_KB,
+  COUNT_PAIR,
+  PERCENTAGE_FULL,
+} from '@/constants';
 import type {
   ThemeTransitionConfig,
   ThemeTransitionRecord,

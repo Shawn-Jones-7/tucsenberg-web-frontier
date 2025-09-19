@@ -3,11 +3,13 @@
  * 提供通用的工具方法和辅助函数
  */
 
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { ZERO } from '@/constants';
-
 import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
-import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
+import type {
+  DetailedWebVitals,
+  PerformanceBaseline,
+} from '@/lib/web-vitals/types';
+import { ZERO } from '@/constants';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * 性能监控工具类
@@ -33,11 +35,23 @@ export class MonitoringUtils {
     const t = PERFORMANCE_THRESHOLDS;
     switch (metric) {
       case 'cls':
-        return MonitoringUtils.getStandardMetricStatus(value, t.CLS_GOOD, t.CLS_NEEDS_IMPROVEMENT);
+        return MonitoringUtils.getStandardMetricStatus(
+          value,
+          t.CLS_GOOD,
+          t.CLS_NEEDS_IMPROVEMENT,
+        );
       case 'fid':
-        return MonitoringUtils.getStandardMetricStatus(value, t.FID_GOOD, t.FID_NEEDS_IMPROVEMENT);
+        return MonitoringUtils.getStandardMetricStatus(
+          value,
+          t.FID_GOOD,
+          t.FID_NEEDS_IMPROVEMENT,
+        );
       case 'lcp':
-        return MonitoringUtils.getStandardMetricStatus(value, t.LCP_GOOD, t.LCP_NEEDS_IMPROVEMENT);
+        return MonitoringUtils.getStandardMetricStatus(
+          value,
+          t.LCP_GOOD,
+          t.LCP_NEEDS_IMPROVEMENT,
+        );
       case 'fcp':
         return MonitoringUtils.getStandardMetricStatus(
           value,
@@ -45,7 +59,11 @@ export class MonitoringUtils {
           WEB_VITALS_CONSTANTS.FCP_NEEDS_IMPROVEMENT_THRESHOLD,
         );
       case 'ttfb':
-        return MonitoringUtils.getStandardMetricStatus(value, t.TTFB_GOOD, t.TTFB_NEEDS_IMPROVEMENT);
+        return MonitoringUtils.getStandardMetricStatus(
+          value,
+          t.TTFB_GOOD,
+          t.TTFB_NEEDS_IMPROVEMENT,
+        );
       default:
         return '';
     }

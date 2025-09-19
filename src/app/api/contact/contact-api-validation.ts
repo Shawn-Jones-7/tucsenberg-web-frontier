@@ -3,14 +3,20 @@
  * Contact form API validation and data processing
  */
 
-import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
-import { ANIMATION_DURATION_VERY_SLOW, ONE, ZERO, COUNT_TEN, SECONDS_PER_MINUTE, DAYS_PER_WEEK } from '@/constants';
-
+import { z } from 'zod';
 import { airtableService } from '@/lib/airtable';
 import { logger } from '@/lib/logger';
 import { resendService } from '@/lib/resend';
 import { contactFormSchema, type ContactFormData } from '@/lib/validations';
-import { z } from 'zod';
+import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  DAYS_PER_WEEK,
+  ONE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 /**
  * 扩展的联系表单模式，包含Turnstile token
@@ -36,10 +42,12 @@ export async function validateFormData(body: unknown, clientIP: string) {
       clientIP,
     });
 
-    const errorMessages = validationResult.error.issues.map((error: z.ZodIssue) => {
-      const field = error.path.join('.');
-      return `${field}: ${error.message}`;
-    });
+    const errorMessages = validationResult.error.issues.map(
+      (error: z.ZodIssue) => {
+        const field = error.path.join('.');
+        return `${field}: ${error.message}`;
+      },
+    );
 
     return {
       success: false,

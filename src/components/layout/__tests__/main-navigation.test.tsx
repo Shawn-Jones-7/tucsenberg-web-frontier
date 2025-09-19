@@ -2,8 +2,11 @@ import React from 'react';
 import { screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { MainNavigation, MainNavigationCompact } from '@/components/layout/main-navigation';
 import { renderWithProviders } from '@/components/layout/__tests__/test-utils';
+import {
+  MainNavigation,
+  MainNavigationCompact,
+} from '@/components/layout/main-navigation';
 
 // Define mock navigation items locally
 const mockNavigationItems = [

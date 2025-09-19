@@ -7,15 +7,22 @@
 
 'use client';
 
-import { MAGIC_6 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { DAYS_PER_WEEK } from "@/constants/time";
-import { logger } from '@/lib/logger';
 import type {
   StorageEvent,
   StorageEventListener,
 } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_6 } from '@/constants/count';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 // ==================== 事件管理 ====================
 
@@ -128,7 +135,14 @@ export interface AccessLogEntry {
 }
 
 // 受控操作类型白名单（用于统计，未知类型归为 other）
-type OperationType = 'read' | 'write' | 'update' | 'remove' | 'delete' | 'clear' | 'list';
+type OperationType =
+  | 'read'
+  | 'write'
+  | 'update'
+  | 'remove'
+  | 'delete'
+  | 'clear'
+  | 'list';
 
 interface OperationCounts {
   read: number;
@@ -142,27 +156,44 @@ interface OperationCounts {
 }
 
 function createEmptyOperationCounts(): OperationCounts {
-  return { read: ZERO, write: ZERO, update: ZERO, remove: ZERO, delete: ZERO, clear: ZERO, list: ZERO, other: ZERO };
+  return {
+    read: ZERO,
+    write: ZERO,
+    update: ZERO,
+    remove: ZERO,
+    delete: ZERO,
+    clear: ZERO,
+    list: ZERO,
+    other: ZERO,
+  };
 }
 
 function incrementOperationCount(target: OperationCounts, op: string): void {
   switch (op as OperationType) {
     case 'read':
-      target.read += ONE; break;
+      target.read += ONE;
+      break;
     case 'write':
-      target.write += ONE; break;
+      target.write += ONE;
+      break;
     case 'update':
-      target.update += ONE; break;
+      target.update += ONE;
+      break;
     case 'remove':
-      target.remove += ONE; break;
+      target.remove += ONE;
+      break;
     case 'delete':
-      target.delete += ONE; break;
+      target.delete += ONE;
+      break;
     case 'clear':
-      target.clear += ONE; break;
+      target.clear += ONE;
+      break;
     case 'list':
-      target.list += ONE; break;
+      target.list += ONE;
+      break;
     default:
-      target.other += ONE; break;
+      target.other += ONE;
+      break;
   }
 }
 
@@ -241,7 +272,8 @@ export class AccessLogger {
   } {
     const total = this.accessLog.length;
     const successful = this.accessLog.filter((entry) => entry.success).length;
-    const successRate = total > ZERO ? (successful / total) * PERCENTAGE_FULL : PERCENTAGE_FULL;
+    const successRate =
+      total > ZERO ? (successful / total) * PERCENTAGE_FULL : PERCENTAGE_FULL;
 
     // 计算平均响应时间
     const responseTimes = this.accessLog
@@ -373,24 +405,46 @@ export class ErrorLogger {
     errorTrends: Array<{ date: string; count: number }>;
   } {
     const total = this.errorLog.length;
-    const {totalOperations} = AccessLogger.getAccessStats();
-    const errorRate = totalOperations > ZERO ? (total / totalOperations) * PERCENTAGE_FULL : ZERO;
+    const { totalOperations } = AccessLogger.getAccessStats();
+    const errorRate =
+      totalOperations > ZERO
+        ? (total / totalOperations) * PERCENTAGE_FULL
+        : ZERO;
 
     // 统计严重程度分布（受控联合 + switch）
-    const severityDistribution = { low: ZERO, medium: ZERO, high: ZERO, critical: ZERO } as const as {
+    const severityDistribution = {
+      low: ZERO,
+      medium: ZERO,
+      high: ZERO,
+      critical: ZERO,
+    } as const as {
       low: number;
       medium: number;
       high: number;
       critical: number;
     };
-    const dist: { low: number; medium: number; high: number; critical: number } = { ...severityDistribution };
+    const dist: {
+      low: number;
+      medium: number;
+      high: number;
+      critical: number;
+    } = { ...severityDistribution };
     for (const entry of this.errorLog) {
       switch (entry.severity) {
-        case 'low': dist.low += ONE; break;
-        case 'medium': dist.medium += ONE; break;
-        case 'high': dist.high += ONE; break;
-        case 'critical': dist.critical += ONE; break;
-        default: break;
+        case 'low':
+          dist.low += ONE;
+          break;
+        case 'medium':
+          dist.medium += ONE;
+          break;
+        case 'high':
+          dist.high += ONE;
+          break;
+        case 'critical':
+          dist.critical += ONE;
+          break;
+        default:
+          break;
       }
     }
 
@@ -424,20 +478,25 @@ export class ErrorLogger {
     for (let i = MAGIC_6; i >= ZERO; i--) {
       const date = new Date(now);
       date.setDate(date.getDate() - i);
-      const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+      const dateStr =
+        date.toISOString().split('T').at(ZERO) || date.toISOString();
       trends.set(dateStr, ZERO);
     }
 
     // 统计错误数量
     for (const entry of this.errorLog) {
       const date = new Date(entry.timestamp);
-      const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+      const dateStr =
+        date.toISOString().split('T').at(ZERO) || date.toISOString();
       if (trends.has(dateStr)) {
         trends.set(dateStr, (trends.get(dateStr) ?? ZERO) + ONE);
       }
     }
 
-    return Array.from(trends.entries()).map(([date, count]) => ({ date, count }));
+    return Array.from(trends.entries()).map(([date, count]) => ({
+      date,
+      count,
+    }));
   }
 }
 
@@ -448,7 +507,11 @@ export class ErrorLogger {
  * Cleanup analytics data
  */
 export function cleanupAnalyticsData(
-  maxAge: number = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+  maxAge: number = DAYS_PER_WEEK *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW,
 ): void {
   const cutoffTime = Date.now() - maxAge;
 
@@ -463,7 +526,9 @@ export function cleanupAnalyticsData(
       key: entry.key,
       operation: entry.operation,
       success: entry.success,
-      ...(entry.responseTime !== undefined && { responseTime: entry.responseTime }),
+      ...(entry.responseTime !== undefined && {
+        responseTime: entry.responseTime,
+      }),
       ...(entry.error !== undefined && { error: entry.error }),
     });
   });

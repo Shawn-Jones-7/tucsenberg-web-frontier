@@ -6,12 +6,12 @@
  */
 'use client';
 
-import { COUNT_120 } from "@/constants/count";
-import { HOURS_PER_DAY } from "@/constants";
-import { Link } from '@/i18n/routing';
-import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 import Image from 'next/image';
+import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
+import { HOURS_PER_DAY } from '@/constants';
+import { COUNT_120 } from '@/constants/count';
+import { Link } from '@/i18n/routing';
 
 /**
  * Logo Component

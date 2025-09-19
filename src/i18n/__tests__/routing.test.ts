@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { type Locale } from '@/i18n/routing';
+import type { Locale } from '@/i18n/routing';
 
 // Mock next-intl/navigation
 const mockCreateNavigation = vi.fn();

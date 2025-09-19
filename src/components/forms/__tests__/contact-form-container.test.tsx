@@ -1,7 +1,7 @@
 import { act } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { fireEvent, render, screen } from '@/test/utils';
 import { ContactFormContainer } from '@/components/forms/contact-form-container';
+import { fireEvent, render, screen } from '@/test/utils';
 
 // Mock next-intl with comprehensive translations
 const mockT = vi.fn((key: string) => {
@@ -37,7 +37,7 @@ const mockT = vi.fn((key: string) => {
     acceptPrivacy: 'I accept the privacy policy',
     marketingConsent: 'I agree to receive marketing communications',
   };
-   
+
   return Object.prototype.hasOwnProperty.call(translations, key)
     ? translations[key]
     : key; // key 来自测试数据，安全

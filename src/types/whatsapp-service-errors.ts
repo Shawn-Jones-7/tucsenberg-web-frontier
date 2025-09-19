@@ -1,4 +1,10 @@
-import { ANIMATION_DURATION_VERY_SLOW, HTTP_BAD_REQUEST, HTTP_UNAUTHORIZED, MAGIC_429, SECONDS_PER_MINUTE } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  HTTP_BAD_REQUEST,
+  HTTP_UNAUTHORIZED,
+  MAGIC_429,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 
 /**
  * WhatsApp Service Error Types and Classes
@@ -100,7 +106,9 @@ export class WhatsAppApiError extends WhatsAppError {
     code: number,
     options?: { apiError?: WhatsAppApiError['apiError']; traceId?: string },
   ) {
-    const base: { type: string; subcode?: number; traceId?: string } = { type: 'ApiError' };
+    const base: { type: string; subcode?: number; traceId?: string } = {
+      type: 'ApiError',
+    };
     const sub = options?.apiError?.error_subcode;
     if (typeof sub === 'number') base.subcode = sub;
     const tid = options?.traceId || options?.apiError?.fbtrace_id;
@@ -231,7 +239,9 @@ export class WhatsAppRateLimitError extends WhatsAppError {
    * Get retry delay in milliseconds
    */
   getRetryDelay(): number {
-    return (this.retryAfter || SECONDS_PER_MINUTE) * ANIMATION_DURATION_VERY_SLOW; // Default to SECONDS_PER_MINUTE seconds
+    return (
+      (this.retryAfter || SECONDS_PER_MINUTE) * ANIMATION_DURATION_VERY_SLOW
+    ); // Default to SECONDS_PER_MINUTE seconds
   }
 
   /**
@@ -421,8 +431,10 @@ export function createErrorFromApiResponse(
         : undefined;
     const retryAfterNumber =
       typeof retryAfter === 'number' ? retryAfter : undefined;
-    const opts: { retryAfter?: number; limit?: number; remaining?: number } = {};
-    if (typeof retryAfterNumber === 'number') opts.retryAfter = retryAfterNumber;
+    const opts: { retryAfter?: number; limit?: number; remaining?: number } =
+      {};
+    if (typeof retryAfterNumber === 'number')
+      opts.retryAfter = retryAfterNumber;
     return new WhatsAppRateLimitError('Rate limit exceeded', opts);
   }
 
@@ -433,7 +445,8 @@ export function createErrorFromApiResponse(
       'message' in data.error
         ? (data.error as Record<string, unknown>).message || 'API Error'
         : 'API Error';
-    const opts: { apiError?: WhatsAppApiError['apiError']; traceId?: string } = {};
+    const opts: { apiError?: WhatsAppApiError['apiError']; traceId?: string } =
+      {};
     opts.apiError = data.error as WhatsAppApiError['apiError'];
     if (typeof traceId === 'string') opts.traceId = traceId;
     return new WhatsAppApiError(errorMessage as string, status, opts);

@@ -6,8 +6,9 @@
  * 🔄 配合env.mjs进行类型安全的环境变量验证
  */
 
-import { MAGIC_0_1 } from '@/constants/decimal';
 import { COUNT_PAIR, ONE } from '@/constants';
+import { MAGIC_0_1 } from '@/constants/decimal';
+import { WEB_VITALS_THRESHOLDS } from '@/constants/performance-constants';
 import {
   HOURS_PER_DAY,
   MINUTE_MS,
@@ -15,7 +16,6 @@ import {
   SECONDS_PER_MINUTE,
   THIRTY_SECONDS_MS,
 } from '@/constants/time';
-import { WEB_VITALS_THRESHOLDS } from '@/constants/performance-constants';
 import { env } from '@/env.mjs';
 
 // ============================================================================
@@ -105,8 +105,7 @@ export const DEV_EXPERIENCE_CONFIG = {
  */
 export const CACHE_CONFIG = {
   /** 静态资源缓存时间 (秒) */
-  STATIC_CACHE_TTL:
-    env.STATIC_CACHE_TTL ?? HOURS_PER_DAY * SECONDS_PER_HOUR,
+  STATIC_CACHE_TTL: env.STATIC_CACHE_TTL ?? HOURS_PER_DAY * SECONDS_PER_HOUR,
   /** API响应缓存时间 (秒) */
   API_CACHE_TTL: env.API_CACHE_TTL ?? 5 * SECONDS_PER_MINUTE,
   /** 用户会话缓存时间 (秒) */
@@ -152,14 +151,11 @@ export const MONITORING_CONFIG = {
  */
 export const WEB_VITALS_CONFIG = {
   /** LCP良好阈值 (毫秒) */
-  LCP_GOOD_THRESHOLD:
-    env.LCP_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.LCP.GOOD,
+  LCP_GOOD_THRESHOLD: env.LCP_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.LCP.GOOD,
   /** FID良好阈值 (毫秒) */
-  FID_GOOD_THRESHOLD:
-    env.FID_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.FID.GOOD,
+  FID_GOOD_THRESHOLD: env.FID_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.FID.GOOD,
   /** CLS良好阈值 */
-  CLS_GOOD_THRESHOLD:
-    env.CLS_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.CLS.GOOD,
+  CLS_GOOD_THRESHOLD: env.CLS_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.CLS.GOOD,
   /** TTFB良好阈值 (毫秒) */
   TTFB_GOOD_THRESHOLD:
     env.TTFB_GOOD_THRESHOLD ?? WEB_VITALS_THRESHOLDS.TTFB.GOOD,

@@ -1,6 +1,16 @@
 import { useCallback } from 'react';
-import { ANIMATION_DURATION_NORMAL, COUNT_FIVE, COUNT_TRIPLE, MAGIC_0_1, MAGIC_0_25, MAGIC_2500, MAGIC_4000, MAGIC_75, MAGIC_90, PERCENTAGE_HALF } from '@/constants';
-
+import {
+  ANIMATION_DURATION_NORMAL,
+  COUNT_FIVE,
+  COUNT_TRIPLE,
+  MAGIC_0_1,
+  MAGIC_0_25,
+  MAGIC_75,
+  MAGIC_90,
+  MAGIC_2500,
+  MAGIC_4000,
+  PERCENTAGE_HALF,
+} from '@/constants';
 import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import type {
   DiagnosticReport,

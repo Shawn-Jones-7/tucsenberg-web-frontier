@@ -1,10 +1,10 @@
 'use client';
 
 /* eslint-disable max-lines-per-function, security/detect-object-injection, no-shadow */
-import { ZERO } from "@/constants";
-import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
-import { useLocale, useTranslations } from 'next-intl';
 import { useCallback, useMemo } from 'react';
+import { useLocale, useTranslations } from 'next-intl';
+import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
+import { ZERO } from '@/constants';
 
 interface UseEnhancedTranslationsOptions {
   namespace?: string;

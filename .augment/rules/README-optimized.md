@@ -2,50 +2,50 @@
 type: 'always_apply'
 ---
 
-# Augment Rules Configuration for tucsenberg-web-stable
+# Augment Rules Configuration for tucsenberg-web-frontier
 
 ## Overview
 
 This directory contains 10 optimized Augment AI rules that guide development practices for the
-tucsenberg-web-stable project. These rules ensure consistent, high-quality code that follows
+tucsenberg-web-frontier project. These rules ensure consistent, high-quality code that follows
 enterprise standards. Rules have been optimized to stay within Augment's 49,512 character limit.
 
 ## Rule Files Structure
 
 ### 🔧 `coding-standards.md` (Always)
 
-**Type**: Always  
-**Purpose**: Core TypeScript/React development standards  
+**Type**: Always
+**Purpose**: Core TypeScript/React development standards
 **Key Areas**: TypeScript strict mode, React patterns, import standards
 
 ### 🏗️ `project-architecture.md` (Auto)
 
-**Type**: Auto  
-**Description**: Architecture decisions and project structure guidelines  
+**Type**: Auto
+**Description**: Architecture decisions and project structure guidelines
 **Key Areas**: File structure, component architecture, i18n, state management
 
 ### 🔄 `git-workflow.md` (Auto)
 
-**Type**: Auto  
-**Description**: Git workflow, commit standards, and quality gates  
+**Type**: Auto
+**Description**: Git workflow, commit standards, and quality gates
 **Key Areas**: Conventional commits, pre-commit hooks, quality checks
 
 ### ⚡ `performance-optimization.md` (Auto)
 
-**Type**: Auto  
-**Description**: Performance optimization strategies and Core Web Vitals  
+**Type**: Auto
+**Description**: Performance optimization strategies and Core Web Vitals
 **Key Areas**: Next.js optimization, image handling, caching, monitoring
 
 ### 🔬 `technical-implementation-methodology.md` (Auto)
 
-**Type**: Auto  
-**Description**: Research-first methodology for technical decisions  
+**Type**: Auto
+**Description**: Research-first methodology for technical decisions
 **Key Areas**: Documentation research, quality assessment, decision frameworks
 
 ### 📘 `typescript-best-practices.md` (Auto)
 
-**Type**: Auto  
-**Description**: Comprehensive TypeScript best practices and advanced patterns  
+**Type**: Auto
+**Description**: Comprehensive TypeScript best practices and advanced patterns
 **Key Areas**: Strict type safety, React component types, Framer Motion patterns
 
 ### 🎨 UI & Data Patterns (Integrated into coding-standards.md)
@@ -55,20 +55,20 @@ enterprise standards. Rules have been optimized to stay within Augment's 49,512 
 
 ### 🧪 `testing-compact.md` (Auto)
 
-**Type**: Auto  
-**Description**: Testing strategy and best practices with Jest and Testing Library  
+**Type**: Auto
+**Description**: Testing strategy and best practices with Jest and Testing Library
 **Key Areas**: Jest configuration, component testing, accessibility testing
 
 ### ♿ `accessibility-compact.md` (Auto)
 
-**Type**: Auto  
-**Description**: Accessibility testing and WCAG 2.1 AA compliance  
+**Type**: Auto
+**Description**: Accessibility testing and WCAG 2.1 AA compliance
 **Key Areas**: WCAG compliance, jest-axe testing, semantic HTML, ARIA patterns
 
 ### 🔒 `quality-compact.md` (Auto)
 
-**Type**: Auto  
-**Description**: Quality gates, CI/CD processes, and performance budgets  
+**Type**: Auto
+**Description**: Quality gates, CI/CD processes, and performance budgets
 **Key Areas**: Quality metrics, CI/CD pipeline, performance budgets
 
 ## Usage Guidelines

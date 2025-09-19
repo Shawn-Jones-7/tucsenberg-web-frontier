@@ -70,6 +70,12 @@ export const ALLOWED_FILE_TYPES = {
   ],
 } as const;
 
+const ALLOWED_TYPE_SETS = {
+  images: new Set<string>(ALLOWED_FILE_TYPES.images),
+  documents: new Set<string>(ALLOWED_FILE_TYPES.documents),
+  archives: new Set<string>(ALLOWED_FILE_TYPES.archives),
+} as const;
+
 function getAllowedTypesForCategory(
   category: keyof typeof ALLOWED_FILE_TYPES,
 ): readonly string[] {
@@ -113,9 +119,15 @@ const DANGEROUS_EXTENSIONS = [
   '.jsp',
 ] as const;
 
+const DANGEROUS_EXTENSION_SET = new Set<string>(DANGEROUS_EXTENSIONS);
+
 function getMaxBytes(maxSizeMB?: number): number {
   const sizeMB = maxSizeMB ?? FILE_UPLOAD_CONSTANTS.MAX_FILE_SIZE_MB;
-  return sizeMB * FILE_UPLOAD_CONSTANTS.BYTES_PER_MB * FILE_UPLOAD_CONSTANTS.KB_TO_BYTES;
+  return (
+    sizeMB *
+    FILE_UPLOAD_CONSTANTS.BYTES_PER_MB *
+    FILE_UPLOAD_CONSTANTS.KB_TO_BYTES
+  );
 }
 
 function resolveAllowedTypes(options: {
@@ -124,17 +136,25 @@ function resolveAllowedTypes(options: {
 }): string[] {
   if (options.allowedTypes) return options.allowedTypes;
   if (options.allowedCategories)
-    return options.allowedCategories.flatMap((c) => getAllowedTypesForCategory(c));
+    return options.allowedCategories.flatMap((c) =>
+      getAllowedTypesForCategory(c),
+    );
   return [...ALLOWED_FILE_TYPES.images, ...ALLOWED_FILE_TYPES.documents];
 }
 
-function checkFileNameIssues(fileName: string): { error?: string; warnings: string[] } {
+function checkFileNameIssues(fileName: string): {
+  error?: string;
+  warnings: string[];
+} {
   const warnings: string[] = [];
   const lower = fileName.toLowerCase();
 
   for (const ext of DANGEROUS_EXTENSIONS) {
     if (lower.endsWith(ext)) {
-      return { error: `File extension '${ext}' is not allowed for security reasons`, warnings };
+      return {
+        error: `File extension '${ext}' is not allowed for security reasons`,
+        warnings,
+      };
     }
   }
 
@@ -142,19 +162,32 @@ function checkFileNameIssues(fileName: string): { error?: string; warnings: stri
   if (parts.length > COUNT_PAIR) {
     for (const part of parts.slice(ONE, -ONE)) {
       const ext = `.${part}`;
-      if (DANGEROUS_EXTENSIONS.includes(ext)) {
-        return { error: `File contains dangerous extension '${ext}' in filename`, warnings };
+      if (DANGEROUS_EXTENSION_SET.has(ext)) {
+        return {
+          error: `File contains dangerous extension '${ext}' in filename`,
+          warnings,
+        };
       }
     }
   }
 
-  const suspiciousPatterns = [/^con\./i, /^prn\./i, /^aux\./i, /^nul\./i, /^com[1-9]\./i, /^lpt[1-9]\./i];
+  const suspiciousPatterns = [
+    /^con\./i,
+    /^prn\./i,
+    /^aux\./i,
+    /^nul\./i,
+    /^com[1-9]\./i,
+    /^lpt[1-9]\./i,
+  ];
   if (suspiciousPatterns.some((p) => p.test(lower))) {
     warnings.push('File name matches a reserved system name pattern');
   }
 
   if (lower.length > MAGIC_255) {
-    return { error: 'File name is too long (maximum MAGIC_255 characters)', warnings };
+    return {
+      error: 'File name is too long (maximum MAGIC_255 characters)',
+      warnings,
+    };
   }
 
   if (lower.includes('\0')) {
@@ -238,7 +271,12 @@ export async function validateFileSignature(
             HEX_PNG_SIGNATURE_6,
           ] as const;
         case 'application/zip':
-          return [HEX_PNG_SIGNATURE_2, HEX_ZIP_SIGNATURE, MAGIC_HEX_03, MAGIC_HEX_04] as const;
+          return [
+            HEX_PNG_SIGNATURE_2,
+            HEX_ZIP_SIGNATURE,
+            MAGIC_HEX_03,
+            MAGIC_HEX_04,
+          ] as const;
         default:
           return null;
       }
@@ -301,14 +339,14 @@ export function generateSafeFileName(
  * Check if file is an image
  */
 export function isImageFile(file: File): boolean {
-  return ALLOWED_FILE_TYPES.images.includes(file.type);
+  return ALLOWED_TYPE_SETS.images.has(file.type);
 }
 
 /**
  * Check if file is a document
  */
 export function isDocumentFile(file: File): boolean {
-  return ALLOWED_FILE_TYPES.documents.includes(file.type);
+  return ALLOWED_TYPE_SETS.documents.has(file.type);
 }
 
 /**
@@ -317,13 +355,13 @@ export function isDocumentFile(file: File): boolean {
 export function getFileCategory(
   file: File,
 ): keyof typeof ALLOWED_FILE_TYPES | 'unknown' {
-  if (ALLOWED_FILE_TYPES.images.includes(file.type)) {
+  if (ALLOWED_TYPE_SETS.images.has(file.type)) {
     return 'images';
   }
-  if (ALLOWED_FILE_TYPES.documents.includes(file.type)) {
+  if (ALLOWED_TYPE_SETS.documents.has(file.type)) {
     return 'documents';
   }
-  if (ALLOWED_FILE_TYPES.archives.includes(file.type)) {
+  if (ALLOWED_TYPE_SETS.archives.has(file.type)) {
     return 'archives';
   }
   return 'unknown';

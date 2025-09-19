@@ -9,9 +9,6 @@
 
 // 重新导出所有模块的功能
 // 导入主要功能用于向后兼容
-import { DAYS_PER_WEEK } from "@/constants/time";
-import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants';
-
 import {
   calculateStorageStats,
   performHealthCheck,
@@ -33,7 +30,7 @@ import {
 import {
   CacheManager,
   exportAnalyticsData,
-  type ExportData
+  type ExportData,
 } from '@/lib/locale-storage-analytics-utils';
 import type {
   StorageEventListener,
@@ -41,28 +38,45 @@ import type {
   StorageOperationResult,
   StorageStats,
 } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  HOURS_PER_DAY,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 export {
-  calculateHealthCheck, calculateStorageEfficiency, calculateStorageStats,
-  getStorageStats, performHealthCheck
+  calculateHealthCheck,
+  calculateStorageEfficiency,
+  calculateStorageStats,
+  getStorageStats,
+  performHealthCheck,
 } from '@/lib/locale-storage-analytics-core';
 export {
-  cleanupAnalyticsData, EventManager
+  cleanupAnalyticsData,
+  EventManager,
 } from '@/lib/locale-storage-analytics-events';
 export type {
   AccessLogEntry,
   AccessLogger,
   ErrorLogEntry,
-  ErrorLogger
+  ErrorLogger,
 } from '@/lib/locale-storage-analytics-events';
 export {
-  getPerformanceMetrics, getUsagePatterns, getUsageTrends
+  getPerformanceMetrics,
+  getUsagePatterns,
+  getUsageTrends,
 } from '@/lib/locale-storage-analytics-performance';
 export {
-  CacheManager, compressAnalyticsData, exportAnalyticsData, formatByteSize,
+  CacheManager,
+  compressAnalyticsData,
+  exportAnalyticsData,
+  formatByteSize,
   formatDuration,
   formatPercentage,
-  generateUniqueId, optimizeAnalyticsStorage, validateAnalyticsData
+  generateUniqueId,
+  optimizeAnalyticsStorage,
+  validateAnalyticsData,
 } from '@/lib/locale-storage-analytics-utils';
 
 /**
@@ -153,7 +167,8 @@ export class LocaleStorageAnalytics {
    * Log error
    */
   static logError(error: string, context?: string): void {
-    ErrorLogger.logError({ error, context });
+    const payload = context ? { error, context } : { error };
+    ErrorLogger.logError(payload);
   }
 
   /**
@@ -184,7 +199,13 @@ export class LocaleStorageAnalytics {
    * 清理分析数据
    * Cleanup analytics data
    */
-  static cleanupAnalyticsData(maxAge: number = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): void {
+  static cleanupAnalyticsData(
+    maxAge: number = DAYS_PER_WEEK *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW,
+  ): void {
     cleanupAnalyticsData(maxAge);
   }
 
@@ -234,5 +255,9 @@ export class LocaleStorageAnalytics {
  * Backward compatible type aliases
  */
 export type {
-  LocaleStorageAnalytics as Analytics, ExportData, PerformanceMetrics, UsagePatterns, UsageTrends
+  LocaleStorageAnalytics as Analytics,
+  ExportData,
+  PerformanceMetrics,
+  UsagePatterns,
+  UsageTrends,
 };

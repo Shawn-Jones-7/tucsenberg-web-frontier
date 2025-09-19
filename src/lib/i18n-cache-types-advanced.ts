@@ -5,11 +5,6 @@
  * 提供缓存系统的高级配置选项、策略和扩展功能
  */
 
-import { COUNT_14, COUNT_256, MAGIC_16, MAGIC_32, MAGIC_512, MAGIC_6 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THIRTY_SECONDS_MS } from '@/constants';
-
-import { DEC_0_05, MAGIC_0_8 } from "@/constants/decimal";
-import { MINUTE_MS, DAYS_PER_WEEK } from "@/constants/time";
 import type { Locale } from '@/types/i18n';
 import type {
   CacheBackupConfig,
@@ -21,6 +16,28 @@ import type {
   CacheSecurityConfig,
   CacheSyncOptions,
 } from '@/lib/i18n-cache-types-interfaces';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  HOURS_PER_DAY,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+  THIRTY_SECONDS_MS,
+} from '@/constants';
+import {
+  COUNT_14,
+  COUNT_256,
+  MAGIC_6,
+  MAGIC_16,
+  MAGIC_32,
+  MAGIC_512,
+} from '@/constants/count';
+import { DEC_0_05, MAGIC_0_8 } from '@/constants/decimal';
+import { DAYS_PER_WEEK, MINUTE_MS } from '@/constants/time';
 
 /**
  * 高级缓存配置
@@ -297,7 +314,11 @@ export const DEFAULT_ADVANCED_CACHE_CONFIG: AdvancedCacheConfig = {
   // 备份配置
   backup: {
     enableBackup: false,
-    backupInterval: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+    backupInterval:
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW,
     maxBackups: DAYS_PER_WEEK,
     backupLocation: './cache-backups',
     compressionEnabled: true,
@@ -409,7 +430,11 @@ export class CacheConfigFactory {
       },
       backup: {
         enableBackup: true,
-        backupInterval: MAGIC_6 * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 6 hours
+        backupInterval:
+          MAGIC_6 *
+          SECONDS_PER_MINUTE *
+          SECONDS_PER_MINUTE *
+          ANIMATION_DURATION_VERY_SLOW, // 6 hours
         maxBackups: COUNT_14,
         backupLocation: './cache-backups',
         compressionEnabled: true,

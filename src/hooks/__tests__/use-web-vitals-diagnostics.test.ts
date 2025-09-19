@@ -1,11 +1,15 @@
 import { act, renderHook } from '@testing-library/react';
+import type { RenderHookResult } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 // 4. 导入测试常量和被测试的模块
 import {
   TEST_COUNT_CONSTANTS,
   TEST_WEB_VITALS_DIAGNOSTICS,
 } from '@/constants/test-constants';
 import { useWebVitalsDiagnostics } from '@/hooks/use-web-vitals-diagnostics';
+import type { UseWebVitalsDiagnosticsReturn } from '@/hooks/web-vitals-diagnostics-types';
+import type { DiagnosticReport } from '@/hooks/web-vitals-diagnostics-utils';
 
 // 1. 直接Mock模块 - 移到文件顶部确保在所有导入前执行
 vi.mock('@/lib/enhanced-web-vitals', () => ({
@@ -15,6 +19,11 @@ vi.mock('@/lib/enhanced-web-vitals', () => ({
     cleanup: vi.fn(),
   },
 }));
+
+const renderDiagnosticsHook = (): RenderHookResult<
+  UseWebVitalsDiagnosticsReturn,
+  void
+> => renderHook(() => useWebVitalsDiagnostics());
 
 // 2. 使用vi.hoisted确保Mock函数在模块导入前设置
 const { mockLocalStorage, mockConsoleWarn } = vi.hoisted(() => ({
@@ -26,6 +35,18 @@ const { mockLocalStorage, mockConsoleWarn } = vi.hoisted(() => ({
   },
   mockConsoleWarn: vi.fn(),
 }));
+
+const getCollectorMock = async () => {
+  const { enhancedWebVitalsCollector } = await import(
+    '@/lib/enhanced-web-vitals'
+  );
+  return vi.mocked(enhancedWebVitalsCollector);
+};
+
+type DiagnosticsHookRender = ReturnType<typeof renderDiagnosticsHook>;
+type DiagnosticsHookResult = DiagnosticsHookRender['result'];
+
+let performanceNowSpy: ReturnType<typeof vi.spyOn> | null = null;
 
 // 3. Mock浏览器API
 Object.defineProperty(global, 'localStorage', {
@@ -72,41 +93,58 @@ const verifyMockSetup = async () => {
 };
 
 // 辅助函数：验证Hook返回值的完整性
-const validateHookResult = (result: any) => {
-  // 在测试环境中，Hook应该立即返回有效对象
-  expect((result as any).current).toBeTruthy();
-  expect((result as any).current).not.toBeNull();
-  expect(typeof (result as any).current.refreshDiagnostics).toBe('function');
-  expect(typeof (result as any).current.getPerformanceTrends).toBe('function');
-  expect(typeof (result as any).current.exportReport).toBe('function');
-  expect(typeof (result as any).current.getPageComparison).toBe('function');
-  expect(typeof (result as any).current.clearHistory).toBe('function');
+const validateHookResult = ({ current }: DiagnosticsHookResult) => {
+  expect(current).toBeTruthy();
+  expect(current).not.toBeNull();
+  expect(typeof current.refreshDiagnostics).toBe('function');
+  expect(typeof current.getPerformanceTrends).toBe('function');
+  expect(typeof current.exportReport).toBe('function');
+  expect(typeof current.getPageComparison).toBe('function');
+  expect(typeof current.clearHistory).toBe('function');
 };
 
 describe('useWebVitalsDiagnostics', () => {
+  const baseTimestamp = Date.now();
+
+  const mockDetailedMetrics: DetailedWebVitals = {
+    cls: TEST_WEB_VITALS_DIAGNOSTICS.CLS_BASELINE,
+    fid: TEST_WEB_VITALS_DIAGNOSTICS.FID_BASELINE,
+    lcp: TEST_WEB_VITALS_DIAGNOSTICS.LCP_BASELINE,
+    fcp: TEST_WEB_VITALS_DIAGNOSTICS.FCP_BASELINE,
+    ttfb: TEST_WEB_VITALS_DIAGNOSTICS.TTFB_BASELINE,
+    inp: TEST_WEB_VITALS_DIAGNOSTICS.INP_BASELINE,
+    domContentLoaded: 1200,
+    loadComplete: 2000,
+    firstPaint: 900,
+    resourceTiming: {
+      totalResources: 5,
+      slowResources: [],
+      totalSize: 0,
+      totalDuration: 0,
+    },
+    connection: {
+      effectiveType: '4g',
+      downlink: TEST_WEB_VITALS_DIAGNOSTICS.NETWORK_DOWNLINK,
+      rtt: TEST_WEB_VITALS_DIAGNOSTICS.NETWORK_RTT,
+      saveData: false,
+    },
+    device: {
+      memory: TEST_WEB_VITALS_DIAGNOSTICS.DEVICE_MEMORY,
+      cores: 4,
+      userAgent: 'test-agent',
+      viewport: { width: 1920, height: 1080 },
+    },
+    page: {
+      url: 'http://localhost:3000/test',
+      referrer: '',
+      title: 'Diagnostics Test Page',
+      timestamp: baseTimestamp,
+    },
+  };
+
   // Mock返回值应该匹配generateDiagnosticReport的返回类型
   const mockGenerateReportResult = {
-    metrics: {
-      cls: TEST_WEB_VITALS_DIAGNOSTICS.CLS_BASELINE,
-      lcp: TEST_WEB_VITALS_DIAGNOSTICS.LCP_BASELINE,
-      fid: TEST_WEB_VITALS_DIAGNOSTICS.FID_BASELINE,
-      inp: TEST_WEB_VITALS_DIAGNOSTICS.INP_BASELINE,
-      ttfb: TEST_WEB_VITALS_DIAGNOSTICS.TTFB_BASELINE,
-      fcp: TEST_WEB_VITALS_DIAGNOSTICS.FCP_BASELINE,
-      connection: {
-        effectiveType: '4g',
-        downlink: TEST_WEB_VITALS_DIAGNOSTICS.NETWORK_DOWNLINK,
-        rtt: TEST_WEB_VITALS_DIAGNOSTICS.NETWORK_RTT,
-        saveData: false,
-      },
-      deviceInfo: {
-        memory: TEST_WEB_VITALS_DIAGNOSTICS.DEVICE_MEMORY,
-        cores: 4,
-        userAgent: 'test-agent',
-        viewport: { width: 1920, height: 1080 },
-      },
-      slowResources: [],
-    },
+    metrics: mockDetailedMetrics,
     analysis: {
       issues: ['LCP could be improved'],
       recommendations: ['Optimize images', 'Use CDN'],
@@ -115,14 +153,14 @@ describe('useWebVitalsDiagnostics', () => {
   };
 
   // 期望的DiagnosticReport结构（Hook内部转换后的）
-  const mockDiagnosticReport = {
-    timestamp: Date.now(),
-    vitals: mockGenerateReportResult.metrics,
+  const mockDiagnosticReport: DiagnosticReport = {
+    timestamp: baseTimestamp,
+    vitals: mockDetailedMetrics,
     score: mockGenerateReportResult.analysis.score,
     issues: mockGenerateReportResult.analysis.issues,
     recommendations: mockGenerateReportResult.analysis.recommendations,
-    pageUrl: 'http://localhost:3000/test',
-    userAgent: 'test-agent',
+    pageUrl: mockDetailedMetrics.page.url,
+    userAgent: mockDetailedMetrics.device.userAgent,
   };
 
   beforeEach(async () => {
@@ -133,19 +171,17 @@ describe('useWebVitalsDiagnostics', () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
 
+    performanceNowSpy = vi
+      .spyOn(globalThis.performance, 'now')
+      .mockReturnValue(100);
+
     // 3. 获取Mock实例并设置默认行为
-    const { enhancedWebVitalsCollector } = await import(
-      '@/lib/enhanced-web-vitals'
+    const collector = await getCollectorMock();
+    collector.generateDiagnosticReport.mockReturnValue(
+      mockGenerateReportResult,
     );
-    (
-      enhancedWebVitalsCollector.generateDiagnosticReport as unknown
-    ).mockReturnValue(mockGenerateReportResult);
-    (enhancedWebVitalsCollector.getDetailedMetrics as unknown).mockReturnValue(
-      {},
-    );
-    (enhancedWebVitalsCollector.cleanup as unknown).mockImplementation(
-      () => {},
-    );
+    collector.getDetailedMetrics.mockReturnValue(mockDetailedMetrics);
+    collector.cleanup.mockImplementation(() => {});
 
     // 4. 设置浏览器API Mock的默认行为
     mockLocalStorage.getItem.mockReturnValue(null);
@@ -160,18 +196,12 @@ describe('useWebVitalsDiagnostics', () => {
     vi.clearAllMocks();
 
     // 获取Mock实例并重新设置默认行为
-    const { enhancedWebVitalsCollector } = await import(
-      '@/lib/enhanced-web-vitals'
+    const collector = await getCollectorMock();
+    collector.generateDiagnosticReport.mockReturnValue(
+      mockGenerateReportResult,
     );
-    (
-      enhancedWebVitalsCollector.generateDiagnosticReport as unknown
-    ).mockReturnValue(mockGenerateReportResult);
-    (enhancedWebVitalsCollector.getDetailedMetrics as unknown).mockReturnValue(
-      {},
-    );
-    (enhancedWebVitalsCollector.cleanup as unknown).mockImplementation(
-      () => {},
-    );
+    collector.getDetailedMetrics.mockReturnValue(mockDetailedMetrics);
+    collector.cleanup.mockImplementation(() => {});
 
     // 重置浏览器API Mock
     mockLocalStorage.getItem.mockReturnValue(null);
@@ -183,13 +213,17 @@ describe('useWebVitalsDiagnostics', () => {
 
   afterEach(() => {
     vi.useRealTimers();
+    if (performanceNowSpy) {
+      performanceNowSpy.mockRestore();
+      performanceNowSpy = null;
+    }
     // 统一使用vi.clearAllMocks()而不是vi.resetAllMocks()
     vi.clearAllMocks();
   });
 
   describe('initialization', () => {
     it('should initialize with loading state', () => {
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       expect(result.current).not.toBeNull();
@@ -201,7 +235,7 @@ describe('useWebVitalsDiagnostics', () => {
     });
 
     it('should provide all required functions', () => {
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       expect(result.current).not.toBeNull();
@@ -226,7 +260,7 @@ describe('useWebVitalsDiagnostics', () => {
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(historicalData));
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       expect(result.current).not.toBeNull();
@@ -240,7 +274,7 @@ describe('useWebVitalsDiagnostics', () => {
   describe('refreshDiagnostics', () => {
     it('should generate new diagnostic report', async () => {
       await resetMocksToDefault();
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 在测试环境中，Hook应该立即可用，无需等待初始化
       expect(result.current).toBeTruthy();
@@ -274,7 +308,7 @@ describe('useWebVitalsDiagnostics', () => {
 
     it('should save report to localStorage', async () => {
       await resetMocksToDefault();
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 在测试环境中，Hook应该立即可用
       expect(result.current).toBeTruthy();
@@ -297,16 +331,12 @@ describe('useWebVitalsDiagnostics', () => {
       await resetMocksToDefault();
 
       // 设置错误Mock
-      const { enhancedWebVitalsCollector } = await import(
-        '@/lib/enhanced-web-vitals'
-      );
-      (
-        enhancedWebVitalsCollector.generateDiagnosticReport as unknown
-      ).mockImplementation(() => {
+      const collector = await getCollectorMock();
+      collector.generateDiagnosticReport.mockImplementation(() => {
         throw new Error('Report generation failed');
       });
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 在测试环境中，Hook应该立即可用
       expect(result.current).toBeTruthy();
@@ -327,16 +357,12 @@ describe('useWebVitalsDiagnostics', () => {
       await resetMocksToDefault();
 
       // 设置错误Mock
-      const { enhancedWebVitalsCollector } = await import(
-        '@/lib/enhanced-web-vitals'
-      );
-      (
-        enhancedWebVitalsCollector.generateDiagnosticReport as unknown
-      ).mockImplementation(() => {
+      const collector = await getCollectorMock();
+      collector.generateDiagnosticReport.mockImplementation(() => {
         throw new Error('String error');
       });
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 在测试环境中，Hook应该立即可用
       expect(result.current).toBeTruthy();
@@ -361,7 +387,7 @@ describe('useWebVitalsDiagnostics', () => {
         throw new Error('Storage error');
       });
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // Should not throw and should warn
       expect(() => result.current).not.toThrow();
@@ -377,7 +403,7 @@ describe('useWebVitalsDiagnostics', () => {
       // 设置无效JSON
       mockLocalStorage.getItem.mockReturnValue('invalid json');
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       expect(() => result.current).not.toThrow();
       expect(result.current).not.toBeNull();
@@ -390,7 +416,7 @@ describe('useWebVitalsDiagnostics', () => {
     it('should handle non-array data in localStorage', async () => {
       mockLocalStorage.getItem.mockReturnValue('{"not": "array"}');
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -411,7 +437,7 @@ describe('useWebVitalsDiagnostics', () => {
         throw new Error('Storage full');
       });
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -440,7 +466,7 @@ describe('useWebVitalsDiagnostics', () => {
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(manyReports));
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       expect(result.current).not.toBeNull();
@@ -462,7 +488,7 @@ describe('useWebVitalsDiagnostics', () => {
   describe('performance trends analysis', () => {
     it('should return null when insufficient data', async () => {
       await resetMocksToDefault();
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -495,7 +521,7 @@ describe('useWebVitalsDiagnostics', () => {
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(historicalData));
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -518,12 +544,8 @@ describe('useWebVitalsDiagnostics', () => {
       await resetMocksToDefault();
 
       // 设置Mock返回零值，确保新生成的报告也是零值
-      const { enhancedWebVitalsCollector } = await import(
-        '@/lib/enhanced-web-vitals'
-      );
-      (
-        enhancedWebVitalsCollector.generateDiagnosticReport as unknown
-      ).mockReturnValue({
+      const collector = await getCollectorMock();
+      collector.generateDiagnosticReport.mockReturnValue({
         ...mockGenerateReportResult,
         metrics: {
           ...mockGenerateReportResult.metrics,
@@ -548,7 +570,7 @@ describe('useWebVitalsDiagnostics', () => {
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(historicalData));
 
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -568,7 +590,7 @@ describe('useWebVitalsDiagnostics', () => {
 
   describe('data export', () => {
     it('should call exportReport function', async () => {
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -586,7 +608,7 @@ describe('useWebVitalsDiagnostics', () => {
     });
 
     it('should handle export with empty state', async () => {
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -600,7 +622,7 @@ describe('useWebVitalsDiagnostics', () => {
   describe('clear history', () => {
     it('should clear historical data', async () => {
       await resetMocksToDefault();
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -629,7 +651,7 @@ describe('useWebVitalsDiagnostics', () => {
   describe('edge cases', () => {
     it('should handle multiple rapid refresh calls', async () => {
       await resetMocksToDefault();
-      const { result } = renderHook(() => useWebVitalsDiagnostics());
+      const { result } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);
@@ -652,7 +674,7 @@ describe('useWebVitalsDiagnostics', () => {
 
     it('should handle component unmounting during async operation', async () => {
       await resetMocksToDefault();
-      const { result, unmount } = renderHook(() => useWebVitalsDiagnostics());
+      const { result, unmount } = renderDiagnosticsHook();
 
       // 验证Hook正确初始化
       validateHookResult(result);

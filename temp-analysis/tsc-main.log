@@ -1,0 +1,15 @@
+src/types/test-types.ts(471,35): error TS2344: Type '(locale: string) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'locale' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'string'.
+src/types/test-types.ts(472,33): error TS2344: Type '(locale: string) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'locale' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'string'.
+src/types/test-types.ts(482,5): error TS2344: Type '(success: (position: GeolocationPosition) => void, error?: ((error: GeolocationPositionError) => void) | undefined) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'success' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type '(position: GeolocationPosition) => void'.
+src/types/test-types.ts(488,5): error TS2344: Type '(success: (position: GeolocationPosition) => void, error?: ((error: GeolocationPositionError) => void) | undefined) => number' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'success' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type '(position: GeolocationPosition) => void'.
+src/types/test-types.ts(493,28): error TS2344: Type '(watchId: number) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'watchId' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'number'.

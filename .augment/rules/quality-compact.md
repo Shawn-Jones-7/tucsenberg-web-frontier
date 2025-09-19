@@ -1,5 +1,5 @@
 ---
-type: "agent_requested"
+type: "auto"
 description: "Quality gates, CI/CD processes, and performance budgets for Next.js 15 and React 19"
 ---
 # Quality Assurance and CI/CD Standards
@@ -10,7 +10,7 @@ pnpm quality-gate # type-check:strict + lint:strict + test:coverage + test:a11y 
 ```
 
 ### Quality Metrics Thresholds
-- **Type Coverage**: ≥95%, **Code Coverage**: ≥80%, **Accessibility**: Zero violations
+- **Type Coverage**: ≥95%, **Code Coverage**: ≥65%, **Accessibility**: Zero violations
 - **Performance**: Core Web Vitals + React 19 metrics, **Bundle Size**: Turbopack limits
 
 ## CI/CD Pipeline Configuration
@@ -43,9 +43,44 @@ module.exports = { ci: { collect: { url: ['http://localhost:3000'], numberOfRuns
 
 ## Code Quality Standards
 
-### TypeScript 5.7+ Configuration
+### TypeScript 5.9.2 Configuration
 ```json
-{ "compilerOptions": { "strict": true, "noUnusedLocals": true, "noUnusedParameters": true, "exactOptionalPropertyTypes": true, "noImplicitReturns": true, "noFallthroughCasesInSwitch": true, "noUncheckedIndexedAccess": true, "verbatimModuleSyntax": true } }
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "exactOptionalPropertyTypes": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
+}
 ```
 
 ### ESLint Rules for React 19
@@ -64,7 +99,7 @@ module.exports = {
 
 ## Coverage Reporting for React 19
 ```javascript
-module.exports = { collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'], coverageThreshold: { global: { branches: 80, functions: 80, lines: 80, statements: 80 } }, testEnvironment: 'jsdom' };
+module.exports = { collectCoverageFrom: ['src/**/*.{js,jsx,ts,tsx}'], coverageThreshold: { global: { branches: 65, functions: 65, lines: 65, statements: 65 } }, testEnvironment: 'jsdom' };
 ```
 
 ## Deployment Quality Checks

@@ -1,12 +1,10 @@
 // 导入主要功能用于向后兼容
 import { PerformanceConfigManager } from '@/lib/performance-monitoring-core-config';
-import { ANIMATION_DURATION_VERY_SLOW, SECONDS_PER_MINUTE } from '@/constants';
-
-import { PerformanceMetricsManager } from '@/lib/performance-monitoring-core-metrics';
 import {
   PerformanceToolConflictChecker,
   type ToolConflictResult,
 } from '@/lib/performance-monitoring-core-conflicts';
+import { PerformanceMetricsManager } from '@/lib/performance-monitoring-core-metrics';
 import {
   PerformanceReportGenerator,
   type PerformanceReport,
@@ -17,6 +15,7 @@ import type {
   PerformanceMetricSource,
   PerformanceMetricType,
 } from '@/lib/performance-monitoring-types';
+import { ANIMATION_DURATION_VERY_SLOW, SECONDS_PER_MINUTE } from '@/constants';
 
 /**
  * 性能监控核心协调器 - 主入口
@@ -30,16 +29,22 @@ export type { ToolConflictResult } from '@/lib/performance-monitoring-core-confl
 export type { PerformanceReport } from '@/lib/performance-monitoring-core-reports';
 export {
   createConfigManager,
-  getDefaultConfig, PerformanceConfigManager, validatePerformanceConfig
+  getDefaultConfig,
+  PerformanceConfigManager,
+  validatePerformanceConfig,
 } from '@/lib/performance-monitoring-core-config';
 export {
-  createConflictChecker, PerformanceToolConflictChecker, quickConflictCheck
+  createConflictChecker,
+  PerformanceToolConflictChecker,
+  quickConflictCheck,
 } from '@/lib/performance-monitoring-core-conflicts';
 export {
-  createMetricsManager, PerformanceMetricsManager
+  createMetricsManager,
+  PerformanceMetricsManager,
 } from '@/lib/performance-monitoring-core-metrics';
 export {
-  createReportGenerator, PerformanceReportGenerator
+  createReportGenerator,
+  PerformanceReportGenerator,
 } from '@/lib/performance-monitoring-core-reports';
 
 /**
@@ -128,7 +133,9 @@ export class PerformanceMonitoringCore {
    * 生成性能报告
    * Generate performance report
    */
-  generateReport(timeWindow = SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): PerformanceReport {
+  generateReport(
+    timeWindow = SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+  ): PerformanceReport {
     const metrics = this.metricsManager.getAllMetrics();
     return this.reportGenerator.generateReport(metrics, timeWindow);
   }

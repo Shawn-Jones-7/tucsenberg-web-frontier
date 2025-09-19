@@ -245,7 +245,7 @@ class PerformanceAnalyzer {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k**i).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   }
 
   /**
@@ -298,7 +298,7 @@ class PerformanceAnalyzer {
    */
   printBundleSizeDetails() {
     console.log('\n📦 包大小分析:');
-    const {bundleSize} = this.report.performance;
+    const { bundleSize } = this.report.performance;
 
     Object.entries(bundleSize).forEach(([type, size]) => {
       const limit = this.getBundleLimit(type);

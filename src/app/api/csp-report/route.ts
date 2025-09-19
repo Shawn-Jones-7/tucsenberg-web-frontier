@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import type { CSPReport } from '@/config/security';
 import { env } from '@/../env.mjs';
+import type { CSPReport } from '@/config/security';
 
 /**
  * CSP Report endpoint
@@ -9,50 +9,74 @@ import { env } from '@/../env.mjs';
  * This endpoint receives Content Security Policy violation reports
  * and logs them for security monitoring and debugging.
  */
-const isDevIgnored = () => env.NODE_ENV === 'development' && !env.CSP_REPORT_URI;
-const isContentTypeValid = (ct: string | null) => Boolean(ct && ct.includes('application/csp-report'));
+const isDevIgnored = () =>
+  env.NODE_ENV === 'development' && !env.CSP_REPORT_URI;
+const isContentTypeValid = (ct: string | null) =>
+  Boolean(ct && ct.includes('application/csp-report'));
 const getClientIp = (request: NextRequest) =>
-  request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown';
-const buildViolationData = (request: NextRequest, cspReport: CSPReport['csp-report']) => ({
-    timestamp: new Date().toISOString(),
-    documentUri: cspReport['document-uri'],
-    referrer: cspReport.referrer,
-    violatedDirective: cspReport['violated-directive'],
-    effectiveDirective: cspReport['effective-directive'],
-    originalPolicy: cspReport['original-policy'],
-    blockedUri: cspReport['blocked-uri'],
-    lineNumber: cspReport['line-number'],
-    columnNumber: cspReport['column-number'],
-    sourceFile: cspReport['source-file'],
-    statusCode: cspReport['status-code'],
-    scriptSample: cspReport['script-sample'],
-    disposition: cspReport.disposition,
-    userAgent: request.headers.get('user-agent'),
-    ip: getClientIp(request),
-  });
+  request.headers.get('x-forwarded-for') ||
+  request.headers.get('x-real-ip') ||
+  'unknown';
+const buildViolationData = (
+  request: NextRequest,
+  cspReport: CSPReport['csp-report'],
+) => ({
+  timestamp: new Date().toISOString(),
+  documentUri: cspReport['document-uri'],
+  referrer: cspReport.referrer,
+  violatedDirective: cspReport['violated-directive'],
+  effectiveDirective: cspReport['effective-directive'],
+  originalPolicy: cspReport['original-policy'],
+  blockedUri: cspReport['blocked-uri'],
+  lineNumber: cspReport['line-number'],
+  columnNumber: cspReport['column-number'],
+  sourceFile: cspReport['source-file'],
+  statusCode: cspReport['status-code'],
+  scriptSample: cspReport['script-sample'],
+  disposition: cspReport.disposition,
+  userAgent: request.headers.get('user-agent'),
+  ip: getClientIp(request),
+});
 const isSuspiciousReport = (csp: CSPReport['csp-report']) => {
-    const patterns = ['eval', 'data:text/html', 'vbscript:', 'onload', 'onerror', 'onclick'];
-    const blocked = csp['blocked-uri']?.toLowerCase() || '';
-    const sample = csp['script-sample']?.toLowerCase() || '';
-    return patterns.some((p) => blocked.includes(p) || sample.includes(p));
+  const patterns = [
+    'eval',
+    'data:text/html',
+    'vbscript:',
+    'onload',
+    'onerror',
+    'onclick',
+  ];
+  const blocked = csp['blocked-uri']?.toLowerCase() || '';
+  const sample = csp['script-sample']?.toLowerCase() || '';
+  return patterns.some((p) => blocked.includes(p) || sample.includes(p));
 };
 
 async function handleCspRequest(request: NextRequest) {
-
   try {
-    if (isDevIgnored()) return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    if (isDevIgnored())
+      return NextResponse.json({ status: 'ignored' }, { status: 200 });
 
     const contentType = request.headers.get('content-type');
     if (!isContentTypeValid(contentType)) {
-      return NextResponse.json({ error: 'Invalid content type' }, { status: 400 });
+      return NextResponse.json(
+        { error: 'Invalid content type' },
+        { status: 400 },
+      );
     }
 
     const report: CSPReport = await request.json();
     const cspReport = report['csp-report'];
-    if (!cspReport) return NextResponse.json({ error: 'Invalid CSP report format' }, { status: 400 });
+    if (!cspReport)
+      return NextResponse.json(
+        { error: 'Invalid CSP report format' },
+        { status: 400 },
+      );
 
     const violationData = buildViolationData(request, cspReport);
-    logger.warn('CSP Violation Report:', JSON.stringify(violationData, null, 2));
+    logger.warn(
+      'CSP Violation Report:',
+      JSON.stringify(violationData, null, 2),
+    );
 
     if (env.NODE_ENV === 'production') {
       logger.error('Production CSP Violation:', violationData);
@@ -62,10 +86,16 @@ async function handleCspRequest(request: NextRequest) {
       logger.error('SUSPICIOUS CSP VIOLATION DETECTED:', violationData);
     }
 
-    return NextResponse.json({ status: 'received', timestamp: violationData.timestamp }, { status: 200 });
+    return NextResponse.json(
+      { status: 'received', timestamp: violationData.timestamp },
+      { status: 200 },
+    );
   } catch (error) {
     logger.error('Error processing CSP report:', error as unknown);
-    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+    return NextResponse.json(
+      { error: 'Internal server error' },
+      { status: 500 },
+    );
   }
 }
 

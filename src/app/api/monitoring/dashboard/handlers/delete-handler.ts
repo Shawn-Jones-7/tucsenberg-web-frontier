@@ -1,6 +1,6 @@
-import { HTTP_BAD_REQUEST } from "@/constants";
-import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { HTTP_BAD_REQUEST } from '@/constants';
 
 /**
  * DELETE /api/monitoring/dashboard

@@ -9,11 +9,11 @@
 
 import { describe, expect, it } from 'vitest';
 import type { _ContentType } from '@/types/content';
+import { validateContentMetadata } from '@/lib/content-validation';
 import {
   TEST_CONTENT_LIMITS,
   TEST_COUNT_CONSTANTS,
 } from '@/constants/test-constants';
-import { validateContentMetadata } from '@/lib/content-validation';
 
 describe('Content Validation - Basic Tests', () => {
   describe('validateContentMetadata - Basic Validation', () => {

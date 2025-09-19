@@ -1,9 +1,12 @@
 #!/usr/bin/env tsx
-
-import { Project, ts } from 'ts-morph';
-import { resolve } from 'node:path';
 import { writeFileSync } from 'node:fs';
-import { loadEnhancedMapping, ensureConstDefined, shouldSkipNode } from './utils';
+import { resolve } from 'node:path';
+import { Project, ts } from 'ts-morph';
+import {
+  ensureConstDefined,
+  loadEnhancedMapping,
+  shouldSkipNode,
+} from './utils';
 
 // 测试AST工具的核心功能
 async function testASTCore() {
@@ -68,12 +71,10 @@ async function testASTCore() {
       log.push(`\n🎉 AST工具核心功能正常！`);
       writeFileSync(resultPath, log.join('\n'));
       return true;
-    } 
-      log.push(`\n❌ AST工具可能存在问题`);
-      writeFileSync(resultPath, log.join('\n'));
-      return false;
-    
-
+    }
+    log.push(`\n❌ AST工具可能存在问题`);
+    writeFileSync(resultPath, log.join('\n'));
+    return false;
   } catch (error) {
     log.push(`❌ 测试失败: ${error}`);
     const resultPath = resolve(__dirname, 'test-result.txt');
@@ -84,7 +85,7 @@ async function testASTCore() {
 
 // 运行测试
 if (require.main === module) {
-  testASTCore().then(success => {
+  testASTCore().then((success) => {
     process.exit(success ? 0 : 1);
   });
 }

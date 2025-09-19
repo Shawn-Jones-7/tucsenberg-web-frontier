@@ -5,16 +5,27 @@
 
 'use client';
 
-import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO, MAGIC_1_5 } from '@/constants';
-
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
-import type { StorageOperationResult } from '@/lib/locale-storage-types';
 import {
   cleanupDuplicateDetections,
   cleanupExpiredDetections,
   limitHistorySize,
 } from '@/lib/locale-storage-history-maintenance/cleanup';
+import type {
+  LocaleDetectionRecord,
+  StorageOperationResult,
+} from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  MAGIC_1_5,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { CACHE_LIMITS } from '@/constants/i18n-constants';
 
 /**
  * 执行完整的历史维护
@@ -112,26 +123,34 @@ export function getMaintenanceRecommendations(): {
   return { recommendations, urgency, estimatedBenefit };
 }
 
-function applyExpiredCleanup(options: { cleanupExpired?: boolean; maxAge?: number }): number {
+function applyExpiredCleanup(options: {
+  cleanupExpired?: boolean;
+  maxAge?: number;
+}): number {
   if (options.cleanupExpired === false) return ZERO;
   const res = cleanupExpiredDetections(options.maxAge);
   return res.success ? res.data || ZERO : ZERO;
 }
 
-function applyDuplicateCleanup(options: { removeDuplicates?: boolean }): number {
+function applyDuplicateCleanup(options: {
+  removeDuplicates?: boolean;
+}): number {
   if (options.removeDuplicates === false) return ZERO;
   const res = cleanupDuplicateDetections();
   return res.success ? res.data || ZERO : ZERO;
 }
 
-function applySizeLimit(options: { limitSize?: boolean; maxRecords?: number }): number {
+function applySizeLimit(options: {
+  limitSize?: boolean;
+  maxRecords?: number;
+}): number {
   if (options.limitSize === false) return ZERO;
   const res = limitHistorySize(options.maxRecords);
   return res.success ? res.data || ZERO : ZERO;
 }
 
 function assessCount(
-  records: Array<{ timestamp: number } & Record<string, unknown>>,
+  records: LocaleDetectionRecord[],
   recommendations: string[],
   currentUrgency: 'low' | 'medium' | 'high',
 ): 'low' | 'medium' | 'high' {
@@ -148,12 +167,20 @@ function assessCount(
 }
 
 function assessExpired(
-  records: Array<{ timestamp: number }>,
+  records: LocaleDetectionRecord[],
   recommendations: string[],
   currentUrgency: 'low' | 'medium' | 'high',
 ): 'low' | 'medium' | 'high' {
-  const thirtyDaysAgo = Date.now() - DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
-  const expiredCount = records.filter((r) => r.timestamp < thirtyDaysAgo).length;
+  const thirtyDaysAgo =
+    Date.now() -
+    DAYS_PER_MONTH *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW;
+  const expiredCount = records.filter(
+    (r) => r.timestamp < thirtyDaysAgo,
+  ).length;
   if (expiredCount > ZERO) {
     recommendations.push(`发现 ${expiredCount} 条过期记录，建议清理`);
     return currentUrgency === 'low' ? 'medium' : currentUrgency;
@@ -162,14 +189,15 @@ function assessExpired(
 }
 
 function assessDuplicates(
-  records: Array<{ locale: unknown; source: unknown; timestamp: number }>,
+  records: LocaleDetectionRecord[],
   recommendations: string[],
 ): void {
   const uniqueKeys = new Set<string>();
   let duplicateCount = ZERO;
   for (const record of records) {
     const key = `${String(record.locale)}-${String(record.source)}-${record.timestamp}`;
-    if (uniqueKeys.has(key)) duplicateCount += ONE; else uniqueKeys.add(key);
+    if (uniqueKeys.has(key)) duplicateCount += ONE;
+    else uniqueKeys.add(key);
   }
   if (duplicateCount > ZERO) {
     recommendations.push(`发现 ${duplicateCount} 条重复记录，建议清理`);
@@ -177,12 +205,17 @@ function assessDuplicates(
 }
 
 function assessIntegrity(
-  records: Array<{ locale: unknown; source: unknown; timestamp: number; confidence: number }>,
+  records: LocaleDetectionRecord[],
   recommendations: string[],
   currentUrgency: 'low' | 'medium' | 'high',
 ): 'low' | 'medium' | 'high' {
   const invalidRecords = records.filter(
-    (record) => !record.locale || !record.source || !record.timestamp || record.confidence < ZERO || record.confidence > ONE,
+    (record) =>
+      !record.locale ||
+      !record.source ||
+      !record.timestamp ||
+      record.confidence < ZERO ||
+      record.confidence > ONE,
   );
   if (invalidRecords.length > ZERO) {
     recommendations.push(`发现 ${invalidRecords.length} 条无效记录，建议清理`);

@@ -7,8 +7,7 @@
 
 'use client';
 
-import { ONE, ZERO } from "@/constants";
-import { MINUTE_MS } from "@/constants/time";
+import type { Locale } from '@/types/i18n';
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import {
@@ -18,7 +17,8 @@ import {
   type UserLocalePreference,
   type ValidationResult,
 } from '@/lib/locale-storage-types';
-import type { Locale } from '@/types/i18n';
+import { ONE, ZERO } from '@/constants';
+import { MINUTE_MS } from '@/constants/time';
 
 /**
  * 存储验证数据结构
@@ -158,13 +158,12 @@ export class LocaleValidationManager {
           data: { issues },
         };
       }
-        return {
-          success: false,
-          error: `发现 ${issues.length} 个问题`,
-          timestamp: Date.now(),
-          data: { issues },
-        };
-
+      return {
+        success: false,
+        error: `发现 ${issues.length} 个问题`,
+        timestamp: Date.now(),
+        data: { issues },
+      };
     } catch (error) {
       return {
         success: false,
@@ -193,7 +192,8 @@ export class LocaleValidationManager {
     if (typeof preference.confidence !== 'number') return false;
 
     // 验证值的合理性
-    if (preference.confidence < ZERO || preference.confidence > ONE) return false;
+    if (preference.confidence < ZERO || preference.confidence > ONE)
+      return false;
     if (preference.timestamp > Date.now() || preference.timestamp < ZERO)
       return false;
 
@@ -301,9 +301,9 @@ export class LocaleValidationManager {
    * Validate all storage data
    */
   static validateAllData(): Record<string, ValidationResult> {
-    const entries = (Object.keys(STORAGE_KEYS) as Array<
-      keyof typeof STORAGE_KEYS
-    >).map((key) => [key as string, this.validateSpecificData(key)] as const);
+    const entries = (
+      Object.keys(STORAGE_KEYS) as Array<keyof typeof STORAGE_KEYS>
+    ).map((key) => [key as string, this.validateSpecificData(key)] as const);
     return Object.fromEntries(entries) as Record<string, ValidationResult>;
   }
 
@@ -338,13 +338,12 @@ export class LocaleValidationManager {
           data: { issues, warnings },
         };
       }
-        return {
-          success: false,
-          error: `发现 ${issues.length} 个一致性问题`,
-          timestamp: Date.now(),
-          data: { issues, warnings },
-        };
-
+      return {
+        success: false,
+        error: `发现 ${issues.length} 个一致性问题`,
+        timestamp: Date.now(),
+        data: { issues, warnings },
+      };
     } catch (error) {
       return {
         success: false,

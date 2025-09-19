@@ -1,12 +1,22 @@
+import { cache } from 'react';
+import { logger } from '@/lib/logger';
+import {
+  ANIMATION_DURATION_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  HTTP_OK,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  ZERO,
+} from '@/constants';
 import {
   CACHE_DURATIONS,
   CACHE_LIMITS,
   PERFORMANCE_THRESHOLDS,
 } from '@/constants/i18n-constants';
-import { logger } from '@/lib/logger';
-import { ANIMATION_DURATION_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, HTTP_OK, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from '@/constants';
-
-import { cache } from 'react';
 
 /**
  * 缓存项接口

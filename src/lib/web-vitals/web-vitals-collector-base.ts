@@ -6,9 +6,8 @@
 'use client';
 
 import { WebVitalsObservers } from '@/lib/web-vitals/observers';
-import { COUNT_TEN, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type { DetailedWebVitals } from '@/lib/web-vitals/types';
+import { COUNT_TEN, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 /**
  * Web Vitals 收集器基础类
@@ -116,7 +115,10 @@ export class WebVitalsCollectorBase {
     this.metrics.resourceTiming = {
       totalResources: resources.length,
       slowResources,
-      totalSize: resources.reduce((sum, r) => sum + (r.transferSize || ZERO), ZERO),
+      totalSize: resources.reduce(
+        (sum, r) => sum + (r.transferSize || ZERO),
+        ZERO,
+      ),
       totalDuration: resources.reduce((sum, r) => sum + r.duration, ZERO),
     };
   }
@@ -163,8 +165,8 @@ export class WebVitalsCollectorBase {
    * 获取默认的设备信息
    */
   protected getDefaultDevice() {
-    const {deviceMemory} = (navigator as Navigator & { deviceMemory?: number });
-    const {hardwareConcurrency} = navigator;
+    const { deviceMemory } = navigator as Navigator & { deviceMemory?: number };
+    const { hardwareConcurrency } = navigator;
 
     return {
       ...(deviceMemory !== undefined && { memory: deviceMemory }),

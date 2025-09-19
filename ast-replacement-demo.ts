@@ -1,7 +1,7 @@
-import { MAGIC_2000 } from "@/constants/count";
-import { MAGIC_0_8 } from "@/constants/decimal";
-import { BYTES_PER_KB } from "@/constants/magic-numbers";
-import { DAYS_PER_WEEK } from "@/constants/time";
+import { MAGIC_2000 } from '@/constants/count';
+import { MAGIC_0_8 } from '@/constants/decimal';
+import { BYTES_PER_KB } from '@/constants/magic-numbers';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 // AST替换演示文件
 export function demoFunction() {
@@ -15,6 +15,6 @@ export function demoFunction() {
     percentage,
     count,
     size,
-    result: timeout * percentage + count * size
+    result: timeout * percentage + count * size,
   };
 }

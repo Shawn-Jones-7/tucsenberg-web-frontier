@@ -1,7 +1,6 @@
-import { QUALITY_CHECK_THRESHOLDS } from '@/constants/i18n-constants';
-import { COUNT_FIVE, HTTP_OK, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type { QualityIssue } from '@/types/translation-manager';
+import { COUNT_FIVE, HTTP_OK, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
+import { QUALITY_CHECK_THRESHOLDS } from '@/constants/i18n-constants';
 
 /**
  * 翻译工具函数集合

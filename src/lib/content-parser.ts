@@ -14,10 +14,10 @@ import {
   type Locale,
   type ParsedContent,
 } from '@/types/content';
-import { logger } from '@/lib/logger';
-import { CONTENT_LIMITS } from '@/constants/app-constants';
 import { CONTENT_DIR, validateFilePath } from '@/lib/content-utils';
 import { validateContentMetadata } from '@/lib/content-validation';
+import { logger } from '@/lib/logger';
+import { CONTENT_LIMITS } from '@/constants/app-constants';
 
 /**
  * Parse MDX file with frontmatter

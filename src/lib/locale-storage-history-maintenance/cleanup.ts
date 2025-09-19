@@ -5,26 +5,36 @@
 
 'use client';
 
-import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { LocalStorageManager } from '@/lib/locale-storage-local';
 import {
   createDefaultHistory,
   getDetectionHistory,
   HistoryCacheManager,
 } from '@/lib/locale-storage-history-core';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type {
   LocaleDetectionRecord,
   StorageOperationResult,
 } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { CACHE_LIMITS } from '@/constants/i18n-constants';
 
 /**
  * 清理过期的检测记录
  * Cleanup expired detection records
  */
 export function cleanupExpiredDetections(
-  maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+  maxAgeMs: number = DAYS_PER_MONTH *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW,
 ): StorageOperationResult<number> {
   const startTime = Date.now();
 

@@ -15,9 +15,9 @@ import type {
   ParsedContent,
 } from '@/types/content';
 import { getContentFiles, parseContentFile } from '@/lib/content-parser';
-import { getContentConfig, PAGES_DIR, POSTS_DIR } from '@/lib/content-utils';
 import { filterPosts } from '@/lib/content-query/filters';
 import { paginatePosts, sortPosts } from '@/lib/content-query/sorting';
+import { getContentConfig, PAGES_DIR, POSTS_DIR } from '@/lib/content-utils';
 
 /**
  * Get all blog posts

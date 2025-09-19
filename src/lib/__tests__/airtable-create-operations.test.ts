@@ -10,9 +10,15 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
+  AirtableBaseLike,
   AirtableServicePrivate,
   DynamicImportModule,
 } from '@/types/test-types';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import {
+  configureServiceForTesting,
+  createMockBase,
+} from './airtable/test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();
@@ -25,10 +31,17 @@ const mockTable = vi.fn().mockReturnValue({
   update: mockUpdate,
   destroy: mockDestroy,
 });
-const mockBase = vi.fn().mockReturnValue({
-  table: mockTable,
-});
+
+const tableFactory: AirtableBaseLike['table'] = (name) => {
+  void name;
+  return mockTable() as ReturnType<AirtableBaseLike['table']>;
+};
+
+const mockBase = vi.fn(() => createMockBase(tableFactory));
 const mockConfigure = vi.fn();
+
+const setServiceReady = (service: unknown) =>
+  configureServiceForTesting(service, createMockBase(tableFactory));
 
 vi.mock('airtable', () => ({
   default: {
@@ -54,7 +67,7 @@ vi.mock('./validations', async () => {
 });
 
 describe('Airtable Service - Create Operations Tests', () => {
-  let AirtableServiceClass: any;
+  let AirtableServiceClass: typeof AirtableServiceType;
 
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
@@ -68,7 +81,7 @@ describe('Airtable Service - Create Operations Tests', () => {
 
     // Dynamically import the module to ensure fresh instance
     const module = (await import('../airtable')) as DynamicImportModule;
-    AirtableServiceClass = module.AirtableService;
+    AirtableServiceClass = module.AirtableService as typeof AirtableServiceType;
   });
 
   afterEach(() => {
@@ -90,10 +103,7 @@ describe('Airtable Service - Create Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       // Mock successful creation
       mockCreate.mockResolvedValue([
@@ -133,10 +143,7 @@ describe('Airtable Service - Create Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const formDataWithOptionals = {
         ...validFormData,
@@ -174,8 +181,8 @@ describe('Airtable Service - Create Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Ensure service is not configured
-      (service as AirtableServicePrivate).isConfigured = false;
-      (service as AirtableServicePrivate).base = null;
+      (service as unknown as AirtableServicePrivate).isConfigured = false;
+      (service as unknown as AirtableServicePrivate).base = null;
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
         'Airtable service is not configured',
@@ -185,10 +192,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle creation errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockCreate.mockRejectedValue(new Error('Creation failed'));
 
@@ -200,10 +204,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle empty form data', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const emptyFormData = {
         firstName: '',
@@ -231,10 +232,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle special characters in form data', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const specialFormData = {
         firstName: 'José',
@@ -275,10 +273,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle long text content', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const longMessage = 'A'.repeat(1000); // Very long message
       const longFormData = {
@@ -315,10 +310,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle network timeout errors', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const timeoutError = new Error('Request timeout');
       timeoutError.name = 'TimeoutError';
@@ -332,10 +324,7 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should handle rate limiting errors', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const rateLimitError = new Error('Rate limit exceeded');
       rateLimitError.name = 'RateLimitError';

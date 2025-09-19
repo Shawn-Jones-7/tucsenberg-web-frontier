@@ -3,14 +3,14 @@ const { join, resolve } = require('path');
 
 function findTsFiles(dir, pattern = /\.(ts|tsx)$/) {
   const results = [];
-  
+
   try {
     const items = readdirSync(dir);
-    
+
     for (const item of items) {
       const fullPath = join(dir, item);
       const stat = statSync(fullPath);
-      
+
       if (stat.isDirectory()) {
         if (!item.startsWith('.') && item !== 'node_modules') {
           results.push(...findTsFiles(fullPath, pattern));
@@ -22,7 +22,7 @@ function findTsFiles(dir, pattern = /\.(ts|tsx)$/) {
   } catch (error) {
     console.warn(`无法读取目录 ${dir}:`, error.message);
   }
-  
+
   return results;
 }
 
@@ -41,7 +41,7 @@ if (files.length > 0) {
   files.slice(0, 10).forEach((file, index) => {
     console.log(`${index + 1}. ${file.replace(rootDir, '.')}`);
   });
-  
+
   console.log('\n✅ 文件查找功能正常工作！');
 } else {
   console.log('❌ 未找到任何TypeScript文件');

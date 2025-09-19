@@ -185,10 +185,10 @@ describe('useKeyboardNavigation Advanced Tests', () => {
 
       expect(() => {
         act(() => {
-          result.current.focusIndex(-1);
-          result.current.focusIndex(999);
-          result.current.focusIndex(NaN);
-          result.current.focusIndex(Infinity);
+          result.current.setFocusIndex(-1);
+          result.current.setFocusIndex(999);
+          result.current.setFocusIndex(NaN);
+          result.current.setFocusIndex(Infinity);
         });
       }).not.toThrow();
     });

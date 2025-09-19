@@ -1,10 +1,11 @@
 import { vi } from 'vitest';
 import type { AccessibilityManagerPrivate } from '@/types/test-types';
+import { AccessibilityManager, useAccessibility } from '@/lib/accessibility';
+import type { ScreenReaderConfig } from '@/lib/accessibility-types';
 import {
   DELAY_CONSTANTS,
   PERFORMANCE_CONSTANTS,
 } from '../../../constants/app-constants';
-import { AccessibilityManager, useAccessibility } from '@/lib/accessibility';
 
 // Mock logger module
 vi.mock('../../logger', () => ({
@@ -176,14 +177,17 @@ export function setupAccessibilityTest() {
 }
 
 // Helper function to create accessibility manager instance
+const defaultAccessibilityConfig: ScreenReaderConfig = {
+  enabled: true,
+  language: 'en',
+  announceDelay: DELAY_CONSTANTS.STANDARD_TIMEOUT,
+};
+
 export function createAccessibilityManager(
-  config?: unknown,
+  config: Partial<ScreenReaderConfig> = {},
 ): AccessibilityManager {
   return new AccessibilityManager({
-    language: 'en',
-    enableVoiceAnnouncements: true,
-    enableHighContrast: false,
-    enableReducedMotion: false,
+    ...defaultAccessibilityConfig,
     ...config,
   });
 }
@@ -192,7 +196,7 @@ export function createAccessibilityManager(
 export function getPrivateAccessibility(
   manager: AccessibilityManager,
 ): AccessibilityManagerPrivate {
-  return manager as AccessibilityManagerPrivate;
+  return manager as unknown as AccessibilityManagerPrivate;
 }
 
 // Helper function to simulate media query changes

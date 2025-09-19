@@ -306,7 +306,7 @@ class PerformanceBenchmarkMonitor {
     Object.entries(benchmarks.metrics).forEach(([metric, data]) => {
       if (data.status !== 'success') return;
 
-      const {regression} = data;
+      const { regression } = data;
       const threshold = this.regressionThresholds[metric] || 1.2;
 
       if (regression > threshold) {
@@ -485,7 +485,7 @@ class PerformanceBenchmarkMonitor {
       platform: process.platform,
       arch: process.arch,
       cpus: require('os').cpus().length,
-      memory: `${Math.round(require('os').totalmem() / 1024 / 1024 / 1024)  }GB`,
+      memory: `${Math.round(require('os').totalmem() / 1024 / 1024 / 1024)}GB`,
     };
   }
 
@@ -512,7 +512,7 @@ class PerformanceBenchmarkMonitor {
     const k = 1024;
     const sizes = ['Bytes', 'KB', 'MB', 'GB'];
     const i = Math.floor(Math.log(bytes) / Math.log(k));
-    return `${parseFloat((bytes / k**i).toFixed(2))  } ${  sizes[i]}`;
+    return `${parseFloat((bytes / k ** i).toFixed(2))} ${sizes[i]}`;
   }
 }
 

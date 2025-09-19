@@ -1,7 +1,14 @@
 import { useCallback, useMemo } from 'react';
-import { MAGIC_300000, DAYS_PER_WEEK, HOURS_PER_DAY, SECONDS_PER_MINUTE, COUNT_PAIR, COUNT_FIVE, COUNT_TEN  } from '@/constants';
-
 import { logger } from '@/lib/logger';
+import {
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  DAYS_PER_WEEK,
+  HOURS_PER_DAY,
+  MAGIC_300000,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 import { MB } from '@/constants/app-constants';
 import type {
   DiagnosticReport,
@@ -125,7 +132,11 @@ export function validateDiagnosticReport(
  */
 export function cleanupExpiredData(
   reports: DiagnosticReport[],
-  maxAge: number = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * 1000, // DAYS_PER_WEEK天
+  maxAge: number = DAYS_PER_WEEK *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    1000, // DAYS_PER_WEEK天
 ): DiagnosticReport[] {
   const cutoffTime = Date.now() - maxAge;
   return reports.filter((report) => report.timestamp > cutoffTime);
@@ -165,7 +176,9 @@ export function exportDataToFile(
   mimeType: string,
 ): void {
   try {
-    const blob = new Blob([JSON.stringify(data, null, COUNT_PAIR)], { type: mimeType });
+    const blob = new Blob([JSON.stringify(data, null, COUNT_PAIR)], {
+      type: mimeType,
+    });
     const url = URL.createObjectURL(blob);
 
     const link = document.createElement('a');

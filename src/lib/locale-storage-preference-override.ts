@@ -7,13 +7,9 @@
 
 'use client';
 
-import { MAGIC_0_8 } from "@/constants/decimal";
-import { ONE, PERCENTAGE_HALF, ZERO } from '@/constants';
-import { safeGetArrayItem } from '@/lib/security-object-access';
-
+import type { Locale } from '@/types/i18n';
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import type { Locale } from '@/types/i18n';
 import {
   getUserPreference,
   saveUserPreference,
@@ -22,6 +18,9 @@ import type {
   StorageOperationResult,
   UserLocalePreference,
 } from '@/lib/locale-storage-types';
+import { safeGetArrayItem } from '@/lib/security-object-access';
+import { ONE, PERCENTAGE_HALF, ZERO } from '@/constants';
+import { MAGIC_0_8 } from '@/constants/decimal';
 
 // ==================== 用户覆盖管理 ====================
 
@@ -308,7 +307,10 @@ export function getOverrideStats(): {
     setOperations.forEach((entry) => {
       freqMap.set(entry.locale, (freqMap.get(entry.locale) || ZERO) + ONE);
     });
-    stats.overrideFrequency = Object.fromEntries(freqMap) as Record<Locale, number>;
+    stats.overrideFrequency = Object.fromEntries(freqMap) as Record<
+      Locale,
+      number
+    >;
 
     // 找出最常用的语言
     let maxCount = ZERO;

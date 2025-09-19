@@ -6,14 +6,14 @@
 'use client';
 
 import type { Locale } from '@/types/i18n';
-import { logger } from '@/lib/logger';
+import { recordPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
 import type {
   LocaleSource,
   StorageEvent,
   StorageEventListener,
   UserLocalePreference,
 } from '@/lib/locale-storage-types';
-import { recordPreferenceHistory } from '@/lib/locale-storage-preference-events/history-manager';
+import { logger } from '@/lib/logger';
 
 /**
  * 预定义事件监听器

@@ -1,5 +1,6 @@
 // 向后兼容的重新导出
 import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
+import { CacheConfigFactory } from '@/../backups/barrel-exports/src/lib/i18n-cache-types-advanced';
 import type {
   AdvancedCacheConfig,
   CacheClusterConfig,
@@ -13,7 +14,6 @@ import type {
   CacheWarmingConfig,
   DEFAULT_ADVANCED_CACHE_CONFIG,
 } from './i18n-cache-types-advanced';
-import { CacheConfigFactory } from '@/../backups/barrel-exports/src/lib/i18n-cache-types-advanced';
 import type {
   CACHE_CONSTANTS,
   CacheConfig,

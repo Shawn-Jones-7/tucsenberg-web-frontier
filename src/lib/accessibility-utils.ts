@@ -3,17 +3,16 @@
  * 提供静态工具方法和颜色解析功能
  */
 
-import { OPACITY_CONSTANTS } from '@/constants/app-constants';
-import { COUNT_TRIPLE, ONE, ZERO } from '@/constants';
-
-import { MAGIC_6 } from "@/constants/count";
-import { checkContrastCompliance, type OKLCHColor } from '@/lib/colors';
-import { logger } from '@/lib/logger';
 import {
   KEYBOARD_KEYS,
   type ColorSchemePreference,
   type WCAGLevel,
 } from '@/lib/accessibility-types';
+import { checkContrastCompliance, type OKLCHColor } from '@/lib/colors';
+import { logger } from '@/lib/logger';
+import { COUNT_TRIPLE, ONE, ZERO } from '@/constants';
+import { OPACITY_CONSTANTS } from '@/constants/app-constants';
+import { MAGIC_6 } from '@/constants/count';
 
 /**
  * 无障碍性工具类

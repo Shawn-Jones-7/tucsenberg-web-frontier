@@ -75,9 +75,8 @@ ${missingConstants
     const numValue = parseFloat(value);
     if (isNaN(numValue)) {
       return `export const ${name} = ${value}; // 原始值: ${value}`;
-    } 
-      return `export const ${name} = ${numValue};`;
-    
+    }
+    return `export const ${name} = ${numValue};`;
   })
   .join('\n')}
 `;

@@ -9,8 +9,8 @@
  * - 错误恢复机制
  */
 
-import React, { type ReactElement, type RenderOptions } from 'react';
-import { render } from '@testing-library/react';
+import React, { type ReactElement } from 'react';
+import { render, type RenderOptions } from '@testing-library/react';
 import { vi } from 'vitest';
 
 // 错误类型定义

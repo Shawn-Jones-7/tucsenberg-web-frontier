@@ -1,7 +1,7 @@
-import { UnderConstruction } from '@/components/shared/under-construction';
-import { ZERO } from "@/constants";
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { UnderConstruction } from '@/components/shared/under-construction';
+import { ZERO } from '@/constants';
 
 interface BlogPageProps {
   params: Promise<{

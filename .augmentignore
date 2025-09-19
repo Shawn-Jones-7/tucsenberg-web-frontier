@@ -1,5 +1,0 @@
-# Augment 工作区索引排除配置
-# 此文件控制 Augment 不索引哪些文件，不影响其他 AI 工具的访问
-
-# 排除项目根目录下的 AGENTS.md 文件
-AGENTS.md

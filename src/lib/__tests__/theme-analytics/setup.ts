@@ -1,8 +1,5 @@
 import { vi } from 'vitest';
-import type {
-  MockSwitchPattern,
-  ThemeAnalyticsPrivate,
-} from '@/types/test-types';
+import type { MockSwitchPattern } from '@/types/test-types';
 import {
   TEST_BASE_NUMBERS,
   TEST_CONSTANTS,
@@ -19,7 +16,14 @@ import {
 import {
   ThemeAnalytics,
   type ThemeAnalyticsConfig,
+  themeAnalytics,
 } from '../../theme-analytics';
+
+type MutableGlobal = typeof globalThis & {
+  crypto?: unknown;
+  navigator?: unknown;
+};
+const mutableGlobal = globalThis as MutableGlobal;
 
 // Note: Sentry is mocked in the test file using vi.hoisted
 
@@ -192,13 +196,6 @@ export function createMockSwitchPattern(
   };
 }
 
-// Helper function to access private methods for testing
-export function getPrivateAnalytics(
-  analytics: ThemeAnalytics,
-): ThemeAnalyticsPrivate {
-  return analytics as ThemeAnalyticsPrivate;
-}
-
 // Helper function to simulate time passage
 export function simulateTimePassage(milliseconds: number) {
   const currentTime =
@@ -212,19 +209,50 @@ export function simulateThemeSwitches(
   analytics: ThemeAnalytics,
   count: number,
 ) {
-  const patterns = ['light', 'dark', 'system'];
+  const patterns = ['light', 'dark', 'system'] as const;
   for (let i = 0; i < count; i++) {
-    const from = patterns[i % patterns.length];
-    const to = patterns[(i + 1) % patterns.length];
+    const from = patterns[i % patterns.length]!;
+    const to = patterns[(i + 1) % patterns.length]!;
     const startTime = Date.now() + i * 1000;
     const endTime = startTime + 100 + i * TEST_BASE_NUMBERS.LARGE_COUNT;
-    analytics.recordThemeSwitch(from, to, startTime, endTime);
+    analytics.recordThemeSwitch({
+      fromTheme: from,
+      toTheme: to,
+      startTime,
+      endTime,
+    });
   }
 }
 
 // Cleanup function for tests
 export function cleanupThemeAnalyticsTest() {
   vi.restoreAllMocks();
+}
+
+// 辅助方法：移除 crypto 用于验证退化逻辑
+export function removeGlobalCrypto() {
+  delete mutableGlobal.crypto;
+}
+
+// 辅助方法：移除 navigator 用于测试边界场景
+export function removeGlobalNavigator() {
+  delete mutableGlobal.navigator;
+}
+
+// 辅助方法：配置全局实例以便通过公开接口进行断言
+export function configureGlobalThemeAnalytics(
+  overrides: Partial<ThemeAnalyticsConfig> = {},
+): void {
+  themeAnalytics.reset();
+  themeAnalytics.updateConfig({
+    enabled: true,
+    performanceThreshold:
+      THEME_ANALYTICS_CONSTANTS.PERFORMANCE_THRESHOLD_DEFAULT,
+    sampleRate: THEME_ANALYTICS_CONSTANTS.SAMPLING_RATE_FULL,
+    enableDetailedTracking: true,
+    enableUserBehaviorAnalysis: true,
+    ...overrides,
+  });
 }
 
 // Export constants for use in tests

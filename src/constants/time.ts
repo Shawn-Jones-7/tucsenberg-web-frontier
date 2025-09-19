@@ -1,4 +1,10 @@
-import { COUNT_300000, COUNT_3600, COUNT_4, MAGIC_12, MAGIC_2000 } from "./count";
+import {
+  COUNT_4,
+  COUNT_3600,
+  COUNT_300000,
+  MAGIC_12,
+  MAGIC_2000,
+} from './count';
 
 /**
  * 时间相关常量

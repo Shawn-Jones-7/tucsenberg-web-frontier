@@ -1,13 +1,8 @@
 'use client';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { ONE  } from '@/constants';
-
-import { MAGIC_0_2 } from "@/constants/decimal";
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { PROJECT_STATS } from '@/lib/site-config';
-import { useTranslations } from 'next-intl';
 import { useState } from 'react';
+import { useTranslations } from 'next-intl';
+import { PROJECT_STATS } from '@/lib/site-config';
 import {
   BadgeShowcase,
   ButtonShowcase,
@@ -16,6 +11,10 @@ import {
   ResponsiveShowcase,
   ThemeShowcase,
 } from '@/components/home/showcase';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { ONE } from '@/constants';
+import { MAGIC_0_2 } from '@/constants/decimal';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
 export function ComponentShowcase() {
   const t = useTranslations('home.showcase');

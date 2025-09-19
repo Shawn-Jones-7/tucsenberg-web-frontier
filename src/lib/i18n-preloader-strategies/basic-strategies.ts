@@ -4,13 +4,12 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import { COUNT_PAIR, HALF_SECOND_MS, MAGIC_999, ONE, ZERO } from '@/constants';
-
 import type {
   IPreloader,
   PreloadOptions,
   PreloadStrategy,
 } from '@/lib/i18n-preloader-types';
+import { COUNT_PAIR, HALF_SECOND_MS, MAGIC_999, ONE, ZERO } from '@/constants';
 
 /**
  * 立即预加载策略

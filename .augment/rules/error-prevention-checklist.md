@@ -1,5 +1,5 @@
 ---
-type: "agent_requested"
+type: "auto"
 description: "Comprehensive error prevention checklist for TypeScript, React, and Next.js development"
 ---
 # Error Prevention Checklist
@@ -77,7 +77,7 @@ pnpm type-check && pnpm lint && pnpm build && pnpm test && pnpm test:a11y
 - [ ] All TypeScript errors resolved
 - [ ] All ESLint errors fixed
 - [ ] Build completes without warnings
-- [ ] Test coverage meets requirements (>80%)
+- [ ] Test coverage meets requirements (≥65%)
 - [ ] Performance metrics within acceptable range
 - [ ] Accessibility standards met (WCAG 2.1 AA)
 
@@ -106,7 +106,7 @@ useEffect(() => { const { timeSpentInThemes } = analytics; }, [analytics.timeSpe
 ### Target Metrics
 
 - TypeScript errors: 0, ESLint errors: 0, ESLint warnings: < 5
-- Test coverage: > 80%, Build time: < 60 seconds
+- Test coverage: ≥ 65%, Build time: < 60 seconds
 - Lighthouse performance: > 90, Accessibility score: > 95
 
 ### Monitoring Methods

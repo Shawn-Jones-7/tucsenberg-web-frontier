@@ -161,14 +161,12 @@ class TestServerManager {
         if (hasReactScan) {
           console.warn('⚠️  Server response contains React Scan content');
           return { healthy: true, hasInterference: true };
-        } 
-          console.log('✅ Server response is clean (no React Scan content)');
-          return { healthy: true, hasInterference: false };
-        
-      } 
-        console.error(`❌ Server returned status ${response.status}`);
-        return { healthy: false, hasInterference: false };
-      
+        }
+        console.log('✅ Server response is clean (no React Scan content)');
+        return { healthy: true, hasInterference: false };
+      }
+      console.error(`❌ Server returned status ${response.status}`);
+      return { healthy: false, hasInterference: false };
     } catch (error) {
       console.error('❌ Server verification failed:', error.message);
       return { healthy: false, hasInterference: false };

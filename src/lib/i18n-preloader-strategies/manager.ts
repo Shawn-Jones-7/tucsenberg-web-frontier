@@ -3,12 +3,12 @@
  * Translation Preloader Strategy Manager
  */
 
-import { ONE } from "@/constants";
 import type {
   PreloaderMetrics,
   PreloadStrategy,
   PreloadStrategyConfig,
 } from '@/lib/i18n-preloader-types';
+import { ONE } from '@/constants';
 
 /**
  * 预加载策略管理器

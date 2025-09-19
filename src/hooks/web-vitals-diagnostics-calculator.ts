@@ -4,8 +4,14 @@
  */
 
 import type { DetailedWebVitals } from '@/lib/enhanced-web-vitals';
-import { COUNT_PAIR, MAGIC_0_95, MAGIC_90, MAGIC_80, MAGIC_70, SECONDS_PER_MINUTE  } from '@/constants';
-
+import {
+  COUNT_PAIR,
+  MAGIC_0_95,
+  MAGIC_70,
+  MAGIC_80,
+  MAGIC_90,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 import {
   WEB_VITALS_CONSTANTS,
   type DiagnosticReport,
@@ -58,10 +64,7 @@ export const calculatePerformanceTrends = (
 
     const change = recentAvg - previousAvg;
     const percentageChange = Math.abs(change / previousAvg) * 100;
-    const trend:
-      | 'improving'
-      | 'declining'
-      | 'stable' =
+    const trend: 'improving' | 'declining' | 'stable' =
       percentageChange < WEB_VITALS_CONSTANTS.TREND_THRESHOLD
         ? 'stable'
         : change < 0
@@ -73,7 +76,9 @@ export const calculatePerformanceTrends = (
       trend,
       change: Number(change.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
       recent: Number(recentAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
-      previous: Number(previousAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES)),
+      previous: Number(
+        previousAvg.toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
+      ),
     };
   };
 
@@ -169,7 +174,9 @@ export const calculateMedian = (values: number[]): number => {
   if (sorted.length % COUNT_PAIR === 0) {
     const [left = 0, right = 0] = sorted.slice(middle - 1, middle + 1);
     return Number(
-      ((left + right) / COUNT_PAIR).toFixed(WEB_VITALS_CONSTANTS.DECIMAL_PLACES),
+      ((left + right) / COUNT_PAIR).toFixed(
+        WEB_VITALS_CONSTANTS.DECIMAL_PLACES,
+      ),
     );
   }
 

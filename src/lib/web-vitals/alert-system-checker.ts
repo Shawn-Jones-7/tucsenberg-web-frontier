@@ -3,7 +3,6 @@
  * Performance Alert System - Metrics Checker
  */
 
-import { ZERO } from "@/constants";
 import {
   extractCoreMetrics,
   formatMetricValue,
@@ -17,6 +16,7 @@ import type {
   PerformanceAlertConfig,
   RegressionDetectionResult,
 } from '@/lib/web-vitals/types';
+import { ZERO } from '@/constants';
 
 /**
  * 预警信息接口

@@ -2,13 +2,12 @@
 
 /**
  * 修复映射不一致问题
- * 
+ *
  * 根据校验报告修正映射文件中的问题：
  * 1. 修正嵌套对象属性的映射格式
  * 2. 清理无效的映射条目
  * 3. 更新模块路径
  */
-
 import fs from 'fs';
 import path from 'path';
 
@@ -17,7 +16,7 @@ interface MappingEntry {
   module: string;
   source?: string;
   type?: string;
-  alternatives?: any[];
+  alternatives?: string[];
 }
 
 class MappingFixer {
@@ -54,7 +53,7 @@ class MappingFixer {
    */
   fixAllMappings(): void {
     console.log('🔧 开始修复映射不一致问题...');
-    
+
     let fixedCount = 0;
     let removedCount = 0;
 
@@ -68,7 +67,7 @@ class MappingFixer {
 
       const originalExport = entry.export;
       const fixed = this.fixSingleMapping(entry);
-      
+
       if (fixed && entry.export !== originalExport) {
         console.log(`✅ 修复映射: ${originalExport} → ${entry.export}`);
         fixedCount++;
@@ -119,7 +118,10 @@ class MappingFixer {
     }
 
     // 标准化模块路径格式
-    if (modulePath.startsWith('@/constants/') && !modulePath.endsWith('-constants')) {
+    if (
+      modulePath.startsWith('@/constants/') &&
+      !modulePath.endsWith('-constants')
+    ) {
       // 确保路径格式正确
       return modulePath;
     }
@@ -132,7 +134,7 @@ class MappingFixer {
    */
   generateReport(): string {
     const lines: string[] = [];
-    
+
     lines.push('# 映射修复报告');
     lines.push('');
     lines.push(`生成时间: ${new Date().toISOString()}`);
@@ -140,8 +142,8 @@ class MappingFixer {
 
     // 统计信息
     const totalEntries = Object.keys(this.mappingData).length;
-    const validEntries = Object.values(this.mappingData).filter(entry => 
-      entry && entry.export && entry.module
+    const validEntries = Object.values(this.mappingData).filter(
+      (entry) => entry && entry.export && entry.module,
     ).length;
 
     lines.push('## 修复后统计');
@@ -175,16 +177,15 @@ async function main() {
   try {
     // 修复映射
     fixer.fixAllMappings();
-    
+
     // 生成报告
     const report = fixer.generateReport();
-    console.log(`\n${  report}`);
-    
+    console.log(`\n${report}`);
+
     // 保存报告
     const reportPath = path.resolve(__dirname, 'mapping-fix-report.md');
     fs.writeFileSync(reportPath, report);
     console.log(`📄 修复报告已保存到: ${reportPath}`);
-    
   } catch (error) {
     console.error('❌ 修复失败:', error);
     process.exit(1);

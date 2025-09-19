@@ -455,8 +455,14 @@ describe('paths configuration', () => {
     });
 
     it('should not create memory leaks with repeated calls', () => {
-      const initialMemory =
-        (performance as unknown).memory?.usedJSHeapSize || 0;
+      const getUsedHeapSize = () => {
+        const perf = globalThis.performance as Performance & {
+          memory?: { usedJSHeapSize?: number };
+        };
+        return perf.memory?.usedJSHeapSize ?? 0;
+      };
+
+      const initialMemory = getUsedHeapSize();
 
       // Perform many operations
       for (let i = 0; i < 10000; i++) {
@@ -465,11 +471,12 @@ describe('paths configuration', () => {
       }
 
       // Force garbage collection if available
-      if (global.gc) {
-        global.gc();
+      const gc = (globalThis as typeof globalThis & { gc?: () => void }).gc;
+      if (typeof gc === 'function') {
+        gc();
       }
 
-      const finalMemory = (performance as unknown).memory?.usedJSHeapSize || 0;
+      const finalMemory = getUsedHeapSize();
       const memoryIncrease = finalMemory - initialMemory;
 
       // Memory increase should be minimal (less than 1MB)

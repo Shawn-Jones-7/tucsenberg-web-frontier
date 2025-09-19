@@ -4,14 +4,6 @@
  * 主缓存管理器，整合 LRU 缓存、预加载器和性能指标收集器
  */
 
-import { MAGIC_70, MAGIC_80 } from "@/constants/count";
-import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, HTTP_OK, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { CACHE_DURATIONS, CACHE_LIMITS } from '@/constants/i18n-constants';
-import { LRUCache } from '@/lib/i18n-lru-cache';
-import { I18nMetricsCollector } from '@/lib/i18n-metrics-collector';
-import { TranslationPreloader } from '@/lib/i18n-preloader';
-import { logger } from '@/lib/logger';
 import type { I18nMetrics, Locale, Messages } from '@/types/i18n';
 import type {
   CacheConfig,
@@ -21,6 +13,24 @@ import type {
   CacheStats,
   PreloadConfig,
 } from '@/lib/i18n-cache-types';
+import { LRUCache } from '@/lib/i18n-lru-cache';
+import { I18nMetricsCollector } from '@/lib/i18n-metrics-collector';
+import { TranslationPreloader } from '@/lib/i18n-preloader';
+import { logger } from '@/lib/logger';
+import {
+  ANGLE_90_DEG,
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  HTTP_OK,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_70, MAGIC_80 } from '@/constants/count';
+import { CACHE_DURATIONS, CACHE_LIMITS } from '@/constants/i18n-constants';
 
 // 主缓存管理器实现
 export class I18nCacheManager implements CacheManager {
@@ -56,14 +66,39 @@ export class I18nCacheManager implements CacheManager {
   }
 
   // 获取消息
-  getMessages(locale: Locale): Promise<Messages> {
+  async getMessages(locale: Locale): Promise<Messages> {
     this.metricsCollector.recordLocaleUsage(locale);
-    return this.preloader.preloadLocale(locale);
+
+    try {
+      const messages = await this.preloader.preloadLocale(locale);
+      this.updateTranslationCoverage();
+      return messages;
+    } catch (error) {
+      this.metricsCollector.recordError();
+      throw error;
+    }
   }
 
   // 预加载消息
-  preloadMessages(locale: Locale): Promise<Messages> {
-    return this.preloader.preloadLocale(locale);
+  async preloadMessages(locale: Locale): Promise<Messages> {
+    try {
+      const messages = await this.preloader.preloadLocale(locale);
+      this.updateTranslationCoverage();
+      return messages;
+    } catch (error) {
+      this.metricsCollector.recordError();
+      throw error;
+    }
+  }
+
+  // 预加载所有配置的语言包
+  async preloadAllMessages(): Promise<void> {
+    const { preloadLocales } = this.preloader.getConfig();
+    if (!Array.isArray(preloadLocales) || preloadLocales.length === ZERO) {
+      return;
+    }
+
+    await this.preloader.preloadMultipleLocales(preloadLocales);
   }
 
   // 预热缓存
@@ -127,7 +162,8 @@ export class I18nCacheManager implements CacheManager {
     }
 
     // 检查缓存利用率
-    const utilizationRate = (stats.size / this.config.maxSize) * PERCENTAGE_FULL;
+    const utilizationRate =
+      (stats.size / this.config.maxSize) * PERCENTAGE_FULL;
     if (utilizationRate > ANGLE_90_DEG) {
       issues.push('缓存接近满载');
       recommendations.push('考虑增加缓存大小');
@@ -224,7 +260,13 @@ export class I18nCacheManager implements CacheManager {
 
   // 预加载多个语言
   async preloadMultipleLocales(locales: Locale[]): Promise<void> {
-    await this.preloader.preloadMultipleLocales(locales);
+    try {
+      await this.preloader.preloadMultipleLocales(locales);
+      this.updateTranslationCoverage();
+    } catch (error) {
+      this.metricsCollector.recordError();
+      throw error;
+    }
   }
 
   // 设置缓存配置
@@ -250,9 +292,10 @@ export class I18nCacheManager implements CacheManager {
   ): void {
     // 创建适配器函数来转换事件类型
     const adaptedListener = (cacheEvent: unknown) => {
-      const safeEvent = (cacheEvent && typeof cacheEvent === 'object')
-        ? (cacheEvent as Record<string, unknown>)
-        : {} as Record<string, unknown>;
+      const safeEvent =
+        cacheEvent && typeof cacheEvent === 'object'
+          ? (cacheEvent as Record<string, unknown>)
+          : ({} as Record<string, unknown>);
       listener(safeEvent);
     };
     this.metricsCollector.addEventListener(eventType, adaptedListener);
@@ -265,9 +308,10 @@ export class I18nCacheManager implements CacheManager {
   ): void {
     // 创建适配器函数来转换事件类型
     const adaptedListener = (cacheEvent: unknown) => {
-      const safeEvent = (cacheEvent && typeof cacheEvent === 'object')
-        ? (cacheEvent as Record<string, unknown>)
-        : {} as Record<string, unknown>;
+      const safeEvent =
+        cacheEvent && typeof cacheEvent === 'object'
+          ? (cacheEvent as Record<string, unknown>)
+          : ({} as Record<string, unknown>);
       listener(safeEvent);
     };
     this.metricsCollector.removeEventListener(eventType, adaptedListener);
@@ -367,6 +411,25 @@ export class I18nCacheManager implements CacheManager {
   // 停止预加载
   stopPreloading(): void {
     this.preloader.stopPreloading();
+  }
+
+  private updateTranslationCoverage(): void {
+    const config = this.preloader.getConfig();
+    const configuredLocales = Array.isArray(config.preloadLocales)
+      ? config.preloadLocales
+      : [];
+    const cachedLocales = this.getCachedLocales();
+    const totalLocales = new Set<Locale>([
+      ...configuredLocales,
+      ...cachedLocales,
+    ]);
+
+    const coverage =
+      totalLocales.size > ZERO
+        ? cachedLocales.length / totalLocales.size
+        : ZERO;
+
+    this.metricsCollector.recordTranslationCoverage(coverage);
   }
 }
 

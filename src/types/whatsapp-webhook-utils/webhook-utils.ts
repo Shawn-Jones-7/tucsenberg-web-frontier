@@ -3,21 +3,23 @@
  * WhatsApp Webhook Utility Class
  */
 
-import type { WebhookEntry, WebhookPayload } from '@/types/whatsapp-webhook-base';
-import { MAGIC_0_95, MAGIC_0_99, ONE, ZERO } from '@/constants';
-
-import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
+import type {
+  WebhookEntry,
+  WebhookPayload,
+} from '@/types/whatsapp-webhook-base';
 import type {
   EventFilter,
   EventStatistics,
   MessageReceivedEvent,
   WebhookEvent,
 } from '@/types/whatsapp-webhook-events';
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
   SignatureVerificationConfig,
   WebhookParsingResult,
   WebhookValidationResult,
 } from '@/types/whatsapp-webhook-utils/interfaces';
+import { MAGIC_0_95, MAGIC_0_99, ONE, ZERO } from '@/constants';
 
 /**
  * Webhook工具函数
@@ -325,12 +327,16 @@ export class WebhookUtils {
       events_by_type: eventsByType,
       processing_times: {
         average_ms:
-          processingTimes.reduce((a, b) => a + b, ZERO) / processingTimes.length ||
-          ZERO,
+          processingTimes.reduce((a, b) => a + b, ZERO) /
+            processingTimes.length || ZERO,
         min_ms: processingTimes[ZERO] || ZERO,
         max_ms: processingTimes[processingTimes.length - ONE] || ZERO,
-        p95_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] || ZERO,
-        p99_ms: processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] || ZERO,
+        p95_ms:
+          processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] ||
+          ZERO,
+        p99_ms:
+          processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] ||
+          ZERO,
       },
       error_rate: ZERO, // 应该基于实际错误计算
       success_rate: ONE, // 应该基于实际成功率计算

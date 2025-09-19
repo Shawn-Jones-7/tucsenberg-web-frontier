@@ -1,7 +1,33 @@
-import { MAGIC_20, MAGIC_40, MAGIC_512, MAGIC_8, MAGIC_80 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, PERCENTAGE_QUARTER, SECONDS_PER_MINUTE, ZERO } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  PERCENTAGE_QUARTER,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import {
+  MAGIC_8,
+  MAGIC_20,
+  MAGIC_40,
+  MAGIC_80,
+  MAGIC_512,
+} from '@/constants/count';
+import {
+  DEC_0_4,
+  MAGIC_0_2,
+  MAGIC_0_5,
+  MAGIC_0_6,
+  MAGIC_0_8,
+  MAGIC_1_5,
+} from '@/constants/decimal';
 
-import { DEC_0_4, MAGIC_0_2, MAGIC_0_5, MAGIC_0_6, MAGIC_0_8, MAGIC_1_5 } from "@/constants/decimal";
 /**
  * 性能监控常量定义
  * Performance Monitoring Constants

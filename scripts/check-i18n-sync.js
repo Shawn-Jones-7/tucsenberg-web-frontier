@@ -36,4 +36,3 @@ try {
   console.error('i18n:sync:check error', err);
   process.exit(1);
 }
-

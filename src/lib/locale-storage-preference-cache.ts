@@ -7,12 +7,9 @@
 
 'use client';
 
-import { MAGIC_0_5, MAGIC_0_6, MAGIC_0_7 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
+import type { Locale } from '@/types/i18n';
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import type { Locale } from '@/types/i18n';
 import {
   getUserPreference,
   saveUserPreference,
@@ -22,6 +19,13 @@ import type {
   StorageOperationResult,
   UserLocalePreference,
 } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_0_5, MAGIC_0_6, MAGIC_0_7 } from '@/constants/decimal';
 
 // ==================== 缓存管理器 ====================
 
@@ -32,7 +36,8 @@ import type {
 export class PreferenceCacheManager {
   private static cache: Map<string, UserLocalePreference> = new Map();
   private static cacheTimestamp = ZERO;
-  private static readonly CACHE_TTL = COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
+  private static readonly CACHE_TTL =
+    COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
 
   /**
    * 获取缓存的偏好
@@ -189,14 +194,17 @@ export function checkDataConsistency(): {
   const recommendations: string[] = [];
 
   try {
-    const localPreference = LocalStorageManager.get<UserLocalePreference>('locale_preference');
+    const localPreference =
+      LocalStorageManager.get<UserLocalePreference>('locale_preference');
     const cookieLocale = CookieManager.get('locale_preference');
 
     validateLocal(localPreference, issues, recommendations);
     const m = checkMismatch(localPreference, cookieLocale);
-    issues.push(...m.issues); recommendations.push(...m.recommendations);
+    issues.push(...m.issues);
+    recommendations.push(...m.recommendations);
     const c = checkCacheConsistency(localPreference);
-    issues.push(...c.issues); recommendations.push(...c.recommendations);
+    issues.push(...c.issues);
+    recommendations.push(...c.recommendations);
 
     return { isConsistent: issues.length === ZERO, issues, recommendations };
   } catch (error) {
@@ -243,15 +251,20 @@ function checkMismatch(
   return { issues, recommendations };
 }
 
-function checkCacheConsistency(
-  localPreference: UserLocalePreference | null,
-): { issues: string[]; recommendations: string[] } {
+function checkCacheConsistency(localPreference: UserLocalePreference | null): {
+  issues: string[];
+  recommendations: string[];
+} {
   const issues: string[] = [];
   const recommendations: string[] = [];
-  const cached = PreferenceCacheManager.getCachedPreference('locale_preference');
+  const cached =
+    PreferenceCacheManager.getCachedPreference('locale_preference');
   if (!cached || !localPreference) return { issues, recommendations };
   const tsDiff = Math.abs(cached.timestamp - localPreference.timestamp);
-  if (cached.locale !== localPreference.locale || tsDiff > ANIMATION_DURATION_VERY_SLOW) {
+  if (
+    cached.locale !== localPreference.locale ||
+    tsDiff > ANIMATION_DURATION_VERY_SLOW
+  ) {
     issues.push('Cache data is inconsistent with localStorage');
     recommendations.push('Clear and refresh cache');
   }
@@ -293,7 +306,10 @@ export function fixDataInconsistency(): StorageOperationResult<{
       LocalStorageManager.get<UserLocalePreference>('locale_preference');
     const cookieLocale = CookieManager.get('locale_preference');
 
-    const { pref, note } = determineAuthoritative(localPreference, cookieLocale);
+    const { pref, note } = determineAuthoritative(
+      localPreference,
+      cookieLocale,
+    );
     actions.push(note);
 
     const saveResult = saveUserPreference(pref);
@@ -325,7 +341,10 @@ function determineAuthoritative(
   cookieLocale: string | null,
 ): { pref: UserLocalePreference; note: string } {
   if (localPreference && validatePreferenceData(localPreference).isValid) {
-    return { pref: localPreference, note: 'Using localStorage as authoritative source' };
+    return {
+      pref: localPreference,
+      note: 'Using localStorage as authoritative source',
+    };
   }
   if (cookieLocale) {
     return {
@@ -429,7 +448,9 @@ function tryLocalStorageUsage(usage: {
         .then((estimate) => {
           usage.localStorage.quota = estimate.quota || ZERO;
         })
-        .catch(() => { /* ignore */ });
+        .catch(() => {
+          /* ignore */
+        });
     }
   } catch {
     // ignore

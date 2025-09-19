@@ -1,5 +1,5 @@
 ---
-type: "agent_requested"
+type: "auto"
 description: "ESLint configuration and error handling guide for Next.js 15 and React 19"
 ---
 # ESLint Configuration and Error Handling Guide
@@ -78,10 +78,63 @@ useEffect(() => { const { timeSpentInThemes } = analytics; updateMetrics(timeSpe
 useEffect(() => { const { timeSpentInThemes } = analytics; updateMetrics(timeSpentInThemes); }, [analytics.timeSpentInThemes, analytics, updateMetrics]);
 ```
 
-## Recommended ESLint Configuration
+## Recommended ESLint Configuration (eslint.config.mjs)
 
-```json
-{ "extends": ["next/core-web-vitals", "@typescript-eslint/recommended"], "parser": "@typescript-eslint/parser", "parserOptions": { "project": "./tsconfig.json" }, "rules": { "@typescript-eslint/no-explicit-any": "warn", "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }], "@typescript-eslint/no-empty-function": ["warn", { "allow": ["arrowFunctions"] }], "@typescript-eslint/prefer-nullish-coalescing": "error", "react/no-unescaped-entities": "error", "react-hooks/exhaustive-deps": "warn", "@next/next/no-img-element": "error", "no-console": ["warn", { "allow": ["warn", "error"] }], "prefer-const": "error", "no-var": "error" }, "overrides": [{ "files": ["*.config.js", "*.config.ts"], "rules": { "no-console": "off" } }, { "files": ["**/*.test.ts", "**/*.test.tsx"], "rules": { "@typescript-eslint/no-explicit-any": "off" } }] }
+```javascript
+import { FlatCompat } from '@eslint/eslintrc';
+import js from '@eslint/js';
+import typescriptEslint from '@typescript-eslint/eslint-plugin';
+import typescriptParser from '@typescript-eslint/parser';
+
+const compat = new FlatCompat({
+  baseDirectory: import.meta.dirname,
+  recommendedConfig: js.configs.recommended,
+});
+
+export default [
+  ...compat.extends('next/core-web-vitals', '@typescript-eslint/recommended'),
+  {
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    languageOptions: {
+      parser: typescriptParser,
+      parserOptions: {
+        project: './tsconfig.json',
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescriptEslint,
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'warn',
+      '@typescript-eslint/no-unused-vars': ['error', {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }],
+      '@typescript-eslint/no-empty-function': ['warn', {
+        allow: ['arrowFunctions']
+      }],
+      '@typescript-eslint/prefer-nullish-coalescing': 'error',
+      'react/no-unescaped-entities': 'error',
+      'react-hooks/exhaustive-deps': 'warn',
+      '@next/next/no-img-element': 'error',
+      'no-console': ['warn', { allow: ['warn', 'error'] }],
+      'prefer-const': 'error',
+      'no-var': 'error',
+    },
+  },
+  {
+    files: ['*.config.js', '*.config.ts'],
+    rules: {
+      'no-console': 'off',
+    },
+  },
+  {
+    files: ['**/*.test.ts', '**/*.test.tsx'],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'off',
+    },
+  },
+];
 ```
 
 ## Project-Specific Rule Adjustments
@@ -121,7 +174,8 @@ async function serverAction(formData: FormData) {
   "scripts": {
     "lint": "next lint",
     "lint:fix": "next lint --fix",
-    "lint:strict": "next lint --max-warnings 0"
+    "lint:strict": "next lint --max-warnings 0",
+    "lint:check": "eslint . --ext .js,.jsx,.ts,.tsx --config eslint.config.mjs"
   }
 }
 ```

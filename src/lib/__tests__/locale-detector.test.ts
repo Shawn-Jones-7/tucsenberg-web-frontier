@@ -1,10 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { SmartLocaleDetector } from '@/lib/locale-detector';
 import type {
   MockGeolocation,
   MockStorageManager,
   UnsafeLocaleCode,
 } from '@/types';
-import { SmartLocaleDetector } from '@/lib/locale-detector';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockLocaleStorageManager, mockGeolocationAPI, mockNavigator } =
@@ -15,6 +15,9 @@ const { mockLocaleStorageManager, mockGeolocationAPI, mockNavigator } =
       getDetectionHistory: vi.fn(),
       addDetectionRecord: vi.fn(),
       getUserPreference: vi.fn(),
+      setUserPreference: vi.fn(),
+      setUserOverride: vi.fn(),
+      clearUserData: vi.fn(),
     },
     mockGeolocationAPI: {
       getCurrentPosition: vi.fn(),

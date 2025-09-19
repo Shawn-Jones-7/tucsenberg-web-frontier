@@ -1,4 +1,4 @@
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 
 /**
  * WhatsApp API 响应类型定义
@@ -497,6 +497,8 @@ export const ResponseUtils = {
    * Check if has previous page
    */
   hasPreviousPage<T>(response: PaginatedResponse<T>): boolean {
-    return Boolean(response.paging?.previous || response.paging?.cursors?.before);
+    return Boolean(
+      response.paging?.previous || response.paging?.cursors?.before,
+    );
   },
 };

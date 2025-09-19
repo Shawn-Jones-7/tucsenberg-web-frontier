@@ -2,28 +2,29 @@
  * 翻译质量检查和AI翻译验证工具
  * 提供翻译质量评估、AI翻译验证和质量基准对比功能
  */
-import { MAGIC_12, MAGIC_15, MAGIC_8 } from "@/constants/count";
-import { COUNT_FIVE, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
-import { DEC_0_05, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8 } from "@/constants/decimal";
-import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
-import { TranslationManager } from '@/lib/translation-manager';
-import { TranslationValidators } from '@/lib/translation-validators';
 import type { Locale } from '@/types/i18n';
 import type {
   BatchTranslationInput,
-  QualityComparison,
   QualityIssue,
   QualityScore,
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
+import { TranslationBenchmarks } from '@/lib/translation-benchmarks';
+import { TranslationManager } from '@/lib/translation-manager';
+import type { QualityComparison as BenchmarkComparison } from '@/lib/translation-quality-types';
+import { TranslationValidators } from '@/lib/translation-validators';
+import { COUNT_FIVE, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
+import { MAGIC_8, MAGIC_12, MAGIC_15 } from '@/constants/count';
+import { DEC_0_05, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8 } from '@/constants/decimal';
 
 // 导入拆分的模块
 export type {
-  AITranslationService, BatchTranslationInput, QualityBenchmark,
+  AITranslationService,
+  BatchTranslationInput,
+  QualityBenchmark,
   QualityComparison,
-  ValidationResult
+  ValidationResult,
 } from '@/lib/translation-quality-types';
 
 /**
@@ -56,14 +57,24 @@ export class TranslationQualityAnalyzer {
     targetLocale: Locale;
     humanTranslation?: string;
   }): QualityScore {
-    const { key, originalText, aiTranslation, targetLocale, humanTranslation } = params;
-    const { issues, totalPenalty } = this.aggregateValidationResults({
+    const { key, originalText, aiTranslation, targetLocale, humanTranslation } =
+      params;
+    const validationInput: {
+      key: string;
+      originalText: string;
+      aiTranslation: string;
+      targetLocale: Locale;
+      humanTranslation?: string;
+    } = {
       key,
       originalText,
       aiTranslation,
       targetLocale,
-      humanTranslation,
-    });
+      ...(humanTranslation !== undefined && { humanTranslation }),
+    };
+
+    const { issues, totalPenalty } =
+      this.aggregateValidationResults(validationInput);
 
     // 计算最终分数
     const baseScore = PERCENTAGE_FULL;
@@ -98,13 +109,17 @@ export class TranslationQualityAnalyzer {
     const results: QualityScore[] = [];
 
     for (const translation of translations) {
-      const result = this.validateAITranslation({
+      const payload = {
         key: translation.key,
         originalText: translation.original,
         aiTranslation: translation.translated,
         targetLocale: translation.locale,
-        humanTranslation: translation.humanReference,
-      });
+        ...(translation.humanReference !== undefined && {
+          humanTranslation: translation.humanReference,
+        }),
+      };
+
+      const result = this.validateAITranslation(payload);
       results.push(result);
     }
 
@@ -117,7 +132,7 @@ export class TranslationQualityAnalyzer {
   compareWithBenchmark(
     currentScore: QualityScore,
     locale: Locale,
-  ): QualityComparison {
+  ): BenchmarkComparison {
     return this.benchmarks.compareWithBenchmark(currentScore, locale);
   }
 
@@ -215,16 +230,29 @@ export class TranslationQualityAnalyzer {
 
   // 拆分校验阶段为小函数，降低 aggregateValidationResults 的语句数/复杂度
   private runBasicValidation(originalText: string, aiTranslation: string) {
-    return TranslationValidators.performBasicValidation(originalText, aiTranslation);
+    return TranslationValidators.performBasicValidation(
+      originalText,
+      aiTranslation,
+    );
   }
   private runLanguageValidation(aiTranslation: string, locale: Locale) {
-    return TranslationValidators.performLanguageSpecificValidation(aiTranslation, locale);
+    return TranslationValidators.performLanguageSpecificValidation(
+      aiTranslation,
+      locale,
+    );
   }
-  private runContextValidation(key: string, aiTranslation: string, locale: Locale) {
+  private runContextValidation(
+    key: string,
+    aiTranslation: string,
+    locale: Locale,
+  ) {
     return this.validateContextConsistency(key, aiTranslation, locale);
   }
   private runHumanComparison(aiTranslation: string, humanTranslation: string) {
-    return TranslationValidators.compareWithHumanTranslation(aiTranslation, humanTranslation);
+    return TranslationValidators.compareWithHumanTranslation(
+      aiTranslation,
+      humanTranslation,
+    );
   }
 
   private aggregateValidationResults(params: {
@@ -234,7 +262,8 @@ export class TranslationQualityAnalyzer {
     targetLocale: Locale;
     humanTranslation?: string;
   }): { issues: QualityIssue[]; totalPenalty: number } {
-    const { key, originalText, aiTranslation, targetLocale, humanTranslation } = params;
+    const { key, originalText, aiTranslation, targetLocale, humanTranslation } =
+      params;
     const issues: QualityIssue[] = [];
     let totalPenalty = ZERO;
 
@@ -242,16 +271,26 @@ export class TranslationQualityAnalyzer {
     issues.push(...basicResult.issues);
     totalPenalty += basicResult.penalty;
 
-    const languageResult = this.runLanguageValidation(aiTranslation, targetLocale);
+    const languageResult = this.runLanguageValidation(
+      aiTranslation,
+      targetLocale,
+    );
     issues.push(...languageResult.issues);
     totalPenalty += languageResult.penalty;
 
-    const contextResult = this.runContextValidation(key, aiTranslation, targetLocale);
+    const contextResult = this.runContextValidation(
+      key,
+      aiTranslation,
+      targetLocale,
+    );
     issues.push(...contextResult.issues);
     totalPenalty += contextResult.penalty;
 
     if (humanTranslation) {
-      const humanResult = this.runHumanComparison(aiTranslation, humanTranslation);
+      const humanResult = this.runHumanComparison(
+        aiTranslation,
+        humanTranslation,
+      );
       issues.push(...humanResult.issues);
       totalPenalty += humanResult.penalty;
     }
@@ -268,19 +307,23 @@ export class TranslationQualityAnalyzer {
     return {
       grammar: Math.max(
         ZERO,
-        PERCENTAGE_FULL - issues.filter((i) => i.type === 'grammar').length * 10,
+        PERCENTAGE_FULL -
+          issues.filter((i) => i.type === 'grammar').length * 10,
       ),
       consistency: Math.max(
         ZERO,
-        PERCENTAGE_FULL - issues.filter((i) => i.type === 'consistency').length * MAGIC_15,
+        PERCENTAGE_FULL -
+          issues.filter((i) => i.type === 'consistency').length * MAGIC_15,
       ),
       terminology: Math.max(
         ZERO,
-        PERCENTAGE_FULL - issues.filter((i) => i.type === 'terminology').length * MAGIC_12,
+        PERCENTAGE_FULL -
+          issues.filter((i) => i.type === 'terminology').length * MAGIC_12,
       ),
       fluency: Math.max(
         ZERO,
-        PERCENTAGE_FULL - issues.filter((i) => i.type === 'fluency').length * MAGIC_8,
+        PERCENTAGE_FULL -
+          issues.filter((i) => i.type === 'fluency').length * MAGIC_8,
       ),
     };
   }

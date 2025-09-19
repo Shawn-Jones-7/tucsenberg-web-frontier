@@ -3,22 +3,22 @@
  * 提供统一的监控API和管理功能
  */
 
-import {
-  CACHE_LIMITS,
-  PERFORMANCE_THRESHOLDS,
-  REPORTING_THRESHOLDS,
-  TIME_UNITS,
-} from '@/constants/i18n-constants';
-import { COUNT_TEN, COUNT_TRIPLE } from "@/constants";
-import { EventCollector } from '@/lib/i18n-event-collector';
-import { PerformanceMonitor } from '@/lib/i18n-performance-monitor';
 import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
+import { EventCollector } from '@/lib/i18n-event-collector';
 import type {
   ErrorLevel,
   MonitoringConfig,
   MonitoringEvent,
   MonitoringEventType,
 } from '@/lib/i18n-monitoring-types';
+import { PerformanceMonitor } from '@/lib/i18n-performance-monitor';
+import { COUNT_TEN, COUNT_TRIPLE } from '@/constants';
+import {
+  CACHE_LIMITS,
+  PERFORMANCE_THRESHOLDS,
+  REPORTING_THRESHOLDS,
+  TIME_UNITS,
+} from '@/constants/i18n-constants';
 
 // 主监控管理器
 export class I18nMonitor {

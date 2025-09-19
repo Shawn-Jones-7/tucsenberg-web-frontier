@@ -1,13 +1,9 @@
-
 /**
  * 性能监控核心报告生成
  * Performance Monitoring Core Report Generation
  *
  * 负责性能报告的生成、评分计算和建议提供功能
  */
-
-import { DEC_0_4, MAGIC_0_2 } from "@/constants/decimal";
-import { ANIMATION_DURATION_SLOW, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, MAGIC_20, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO, MAGIC_0_5, MAGIC_80, MAGIC_40, MAGIC_0_3, MAGIC_0_6, MAGIC_1_5 } from '@/constants';
 
 import type {
   BundlePerformanceData,
@@ -18,6 +14,27 @@ import type {
   PerformanceMetricSource,
   PerformanceMetricType,
 } from '@/lib/performance-monitoring-types';
+import {
+  ANIMATION_DURATION_SLOW,
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TRIPLE,
+  MAGIC_0_3,
+  MAGIC_0_5,
+  MAGIC_0_6,
+  MAGIC_1_5,
+  MAGIC_20,
+  MAGIC_40,
+  MAGIC_80,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { DEC_0_4, MAGIC_0_2 } from '@/constants/decimal';
 
 /**
  * 性能报告接口
@@ -126,14 +143,19 @@ export class PerformanceReportGenerator {
     const sources = [...new Set(metrics.map((m) => m.source))];
     const types = [...new Set(metrics.map((m) => m.type))];
 
-    const timeSpanMinutes = (windowEnd - windowStart) / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    const timeSpanMinutes =
+      (windowEnd - windowStart) /
+      (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
     const averageMetricsPerMinute =
       timeSpanMinutes > ZERO ? metrics.length / timeSpanMinutes : ZERO;
 
     return {
       totalMetrics: metrics.length,
-      recentMetrics: metrics.filter((m) => windowEnd - m.timestamp < SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW)
-        .length, // 最近1分钟
+      recentMetrics: metrics.filter(
+        (m) =>
+          windowEnd - m.timestamp <
+          SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+      ).length, // 最近1分钟
       sources,
       types,
       timeRange: {
@@ -170,7 +192,9 @@ export class PerformanceReportGenerator {
     return recommendations;
   }
 
-  private generateComponentRecommendations(metrics: PerformanceMetrics[]): string[] {
+  private generateComponentRecommendations(
+    metrics: PerformanceMetrics[],
+  ): string[] {
     const recs: string[] = [];
     const componentMetrics = metrics.filter((m) => m.type === 'component');
     if (componentMetrics.length === ZERO) return recs;
@@ -185,7 +209,9 @@ export class PerformanceReportGenerator {
       return false;
     });
     if (slowComponents.length > ZERO) {
-      recs.push(`发现 ${slowComponents.length} 个组件渲染时间超过阈值，建议优化组件性能`);
+      recs.push(
+        `发现 ${slowComponents.length} 个组件渲染时间超过阈值，建议优化组件性能`,
+      );
     }
 
     const avgRenderTime =
@@ -201,7 +227,9 @@ export class PerformanceReportGenerator {
     return recs;
   }
 
-  private generateNetworkRecommendations(metrics: PerformanceMetrics[]): string[] {
+  private generateNetworkRecommendations(
+    metrics: PerformanceMetrics[],
+  ): string[] {
     const recs: string[] = [];
     const networkMetrics = metrics.filter((m) => m.type === 'network');
     if (networkMetrics.length === ZERO) return recs;
@@ -215,7 +243,9 @@ export class PerformanceReportGenerator {
       return false;
     });
     if (slowRequests.length > ZERO) {
-      recs.push(`发现 ${slowRequests.length} 个网络请求响应时间超过阈值，建议优化API性能`);
+      recs.push(
+        `发现 ${slowRequests.length} 个网络请求响应时间超过阈值，建议优化API性能`,
+      );
     }
 
     const avgResponseTime =
@@ -231,7 +261,9 @@ export class PerformanceReportGenerator {
     return recs;
   }
 
-  private generateBundleRecommendations(metrics: PerformanceMetrics[]): string[] {
+  private generateBundleRecommendations(
+    metrics: PerformanceMetrics[],
+  ): string[] {
     const recs: string[] = [];
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
     if (bundleMetrics.length === ZERO) return recs;
@@ -246,7 +278,9 @@ export class PerformanceReportGenerator {
       return false;
     });
     if (largeBundles.length > ZERO) {
-      recs.push(`发现 ${largeBundles.length} 个打包文件大小超过阈值，建议进行代码分割`);
+      recs.push(
+        `发现 ${largeBundles.length} 个打包文件大小超过阈值，建议进行代码分割`,
+      );
     }
 
     const totalBundleSize = bundleMetrics.reduce((sum, m) => {
@@ -295,7 +329,8 @@ export class PerformanceReportGenerator {
     const componentMetrics = metrics.filter((m) => m.type === 'component');
     if (componentMetrics.length === ZERO) return PERCENTAGE_FULL;
 
-    const threshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
+    const threshold =
+      this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
     const avgRenderTime =
       componentMetrics.reduce((sum, m) => {
         if (this.isComponentData(m.data)) {
@@ -345,7 +380,8 @@ export class PerformanceReportGenerator {
     const bundleMetrics = metrics.filter((m) => m.type === 'bundle');
     if (bundleMetrics.length === ZERO) return PERCENTAGE_FULL;
 
-    const threshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB; // 1MB
+    const threshold =
+      this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB; // 1MB
     const totalSize = bundleMetrics.reduce((sum, m) => {
       if (this.isBundleData(m.data)) {
         return sum + (Number(m.data.size) || ZERO);
@@ -443,12 +479,19 @@ export class PerformanceReportGenerator {
   }
 
   private buildComponentAnalysis(componentMetrics: PerformanceMetrics[]) {
-    const componentThreshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
+    const componentThreshold =
+      this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
     const slowestComponents = componentMetrics
-      .filter((m) => this.isComponentData(m.data) && (Number(m.data.renderTime) || ZERO) > componentThreshold)
+      .filter(
+        (m) =>
+          this.isComponentData(m.data) &&
+          (Number(m.data.renderTime) || ZERO) > componentThreshold,
+      )
       .map((m) => ({
         name: m.id || m.type,
-        value: this.isComponentData(m.data) ? (Number(m.data.renderTime) || ZERO) : ZERO,
+        value: this.isComponentData(m.data)
+          ? Number(m.data.renderTime) || ZERO
+          : ZERO,
         threshold: componentThreshold,
       }))
       .sort((a, b) => b.value - a.value)
@@ -470,12 +513,19 @@ export class PerformanceReportGenerator {
   }
 
   private buildNetworkAnalysis(networkMetrics: PerformanceMetrics[]) {
-    const networkThreshold = this.config.network?.thresholds?.responseTime || 1000;
+    const networkThreshold =
+      this.config.network?.thresholds?.responseTime || 1000;
     const slowestRequests = networkMetrics
-      .filter((m) => this.isNetworkData(m.data) && (Number(m.data.responseTime) || ZERO) > networkThreshold)
+      .filter(
+        (m) =>
+          this.isNetworkData(m.data) &&
+          (Number(m.data.responseTime) || ZERO) > networkThreshold,
+      )
       .map((m) => ({
         name: m.id || m.type,
-        value: this.isNetworkData(m.data) ? (Number(m.data.responseTime) || ZERO) : ZERO,
+        value: this.isNetworkData(m.data)
+          ? Number(m.data.responseTime) || ZERO
+          : ZERO,
         threshold: networkThreshold,
       }))
       .sort((a, b) => b.value - a.value)
@@ -497,12 +547,17 @@ export class PerformanceReportGenerator {
   }
 
   private buildBundleAnalysis(bundleMetrics: PerformanceMetrics[]) {
-    const bundleThreshold = this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB;
+    const bundleThreshold =
+      this.config.bundle?.thresholds?.size || BYTES_PER_KB * BYTES_PER_KB;
     const largestBundles = bundleMetrics
-      .filter((m) => this.isBundleData(m.data) && (Number(m.data.size) || ZERO) > bundleThreshold)
+      .filter(
+        (m) =>
+          this.isBundleData(m.data) &&
+          (Number(m.data.size) || ZERO) > bundleThreshold,
+      )
       .map((m) => ({
         name: m.id || m.type,
-        value: this.isBundleData(m.data) ? (Number(m.data.size) || ZERO) : ZERO,
+        value: this.isBundleData(m.data) ? Number(m.data.size) || ZERO : ZERO,
         threshold: bundleThreshold,
       }))
       .sort((a, b) => b.value - a.value)
@@ -554,9 +609,13 @@ export class PerformanceReportGenerator {
     const firstHalf = sortedMetrics.slice(ZERO, midPoint);
     const secondHalf = sortedMetrics.slice(midPoint);
 
-    const firstAvg = firstHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) / firstHalf.length;
+    const firstAvg =
+      firstHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) /
+      firstHalf.length;
 
-    const secondAvg = secondHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) / secondHalf.length;
+    const secondAvg =
+      secondHalf.reduce((sum, m) => sum + this.getMetricValue(m), ZERO) /
+      secondHalf.length;
 
     const changePercent = ((secondAvg - firstAvg) / firstAvg) * PERCENTAGE_FULL;
 

@@ -5,9 +5,6 @@
  * 负责性能指标的记录、存储、清理和实时分析功能
  */
 
-import { MB } from '@/constants/units';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, MAGIC_36, MAGIC_9, MAGIC_1_1, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
 import { logger } from '@/lib/logger';
 import type {
   BundlePerformanceData,
@@ -18,6 +15,20 @@ import type {
   PerformanceMetricSource,
   PerformanceMetricType,
 } from '@/lib/performance-monitoring-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  MAGIC_1_1,
+  MAGIC_9,
+  MAGIC_36,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MB } from '@/constants/units';
 
 interface MetricsStats {
   total: number;
@@ -51,7 +62,8 @@ export class PerformanceMetricsManager {
    */
   private setupPeriodicCleanup(): void {
     const cleanupInterval =
-      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // COUNT_FIVE分钟
+      this.config.global?.dataRetentionTime ||
+      COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // COUNT_FIVE分钟
 
     this.cleanupInterval = setInterval(() => {
       this.cleanupOldMetrics();
@@ -65,8 +77,10 @@ export class PerformanceMetricsManager {
   private cleanupOldMetrics(): void {
     const now = Date.now();
     const retentionTime =
-      this.config.global?.dataRetentionTime || COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
-    const maxMetrics = this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
+      this.config.global?.dataRetentionTime ||
+      COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+    const maxMetrics =
+      this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
 
     // 按时间清理
     this.metrics = this.metrics.filter(
@@ -116,7 +130,8 @@ export class PerformanceMetricsManager {
     this.analyzeRealtimeMetric(fullMetric);
 
     // 立即清理如果超出限制
-    const maxMetrics = this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
+    const maxMetrics =
+      this.config.global?.maxMetrics || ANIMATION_DURATION_VERY_SLOW;
     if (this.metrics.length > maxMetrics * MAGIC_1_1) {
       // 10%缓冲
       this.cleanupOldMetrics();
@@ -200,21 +215,40 @@ export class PerformanceMetricsManager {
     );
   }
 
-  private handleComponentMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
-    const threshold = this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
-    const value = this.isComponentData(metric.data) ? (Number(metric.data.renderTime) || ZERO) : ZERO;
+  private handleComponentMetric(metric: PerformanceMetrics): {
+    slow: boolean;
+    threshold: number;
+    value: number;
+  } {
+    const threshold =
+      this.config.component?.thresholds?.renderTime || PERCENTAGE_FULL;
+    const value = this.isComponentData(metric.data)
+      ? Number(metric.data.renderTime) || ZERO
+      : ZERO;
     return { slow: value > threshold, threshold, value };
   }
 
-  private handleNetworkMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
+  private handleNetworkMetric(metric: PerformanceMetrics): {
+    slow: boolean;
+    threshold: number;
+    value: number;
+  } {
     const threshold = this.config.network?.thresholds?.responseTime || 1000;
-    const value = this.isNetworkData(metric.data) ? (Number(metric.data.responseTime) || ZERO) : ZERO;
+    const value = this.isNetworkData(metric.data)
+      ? Number(metric.data.responseTime) || ZERO
+      : ZERO;
     return { slow: value > threshold, threshold, value };
   }
 
-  private handleBundleMetric(metric: PerformanceMetrics): { slow: boolean; threshold: number; value: number } {
+  private handleBundleMetric(metric: PerformanceMetrics): {
+    slow: boolean;
+    threshold: number;
+    value: number;
+  } {
     const threshold = this.config.bundle?.thresholds?.size || MB;
-    const value = this.isBundleData(metric.data) ? (Number(metric.data.size) || ZERO) : ZERO;
+    const value = this.isBundleData(metric.data)
+      ? Number(metric.data.size) || ZERO
+      : ZERO;
     return { slow: value > threshold, threshold, value };
   }
 
@@ -340,7 +374,8 @@ export class PerformanceMetricsManager {
         stats.byType.network = (stats.byType.network || ZERO) + ONE;
         break;
       case 'user-interaction':
-        stats.byType['user-interaction'] = (stats.byType['user-interaction'] || ZERO) + ONE;
+        stats.byType['user-interaction'] =
+          (stats.byType['user-interaction'] || ZERO) + ONE;
         break;
       default:
         break;
@@ -377,16 +412,20 @@ export class PerformanceMetricsManager {
   ): void {
     switch (s) {
       case 'react-scan':
-        stats.bySource['react-scan'] = (stats.bySource['react-scan'] || ZERO) + ONE;
+        stats.bySource['react-scan'] =
+          (stats.bySource['react-scan'] || ZERO) + ONE;
         break;
       case 'web-eval-agent':
-        stats.bySource['web-eval-agent'] = (stats.bySource['web-eval-agent'] || ZERO) + ONE;
+        stats.bySource['web-eval-agent'] =
+          (stats.bySource['web-eval-agent'] || ZERO) + ONE;
         break;
       case 'bundle-analyzer':
-        stats.bySource['bundle-analyzer'] = (stats.bySource['bundle-analyzer'] || ZERO) + ONE;
+        stats.bySource['bundle-analyzer'] =
+          (stats.bySource['bundle-analyzer'] || ZERO) + ONE;
         break;
       case 'size-limit':
-        stats.bySource['size-limit'] = (stats.bySource['size-limit'] || ZERO) + ONE;
+        stats.bySource['size-limit'] =
+          (stats.bySource['size-limit'] || ZERO) + ONE;
         break;
       default:
         break;
@@ -403,13 +442,15 @@ export class PerformanceMetricsManager {
         stats.bySource.custom = (stats.bySource.custom || ZERO) + ONE;
         break;
       case 'web-vitals':
-        stats.bySource['web-vitals'] = (stats.bySource['web-vitals'] || ZERO) + ONE;
+        stats.bySource['web-vitals'] =
+          (stats.bySource['web-vitals'] || ZERO) + ONE;
         break;
       case 'lighthouse':
         stats.bySource.lighthouse = (stats.bySource.lighthouse || ZERO) + ONE;
         break;
       case 'user-timing':
-        stats.bySource['user-timing'] = (stats.bySource['user-timing'] || ZERO) + ONE;
+        stats.bySource['user-timing'] =
+          (stats.bySource['user-timing'] || ZERO) + ONE;
         break;
       default:
         break;
@@ -426,9 +467,13 @@ export class PerformanceMetricsManager {
     }
 
     const stats = this.getMetricsStats();
-    const timeSpanMinutes = stats.timeRange.span / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    const timeSpanMinutes =
+      stats.timeRange.span /
+      (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
 
-    return timeSpanMinutes > ZERO ? this.metrics.length / timeSpanMinutes : ZERO;
+    return timeSpanMinutes > ZERO
+      ? this.metrics.length / timeSpanMinutes
+      : ZERO;
   }
 
   /**
@@ -534,12 +579,14 @@ export class PerformanceMetricsManager {
     }
 
     const m = metric as PerformanceMetrics;
-    return Boolean(m.type &&
-      m.source &&
-      typeof m.timestamp === 'number' &&
-      m.timestamp > ZERO &&
-      m.data &&
-      typeof m.data === 'object');
+    return Boolean(
+      m.type &&
+        m.source &&
+        typeof m.timestamp === 'number' &&
+        m.timestamp > ZERO &&
+        m.data &&
+        typeof m.data === 'object',
+    );
   }
 
   /**

@@ -36,16 +36,13 @@ export function useEnhancedTheme(): EnhancedThemeHook {
   const setTheme = useCallback(
     (newTheme: string) => {
       if (!debouncedSetThemeRef.current) {
-        debouncedSetThemeRef.current = createDebounce(
-          (themeToSet: string) => {
-            if (theme !== undefined) {
-              executeBasicThemeTransition(originalSetTheme, themeToSet, theme);
-            } else {
-              executeBasicThemeTransition(originalSetTheme, themeToSet);
-            }
-          },
-          DEFAULT_CONFIG.debounceDelay,
-        );
+        debouncedSetThemeRef.current = createDebounce((themeToSet: string) => {
+          if (theme !== undefined) {
+            executeBasicThemeTransition(originalSetTheme, themeToSet, theme);
+          } else {
+            executeBasicThemeTransition(originalSetTheme, themeToSet);
+          }
+        }, DEFAULT_CONFIG.debounceDelay);
       }
       debouncedSetThemeRef.current?.(newTheme);
     },

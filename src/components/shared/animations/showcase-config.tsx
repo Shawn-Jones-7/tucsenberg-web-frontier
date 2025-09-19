@@ -2,11 +2,20 @@
  * 动画示例和配置
  */
 
-import { AnimatedButton, AnimatedCard } from '@/components/shared/animations/card-button';
-import { AnimatedProgress, AnimatedSuccess } from '@/components/shared/animations/form-status';
-import { AnimatedHeroIcon, AnimatedTitle } from '@/components/shared/animations/icon-title';
+import {
+  AnimatedButton,
+  AnimatedCard,
+} from '@/components/shared/animations/card-button';
+import {
+  AnimatedProgress,
+  AnimatedSuccess,
+} from '@/components/shared/animations/form-status';
+import {
+  AnimatedHeroIcon,
+  AnimatedTitle,
+} from '@/components/shared/animations/icon-title';
 import { CardContent } from '@/components/ui/card';
-import { MAGIC_75 } from "@/constants/count";
+import { MAGIC_75 } from '@/constants/count';
 
 // 使用示例组件
 export const AnimationShowcase = () => (

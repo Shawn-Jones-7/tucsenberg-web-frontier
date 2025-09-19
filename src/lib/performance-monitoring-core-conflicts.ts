@@ -1,4 +1,12 @@
-import { COUNT_FIVE, COUNT_PAIR, COUNT_TRIPLE, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from '@/constants';
+import {
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TRIPLE,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  ZERO,
+} from '@/constants';
 
 /**
  * 性能监控核心工具冲突检查
@@ -68,12 +76,27 @@ export class PerformanceToolConflictChecker {
     if (typeof window === 'undefined') return;
 
     const checks: Array<{ name: string; test: () => boolean }> = [
-      { name: 'React DevTools', test: () => '__REACT_DEVTOOLS_GLOBAL_HOOK__' in window },
-      { name: 'Redux DevTools', test: () => '__REDUX_DEVTOOLS_EXTENSION__' in window },
-      { name: 'Vue DevTools', test: () => '__VUE_DEVTOOLS_GLOBAL_HOOK__' in window },
+      {
+        name: 'React DevTools',
+        test: () => '__REACT_DEVTOOLS_GLOBAL_HOOK__' in window,
+      },
+      {
+        name: 'Redux DevTools',
+        test: () => '__REDUX_DEVTOOLS_EXTENSION__' in window,
+      },
+      {
+        name: 'Vue DevTools',
+        test: () => '__VUE_DEVTOOLS_GLOBAL_HOOK__' in window,
+      },
       { name: 'Angular DevTools', test: () => 'ng' in window },
-      { name: 'Sentry', test: () => 'Sentry' in window || '__SENTRY__' in window },
-      { name: 'Google Analytics', test: () => 'gtag' in window || 'ga' in window || 'dataLayer' in window },
+      {
+        name: 'Sentry',
+        test: () => 'Sentry' in window || '__SENTRY__' in window,
+      },
+      {
+        name: 'Google Analytics',
+        test: () => 'gtag' in window || 'ga' in window || 'dataLayer' in window,
+      },
       { name: 'LogRocket', test: () => 'LogRocket' in window },
       { name: 'FullStory', test: () => 'FS' in window },
       { name: 'Hotjar', test: () => 'hj' in window },
@@ -138,12 +161,9 @@ export class PerformanceToolConflictChecker {
     if (isDevelopment) {
       let devToolsCount = ZERO;
 
-      if ('__REACT_DEVTOOLS_GLOBAL_HOOK__' in window)
-        devToolsCount += ONE;
-      if ('__REDUX_DEVTOOLS_EXTENSION__' in window)
-        devToolsCount += ONE;
-      if ('__VUE_DEVTOOLS_GLOBAL_HOOK__' in window)
-        devToolsCount += ONE;
+      if ('__REACT_DEVTOOLS_GLOBAL_HOOK__' in window) devToolsCount += ONE;
+      if ('__REDUX_DEVTOOLS_EXTENSION__' in window) devToolsCount += ONE;
+      if ('__VUE_DEVTOOLS_GLOBAL_HOOK__' in window) devToolsCount += ONE;
 
       if (devToolsCount > COUNT_PAIR) {
         warnings.push(
@@ -268,7 +288,8 @@ export class PerformanceToolConflictChecker {
    */
   private countPerformanceObservers(): number {
     // 这是一个估算，实际实现可能需要更复杂的检测逻辑
-    if (typeof window === 'undefined' || !window.PerformanceObserver) return ZERO;
+    if (typeof window === 'undefined' || !window.PerformanceObserver)
+      return ZERO;
 
     // 检查常见的性能监控库是否在使用PerformanceObserver
     let count = ZERO;
@@ -277,11 +298,14 @@ export class PerformanceToolConflictChecker {
     if ((window as { webVitals?: unknown }).webVitals) count += ONE;
 
     // 检查其他可能的监控工具
-    if ((window as Record<string, unknown>)['__PERFORMANCE_OBSERVERS__']) {
-      const observers = (window as Record<string, unknown>)[
-        '__PERFORMANCE_OBSERVERS__'
-      ];
-      if (Array.isArray(observers)) count += observers.length;
+    const performanceObservers = (
+      window as typeof window & {
+        __PERFORMANCE_OBSERVERS__?: unknown;
+      }
+    ).__PERFORMANCE_OBSERVERS__;
+
+    if (Array.isArray(performanceObservers)) {
+      count += performanceObservers.length;
     }
 
     return count;
@@ -305,7 +329,9 @@ export class PerformanceToolConflictChecker {
    * 获取事件监听器数量
    * Get event listener count
    */
-  private getEventListenerCount(eventType: 'load' | 'DOMContentLoaded'): number {
+  private getEventListenerCount(
+    eventType: 'load' | 'DOMContentLoaded',
+  ): number {
     // 这是一个简化的实现，实际可能需要更复杂的检测
     if (typeof window === 'undefined') return ZERO;
 
@@ -323,7 +349,9 @@ export class PerformanceToolConflictChecker {
       if (!listenersMap) return ZERO;
 
       if (eventType === 'load') {
-        return Array.isArray(listenersMap.load) ? listenersMap.load.length : ZERO;
+        return Array.isArray(listenersMap.load)
+          ? listenersMap.load.length
+          : ZERO;
       }
       // eventType === 'DOMContentLoaded'
       return Array.isArray(listenersMap.DOMContentLoaded)
@@ -347,13 +375,20 @@ export class PerformanceToolConflictChecker {
   } | null {
     if (typeof window === 'undefined') return null;
 
-    type KnownTool = 'React DevTools' | 'Redux DevTools' | 'Sentry' | 'Google Analytics';
+    type KnownTool =
+      | 'React DevTools'
+      | 'Redux DevTools'
+      | 'Sentry'
+      | 'Google Analytics';
 
-    const toolDetailsMap = new Map<KnownTool, {
-      detected: boolean;
-      impact: 'low' | 'medium' | 'high';
-      description: string;
-    }>([
+    const toolDetailsMap = new Map<
+      KnownTool,
+      {
+        detected: boolean;
+        impact: 'low' | 'medium' | 'high';
+        description: string;
+      }
+    >([
       [
         'React DevTools',
         {
@@ -389,9 +424,14 @@ export class PerformanceToolConflictChecker {
     ]);
 
     const isKnownTool = (name: string): name is KnownTool =>
-      (['React DevTools', 'Redux DevTools', 'Sentry', 'Google Analytics'] as const).includes(
-        name as KnownTool,
-      );
+      (
+        [
+          'React DevTools',
+          'Redux DevTools',
+          'Sentry',
+          'Google Analytics',
+        ] as const
+      ).includes(name as KnownTool);
 
     if (!isKnownTool(toolName)) return null;
 

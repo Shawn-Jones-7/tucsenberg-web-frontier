@@ -38,9 +38,7 @@
     "@/constants/performance-constants": [
       "ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE (36)"
     ],
-    "@/constants/performance": [
-      "PERFORMANCE_CONSTANTS.FRAMEWORK_BUNDLE (130)"
-    ],
+    "@/constants/performance": ["PERFORMANCE_CONSTANTS.FRAMEWORK_BUNDLE (130)"],
     "@/constants/security-constants": [
       "INPUT_VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH (254)",
       "FILE_SECURITY_CONSTANTS.FILENAME_MAX_LENGTH (255)"
@@ -57,9 +55,7 @@
       "PERFORMANCE_CONSTANTS.TIMESTAMP_INCREMENT_MASSIVE (1450)",
       "PERFORMANCE_CONSTANTS.LARGE_NUMBER_OFFSET (200100)"
     ],
-    "@/constants/test-constants": [
-      "TEST_APP_CONSTANTS.STANDARD_HEIGHT (1080)"
-    ]
+    "@/constants/test-constants": ["TEST_APP_CONSTANTS.STANDARD_HEIGHT (1080)"]
   },
   "importStatements": [
     {

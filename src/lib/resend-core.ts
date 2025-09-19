@@ -3,13 +3,13 @@
  * Resend email service core class
  */
 
-import { env } from '@/../env.mjs';
-import { ZERO } from "@/constants";
+import { Resend } from 'resend';
 import { logger } from '@/lib/logger';
 import { ResendTemplates } from '@/lib/resend-templates';
 import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
 import type { EmailTemplateData } from '@/lib/validations';
-import { Resend } from 'resend';
+import { env } from '@/../env.mjs';
+import { ZERO } from '@/constants';
 
 /**
  * Resend邮件服务配置

@@ -1,8 +1,8 @@
-import { HTTP_OK, ZERO } from "@/constants";
-import { logger } from '@/lib/logger';
-import { safeGetProperty, safeSetProperty } from '@/lib/security-object-access';
 import type { Locale } from '@/types/i18n';
 import type { QualityScore } from '@/types/translation-manager';
+import { logger } from '@/lib/logger';
+import { safeGetProperty, safeSetProperty } from '@/lib/security-object-access';
+import { HTTP_OK, ZERO } from '@/constants';
 
 /**
  * 翻译管理器安全工具类
@@ -186,7 +186,9 @@ export class TranslationManagerSecurity {
         typeof current === 'object' &&
         Object.prototype.hasOwnProperty.call(current, key)
       ) {
-        current = (safeGetProperty(current, key) as Record<string, unknown>) ?? ({} as Record<string, unknown>);
+        current =
+          (safeGetProperty(current, key) as Record<string, unknown>) ??
+          ({} as Record<string, unknown>);
       } else {
         return undefined;
       }

@@ -46,6 +46,8 @@ describe('i18n Enhanced Request Configuration', () => {
     set: vi.fn(),
   };
 
+  let performanceNowSpy: ReturnType<typeof vi.spyOn>;
+
   beforeEach(() => {
     vi.clearAllMocks();
 
@@ -57,9 +59,13 @@ describe('i18n Enhanced Request Configuration', () => {
     });
 
     // Mock performance.now
-    global.performance = {
-      now: vi.fn().mockReturnValue(100),
-    } as Performance;
+    performanceNowSpy = vi
+      .spyOn(globalThis.performance, 'now')
+      .mockReturnValue(100);
+  });
+
+  afterEach(() => {
+    performanceNowSpy.mockRestore();
   });
 
   describe('增强配置功能', () => {
@@ -387,7 +393,11 @@ describe('i18n Enhanced Request Configuration', () => {
     });
 
     it('应该处理性能API不可用的情况', async () => {
-      global.performance = undefined as Performance;
+      const globalWithPerformance = globalThis as {
+        performance?: Performance | undefined;
+      };
+      const originalPerformance = globalWithPerformance.performance;
+      globalWithPerformance.performance = undefined;
 
       mockGetRequestConfig.mockImplementation(async (configFn) => {
         const result = await configFn({ requestLocale: Promise.resolve('en') });
@@ -400,6 +410,8 @@ describe('i18n Enhanced Request Configuration', () => {
       });
 
       await import('../enhanced-request');
+
+      globalWithPerformance.performance = originalPerformance;
     });
   });
 });

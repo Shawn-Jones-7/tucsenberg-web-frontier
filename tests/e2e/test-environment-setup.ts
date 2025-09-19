@@ -1,5 +1,7 @@
 import type { Page } from '@playwright/test';
 
+type LocatorClickOptions = Parameters<ReturnType<Page['locator']>['click']>[0];
+
 // import { FullConfig } from '@playwright/test'; // TODO: Use when needed
 
 /**
@@ -150,7 +152,7 @@ export async function waitForStablePage(page: Page, timeout = 5000) {
 export async function safeClick(
   page: Page,
   selector: string,
-  options: unknown = {},
+  options?: LocatorClickOptions,
 ) {
   console.log(`🖱️  Safe clicking: ${selector}`);
 

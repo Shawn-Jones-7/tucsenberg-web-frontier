@@ -1,7 +1,5 @@
-import { MAGIC_0_8 } from "@/constants/decimal";
 import { BYTES_PER_KB, COUNT_FIVE, ZERO } from '@/constants';
-
-
+import { MAGIC_0_8 } from '@/constants/decimal';
 
 /**
  * LocalStorage 操作工具类

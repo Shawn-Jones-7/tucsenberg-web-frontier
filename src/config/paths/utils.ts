@@ -8,7 +8,7 @@ import { LOCALES_CONFIG } from '@/config/paths/locales-config';
 import { PATHS_CONFIG } from '@/config/paths/paths-config';
 import { SITE_CONFIG } from '@/config/paths/site-config';
 import type { Locale, LocalizedPath, PageType } from '@/config/paths/types';
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 
 /**
  * 获取本地化路径

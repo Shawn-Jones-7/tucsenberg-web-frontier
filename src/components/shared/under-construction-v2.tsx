@@ -1,7 +1,7 @@
 'use client';
 
-import { ONE } from "@/constants";
 import { cn } from '@/lib/utils';
+import { ONE } from '@/constants';
 
 interface UnderConstructionV2Props {
   pageType: 'products' | 'blog' | 'about' | 'contact';

@@ -4,11 +4,15 @@
  * This module provides navigation configuration, route definitions,
  * and utility functions for the responsive navigation system.
  */
-import { LOCALES_CONFIG } from '@/config/paths';
-import { BREAKPOINT_MD, BREAKPOINT_XL, BYTES_PER_KB, PERCENTAGE_FULL } from '@/constants';
-
-import { COUNT_250 } from "@/constants/count";
 import type { Locale } from '@/types/i18n';
+import { LOCALES_CONFIG } from '@/config/paths';
+import {
+  BREAKPOINT_MD,
+  BREAKPOINT_XL,
+  BYTES_PER_KB,
+  PERCENTAGE_FULL,
+} from '@/constants';
+import { COUNT_250 } from '@/constants/count';
 
 // Navigation item interface
 export interface NavigationItem {

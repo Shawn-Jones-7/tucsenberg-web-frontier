@@ -1,4 +1,11 @@
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_36, MAGIC_9, ONE, THIRTY_SECONDS_MS } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  MAGIC_9,
+  MAGIC_36,
+  ONE,
+  THIRTY_SECONDS_MS,
+} from '@/constants';
 
 /**
  * WhatsApp API 错误处理类型定义
@@ -444,25 +451,41 @@ export const ErrorUtils = {
 
     if (isAuthenticationError(error)) {
       suggestions.push(
-        ...['Check your access token', 'Verify token permissions', 'Ensure token has not expired'],
+        ...[
+          'Check your access token',
+          'Verify token permissions',
+          'Ensure token has not expired',
+        ],
       );
     }
 
     if (isValidationError(error)) {
       suggestions.push(
-        ...['Check request parameters', 'Validate input format', 'Review API documentation'],
+        ...[
+          'Check request parameters',
+          'Validate input format',
+          'Review API documentation',
+        ],
       );
     }
 
     if (isRateLimitError(error)) {
       suggestions.push(
-        ...['Implement exponential backoff', 'Reduce request frequency', 'Consider upgrading your plan'],
+        ...[
+          'Implement exponential backoff',
+          'Reduce request frequency',
+          'Consider upgrading your plan',
+        ],
       );
     }
 
     if (isNetworkError(error)) {
       suggestions.push(
-        ...['Check network connectivity', 'Verify API endpoint URL', 'Try again later'],
+        ...[
+          'Check network connectivity',
+          'Verify API endpoint URL',
+          'Try again later',
+        ],
       );
     }
 
@@ -492,7 +515,7 @@ export const ErrorUtils = {
     multiplier: number = COUNT_PAIR,
     maxDelay: number = THIRTY_SECONDS_MS,
   ): number {
-    const delay = baseDelay * multiplier**(attempt - ONE);
+    const delay = baseDelay * multiplier ** (attempt - ONE);
     return Math.min(delay, maxDelay);
   },
 

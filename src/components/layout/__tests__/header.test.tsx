@@ -1,7 +1,11 @@
 import { screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Header, HeaderMinimal, HeaderTransparent } from '@/components/layout/header';
 import { renderWithProviders } from '@/components/layout/__tests__/test-utils';
+import {
+  Header,
+  HeaderMinimal,
+  HeaderTransparent,
+} from '@/components/layout/header';
 
 // Mock the navigation components
 vi.mock('../main-navigation', () => ({

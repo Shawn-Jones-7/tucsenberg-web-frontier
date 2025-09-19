@@ -37,21 +37,54 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 // Mock document.startViewTransition
-const mockTransition = {
+const createMockTypeSet = (): ViewTransitionTypeSet =>
+  new Set<string>() as unknown as ViewTransitionTypeSet;
+
+const mockTransition: ViewTransition = {
   ready: Promise.resolve(),
   finished: Promise.resolve(),
+  updateCallbackDone: Promise.resolve(),
+  types: createMockTypeSet(),
+  skipTransition: vi.fn(),
 };
 
-// Try to mock startViewTransition safely
-const mockStartViewTransition = vi.fn((callback: () => void) => {
-  // Execute the callback immediately to simulate the transition
-  callback();
-  return mockTransition;
-});
+const createStartViewTransitionMock = (
+  impl?: (
+    callback?: ViewTransitionUpdateCallback | StartViewTransitionOptions,
+  ) => ViewTransition,
+): NonNullable<Document['startViewTransition']> => {
+  const handler: NonNullable<Document['startViewTransition']> = (
+    callback?: ViewTransitionUpdateCallback | StartViewTransitionOptions,
+  ) => {
+    if (impl) {
+      return impl(callback);
+    }
+    if (typeof callback === 'function') {
+      callback();
+    }
+    return mockTransition;
+  };
+
+  return vi.fn(handler) as unknown as NonNullable<
+    Document['startViewTransition']
+  >;
+};
+
+const setStartViewTransition = (
+  impl: NonNullable<Document['startViewTransition']>,
+): void => {
+  (
+    document as Document & {
+      startViewTransition?: NonNullable<Document['startViewTransition']>;
+    }
+  ).startViewTransition = impl;
+};
+
+const mockStartViewTransition = createStartViewTransitionMock();
 
 try {
   if ('startViewTransition' in document) {
-    (document as unknown).startViewTransition = mockStartViewTransition;
+    setStartViewTransition(mockStartViewTransition);
   } else {
     Object.defineProperty(document, 'startViewTransition', {
       value: mockStartViewTransition,
@@ -61,7 +94,7 @@ try {
   }
 } catch {
   // If we can't define it, just set it directly
-  (document as unknown).startViewTransition = mockStartViewTransition;
+  setStartViewTransition(mockStartViewTransition);
 }
 
 // Mock document.documentElement.animate
@@ -264,11 +297,11 @@ describe('useEnhancedTheme', () => {
     });
 
     it('should handle View Transitions API errors', () => {
-      const errorTransition = vi.fn(() => {
+      const errorTransition = createStartViewTransitionMock(() => {
         throw new Error('View Transition failed');
       });
 
-      (document as unknown).startViewTransition = errorTransition;
+      setStartViewTransition(errorTransition);
 
       const { result } = renderHook(() => useEnhancedTheme());
 
@@ -285,21 +318,32 @@ describe('useEnhancedTheme', () => {
 
     it('should handle View Transitions with rejected promises', () => {
       // 创建被拒绝的Promise，但捕获错误以避免未处理的拒绝
-      const rejectedTransition = {
+      const rejectedTransition: ViewTransition = {
         ready: Promise.reject(new Error('Transition ready failed')).catch(
           () => {},
         ),
         finished: Promise.reject(new Error('Transition finished failed')).catch(
           () => {},
         ),
+        updateCallbackDone: Promise.reject(
+          new Error('Transition update failed'),
+        ).catch(() => {}),
+        types: createMockTypeSet(),
+        skipTransition: vi.fn(),
       };
 
-      const mockFailingTransition = vi.fn((callback: () => void) => {
-        callback();
-        return rejectedTransition;
-      });
+      const mockFailingTransition = createStartViewTransitionMock(
+        (
+          callback?: ViewTransitionUpdateCallback | StartViewTransitionOptions,
+        ) => {
+          if (typeof callback === 'function') {
+            callback();
+          }
+          return rejectedTransition;
+        },
+      );
 
-      (document as unknown).startViewTransition = mockFailingTransition;
+      setStartViewTransition(mockFailingTransition);
 
       const { result } = renderHook(() => useEnhancedTheme());
 

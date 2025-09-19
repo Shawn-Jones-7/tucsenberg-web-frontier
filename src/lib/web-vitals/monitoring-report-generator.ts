@@ -3,9 +3,6 @@
  * 负责生成各种性能监控报告
  */
 
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { ONE, ZERO  } from '@/constants';
-
 import { MonitoringUtils } from '@/lib/web-vitals/monitoring-utils';
 import { PerformanceRegressionDetector } from '@/lib/web-vitals/regression-detector';
 import type {
@@ -13,6 +10,8 @@ import type {
   PerformanceBaseline,
   RegressionDetectionResult,
 } from '@/lib/web-vitals/types';
+import { ONE, ZERO } from '@/constants';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * 性能监控报告生成器类

@@ -1,9 +1,10 @@
 import { NextRequest } from 'next/server';
-export const dynamic = 'force-dynamic';
 import { handleDeleteRequest } from '@/app/api/monitoring/dashboard/handlers/delete-handler';
 import { handleGetRequest } from '@/app/api/monitoring/dashboard/handlers/get-handler';
 import { handlePostRequest } from '@/app/api/monitoring/dashboard/handlers/post-handler';
 import { handlePutRequest } from '@/app/api/monitoring/dashboard/handlers/put-handler';
+
+export const dynamic = 'force-dynamic';
 
 /**
  * POST /api/monitoring/dashboard

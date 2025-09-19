@@ -1,4 +1,14 @@
-import { COUNT_FIVE, COUNT_TEN, FIVE_SECONDS_MS, MAGIC_0_1, MAGIC_2000, MAGIC_95, MAGIC_99, PERCENTAGE_FULL, ZERO } from '@/constants';
+import {
+  COUNT_FIVE,
+  COUNT_TEN,
+  FIVE_SECONDS_MS,
+  MAGIC_0_1,
+  MAGIC_95,
+  MAGIC_99,
+  MAGIC_2000,
+  PERCENTAGE_FULL,
+  ZERO,
+} from '@/constants';
 
 /**
  * WhatsApp Service Monitoring and Health Types
@@ -299,7 +309,13 @@ export interface AlertConfig {
  */
 export function calculateUptime(totalTime: number, downTime: number): number {
   if (totalTime <= ZERO) return PERCENTAGE_FULL;
-  return Math.max(ZERO, Math.min(PERCENTAGE_FULL, ((totalTime - downTime) / totalTime) * PERCENTAGE_FULL));
+  return Math.max(
+    ZERO,
+    Math.min(
+      PERCENTAGE_FULL,
+      ((totalTime - downTime) / totalTime) * PERCENTAGE_FULL,
+    ),
+  );
 }
 
 /**
@@ -310,7 +326,10 @@ export function calculateErrorRate(
   errorCount: number,
 ): number {
   if (totalRequests <= ZERO) return ZERO;
-  return Math.min(PERCENTAGE_FULL, (errorCount / totalRequests) * PERCENTAGE_FULL);
+  return Math.min(
+    PERCENTAGE_FULL,
+    (errorCount / totalRequests) * PERCENTAGE_FULL,
+  );
 }
 
 /**
@@ -322,12 +341,20 @@ export function determineHealthStatus(
   uptime: number,
 ): 'healthy' | 'degraded' | 'unhealthy' {
   // Unhealthy thresholds
-  if (errorRate > COUNT_TEN || responseTime > FIVE_SECONDS_MS || uptime < MAGIC_95) {
+  if (
+    errorRate > COUNT_TEN ||
+    responseTime > FIVE_SECONDS_MS ||
+    uptime < MAGIC_95
+  ) {
     return 'unhealthy';
   }
 
   // Degraded thresholds
-  if (errorRate > COUNT_FIVE || responseTime > MAGIC_2000 || uptime < MAGIC_99) {
+  if (
+    errorRate > COUNT_FIVE ||
+    responseTime > MAGIC_2000 ||
+    uptime < MAGIC_99
+  ) {
     return 'degraded';
   }
 

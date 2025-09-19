@@ -7,11 +7,18 @@
 
 'use client';
 
-import { getDetectionHistory } from '@/lib/locale-storage-history-core';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import type { LocaleDetectionRecord } from '@/lib/locale-storage-types';
 import type { Locale } from '@/types/i18n';
+import { getDetectionHistory } from '@/lib/locale-storage-history-core';
+import type { LocaleDetectionRecord } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 // ==================== 基础查询功能 ====================
 
@@ -140,19 +147,30 @@ export function queryDetections(conditions: QueryConditions): {
   records = applySort(records, conditions.sortBy, conditions.sortOrder);
 
   const totalCount = records.length;
-  const { items, hasMore } = applyPagination(records, conditions.offset, conditions.limit);
+  const { items, hasMore } = applyPagination(
+    records,
+    conditions.offset,
+    conditions.limit,
+  );
 
   return { records: items, totalCount, hasMore };
 }
 
-function applyFilters(records: LocaleDetectionRecord[], c: QueryConditions): LocaleDetectionRecord[] {
+function applyFilters(
+  records: LocaleDetectionRecord[],
+  c: QueryConditions,
+): LocaleDetectionRecord[] {
   let result = records;
   if (c.locale) result = result.filter((r) => r.locale === c.locale);
   if (c.source) result = result.filter((r) => r.source === c.source);
-  if (c.startTime !== undefined) result = result.filter((r) => r.timestamp >= c.startTime!);
-  if (c.endTime !== undefined) result = result.filter((r) => r.timestamp <= c.endTime!);
-  if (c.minConfidence !== undefined) result = result.filter((r) => r.confidence >= c.minConfidence!);
-  if (c.maxConfidence !== undefined) result = result.filter((r) => r.confidence <= c.maxConfidence!);
+  if (c.startTime !== undefined)
+    result = result.filter((r) => r.timestamp >= c.startTime!);
+  if (c.endTime !== undefined)
+    result = result.filter((r) => r.timestamp <= c.endTime!);
+  if (c.minConfidence !== undefined)
+    result = result.filter((r) => r.confidence >= c.minConfidence!);
+  if (c.maxConfidence !== undefined)
+    result = result.filter((r) => r.confidence <= c.maxConfidence!);
   return result;
 }
 
@@ -167,11 +185,24 @@ function applySort(
     let aValue: string | number;
     let bValue: string | number;
     switch (sortBy) {
-      case 'timestamp': aValue = a.timestamp; bValue = b.timestamp; break;
-      case 'confidence': aValue = a.confidence; bValue = b.confidence; break;
-      case 'locale': aValue = a.locale; bValue = b.locale; break;
-      case 'source': aValue = a.source; bValue = b.source; break;
-      default: return ZERO;
+      case 'timestamp':
+        aValue = a.timestamp;
+        bValue = b.timestamp;
+        break;
+      case 'confidence':
+        aValue = a.confidence;
+        bValue = b.confidence;
+        break;
+      case 'locale':
+        aValue = a.locale;
+        bValue = b.locale;
+        break;
+      case 'source':
+        aValue = a.source;
+        bValue = b.source;
+        break;
+      default:
+        return ZERO;
     }
     if (aValue < bValue) return sortOrder === 'desc' ? ONE : -ONE;
     if (aValue > bValue) return sortOrder === 'desc' ? -ONE : ONE;
@@ -387,7 +418,10 @@ export function getSourceGroupStats(): Array<{
  * Get time distribution statistics
  */
 export function getTimeDistributionStats(
-  bucketSize: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+  bucketSize: number = HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW,
 ): Array<{
   startTime: number;
   endTime: number;

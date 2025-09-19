@@ -1,14 +1,20 @@
 /**
  * 翻译验证器工具类
  */
-import { MAGIC_15, MAGIC_8 } from "@/constants/count";
-import { COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, ONE, ZERO, PERCENTAGE_QUARTER } from '@/constants';
-
-import { MAGIC_0_3, MAGIC_0_6 } from "@/constants/decimal";
-import { VALIDATION_THRESHOLDS } from '@/constants/i18n-constants';
-import type { ValidationResult } from '@/lib/translation-quality-types';
 import type { Locale } from '@/types/i18n';
 import type { QualityIssue } from '@/types/translation-manager';
+import type { ValidationResult } from '@/lib/translation-quality-types';
+import {
+  COUNT_FIVE,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  ONE,
+  PERCENTAGE_QUARTER,
+  ZERO,
+} from '@/constants';
+import { MAGIC_8, MAGIC_15 } from '@/constants/count';
+import { MAGIC_0_3, MAGIC_0_6 } from '@/constants/decimal';
+import { VALIDATION_THRESHOLDS } from '@/constants/i18n-constants';
 
 export class TranslationValidators {
   /**

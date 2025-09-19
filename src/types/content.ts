@@ -61,6 +61,7 @@ export interface Page extends ParsedContent<PageMetadata> {
 
 // Content collection types
 export type ContentType = 'posts' | 'pages';
+export type _ContentType = ContentType;
 export type Locale = 'en' | 'zh';
 
 // Content query options

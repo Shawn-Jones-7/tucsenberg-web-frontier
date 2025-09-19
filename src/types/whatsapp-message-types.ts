@@ -5,13 +5,16 @@
  * including text, image, interactive, and other specialized message formats.
  */
 
+import type { ContactData, LocationData } from '@/types/whatsapp-base-types';
 import type { TemplateMessage } from '@/types/whatsapp-template-types';
-import { COUNT_TEN, COUNT_TRIPLE, MAGIC_20, MAGIC_4096, ONE, ZERO } from '@/constants';
-
-import type {
-  ContactData,
-  LocationData
-} from '@/types/whatsapp-base-types';
+import {
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  MAGIC_20,
+  MAGIC_4096,
+  ONE,
+  ZERO,
+} from '@/constants';
 
 // Base Message Structure
 interface BaseMessage {
@@ -361,7 +364,9 @@ export function validateInteractiveMessage(
     if (!action.buttons || action.buttons.length === ZERO) {
       errors.push('Button interactive message must have at least one button');
     } else if (action.buttons.length > COUNT_TRIPLE) {
-      errors.push('Button interactive message cannot have more than COUNT_TRIPLE buttons');
+      errors.push(
+        'Button interactive message cannot have more than COUNT_TRIPLE buttons',
+      );
     }
 
     action.buttons?.forEach((button, index) => {
@@ -381,7 +386,9 @@ export function validateInteractiveMessage(
     if (!action.sections || action.sections.length === ZERO) {
       errors.push('List interactive message must have at least one section');
     } else if (action.sections.length > COUNT_TEN) {
-      errors.push('List interactive message cannot have more than COUNT_TEN sections');
+      errors.push(
+        'List interactive message cannot have more than COUNT_TEN sections',
+      );
     }
 
     if (!action.button) {
@@ -438,5 +445,8 @@ export const INTERACTIVE_TYPES = ['button', 'list'] as const;
 // Export commonly used types with shorter names
 export type {
   ImageMessage as Image,
-  InteractiveMessage as Interactive, WhatsAppOutgoingMessage as OutgoingMessage, TemplateMessageRequest as Template, TextMessage as Text
+  InteractiveMessage as Interactive,
+  WhatsAppOutgoingMessage as OutgoingMessage,
+  TemplateMessageRequest as Template,
+  TextMessage as Text,
 };

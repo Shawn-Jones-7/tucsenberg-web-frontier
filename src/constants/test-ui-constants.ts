@@ -1,12 +1,15 @@
-
+import {
+  BREAKPOINT_MD,
+  BREAKPOINT_SM,
+  BREAKPOINT_XL,
+  ZERO,
+} from '@/constants/magic-numbers';
 import { TEST_BASE_NUMBERS } from './test-base-constants';
-import { BREAKPOINT_MD, BREAKPOINT_SM, BREAKPOINT_XL, ZERO } from '@/constants/magic-numbers';
 
 /**
  * 测试UI相关常量定义
  * 包含透明度、角度、屏幕尺寸、内容限制等UI相关常量
  */
-
 
 // ==================== 测试UI常量 ====================
 

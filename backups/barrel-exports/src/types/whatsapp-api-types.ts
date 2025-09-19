@@ -1,4 +1,5 @@
 // 向后兼容的重新导出
+import type { TemplateMessage } from '@/../backups/barrel-exports/src/types/whatsapp-template-types';
 import type {
   ANALYTICS_GRANULARITIES,
   ANALYTICS_METRIC_TYPES,
@@ -114,7 +115,6 @@ import type {
   LocationData,
   WhatsAppContact,
 } from './whatsapp-base-types';
-import type { TemplateMessage } from '@/../backups/barrel-exports/src/types/whatsapp-template-types';
 
 /**
  * WhatsApp API 类型定义 - 主入口

@@ -6,13 +6,26 @@
  */
 
 import type { WhatsAppContact } from '@/types/whatsapp-base-types';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_QUAD, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_WEEK, HOURS_PER_DAY, MAGIC_6, MAGIC_8, MAGIC_9, ONE, SECONDS_PER_MINUTE } from '@/constants';
-
-import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
   MessageStatusUpdate,
   WebhookError,
 } from '@/types/whatsapp-webhook-base';
+import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_QUAD,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_WEEK,
+  HOURS_PER_DAY,
+  MAGIC_6,
+  MAGIC_8,
+  MAGIC_9,
+  ONE,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 
 /**
  * 消息接收事件
@@ -428,7 +441,10 @@ export function getEventTimestamp(event: WebhookEvent): Date {
 
 export function isEventExpired(
   event: WebhookEvent,
-  maxAgeMs: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+  maxAgeMs: number = HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW,
 ): boolean {
   const eventTime = getEventTimestamp(event);
   const now = new Date();

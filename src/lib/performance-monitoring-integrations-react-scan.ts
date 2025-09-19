@@ -6,12 +6,19 @@
  */
 
 import { logger } from '@/lib/logger';
-import { COUNT_FIVE, COUNT_TEN, MAGIC_16, COUNT_PAIR, MAGIC_8, MAGIC_32, MAGIC_0_3  } from '@/constants';
-
 import type {
   PerformanceConfig,
   PerformanceMetrics,
 } from '@/lib/performance-monitoring-types';
+import {
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  MAGIC_0_3,
+  MAGIC_8,
+  MAGIC_16,
+  MAGIC_32,
+} from '@/constants';
 
 /**
  * React Scan 集成钩子返回类型
@@ -412,7 +419,10 @@ export const ReactScanUtils = {
       suggestions.push('Use React.memo to prevent unnecessary re-renders');
     }
 
-    if (componentStats.unnecessaryRenders > componentStats.renders * MAGIC_0_3) {
+    if (
+      componentStats.unnecessaryRenders >
+      componentStats.renders * MAGIC_0_3
+    ) {
       suggestions.push(
         'High rate of unnecessary renders detected - check prop dependencies',
       );

@@ -1,5 +1,15 @@
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_PAIR, HOURS_PER_DAY, MAGIC_36, MAGIC_9, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
 import { safeGetArrayItem } from '@/lib/security-object-access';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+  MAGIC_9,
+  MAGIC_36,
+  ONE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 /**
  * 语言存储系统格式化工具函数

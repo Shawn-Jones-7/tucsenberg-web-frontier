@@ -1,12 +1,12 @@
 /* eslint-disable security/detect-object-injection */
+import type { Metadata } from 'next';
+import { getTranslations } from 'next-intl/server';
 import { SITE_CONFIG, type Locale, type PageType } from '@/config/paths';
-import { ONE } from "@/constants";
+import { ONE } from '@/constants';
 import {
   generateCanonicalURL,
   generateLanguageAlternates,
 } from '@/services/url-generator';
-import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
 
 // 重新导出类型以保持向后兼容
 export type { Locale, PageType } from '@/config/paths';

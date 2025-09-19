@@ -10,8 +10,8 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale } from '@/types/i18n';
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import { I18nCacheManager } from '@/lib/i18n-cache';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 // Mock localStorage
 const mockLocalStorage = {
@@ -367,7 +367,7 @@ describe('I18nCacheManager - Advanced Functionality', () => {
       expect(warmupTime).toBeLessThan(100);
 
       // Allow some time for async warmup to complete
-      await new Promise((resolve) => setTimeout(resolve, 50));
+      await vi.advanceTimersByTimeAsync(50);
 
       const stats = cacheManager.getCacheStats();
       // Warmup may or may not complete immediately, but should not error

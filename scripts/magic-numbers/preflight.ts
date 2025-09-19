@@ -1,8 +1,7 @@
 #!/usr/bin/env tsx
-
-import { Project, ts } from 'ts-morph';
-import { loadMapping, shouldSkipNode, normalize } from './utils';
 import { resolve } from 'node:path';
+import { Project, ts } from 'ts-morph';
+import { loadMapping, normalize, shouldSkipNode } from './utils';
 
 /**
  * 预检验证脚本
@@ -17,7 +16,7 @@ async function preflight() {
     : process.cwd();
 
   const project = new Project({
-    tsConfigFilePath: resolve(rootDir, 'tsconfig.json')
+    tsConfigFilePath: resolve(rootDir, 'tsconfig.json'),
   });
 
   // 添加源文件
@@ -40,7 +39,7 @@ async function preflight() {
   const fileUsage = new Map<string, Set<string>>();
 
   for (const sourceFile of sourceFiles) {
-    const filePath = sourceFile.getFilePath().replace(`${process.cwd()  }/`, '');
+    const filePath = sourceFile.getFilePath().replace(`${process.cwd()}/`, '');
     const numbersInFile = new Set<string>();
 
     sourceFile.forEachDescendant((node) => {
@@ -66,20 +65,26 @@ async function preflight() {
   console.log(`🔢 发现 ${willUse.size} 个不同的数字将被替换`);
 
   // 检查缺失的常量
-  const missing = [...willUse].filter(num => !mapping[num]);
+  const missing = [...willUse].filter((num) => !mapping[num]);
 
   if (missing.length > 0) {
-    console.error('❌ 缺失常量定义，请先补充以下常量到 mapping.json 和 src/constants/magic-numbers.ts:');
+    console.error(
+      '❌ 缺失常量定义，请先补充以下常量到 mapping.json 和 src/constants/magic-numbers.ts:',
+    );
     console.error('');
 
-    missing.sort((a, b) => parseFloat(a) - parseFloat(b)).forEach(num => {
-      console.error(`  "${num}": "MAGIC_${num.replace('.', '_').replace('-', 'NEG_')}",`);
-    });
+    missing
+      .sort((a, b) => parseFloat(a) - parseFloat(b))
+      .forEach((num) => {
+        console.error(
+          `  "${num}": "MAGIC_${num.replace('.', '_').replace('-', 'NEG_')}",`,
+        );
+      });
 
     console.error('');
     console.error('📁 涉及的文件:');
     fileUsage.forEach((numbers, file) => {
-      const missingInFile = [...numbers].filter(num => missing.includes(num));
+      const missingInFile = [...numbers].filter((num) => missing.includes(num));
       if (missingInFile.length > 0) {
         console.error(`  ${file}: ${missingInFile.join(', ')}`);
       }
@@ -91,15 +96,22 @@ async function preflight() {
   // 显示将被替换的数字统计
   console.log('');
   console.log('📊 将被替换的数字统计:');
-  const sortedNumbers = [...willUse].sort((a, b) => parseFloat(a) - parseFloat(b));
-  sortedNumbers.forEach(num => {
-    const count = [...fileUsage.values()].reduce((acc, set) => acc + (set.has(num) ? 1 : 0), 0);
+  const sortedNumbers = [...willUse].sort(
+    (a, b) => parseFloat(a) - parseFloat(b),
+  );
+  sortedNumbers.forEach((num) => {
+    const count = [...fileUsage.values()].reduce(
+      (acc, set) => acc + (set.has(num) ? 1 : 0),
+      0,
+    );
     console.log(`  ${num} → ${mapping[num]} (${count} 个文件)`);
   });
 
   console.log('');
   console.log('✅ 预检通过！所有将替换的数值均有常量定义。');
-  console.log(`📈 总计: ${willUse.size} 种数字，分布在 ${fileUsage.size} 个文件中`);
+  console.log(
+    `📈 总计: ${willUse.size} 种数字，分布在 ${fileUsage.size} 个文件中`,
+  );
 }
 
 // 运行预检

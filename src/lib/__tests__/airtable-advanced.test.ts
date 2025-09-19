@@ -1,5 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { AirtableServicePrivate } from '@/types/test-types';
+import type {
+  AirtableBaseLike,
+  AirtableServicePrivate,
+} from '@/types/test-types';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import {
+  configureServiceForTesting,
+  createMockBase,
+} from './airtable/test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();
@@ -12,10 +20,17 @@ const mockTable = vi.fn().mockReturnValue({
   update: mockUpdate,
   destroy: mockDestroy,
 });
-const mockBase = vi.fn().mockReturnValue({
-  table: mockTable,
-});
+
+const tableFactory: AirtableBaseLike['table'] = (name) => {
+  void name;
+  return mockTable() as ReturnType<AirtableBaseLike['table']>;
+};
+
+const mockBase = vi.fn(() => createMockBase(tableFactory));
 const mockConfigure = vi.fn();
+
+const setServiceReady = (service: unknown) =>
+  configureServiceForTesting(service, createMockBase(tableFactory));
 
 vi.mock('airtable', () => ({
   default: {
@@ -41,7 +56,7 @@ vi.mock('./validations', async () => {
 });
 
 describe('Airtable Advanced Tests', () => {
-  let AirtableServiceClass: any;
+  let AirtableServiceClass: typeof AirtableServiceType;
 
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
@@ -58,7 +73,8 @@ describe('Airtable Advanced Tests', () => {
 
     // Import the service fresh for each test
     const AirtableModule = await import('../airtable');
-    AirtableServiceClass = AirtableModule.AirtableService;
+    AirtableServiceClass =
+      AirtableModule.AirtableService as typeof AirtableServiceType;
   });
 
   afterEach(() => {
@@ -70,12 +86,7 @@ describe('Airtable Advanced Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: vi.fn().mockReturnValue({
-          create: mockCreate,
-        }),
-      };
+      setServiceReady(service);
 
       const largeFormData = {
         firstName: 'John',
@@ -106,12 +117,7 @@ describe('Airtable Advanced Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: vi.fn().mockReturnValue({
-          create: mockCreate,
-        }),
-      };
+      setServiceReady(service);
 
       const specialCharFormData = {
         firstName: 'José',
@@ -150,8 +156,8 @@ describe('Airtable Advanced Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
+      (service as unknown as AirtableServicePrivate).isConfigured = true;
+      (service as unknown as AirtableServicePrivate).base = {
         table: vi.fn().mockReturnValue({
           create: mockCreate,
           select: mockSelect,

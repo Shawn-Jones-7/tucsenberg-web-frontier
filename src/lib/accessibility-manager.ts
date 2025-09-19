@@ -5,14 +5,14 @@
  * 提供主题切换的无障碍性功能，确保WCAG 2.1 AA级合规
  */
 import {
-  DELAY_CONSTANTS,
-  PERCENTAGE_CONSTANTS,
-} from '@/constants/app-constants';
-import {
   THEME_ANNOUNCEMENTS,
   type ScreenReaderConfig,
 } from '@/lib/accessibility-types';
 import { logger } from '@/lib/logger';
+import {
+  DELAY_CONSTANTS,
+  PERCENTAGE_CONSTANTS,
+} from '@/constants/app-constants';
 
 /**
  * 无障碍性管理器

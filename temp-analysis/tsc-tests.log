@@ -1,0 +1,374 @@
+src/i18n/__tests__/enhanced-request.test.ts(396,28): error TS2352: Conversion of type 'undefined' to type 'Performance' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/accessibility-manager-core.test.ts(148,14): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/airtable-advanced.test.ts(89,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-advanced.test.ts(120,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-advanced.test.ts(159,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-advanced.test.ts(160,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-configuration.test.ts(234,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-configuration.test.ts(256,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(106,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(146,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(184,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(185,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(195,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(207,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(235,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(276,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(313,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-create-operations.test.ts(327,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(100,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(103,13): error TS2352: Conversion of type '{ create: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ create: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': select, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(120,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(123,13): error TS2352: Conversion of type '{ create: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ create: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': select, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(145,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(148,13): error TS2352: Conversion of type '{ create: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ create: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': select, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(167,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(170,13): error TS2352: Conversion of type '{ select: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ select: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(190,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(193,13): error TS2352: Conversion of type '{ select: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ select: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(213,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(216,13): error TS2352: Conversion of type '{ select: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ select: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, update, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(242,14): error TS2532: Object is possibly 'undefined'.
+src/lib/__tests__/airtable-error-handling.test.ts(243,14): error TS2532: Object is possibly 'undefined'.
+src/lib/__tests__/airtable-error-handling.test.ts(253,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(256,13): error TS2352: Conversion of type '{ update: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ update: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(264,50): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-error-handling.test.ts(273,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(276,13): error TS2352: Conversion of type '{ update: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ update: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(284,51): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-error-handling.test.ts(293,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(296,13): error TS2352: Conversion of type '{ update: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ update: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, destroy
+src/lib/__tests__/airtable-error-handling.test.ts(304,50): error TS2345: Argument of type '"InvalidStatus"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-error-handling.test.ts(316,50): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-error-handling.test.ts(327,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(330,13): error TS2352: Conversion of type '{ destroy: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ destroy: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, update
+src/lib/__tests__/airtable-error-handling.test.ts(347,9): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-error-handling.test.ts(350,13): error TS2352: Conversion of type '{ destroy: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ destroy: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, update
+src/lib/__tests__/airtable-operations.test.ts(124,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(144,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(167,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(179,9): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-operations.test.ts(189,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(207,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(217,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(218,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(228,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(240,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(252,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(257,50): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable-operations.test.ts(264,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-operations.test.ts(297,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(96,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(120,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(151,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(163,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(177,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(201,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(221,14): error TS2532: Object is possibly 'undefined'.
+src/lib/__tests__/airtable-read-operations.test.ts(222,14): error TS2532: Object is possibly 'undefined'.
+src/lib/__tests__/airtable-read-operations.test.ts(228,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(248,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(263,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(280,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable-read-operations.test.ts(309,23): error TS2345: Argument of type 'AirtableService' is not assignable to parameter of type 'AirtableServicePrivate<Record<string, unknown>>'.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable.test.ts(107,27): error TS2351: This expression is not constructable.
+  Type '{}' has no construct signatures.
+src/lib/__tests__/airtable.test.ts(124,27): error TS2351: This expression is not constructable.
+  Type '{}' has no construct signatures.
+src/lib/__tests__/airtable.test.ts(149,13): error TS2352: Conversion of type '{ create: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ create: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': select, update, destroy
+src/lib/__tests__/airtable.test.ts(196,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable.test.ts(197,8): error TS2352: Conversion of type 'AirtableService' to type 'AirtableServicePrivate<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'base' is private in type 'AirtableService' but not in type 'AirtableServicePrivate<Record<string, unknown>>'.
+src/lib/__tests__/airtable.test.ts(214,13): error TS2352: Conversion of type '{ select: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ select: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, update, destroy
+src/lib/__tests__/airtable.test.ts(269,13): error TS2352: Conversion of type '{ update: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ update: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, destroy
+src/lib/__tests__/airtable.test.ts(284,9): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable.test.ts(309,50): error TS2345: Argument of type '"Contacted"' is not assignable to parameter of type 'ContactStatus'.
+src/lib/__tests__/airtable.test.ts(323,13): error TS2352: Conversion of type '{ destroy: Mock<Procedure>; }' to type 'AirtableTableLike<Record<string, unknown>>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ destroy: Mock<Procedure>; }' is missing the following properties from type 'AirtableTableLike<Record<string, unknown>>': create, select, update
+src/lib/__tests__/colors-contrast-compliance.test.ts(10,10): error TS2724: '"@/constants/test-constants"' has no exported member named '_TEST_CONSTANTS'. Did you mean 'TEST_CONSTANTS'?
+src/lib/__tests__/colors-contrast-compliance.test.ts(178,43): error TS2559: Type '{ overlay: { l: number; c: number; h: number; alpha: number; }; }' has no properties in common with type 'Partial<ThemeColors>'.
+src/lib/__tests__/colors.test.ts(411,7): error TS2578: Unused '@ts-expect-error' directive.
+src/lib/__tests__/colors.test.ts(426,7): error TS2578: Unused '@ts-expect-error' directive.
+src/lib/__tests__/colors.test.ts(538,7): error TS2578: Unused '@ts-expect-error' directive.
+src/lib/__tests__/content-utils.test.ts(65,39): error TS2352: Conversion of type 'null' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/content-utils.test.ts(71,39): error TS2352: Conversion of type 'undefined' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/content-utils.test.ts(79,13): error TS2352: Conversion of type 'number' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/content-utils.test.ts(86,39): error TS2352: Conversion of type 'never[]' to type 'string' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/content-validation-basic.test.ts(11,15): error TS2724: '"@/types/content"' has no exported member named '_ContentType'. Did you mean 'ContentType'?
+src/lib/__tests__/enhanced-web-vitals.test.ts(191,1): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/enhanced-web-vitals.test.ts(433,29): error TS2352: Conversion of type 'undefined' to type 'Mock<Procedure>' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+src/lib/__tests__/i18n-cache-basic.test.ts(11,15): error TS2724: '"@/types/i18n"' has no exported member named '_Locale'. Did you mean 'Locale'?
+src/lib/__tests__/i18n-cache-basic.test.ts(13,10): error TS2724: '"@/constants/test-constants"' has no exported member named '_WEB_VITALS_CONSTANTS'. Did you mean 'WEB_VITALS_CONSTANTS'?
+src/lib/__tests__/i18n-cache-error-advanced.test.ts(196,13): error TS7034: Variable 'operations' implicitly has type 'any[]' in some locations where its type cannot be determined.
+src/lib/__tests__/i18n-cache-error-advanced.test.ts(208,27): error TS7005: Variable 'operations' implicitly has an 'any[]' type.
+src/lib/__tests__/i18n-performance-cache.test.ts(20,6): error TS2352: Conversion of type 'typeof TranslationCache' to type '{ instance?: unknown; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'instance' is private in type 'typeof TranslationCache' but not in type '{ instance?: unknown; }'.
+src/lib/__tests__/i18n-performance-cache.test.ts(148,14): error TS18046: 'testValue' is of type 'unknown'.
+src/lib/__tests__/i18n-performance.test.ts(84,6): error TS2352: Conversion of type 'typeof TranslationCache' to type '{ instance?: unknown; }' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'instance' is private in type 'typeof TranslationCache' but not in type '{ instance?: unknown; }'.
+src/lib/__tests__/locale-detector.test.ts(31,28): error TS2352: Conversion of type '{ getUserOverride: Mock<Procedure>; saveUserPreference: Mock<Procedure>; getDetectionHistory: Mock<Procedure>; addDetectionRecord: Mock<...>; getUserPreference: Mock<...>; }' to type 'MockStorageManager' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ getUserOverride: Mock<Procedure>; saveUserPreference: Mock<Procedure>; getDetectionHistory: Mock<Procedure>; addDetectionRecord: Mock<...>; getUserPreference: Mock<...>; }' is missing the following properties from type 'MockStorageManager': setUserPreference, setUserOverride, clearUserData
+src/lib/__tests__/locale-storage.test.ts(253,13): error TS2739: Type '{ detections: { locale: "en"; source: "browser"; timestamp: number; confidence: number; }[]; lastUpdated: number; }' is missing the following properties from type 'LocaleDetectionHistory': history, totalDetections
+src/lib/__tests__/locale-storage.test.ts(294,13): error TS2739: Type '{ detections: { locale: "en"; source: "browser"; timestamp: number; confidence: number; }[]; lastUpdated: number; }' is missing the following properties from type 'LocaleDetectionHistory': history, totalDetections
+src/lib/__tests__/locale-storage.test.ts(318,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/locale-storage.test.ts(334,13): error TS2739: Type '{ detections: { locale: Locale; source: "browser"; timestamp: number; confidence: number; }[]; lastUpdated: number; }' is missing the following properties from type 'LocaleDetectionHistory': history, totalDetections
+src/lib/__tests__/logger.test.ts(2,10): error TS2305: Module '"@/lib/logger"' has no exported member 'createLogger'.
+src/lib/__tests__/logger.test.ts(2,24): error TS2305: Module '"@/lib/logger"' has no exported member 'log'.
+src/lib/__tests__/logger.test.ts(2,37): error TS2305: Module '"@/lib/logger"' has no exported member 'LogLevel'.
+src/lib/__tests__/logger.test.ts(290,9): error TS2578: Unused '@ts-expect-error' directive.
+src/lib/__tests__/performance-analytics.test.ts(276,38): error TS2352: Conversion of type '{ id: string; }' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ id: string; }' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(349,7): error TS2353: Object literal may only specify known properties, and 'inp' does not exist in type '{ cls: number; lcp: number; fid: number; fcp: number; ttfb: number; domContentLoaded: number; loadComplete: number; firstPaint: number; }'.
+src/lib/__tests__/performance-analytics.test.ts(353,5): error TS2741: Property 'timestamp' is missing in type '{ version: string; commit: string; branch: string; }' but required in type '{ version: string; commit: string; branch: string; timestamp: number; }'.
+src/lib/__tests__/performance-analytics.test.ts(362,7): error TS2322: Type 'string' is not assignable to type '{ width: number; height: number; }'.
+src/lib/__tests__/performance-analytics.test.ts(387,25): error TS18046: 'r' is of type 'unknown'.
+src/lib/__tests__/performance-analytics.test.ts(416,25): error TS18046: 'r' is of type 'unknown'.
+src/lib/__tests__/performance-analytics.test.ts(434,25): error TS18046: 'r' is of type 'unknown'.
+src/lib/__tests__/performance-analytics.test.ts(515,29): error TS2352: Conversion of type '{ enabled: boolean; thresholds: { cls: { warning: number; critical: number; }; lcp: { warning: number; critical: number; }; fid: { warning: number; critical: number; }; }; notifications: { console: boolean; webhook: string; }; }' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ enabled: boolean; thresholds: { cls: { warning: number; critical: number; }; lcp: { warning: number; critical: number; }; fid: { warning: number; critical: number; }; }; notifications: { console: boolean; webhook: string; }; }' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(515,29): error TS2559: Type 'DetailedWebVitals' has no properties in common with type 'Partial<PerformanceAlertConfig> & { notifications?: { console?: boolean; storage?: boolean; webhook?: string; }; webhook?: string; }'.
+src/lib/__tests__/performance-analytics.test.ts(519,31): error TS2352: Conversion of type '{ enabled: boolean; thresholds: { cls: { warning: number; critical: number; }; lcp: { warning: number; critical: number; }; fid: { warning: number; critical: number; }; }; notifications: { console: boolean; webhook: string; }; }' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ enabled: boolean; thresholds: { cls: { warning: number; critical: number; }; lcp: { warning: number; critical: number; }; fid: { warning: number; critical: number; }; }; notifications: { console: boolean; webhook: string; }; }' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(519,31): error TS2559: Type 'DetailedWebVitals' has no properties in common with type 'Partial<PerformanceAlertConfig> & { notifications?: { console?: boolean; storage?: boolean; webhook?: string; }; webhook?: string; }'.
+src/lib/__tests__/performance-analytics.test.ts(524,29): error TS2352: Conversion of type '{ enabled: string; thresholds: string; }' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ enabled: string; thresholds: string; }' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(530,31): error TS2559: Type 'DetailedWebVitals' has no properties in common with type 'Partial<PerformanceAlertConfig> & { notifications?: { console?: boolean; storage?: boolean; webhook?: string; }; webhook?: string; }'.
+src/lib/__tests__/performance-analytics.test.ts(555,8): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(555,42): error TS2339: Property 'checkMetrics' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(575,8): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(575,42): error TS2339: Property 'checkMetrics' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(594,8): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(594,42): error TS2339: Property 'checkMetrics' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(612,65): error TS2339: Property 'error' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(732,24): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(732,58): error TS2339: Property 'getAlertHistory' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(757,24): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(757,58): error TS2339: Property 'getAlertHistory' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(777,15): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(777,49): error TS2339: Property 'getAlertHistory' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(781,8): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(781,42): error TS2339: Property 'clearHistory' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/performance-analytics.test.ts(783,15): error TS2352: Conversion of type 'PerformanceAlertSystem' to type 'DetailedWebVitals' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type 'PerformanceAlertSystem' is missing the following properties from type 'DetailedWebVitals': cls, fid, lcp, fcp, and 7 more.
+src/lib/__tests__/performance-analytics.test.ts(783,49): error TS2339: Property 'getAlertHistory' does not exist on type 'DetailedWebVitals'.
+src/lib/__tests__/resend.test.ts(4,3): error TS2305: Module '"@/types/test-types"' has no exported member 'ResendServicePrivate'.
+src/lib/__tests__/resend.test.ts(100,27): error TS18046: 'ServiceClass' is of type 'unknown'.
+src/lib/__tests__/resend.test.ts(113,5): error TS2322: Type 'unknown' is not assignable to type 'typeof import("/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend")'.
+src/lib/__tests__/resend.test.ts(131,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(163,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(189,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(203,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(215,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(224,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(246,5): error TS2322: Type 'unknown' is not assignable to type 'typeof import("/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/src/lib/resend")'.
+src/lib/__tests__/resend.test.ts(264,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(296,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(310,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(324,27): error TS2552: Cannot find name 'ResendServiceClass'. Did you mean 'ResendService'?
+src/lib/__tests__/resend.test.ts(331,27): error TS2304: Cannot find name 'ResendServiceClass'.
+src/lib/__tests__/resend.test.ts(340,27): error TS2304: Cannot find name 'ResendServiceClass'.
+src/lib/__tests__/resend.test.ts(370,27): error TS2304: Cannot find name 'ResendServiceClass'.
+src/lib/__tests__/resend.test.ts(402,27): error TS2304: Cannot find name 'ResendServiceClass'.
+src/lib/__tests__/resend.test.ts(439,27): error TS2304: Cannot find name 'ResendServiceClass'.
+src/lib/__tests__/structured-data.test.ts(623,9): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/structured-data.test.ts(636,27): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(94,44): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(110,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(123,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(140,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(176,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(190,14): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(205,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(206,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(207,43): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(272,44): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(273,43): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(274,44): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(303,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(304,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(305,43): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(327,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(367,44): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(368,43): error TS2554: Expected 1 arguments, but got 5.
+src/lib/__tests__/theme-analytics.test.ts(409,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(417,14): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(422,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(446,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(460,43): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(478,46): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(499,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(508,35): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(515,33): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(520,26): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(530,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(539,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(545,14): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(550,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(559,7): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(581,14): error TS2571: Object is of type 'unknown'.
+src/lib/__tests__/theme-analytics.test.ts(589,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(610,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(625,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(643,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(669,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics.test.ts(692,44): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/theme-analytics/setup.ts(199,10): error TS2352: Conversion of type 'ThemeAnalytics' to type 'ThemeAnalyticsPrivate' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Property 'isEnabled' is missing in type 'ThemeAnalytics' but required in type 'ThemeAnalyticsPrivate'.
+src/lib/__tests__/theme-analytics/setup.ts(221,39): error TS2554: Expected 1 arguments, but got 4.
+src/lib/__tests__/translation-manager-core.test.ts(3,3): error TS2305: Module '"@/types/test-types"' has no exported member 'MockTranslationManagerConfig'.
+src/lib/__tests__/translation-manager-core.test.ts(4,3): error TS2305: Module '"@/types/test-types"' has no exported member 'TranslationManagerPrivate'.
+src/lib/__tests__/translation-manager-core.test.ts(128,5): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(206,5): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(257,28): error TS2551: Property 'reloadTranslations' does not exist on type 'TranslationManagerCore'. Did you mean 'getTranslations'?
+src/lib/__tests__/translation-manager-core.test.ts(290,5): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(328,28): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(337,9): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(349,9): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(418,36): error TS2551: Property 'getBatchTranslations' does not exist on type 'TranslationManagerCore'. Did you mean 'getTranslations'?
+src/lib/__tests__/translation-manager-core.test.ts(428,28): error TS2551: Property 'reloadTranslations' does not exist on type 'TranslationManagerCore'. Did you mean 'getTranslations'?
+src/lib/__tests__/translation-manager-core.test.ts(435,20): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(436,14): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(446,21): error TS7053: Element implicitly has an 'any' type because expression of type '"qualityChecker"' can't be used to index type 'TranslationManagerCore'.
+  Property 'qualityChecker' does not exist on type 'TranslationManagerCore'.
+src/lib/__tests__/translation-manager-core.test.ts(513,15): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManagerCore'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager-core.test.ts(524,36): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManagerCore'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager-core.test.ts(551,41): error TS2551: Property 'getBatchTranslations' does not exist on type 'TranslationManagerCore'. Did you mean 'getTranslations'?
+src/lib/__tests__/translation-manager.test.ts(15,5): error TS2698: Spread types may only be created from object types.
+src/lib/__tests__/translation-manager.test.ts(25,5): error TS2698: Spread types may only be created from object types.
+src/lib/__tests__/translation-manager.test.ts(168,50): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(173,50): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(178,50): error TS2345: Argument of type '"navigation.home"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(183,50): error TS2345: Argument of type '"missing.key"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(189,9): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(205,50): error TS2345: Argument of type '"common.empty"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(231,36): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(261,36): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(288,36): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(297,36): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(304,37): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(305,37): error TS2551: Property 'validateTranslationQuality' does not exist on type 'TranslationManager'. Did you mean 'validateTranslations'?
+src/lib/__tests__/translation-manager.test.ts(328,36): error TS2551: Property 'getBatchTranslations' does not exist on type 'TranslationManager'. Did you mean 'getTranslations'?
+src/lib/__tests__/translation-manager.test.ts(384,9): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(391,50): error TS2345: Argument of type '""' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(396,51): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(397,51): error TS2345: Argument of type 'unknown' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(411,51): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/translation-manager.test.ts(416,51): error TS2345: Argument of type '"common.hello"' is not assignable to parameter of type 'Locale'.
+src/lib/__tests__/web-vitals-monitor.test.ts(174,14): error TS2790: The operand of a 'delete' operator must be optional.
+src/test/browser-setup.ts(221,16): error TS2352: Conversion of type '{ identifier: number; target: HTMLElement; radiusX: number; radiusY: number; rotationAngle: number; force: number; clientX: number; clientY: number; }[]' to type 'Touch[]' may be a mistake because neither type sufficiently overlaps with the other. If this was intentional, convert the expression to 'unknown' first.
+  Type '{ identifier: number; target: HTMLElement; radiusX: number; radiusY: number; rotationAngle: number; force: number; clientX: number; clientY: number; }' is missing the following properties from type 'Touch': pageX, pageY, screenX, screenY
+src/test/setup.ts(14,13): error TS2428: All declarations of 'Assertion' must have identical type parameters.
+src/testing/utils/theme-test-utilities.ts(189,11): error TS18046: 'mock.handleThemeChange' is of type 'unknown'.
+src/testing/utils/theme-test-utilities.ts(277,7): error TS18046: 'mockFunction' is of type 'unknown'.
+src/testing/utils/theme-test-utilities.ts(278,21): error TS18046: 'mockFunction' is of type 'unknown'.
+src/testing/utils/theme-test-utilities.ts(280,25): error TS18046: 'mockFunction' is of type 'unknown'.
+src/types/test-types.ts(471,35): error TS2344: Type '(locale: string) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'locale' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'string'.
+src/types/test-types.ts(472,33): error TS2344: Type '(locale: string) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'locale' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'string'.
+src/types/test-types.ts(482,5): error TS2344: Type '(success: (position: GeolocationPosition) => void, error?: ((error: GeolocationPositionError) => void) | undefined) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'success' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type '(position: GeolocationPosition) => void'.
+src/types/test-types.ts(488,5): error TS2344: Type '(success: (position: GeolocationPosition) => void, error?: ((error: GeolocationPositionError) => void) | undefined) => number' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'success' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type '(position: GeolocationPosition) => void'.
+src/types/test-types.ts(493,28): error TS2344: Type '(watchId: number) => void' does not satisfy the constraint '(..._args: unknown[]) => unknown'.
+  Types of parameters 'watchId' and '_args' are incompatible.
+    Type 'unknown' is not assignable to type 'number'.
+tests/e2e/homepage.spec.ts(220,19): error TS18046: 'entry' is of type 'unknown'.
+tests/e2e/homepage.spec.ts(221,33): error TS18046: 'entry' is of type 'unknown'.
+tests/e2e/homepage.spec.ts(223,19): error TS18046: 'entry' is of type 'unknown'.
+tests/e2e/homepage.spec.ts(224,33): error TS18046: 'entry' is of type 'unknown'.
+tests/e2e/homepage.spec.ts(226,19): error TS18046: 'entry' is of type 'unknown'.
+tests/e2e/homepage.spec.ts(227,33): error TS18046: 'entry' is of type 'unknown'.
+tests/error-scenarios/error-boundary-core.test.tsx(30,7): error TS2322: Type 'unknown' is not assignable to type 'MouseEventHandler<HTMLButtonElement> | undefined'.
+tests/error-scenarios/network-errors.test.ts(63,11): error TS2698: Spread types may only be created from object types.
+tests/error-scenarios/system-errors.test.ts(47,5): error TS2571: Object is of type 'unknown'.
+tests/error-scenarios/system-errors.test.ts(48,5): error TS2571: Object is of type 'unknown'.
+tests/error-scenarios/system-errors.test.ts(176,24): error TS2379: Argument of type '{ error: Error; timestamp: Date; context: Record<string, unknown> | undefined; }' is not assignable to parameter of type '{ error: Error; timestamp: Date; context?: Record<string, unknown>; }' with 'exactOptionalPropertyTypes: true'. Consider adding 'undefined' to the types of the target's properties.
+  Types of property 'context' are incompatible.
+    Type 'Record<string, unknown> | undefined' is not assignable to type 'Record<string, unknown>'.
+      Type 'undefined' is not assignable to type 'Record<string, unknown>'.
+tests/error-scenarios/system-errors.test.ts(325,14): error TS2571: Object is of type 'unknown'.

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { type RenderOptions, render } from '@testing-library/react';
+import { render, type RenderOptions } from '@testing-library/react';
 import { vi } from 'vitest';
 
 // import { ThemeProvider } from 'next-themes';

@@ -2,25 +2,29 @@
  * Airtable 核心服务类
  */
 
-import { env } from '@/../env.mjs';
-import { ANIMATION_DURATION_VERY_SLOW, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
-import { logger } from '@/lib/logger';
-import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
 // 动态引入 Airtable，避免构建期和初始化顺序问题
 // import type 仅用于类型提示，实际模块在运行时按需加载
 import type AirtableNS from 'airtable';
-
-interface AirtableLike {
-  base: (id: string) => AirtableNS.Base;
-  configure: (opts: { endpointUrl: string; apiKey: string }) => void;
-}
 import type {
   AirtableQueryOptions,
   AirtableRecord,
   ContactFormData,
   ContactStatus,
 } from '@/lib/airtable/types';
+import { logger } from '@/lib/logger';
+import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
+import { env } from '@/../env.mjs';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  ONE,
+  PERCENTAGE_FULL,
+  ZERO,
+} from '@/constants';
+
+interface AirtableLike {
+  base: (id: string) => AirtableNS.Base;
+  configure: (opts: { endpointUrl: string; apiKey: string }) => void;
+}
 
 /**
  * Airtable配置和初始化
@@ -58,8 +62,11 @@ export class AirtableService {
         this.airtableModule = await import('airtable');
       }
       const resolveAirtable = (mod: unknown): AirtableLike | null => {
-        const maybe = mod as { default?: Partial<AirtableLike> } | Partial<AirtableLike>;
-        const candidate = (maybe as { default?: Partial<AirtableLike> }).default ?? maybe;
+        const maybe = mod as
+          | { default?: Partial<AirtableLike> }
+          | Partial<AirtableLike>;
+        const candidate =
+          (maybe as { default?: Partial<AirtableLike> }).default ?? maybe;
         if (
           candidate &&
           typeof candidate === 'object' &&

@@ -1,9 +1,9 @@
 'use client';
 
-import { COUNT_6000, MAGIC_4000 } from "@/constants/count";
-import { FIVE_SECONDS_MS } from "@/constants";
 import { useTranslations } from 'next-intl';
 import { toast as sonnerToast } from 'sonner';
+import { FIVE_SECONDS_MS } from '@/constants';
+import { COUNT_6000, MAGIC_4000 } from '@/constants/count';
 
 /**
  * Custom toast hook with internationalization support

@@ -4,10 +4,8 @@
  * 提供浏览器检测、地理位置检测、时区检测等基础检测方法
  */
 
-import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, SECONDS_PER_MINUTE } from '@/constants';
-
 import type { Locale } from '@/types/i18n';
+import { DEFAULT_LOCALE, SUPPORTED_LOCALES } from '@/lib/locale-constants';
 import {
   COUNTRY_CODE_TO_LOCALE_MAP,
   DETECTION_TIMEOUTS,
@@ -15,6 +13,11 @@ import {
   LANGUAGE_CODE_TO_LOCALE_MAP,
   TIMEZONE_TO_LOCALE_MAP,
 } from '@/lib/locale-detector-constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 
 /**
  * 基础语言检测器
@@ -92,10 +95,12 @@ export class BaseLocaleDetector {
 
         // 尝试提取主要语言代码 (例如: 'zh-CN' -> 'zh')
         const [primaryLang] = normalizedLang.split('-');
-        const primaryLocale = this.getLocaleFromLanguageCode(primaryLang);
+        if (typeof primaryLang === 'string' && primaryLang.length > 0) {
+          const primaryLocale = this.getLocaleFromLanguageCode(primaryLang);
 
-        if (primaryLocale) {
-          return primaryLocale;
+          if (primaryLocale) {
+            return primaryLocale;
+          }
         }
       }
 
@@ -151,7 +156,8 @@ export class BaseLocaleDetector {
           {
             timeout: DETECTION_TIMEOUTS.GEOLOCATION,
             enableHighAccuracy: false,
-            maximumAge: COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 10分钟缓存
+            maximumAge:
+              COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 10分钟缓存
           },
         );
       });

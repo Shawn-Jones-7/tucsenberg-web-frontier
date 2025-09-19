@@ -1,6 +1,6 @@
 'use client';
 
-import { type FormEvent, useState } from 'react';
+import { useState, type FormEvent } from 'react';
 import {
   ArrowRight,
   Bell,
@@ -17,6 +17,8 @@ import { useTranslations } from 'next-intl';
 // cn utility is imported but not used in this file
 // import { cn } from '@/lib/utils';
 import { logger } from '@/lib/logger';
+import { AnimatedIcon } from '@/components/shared/animated-icon';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -28,8 +30,6 @@ import {
 } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Link } from '@/i18n/routing';
-import { AnimatedIcon } from '@/components/shared/animated-icon';
-import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 interface EmailSubscriptionProps {
   showEmailSubscription: boolean;
@@ -75,7 +75,9 @@ export function EmailSubscription({
           <Bell className='h-5 w-5' />
           {translate('emailSubscription.title')}
         </CardTitle>
-        <CardDescription>{translate('emailSubscription.description')}</CardDescription>
+        <CardDescription>
+          {translate('emailSubscription.description')}
+        </CardDescription>
       </CardHeader>
       <CardContent>
         {isSubscribed ? (
@@ -119,7 +121,11 @@ export function SocialLinks({ showSocialLinks }: SocialLinksProps) {
   const socialLinks = [
     { icon: Twitter, href: 'https://twitter.com/tucsenberg', label: 'Twitter' },
     { icon: Github, href: 'https://github.com/tucsenberg', label: 'GitHub' },
-    { icon: Linkedin, href: 'https://www.linkedin.com/company/tucsenberg', label: 'LinkedIn' },
+    {
+      icon: Linkedin,
+      href: 'https://www.linkedin.com/company/tucsenberg',
+      label: 'LinkedIn',
+    },
   ] as const;
 
   if (!showSocialLinks) return null;

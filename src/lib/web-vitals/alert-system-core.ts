@@ -3,11 +3,10 @@
  * Performance Alert System - Core Class
  */
 
-import { MAGIC_70 } from "@/constants/count";
-import { PERCENTAGE_HALF, ZERO } from '@/constants';
-
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { AlertSystemChecker, type AlertInfo } from '@/lib/web-vitals/alert-system-checker';
+import {
+  AlertSystemChecker,
+  type AlertInfo,
+} from '@/lib/web-vitals/alert-system-checker';
 import {
   AlertSystemSender,
   type AlertHistoryEntry,
@@ -17,6 +16,9 @@ import type {
   PerformanceAlertConfig,
   RegressionDetectionResult,
 } from '@/lib/web-vitals/types';
+import { PERCENTAGE_HALF, ZERO } from '@/constants';
+import { MAGIC_70 } from '@/constants/count';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * 性能预警系统核心类
@@ -145,12 +147,14 @@ export class PerformanceAlertSystem {
     message: string;
     data?: Record<string, unknown>;
   }): Promise<void> {
-    return this.sender.sendAlert({
+    const payload = {
       severity: args.severity,
       message: args.message,
       config: this.config,
-      data: args.data,
-    });
+      ...(args.data !== undefined && { data: args.data }),
+    };
+
+    return this.sender.sendAlert(payload);
   }
 
   /**

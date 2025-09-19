@@ -1,8 +1,8 @@
-import { ContactForm } from '@/components/contact/contact-form';
-import { Card } from '@/components/ui/card';
-import { COUNT_PAIR } from "@/constants";
 import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
+import { ContactForm } from '@/components/contact/contact-form';
+import { Card } from '@/components/ui/card';
+import { COUNT_PAIR } from '@/constants';
 
 interface ContactPageProps {
   params: Promise<{

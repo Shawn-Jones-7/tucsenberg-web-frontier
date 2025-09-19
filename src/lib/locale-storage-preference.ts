@@ -37,7 +37,13 @@ import {
   PreferenceEventManager,
   recordPreferenceHistory,
 } from '@/lib/locale-storage-preference-events';
-import { clearUserOverride, getOverrideStats, getUserOverride, hasUserOverride, setUserOverride } from '@/lib/locale-storage-preference-override';
+import {
+  clearUserOverride,
+  getOverrideStats,
+  getUserOverride,
+  hasUserOverride,
+  setUserOverride,
+} from '@/lib/locale-storage-preference-override';
 import type {
   StorageEventListener,
   StorageOperationResult,

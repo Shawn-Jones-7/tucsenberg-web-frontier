@@ -5,11 +5,8 @@
  * 提供缓存系统所需的工具函数、验证器和辅助方法
  */
 
-import { COUNT_100000, COUNT_256, MAGIC_9 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_PAIR, COUNT_TEN, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import type { AdvancedCacheConfig } from '@/lib/i18n-cache-types-advanced';
 import type { Locale } from '@/types/i18n';
+import type { AdvancedCacheConfig } from '@/lib/i18n-cache-types-advanced';
 import type {
   CacheConfig,
   CacheConfigValidation,
@@ -18,6 +15,17 @@ import type {
   CacheItem,
   CacheStats,
 } from '@/lib/i18n-cache-types-base';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_PAIR,
+  COUNT_TEN,
+  HOURS_PER_DAY,
+  ONE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { COUNT_256, COUNT_100000, MAGIC_9 } from '@/constants/count';
 
 /**
  * 缓存键工具函数
@@ -58,7 +66,9 @@ export const CacheKeyUtils = {
    * Validate cache key format
    */
   validate(key: string): boolean {
-    return typeof key === 'string' && key.length > ZERO && key.length <= COUNT_256;
+    return (
+      typeof key === 'string' && key.length > ZERO && key.length <= COUNT_256
+    );
   },
 
   /**
@@ -135,7 +145,11 @@ export const CacheTimeUtils = {
       s: ANIMATION_DURATION_VERY_SLOW,
       m: SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
       h: SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
-      d: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+      d:
+        HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW,
     };
 
     const match = timeStr.match(/^(\d+)(ms|s|m|h|d)$/);
@@ -143,7 +157,9 @@ export const CacheTimeUtils = {
 
     const [, value, unit] = match;
     if (!value || !unit) throw new Error(`Invalid time format: ${timeStr}`);
-    return parseInt(value, COUNT_TEN) * (units[unit as keyof typeof units] || ONE);
+    return (
+      parseInt(value, COUNT_TEN) * (units[unit as keyof typeof units] || ONE)
+    );
   },
 } as const;
 
@@ -176,10 +192,15 @@ export const CacheSizeUtils = {
       unitIndex += 1;
     }
     const unitLabel =
-      unitIndex === 0 ? 'B' :
-      unitIndex === 1 ? 'KB' :
-      unitIndex === 2 ? 'MB' :
-      unitIndex === 3 ? 'GB' : 'TB';
+      unitIndex === 0
+        ? 'B'
+        : unitIndex === 1
+          ? 'KB'
+          : unitIndex === 2
+            ? 'MB'
+            : unitIndex === 3
+              ? 'GB'
+              : 'TB';
     return `${size.toFixed(COUNT_PAIR)} ${unitLabel}`;
   },
 
@@ -198,15 +219,18 @@ export const CacheSizeUtils = {
     let dotCount = 0;
     for (let i = 0; i < numberPart.length; i++) {
       const code = numberPart.charCodeAt(i);
-      if (code === 46) { // '.'
+      if (code === 46) {
+        // '.'
         dotCount += 1;
         if (dotCount > 1) throw new Error(`Invalid size format: ${sizeStr}`);
         continue;
       }
-      if (code < 48 || code > 57) throw new Error(`Invalid size format: ${sizeStr}`);
+      if (code < 48 || code > 57)
+        throw new Error(`Invalid size format: ${sizeStr}`);
     }
     const value = parseFloat(numberPart);
-    if (!Number.isFinite(value)) throw new Error(`Invalid size format: ${sizeStr}`);
+    if (!Number.isFinite(value))
+      throw new Error(`Invalid size format: ${sizeStr}`);
 
     const multiplier = (() => {
       switch (unit) {
@@ -219,9 +243,7 @@ export const CacheSizeUtils = {
         case 'GB':
           return BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB;
         case 'TB':
-          return (
-            BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB
-          );
+          return BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB * BYTES_PER_KB;
         default:
           return ONE;
       }
@@ -334,7 +356,13 @@ export const CacheValidationUtils = {
     if (config.ttl !== undefined) {
       if (typeof config.ttl !== 'number' || config.ttl < ZERO) {
         errors.push('ttl must be a non-negative number');
-      } else if (config.ttl > HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW) {
+      } else if (
+        config.ttl >
+        HOURS_PER_DAY *
+          SECONDS_PER_MINUTE *
+          SECONDS_PER_MINUTE *
+          ANIMATION_DURATION_VERY_SLOW
+      ) {
         warnings.push('ttl is very long (>24h), consider reducing it');
       }
     }

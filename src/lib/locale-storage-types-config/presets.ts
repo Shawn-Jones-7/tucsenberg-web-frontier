@@ -3,10 +3,33 @@
  * Locale Storage System Environment Configuration Presets
  */
 
-import { COUNT_100000, COUNT_200000, COUNT_256, COUNT_300000, MAGIC_16, MAGIC_20, MAGIC_32, MAGIC_512 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, DAYS_PER_WEEK, HOURS_PER_DAY, MAGIC_6, ONE, PERCENTAGE_HALF, SECONDS_PER_MINUTE, THIRTY_SECONDS_MS, ZERO } from '@/constants';
-
 import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  DAYS_PER_WEEK,
+  HOURS_PER_DAY,
+  MAGIC_6,
+  ONE,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  THIRTY_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import {
+  COUNT_256,
+  COUNT_100000,
+  COUNT_200000,
+  COUNT_300000,
+  MAGIC_16,
+  MAGIC_20,
+  MAGIC_32,
+  MAGIC_512,
+} from '@/constants/count';
 
 /**
  * 配置预设
@@ -99,10 +122,29 @@ export const CONFIG_PRESETS: Record<string, Partial<StorageConfig>> = {
       threshold: COUNT_256,
     },
     retention: {
-      preferences: DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // DAYS_PER_WEEK天
-      history: COUNT_TRIPLE * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // COUNT_TRIPLE天
-      analytics: DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // DAYS_PER_MONTH天
-      cache: MAGIC_6 * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // MAGIC_6小时
+      preferences:
+        DAYS_PER_WEEK *
+        HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW, // DAYS_PER_WEEK天
+      history:
+        COUNT_TRIPLE *
+        HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW, // COUNT_TRIPLE天
+      analytics:
+        DAYS_PER_MONTH *
+        HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW, // DAYS_PER_MONTH天
+      cache:
+        MAGIC_6 *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW, // MAGIC_6小时
     },
   },
 

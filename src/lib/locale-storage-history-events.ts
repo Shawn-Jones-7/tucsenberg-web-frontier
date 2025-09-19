@@ -7,13 +7,12 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
-import { COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type {
   StorageEvent,
   StorageEventListener,
 } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
+import { COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 // ==================== 事件管理器 ====================
 
@@ -125,7 +124,9 @@ export class HistoryEventManager {
    * Get event history
    */
   static getEventHistory(limit?: number): StorageEvent[] {
-    return limit ? this.eventHistory.slice(ZERO, limit) : [...this.eventHistory];
+    return limit
+      ? this.eventHistory.slice(ZERO, limit)
+      : [...this.eventHistory];
   }
 
   /**
@@ -157,7 +158,10 @@ export class HistoryEventManager {
     return {
       totalListeners,
       eventTypes: Array.from(this.eventListeners.keys()),
-      listenersByType: Object.fromEntries(byType.entries()) as Record<string, number>,
+      listenersByType: Object.fromEntries(byType.entries()) as Record<
+        string,
+        number
+      >,
     };
   }
 }
@@ -307,7 +311,8 @@ export function createStatsListener(): {
 
   const listener: StorageEventListener = (event: StorageEvent) => {
     stats.totalEvents += ONE;
-    stats.eventsByType[event.type] = (stats.eventsByType[event.type] || ZERO) + ONE;
+    stats.eventsByType[event.type] =
+      (stats.eventsByType[event.type] || ZERO) + ONE;
 
     // 保留最近10个事件
     stats.recentEvents.unshift(event);
@@ -474,6 +479,9 @@ export function getEventSystemStatus(): {
     isActive: listenerStats.totalListeners > ZERO,
     listenerStats,
     eventHistoryCount: HistoryEventManager.getEventHistory().length,
-    lastEventTime: eventHistory.length > ZERO ? (eventHistory.at(ZERO)?.timestamp ?? null) : null,
+    lastEventTime:
+      eventHistory.length > ZERO
+        ? (eventHistory.at(ZERO)?.timestamp ?? null)
+        : null,
   };
 }

@@ -1,7 +1,7 @@
 'use client';
 
-import { ONE, ZERO } from "@/constants";
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { ONE, ZERO } from '@/constants';
 
 export interface KeyboardNavigationOptions {
   enabled?: boolean;
@@ -213,8 +213,12 @@ function useKeyboardHandler(args: {
   getFocusableElements: () => HTMLElement[];
   getCurrentFocusIndex: () => number;
 }) {
-  const { config, navigationActions, getFocusableElements, getCurrentFocusIndex } =
-    args;
+  const {
+    config,
+    navigationActions,
+    getFocusableElements,
+    getCurrentFocusIndex,
+  } = args;
   const handleKeyDown = useCallback(
     (event: KeyboardEvent): void => {
       if (!config.enabled) return;

@@ -1,5 +1,16 @@
 import { describe, expect, it } from 'vitest';
 import {
+  APP_CONSTANTS,
+  CONTENT_LIMITS,
+  DEBUG_CONSTANTS,
+  DELAY_CONSTANTS,
+  OPACITY_CONSTANTS,
+  PAGINATION_CONSTANTS,
+  PERCENTAGE_CONSTANTS,
+  PERFORMANCE_CONSTANTS,
+  TIME_CONSTANTS,
+} from '../app-constants';
+import {
   TEST_APP_CONSTANTS,
   TEST_DELAY_VALUES,
   TEST_PERCENTAGE_VALUES,
@@ -13,17 +24,6 @@ import {
   TEST_OPACITY_CONSTANTS,
   TEST_SPECIAL_CONSTANTS,
 } from '../test-constants';
-import {
-  APP_CONSTANTS,
-  CONTENT_LIMITS,
-  DEBUG_CONSTANTS,
-  DELAY_CONSTANTS,
-  OPACITY_CONSTANTS,
-  PAGINATION_CONSTANTS,
-  PERCENTAGE_CONSTANTS,
-  PERFORMANCE_CONSTANTS,
-  TIME_CONSTANTS,
-} from '../app-constants';
 
 describe('app-constants', () => {
   describe('TIME_CONSTANTS', () => {

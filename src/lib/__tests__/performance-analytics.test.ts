@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import type { DetailedWebVitals, PerformanceBaseline } from '@/types';
+import type { PerformanceAlertConfig } from '@/lib/web-vitals/types';
 import {
   PerformanceAlertSystem,
   PerformanceBaselineManager,
@@ -51,15 +52,22 @@ Object.defineProperty(global, 'localStorage', {
   writable: true,
 });
 
-describe('PerformanceBaselineManager', () => {
-  let baselineManager: InstanceType<typeof PerformanceBaselineManager>;
+const createTestPage = (
+  url: string,
+  overrides: Partial<DetailedWebVitals['page']> = {},
+): DetailedWebVitals['page'] => ({
+  url,
+  referrer: '',
+  title: 'Test Page',
+  timestamp: Date.now(),
+  ...overrides,
+});
 
-  // Shared baseline object for tests
-  const mockBaseline = {
-    id: 'test-baseline',
-    timestamp: Date.now(),
-    url: 'https://test.com/en/test-page',
-    userAgent: 'Test Browser',
+const createDetailedMetrics = (
+  overrides: Partial<DetailedWebVitals> = {},
+): DetailedWebVitals => {
+  const now = Date.now();
+  const base: DetailedWebVitals = {
     cls: 0.1,
     fid: 100,
     lcp: 2500,
@@ -71,15 +79,9 @@ describe('PerformanceBaselineManager', () => {
     firstPaint: 1200,
     resourceTiming: {
       totalResources: 10,
-      slowResources: [],
+      slowResources: [] as DetailedWebVitals['resourceTiming']['slowResources'],
       totalSize: 1024000,
       totalDuration: 2000,
-    },
-    connection: {
-      effectiveType: '4g',
-      downlink: 10,
-      rtt: 50,
-      saveData: false,
     },
     device: {
       memory: 8,
@@ -89,69 +91,198 @@ describe('PerformanceBaselineManager', () => {
         width: 1920,
         height: 1080,
       },
+    },
+    connection: {
+      effectiveType: '4g',
+      downlink: 10,
+      rtt: 50,
+      saveData: false,
     },
     page: {
       url: 'https://test.com/en/test-page',
       referrer: '',
       title: 'Test Page',
-      timestamp: Date.now(),
-    },
-    metrics: {
-      cls: 0.1,
-      lcp: 2500,
-      fid: 100,
-      fcp: 1800,
-      ttfb: 800,
-      domContentLoaded: 1500,
-      loadComplete: 3000,
-      firstPaint: 1200,
-    },
-    score: 0.8,
-    environment: {
-      viewport: { width: 1920, height: 1080 },
-      memory: 8,
-      cores: 4,
+      timestamp: now,
     },
   };
 
-  const mockDetailedWebVitals: DetailedWebVitals = {
-    cls: 0.1,
-    fid: 100,
-    lcp: 2500,
-    fcp: 1800,
-    ttfb: 800,
-    inp: 200,
-    domContentLoaded: 1500,
-    loadComplete: 3000,
-    firstPaint: 1200,
-    resourceTiming: {
-      totalResources: 10,
-      slowResources: [],
-      totalSize: 1024000,
-      totalDuration: 2000,
-    },
-    connection: {
-      effectiveType: '4g',
-      downlink: 10,
-      rtt: 50,
-      saveData: false,
-    },
-    device: {
-      memory: 8,
-      cores: 4,
-      userAgent: 'Test Browser',
-      viewport: {
-        width: 1920,
-        height: 1080,
-      },
-    },
-    page: {
-      url: 'https://test.com/page',
-      referrer: '',
-      title: 'Test Page',
-      timestamp: Date.now(),
+  const result: DetailedWebVitals = {
+    ...base,
+    ...overrides,
+  };
+
+  result.resourceTiming = {
+    ...base.resourceTiming,
+    ...(overrides.resourceTiming ?? {}),
+  };
+
+  result.device = {
+    ...base.device,
+    ...(overrides.device ?? {}),
+    viewport: {
+      ...base.device.viewport,
+      ...(overrides.device?.viewport ?? {}),
     },
   };
+
+  if (overrides.connection) {
+    result.connection = {
+      ...base.connection!,
+      ...overrides.connection,
+    };
+  } else if (overrides.connection === null) {
+    const updatedResult = { ...result };
+    delete updatedResult.connection;
+    return {
+      ...updatedResult,
+      page: {
+        ...base.page,
+        ...(overrides.page ?? {}),
+      },
+    };
+  } else if (!result.connection && base.connection) {
+    result.connection = base.connection;
+  }
+
+  result.page = {
+    ...base.page,
+    ...(overrides.page ?? {}),
+  };
+
+  return result;
+};
+
+const createBaselineFromMetrics = (
+  metrics: DetailedWebVitals,
+  overrides: Partial<PerformanceBaseline> = {},
+): PerformanceBaseline => {
+  const environment: PerformanceBaseline['environment'] = {
+    viewport: metrics.device.viewport,
+  };
+  if (metrics.device.memory !== undefined) {
+    environment.memory = metrics.device.memory;
+  }
+  if (metrics.device.cores !== undefined) {
+    environment.cores = metrics.device.cores;
+  }
+
+  const connection = metrics.connection
+    ? {
+        effectiveType: metrics.connection.effectiveType,
+        downlink: metrics.connection.downlink,
+      }
+    : undefined;
+
+  const {
+    environment: environmentOverride,
+    metrics: metricsOverride,
+    buildInfo: buildInfoOverride,
+    connection: connectionOverride,
+    ...restOverrides
+  } = overrides;
+
+  let baseline: PerformanceBaseline = {
+    id: `baseline-${metrics.page.timestamp}`,
+    timestamp: metrics.page.timestamp,
+    url: metrics.page.url,
+    userAgent: metrics.device.userAgent,
+    metrics: {
+      cls: metrics.cls,
+      lcp: metrics.lcp,
+      fid: metrics.fid,
+      fcp: metrics.fcp,
+      ttfb: metrics.ttfb,
+      domContentLoaded: metrics.domContentLoaded,
+      loadComplete: metrics.loadComplete,
+      firstPaint: metrics.firstPaint,
+    },
+    score: 0.8,
+    environment,
+    buildInfo: {
+      version: '1.0.0',
+      commit: 'abc123',
+      branch: 'main',
+      timestamp: metrics.page.timestamp,
+    },
+  };
+
+  if (environmentOverride) {
+    const { viewport, memory, cores } = environmentOverride;
+    baseline = {
+      ...baseline,
+      environment: {
+        ...baseline.environment,
+        ...(memory !== undefined ? { memory } : {}),
+        ...(cores !== undefined ? { cores } : {}),
+        viewport: viewport
+          ? {
+              ...baseline.environment.viewport,
+              ...viewport,
+            }
+          : baseline.environment.viewport,
+      },
+    };
+  }
+
+  if (metricsOverride) {
+    baseline = {
+      ...baseline,
+      metrics: {
+        ...baseline.metrics,
+        ...metricsOverride,
+      },
+    };
+  }
+
+  if (buildInfoOverride) {
+    baseline = {
+      ...baseline,
+      buildInfo: {
+        ...baseline.buildInfo,
+        ...buildInfoOverride,
+      },
+    };
+  }
+
+  if (connection) {
+    baseline = {
+      ...baseline,
+      connection,
+    };
+  }
+
+  if (connectionOverride !== undefined) {
+    if (connectionOverride === null) {
+      const updatedBaseline = { ...baseline };
+      delete updatedBaseline.connection;
+      baseline = updatedBaseline;
+    } else {
+      baseline = {
+        ...baseline,
+        connection: connectionOverride,
+      };
+    }
+  }
+
+  baseline = {
+    ...baseline,
+    ...restOverrides,
+  };
+
+  return baseline;
+};
+
+const mockDetailedWebVitals = createDetailedMetrics({
+  inp: 200,
+  page: createTestPage('https://test.com/page'),
+});
+
+const mockBaseline = createBaselineFromMetrics(mockDetailedWebVitals, {
+  id: 'test-baseline',
+});
+
+describe('PerformanceBaselineManager', () => {
+  let baselineManager: InstanceType<typeof PerformanceBaselineManager>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -194,15 +325,28 @@ describe('PerformanceBaselineManager', () => {
     });
 
     it('should get most recent baseline', () => {
-      const oldBaseline = {
-        ...mockBaseline,
-        timestamp: Date.now() - WEB_VITALS_CONSTANTS.MILLISECONDS_PER_DAY,
-      }; // 1 day ago
-      const newBaseline = {
-        ...mockBaseline,
-        id: 'new-baseline',
-        timestamp: Date.now(),
-      };
+      const oldBaseline = createBaselineFromMetrics(
+        createDetailedMetrics({
+          page: {
+            url: 'https://test.com/old-page',
+            referrer: '',
+            title: 'Old Page',
+            timestamp: Date.now() - WEB_VITALS_CONSTANTS.MILLISECONDS_PER_DAY,
+          },
+        }),
+        { id: 'old-baseline' },
+      );
+      const newBaseline = createBaselineFromMetrics(
+        createDetailedMetrics({
+          page: {
+            url: 'https://test.com/new-page',
+            referrer: '',
+            title: 'New Page',
+            timestamp: Date.now(),
+          },
+        }),
+        { id: 'new-baseline' },
+      );
 
       mockLocalStorage.getItem.mockReturnValue(
         JSON.stringify([oldBaseline, newBaseline]),
@@ -223,9 +367,21 @@ describe('PerformanceBaselineManager', () => {
 
     it('should filter baselines by page and locale', () => {
       const baselines = [
-        { ...mockBaseline, url: 'https://test.com/en/page1' },
-        { ...mockBaseline, url: 'https://test.com/en/page2' },
-        { ...mockBaseline, url: 'https://test.com/zh/page1' },
+        createBaselineFromMetrics(
+          createDetailedMetrics({
+            page: createTestPage('https://test.com/en/page1'),
+          }),
+        ),
+        createBaselineFromMetrics(
+          createDetailedMetrics({
+            page: createTestPage('https://test.com/en/page2'),
+          }),
+        ),
+        createBaselineFromMetrics(
+          createDetailedMetrics({
+            page: createTestPage('https://test.com/zh/page1'),
+          }),
+        ),
       ];
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(baselines));
@@ -237,21 +393,35 @@ describe('PerformanceBaselineManager', () => {
     });
 
     it('should limit stored baselines to prevent memory issues', () => {
-      const manyBaselines = Array.from({ length: 150 }, (_, i) => ({
-        ...mockBaseline,
-        id: `baseline-${i}`,
-        timestamp: Date.now() - i * 1000,
-      }));
+      const manyBaselines = Array.from({ length: 150 }, (_, i) =>
+        createBaselineFromMetrics(
+          createDetailedMetrics({
+            page: {
+              url: `https://test.com/page${i}`,
+              referrer: '',
+              title: `Test Page ${i}`,
+              timestamp: Date.now() - i * 1000,
+            },
+          }),
+          { id: `baseline-${i}` },
+        ),
+      );
 
-      baselineManager.saveBaseline(mockBaseline);
+      baselineManager.saveBaseline(mockDetailedWebVitals);
 
       // Mock existing baselines
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(manyBaselines));
 
-      baselineManager.saveBaseline({
-        ...mockBaseline,
-        id: 'new-baseline',
-      } as DetailedWebVitals);
+      baselineManager.saveBaseline(
+        createDetailedMetrics({
+          page: {
+            url: 'https://test.com/new-page',
+            referrer: '',
+            title: 'New Test Page',
+            timestamp: Date.now(),
+          },
+        }),
+      );
 
       // Should limit to 100 baselines
       const setItemCall = mockLocalStorage.setItem.mock.calls.find(
@@ -267,14 +437,13 @@ describe('PerformanceBaselineManager', () => {
 
   describe('数据验证', () => {
     it('should validate baseline structure', () => {
-      const invalidBaseline = {
-        id: 'test',
-        // Missing required fields
-      };
-
       expect(() => {
-        baselineManager.saveBaseline(invalidBaseline as DetailedWebVitals);
-      }).not.toThrow(); // Should handle gracefully
+        baselineManager.saveBaseline(
+          createDetailedMetrics({
+            resourceTiming: undefined as unknown as DetailedWebVitals['resourceTiming'],
+          }),
+        );
+      }).not.toThrow();
     });
 
     it('should handle corrupted localStorage data', () => {
@@ -337,32 +506,10 @@ describe('PerformanceRegressionDetector', () => {
     },
   };
 
-  const mockBaseline: PerformanceBaseline = {
-    id: 'test-baseline',
-    timestamp: Date.now() - WEB_VITALS_CONSTANTS.MILLISECONDS_PER_DAY,
-    page: '/page',
-    locale: 'en',
-    metrics: {
-      cls: 0.1,
-      lcp: 2500,
-      fid: 100,
-      inp: 200,
-      ttfb: 800,
-      fcp: 1800,
-    },
-    buildInfo: {
-      version: '1.0.0',
-      commit: 'abc123',
-      branch: 'main',
-    },
-    environment: {
-      page: 'https://test.com/page',
-      locale: 'en',
-      userAgent: 'Test Browser',
-      viewport: '1920x1080',
-      connection: '4g',
-    },
-  };
+  const mockBaseline: PerformanceBaseline = createBaselineFromMetrics(
+    mockDetailedWebVitals,
+    { id: 'test-baseline' },
+  );
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -383,9 +530,7 @@ describe('PerformanceRegressionDetector', () => {
       expect(result.hasRegression).toBe(true);
       expect(result.regressions.length).toBeGreaterThan(0);
 
-      const clsRegression = result.regressions.find(
-        (r: unknown) => r.metric === 'cls',
-      );
+      const clsRegression = result.regressions.find((r) => r.metric === 'cls');
       expect(clsRegression).toBeDefined();
       expect(clsRegression?.severity).toBe('critical');
     });
@@ -412,9 +557,7 @@ describe('PerformanceRegressionDetector', () => {
         mockBaseline,
       );
 
-      const clsRegression = result.regressions.find(
-        (r: unknown) => r.metric === 'cls',
-      );
+      const clsRegression = result.regressions.find((r) => r.metric === 'cls');
       expect(clsRegression?.changePercent).toBeCloseTo(
         WEB_VITALS_CONSTANTS.TEST_PERCENTAGE_FIFTY,
         1, // 1 decimal place precision
@@ -430,9 +573,7 @@ describe('PerformanceRegressionDetector', () => {
 
       const result = detector.detectRegression(severeMetrics, mockBaseline);
 
-      const clsRegression = result.regressions.find(
-        (r: unknown) => r.metric === 'cls',
-      );
+      const clsRegression = result.regressions.find((r) => r.metric === 'cls');
       expect(clsRegression?.severity).toBe('critical');
     });
 
@@ -442,7 +583,7 @@ describe('PerformanceRegressionDetector', () => {
         metrics: {
           cls: 0.1,
           // Missing other metrics
-        } as DetailedWebVitals,
+        } as unknown as PerformanceBaseline['metrics'],
       };
 
       expect(() => {
@@ -499,12 +640,17 @@ describe('PerformanceAlertSystem', () => {
     });
 
     it('should configure custom alert thresholds', () => {
-      const customConfig = {
+      const customConfig: Partial<PerformanceAlertConfig> & {
+        notifications: { console: boolean; webhook: string };
+      } = {
         enabled: true,
         thresholds: {
           cls: { warning: 0.15, critical: 0.3 },
           lcp: { warning: 3000, critical: 5000 },
           fid: { warning: 150, critical: 400 },
+          fcp: { warning: 1900, critical: 3000 },
+          ttfb: { warning: 900, critical: 1500 },
+          score: { warning: 0.75, critical: 0.5 },
         },
         notifications: {
           console: true,
@@ -512,19 +658,14 @@ describe('PerformanceAlertSystem', () => {
         },
       };
 
-      alertSystem.configure(customConfig as DetailedWebVitals);
-
-      // Should not throw and should accept configuration
-      expect(() =>
-        alertSystem.configure(customConfig as DetailedWebVitals),
-      ).not.toThrow();
+      expect(() => alertSystem.configure(customConfig)).not.toThrow();
     });
 
     it('should handle invalid configuration gracefully', () => {
       const invalidConfig = {
         enabled: 'not-boolean',
         thresholds: 'not-object',
-      } as DetailedWebVitals;
+      } as unknown as Partial<PerformanceAlertConfig>;
 
       expect(() => {
         alertSystem.configure(invalidConfig);
@@ -534,7 +675,7 @@ describe('PerformanceAlertSystem', () => {
 
   describe('性能警报检查', () => {
     it('should trigger alerts for poor performance', async () => {
-      const poorMetrics = {
+      const poorMetrics: Record<string, number> = {
         cls: 0.3, // Critical
         lcp: 5000, // Critical
         fid: 400, // Critical
@@ -552,16 +693,14 @@ describe('PerformanceAlertSystem', () => {
       loggerErrorSpy.mockClear();
       loggerWarnSpy.mockClear();
 
-      (alertSystem as DetailedWebVitals).checkMetrics(
-        poorMetrics as DetailedWebVitals,
-      );
+      alertSystem.checkMetrics(poorMetrics);
 
       // 由于这些指标都超过了critical阈值，应该调用logger.error
       expect(loggerErrorSpy).toHaveBeenCalled();
     });
 
     it('should not trigger alerts for good performance', () => {
-      const goodMetrics = {
+      const goodMetrics: Record<string, number> = {
         cls: 0.05, // Good
         lcp: 1500, // Good
         fid: 50, // Good
@@ -572,9 +711,7 @@ describe('PerformanceAlertSystem', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      (alertSystem as DetailedWebVitals).checkMetrics(
-        goodMetrics as DetailedWebVitals,
-      );
+      alertSystem.checkMetrics(goodMetrics);
 
       expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
@@ -583,7 +720,7 @@ describe('PerformanceAlertSystem', () => {
     it('should handle disabled alerts', () => {
       alertSystem.configure({ enabled: false });
 
-      const poorMetrics = {
+      const poorMetrics: Record<string, number> = {
         cls: 0.5,
         lcp: 8000,
         fid: 600,
@@ -591,9 +728,7 @@ describe('PerformanceAlertSystem', () => {
 
       const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
-      (alertSystem as DetailedWebVitals).checkMetrics(
-        poorMetrics as DetailedWebVitals,
-      );
+      alertSystem.checkMetrics(poorMetrics);
 
       expect(consoleSpy).not.toHaveBeenCalled();
       consoleSpy.mockRestore();
@@ -608,10 +743,12 @@ describe('PerformanceAlertSystem', () => {
       });
 
       // Mock logger.error instead of console.warn for critical alerts
-      const { logger } = await vi.importMock('@/lib/logger');
-      const loggerSpy = vi.mocked((logger as DetailedWebVitals).error);
+      const loggerModule = await import('@/lib/logger');
+      const loggerSpy = vi
+        .spyOn(loggerModule.logger, 'error')
+        .mockImplementation(() => void 0);
 
-      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({
+      await alertSystem.sendAlert({
         severity: 'critical',
         message: 'Test alert message',
         data: { metric: 'cls', value: 0.5 },
@@ -622,6 +759,7 @@ describe('PerformanceAlertSystem', () => {
         expect.stringContaining('Test alert message'),
         expect.any(Object),
       );
+      loggerSpy.mockRestore();
     });
 
     it('should handle webhook notifications', async () => {
@@ -639,7 +777,11 @@ describe('PerformanceAlertSystem', () => {
         },
       });
 
-      await (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test webhook alert', data: { metric: 'lcp', value: 3500 } });
+      await alertSystem.sendAlert({
+        severity: 'warning',
+        message: 'Test webhook alert',
+        data: { metric: 'lcp', value: 3500 },
+      });
 
       expect(mockFetch).toHaveBeenCalledWith(
         'https://example.com/webhook',
@@ -662,45 +804,64 @@ describe('PerformanceAlertSystem', () => {
         },
       });
 
-      await expect((alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'critical', message: 'Test alert', data: { metric: 'cls', value: 0.5 } })).resolves.not.toThrow();
+      await expect(
+        alertSystem.sendAlert({
+          severity: 'critical',
+          message: 'Test alert',
+          data: { metric: 'cls', value: 0.5 },
+        }),
+      ).resolves.not.toThrow();
     });
   });
 
   describe('警报历史记录', () => {
-    it('should track alert history', () => {
-      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test alert 1', data: { metric: 'cls', value: 0.2 } });
-      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'critical', message: 'Test alert 2', data: { metric: 'lcp', value: 5000 } });
+    it('should track alert history', async () => {
+      await alertSystem.sendAlert({
+        severity: 'warning',
+        message: 'Test alert 1',
+        data: { metric: 'cls', value: 0.2 },
+      });
+      await alertSystem.sendAlert({
+        severity: 'critical',
+        message: 'Test alert 2',
+        data: { metric: 'lcp', value: 5000 },
+      });
 
-      const history = (alertSystem as DetailedWebVitals).getAlertHistory();
+      const history = alertSystem.getAlertHistory();
 
       expect(history).toHaveLength(WEB_VITALS_CONSTANTS.TEST_COUNT_TWO);
       expect(history[0]?.level).toBe('warning');
       expect(history[1]?.level).toBe('critical');
     });
 
-    it('should limit alert history size', () => {
+    it('should limit alert history size', async () => {
       // Send many alerts
       for (let i = 0; i < WEB_VITALS_CONSTANTS.TEST_ALERT_HISTORY_LIMIT; i++) {
-        (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: `Alert ${i}`, data: { metric: 'cls', value: 0.2 } });
+        // eslint-disable-next-line no-await-in-loop -- 顺序发送以模拟真实流程
+        await alertSystem.sendAlert({
+          severity: 'warning',
+          message: `Alert ${i}`,
+          data: { metric: 'cls', value: 0.2 },
+        });
       }
 
-      const history = (alertSystem as DetailedWebVitals).getAlertHistory();
+      const history = alertSystem.getAlertHistory();
 
       expect(history.length).toBeLessThanOrEqual(100); // Should limit to 100
     });
 
-    it('should clear alert history', () => {
-      (alertSystem as unknown as { sendAlert: (args: { severity: 'critical' | 'warning'; message: string; data?: Record<string, unknown> }) => Promise<void> }).sendAlert({ severity: 'warning', message: 'Test alert', data: { metric: 'cls', value: 0.2 } });
+    it('should clear alert history', async () => {
+      await alertSystem.sendAlert({
+        severity: 'warning',
+        message: 'Test alert',
+        data: { metric: 'cls', value: 0.2 },
+      });
 
-      expect((alertSystem as DetailedWebVitals).getAlertHistory()).toHaveLength(
-        1,
-      );
+      expect(alertSystem.getAlertHistory()).toHaveLength(1);
 
-      (alertSystem as DetailedWebVitals).clearHistory();
+      alertSystem.clearAlertHistory();
 
-      expect((alertSystem as DetailedWebVitals).getAlertHistory()).toHaveLength(
-        0,
-      );
+      expect(alertSystem.getAlertHistory()).toHaveLength(0);
     });
   });
 });

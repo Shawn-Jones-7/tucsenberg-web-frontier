@@ -3,7 +3,7 @@
  * 提供项目中常用的工具函数，包括日期格式化、邮箱验证等
  */
 
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 import { EMAIL_VALIDATION } from '@/constants/react-scan';
 
 /**

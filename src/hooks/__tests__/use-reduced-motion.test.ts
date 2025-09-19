@@ -127,7 +127,11 @@ describe('useReducedMotion', () => {
   it('should handle server-side rendering gracefully', () => {
     // Mock matchMedia to return null (SSR behavior)
     const originalMatchMedia = global.window.matchMedia;
-    global.window.matchMedia = vi.fn(() => null) as typeof window.matchMedia;
+    const descriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
+    Object.defineProperty(window, 'matchMedia', {
+      value: vi.fn(() => null),
+      configurable: true,
+    });
 
     const { result } = renderHook(() => useReducedMotion());
 
@@ -135,15 +139,23 @@ describe('useReducedMotion', () => {
     expect(result.current).toBe(false);
 
     // Restore original matchMedia
-    global.window.matchMedia = originalMatchMedia;
+    if (descriptor) {
+      Object.defineProperty(window, 'matchMedia', descriptor);
+    } else {
+      window.matchMedia = originalMatchMedia;
+    }
   });
 
   it('should handle missing matchMedia gracefully', () => {
     // Store original matchMedia
     const originalMatchMedia = global.window.matchMedia;
+    const descriptor = Object.getOwnPropertyDescriptor(window, 'matchMedia');
 
     // Mock window without matchMedia
-    global.window.matchMedia = undefined as typeof window.matchMedia;
+    Object.defineProperty(window, 'matchMedia', {
+      value: undefined,
+      configurable: true,
+    });
 
     const { result } = renderHook(() => useReducedMotion());
 
@@ -151,7 +163,11 @@ describe('useReducedMotion', () => {
     expect(result.current).toBe(false);
 
     // Restore original matchMedia
-    global.window.matchMedia = originalMatchMedia;
+    if (descriptor) {
+      Object.defineProperty(window, 'matchMedia', descriptor);
+    } else {
+      window.matchMedia = originalMatchMedia;
+    }
   });
 
   it('should handle multiple rapid changes correctly', () => {

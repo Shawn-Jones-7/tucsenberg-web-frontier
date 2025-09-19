@@ -22,26 +22,26 @@
 // export const DynamicThemePerformanceMonitor = PerformanceDynamicComponents.ThemePerformanceMonitor;
 
 // 开发工具组件的向后兼容导出
-import { CoreDynamicComponents } from '@/components/shared/dynamic-imports-core';
 import dynamic from 'next/dynamic';
+import { CoreDynamicComponents } from '@/components/shared/dynamic-imports-core';
 
 export {
-    CardSkeletonFallback,
-    ComponentLoadingFallback,
-    createDynamicConfig,
-    DEV_TOOLS_CONFIG,
-    isClient,
-    isDevelopment,
-    isProduction,
-    MinimalLoadingFallback,
-    PERFORMANCE_CONFIG,
-    SHOWCASE_CONFIG,
-    SkeletonLoadingFallback,
-    UI_COMPONENT_CONFIG,
-    withConditionalDynamic,
-    withDelayedDynamic,
-    withDynamicSuspense,
-    withErrorBoundary
+  CardSkeletonFallback,
+  ComponentLoadingFallback,
+  createDynamicConfig,
+  DEV_TOOLS_CONFIG,
+  isClient,
+  isDevelopment,
+  isProduction,
+  MinimalLoadingFallback,
+  PERFORMANCE_CONFIG,
+  SHOWCASE_CONFIG,
+  SkeletonLoadingFallback,
+  UI_COMPONENT_CONFIG,
+  withConditionalDynamic,
+  withDelayedDynamic,
+  withDynamicSuspense,
+  withErrorBoundary,
 } from '@/components/shared/dynamic-imports-base';
 export type { DynamicImportConfig } from '@/components/shared/dynamic-imports-base';
 export { CoreDynamicComponents } from '@/components/shared/dynamic-imports-core';

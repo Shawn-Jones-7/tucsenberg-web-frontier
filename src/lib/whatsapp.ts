@@ -1,8 +1,7 @@
+import WhatsApp from 'whatsapp';
+import { logger } from '@/lib/logger';
 import { env } from '@/../env.mjs';
 import { COUNT_TEN, ZERO } from '@/constants';
-
-import { logger } from '@/lib/logger';
-import WhatsApp from 'whatsapp';
 
 /**
  * WhatsApp webhook消息体类型定义
@@ -228,7 +227,8 @@ export function sendWhatsAppMessage(message: WhatsAppMessage) {
         to: message.to,
         templateName: message.content.templateName!,
       };
-      if (message.content.languageCode) payload.languageCode = message.content.languageCode;
+      if (message.content.languageCode)
+        payload.languageCode = message.content.languageCode;
       if (message.content.components && message.content.components.length > 0) {
         payload.components = message.content.components;
       }

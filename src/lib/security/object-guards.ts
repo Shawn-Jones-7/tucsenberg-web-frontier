@@ -13,7 +13,7 @@
  */
 export const hasOwn = <T extends object>(
   obj: T,
-  key: PropertyKey
+  key: PropertyKey,
 ): key is keyof T => {
   return Object.prototype.hasOwnProperty.call(obj, key);
 };
@@ -24,7 +24,7 @@ export const hasOwn = <T extends object>(
  */
 export const safeGet = <T extends object, K extends PropertyKey>(
   obj: T,
-  key: K
+  key: K,
 ): K extends keyof T ? T[K] : undefined => {
   if (hasOwn(obj, key)) {
     return obj[key] as K extends keyof T ? T[K] : undefined;
@@ -38,7 +38,7 @@ export const safeGet = <T extends object, K extends PropertyKey>(
 export const safeGetWithDefault = <T extends object, K extends PropertyKey, D>(
   obj: T,
   key: K,
-  defaultValue: D
+  defaultValue: D,
 ): (K extends keyof T ? T[K] : never) | D => {
   if (hasOwn(obj, key)) {
     return obj[key] as (K extends keyof T ? T[K] : never) | D;
@@ -53,7 +53,7 @@ export const safeGetWithDefault = <T extends object, K extends PropertyKey, D>(
 export const safeSet = <T extends object, K extends keyof T>(
   obj: T,
   key: K,
-  value: T[K]
+  value: T[K],
 ): boolean => {
   if (hasOwn(obj, key)) {
     obj[key] = value;
@@ -67,7 +67,7 @@ export const safeSet = <T extends object, K extends keyof T>(
  */
 export const safeDelete = <T extends object>(
   obj: T,
-  key: PropertyKey
+  key: PropertyKey,
 ): boolean => {
   if (hasOwn(obj, key)) {
     Reflect.deleteProperty(obj as Record<PropertyKey, unknown>, key);
@@ -81,7 +81,7 @@ export const safeDelete = <T extends object>(
  * 只允许访问预定义的属性列表
  */
 export const createWhitelistAccessor = <T extends object, K extends keyof T>(
-  allowedKeys: readonly K[]
+  allowedKeys: readonly K[],
 ) => {
   const keySet = new Set(allowedKeys);
 
@@ -103,7 +103,7 @@ export const createWhitelistAccessor = <T extends object, K extends keyof T>(
 
     has: (obj: T, key: K): boolean => {
       return keySet.has(key) && hasOwn(obj, key);
-    }
+    },
   };
 };
 
@@ -112,23 +112,23 @@ export const createWhitelistAccessor = <T extends object, K extends keyof T>(
  * 只遍历对象自有属性
  */
 export const safeKeys = <T extends object>(obj: T): (keyof T)[] => {
-  return Object.keys(obj).filter(key => hasOwn(obj, key)) as (keyof T)[];
+  return Object.keys(obj).filter((key) => hasOwn(obj, key)) as (keyof T)[];
 };
 
 /**
  * 安全的对象值遍历
  */
 export const safeValues = <T extends object>(obj: T): T[keyof T][] => {
-  return safeKeys(obj).map(key => obj[key]);
+  return safeKeys(obj).map((key) => obj[key]);
 };
 
 /**
  * 安全的对象条目遍历
  */
 export const safeEntries = <T extends object>(
-  obj: T
+  obj: T,
 ): [keyof T, T[keyof T]][] => {
-  return safeKeys(obj).map(key => [key, obj[key]]);
+  return safeKeys(obj).map((key) => [key, obj[key]]);
 };
 
 /**
@@ -137,13 +137,15 @@ export const safeEntries = <T extends object>(
  */
 export const safeMerge = <T extends object, U extends object>(
   target: T,
-  source: U
+  source: U,
 ): T & Partial<U> => {
   const result = { ...target } as T & Partial<U>;
 
   for (const key of safeKeys(source)) {
     if (hasOwn(source, key)) {
-      (result as Record<PropertyKey, unknown>)[key as PropertyKey] = (source as Record<PropertyKey, unknown>)[key as PropertyKey];
+      (result as Record<PropertyKey, unknown>)[key as PropertyKey] = (
+        source as Record<PropertyKey, unknown>
+      )[key as PropertyKey];
     }
   }
 
@@ -156,7 +158,7 @@ export const safeMerge = <T extends object, U extends object>(
  */
 export const safeDeepGet = <T extends object>(
   obj: T,
-  path: string
+  path: string,
 ): unknown => {
   const keys = path.split('.');
   let current: unknown = obj;
@@ -166,7 +168,10 @@ export const safeDeepGet = <T extends object>(
       return undefined;
     }
 
-    if (typeof current === 'object' && hasOwn(current as Record<PropertyKey, unknown>, key)) {
+    if (
+      typeof current === 'object' &&
+      hasOwn(current as Record<PropertyKey, unknown>, key)
+    ) {
       current = (current as Record<PropertyKey, unknown>)[key as PropertyKey];
     } else {
       return undefined;
@@ -182,9 +187,9 @@ export const safeDeepGet = <T extends object>(
  */
 export const validateObjectStructure = <T extends object>(
   obj: T,
-  requiredKeys: (keyof T)[]
+  requiredKeys: (keyof T)[],
 ): boolean => {
-  return requiredKeys.every(key => hasOwn(obj, key));
+  return requiredKeys.every((key) => hasOwn(obj, key));
 };
 
 /**
@@ -197,7 +202,7 @@ export const createSafeProxy = <T extends object>(
     allowedKeys?: (keyof T)[];
     readOnly?: boolean;
     validator?: (key: keyof T, value: unknown) => boolean;
-  } = {}
+  } = {},
 ): T => {
   const { allowedKeys, readOnly = false, validator } = options;
   const keySet = allowedKeys ? new Set(allowedKeys) : null;
@@ -250,9 +255,9 @@ export const createSafeProxy = <T extends object>(
     },
 
     ownKeys(target) {
-      const keys = Object.keys(target).filter(key => hasOwn(target, key));
-      return keySet ? keys.filter(key => keySet.has(key as keyof T)) : keys;
-    }
+      const keys = Object.keys(target).filter((key) => hasOwn(target, key));
+      return keySet ? keys.filter((key) => keySet.has(key as keyof T)) : keys;
+    },
   });
 };
 
@@ -265,9 +270,11 @@ export const SafeAccess = {
    */
   config: <T extends Record<string, unknown>>(
     config: T,
-    key: string
+    key: string,
   ): T[keyof T] | undefined => {
-    return hasOwn(config, key) ? (config as Record<string, unknown>)[key] as T[keyof T] : undefined;
+    return hasOwn(config, key)
+      ? ((config as Record<string, unknown>)[key] as T[keyof T])
+      : undefined;
   },
 
   /**
@@ -280,10 +287,7 @@ export const SafeAccess = {
   /**
    * 安全访问嵌套对象
    */
-  nested: <T extends object>(
-    obj: T,
-    ...keys: string[]
-  ): unknown => {
+  nested: <T extends object>(obj: T, ...keys: string[]): unknown => {
     let current: unknown = obj;
 
     for (const key of keys) {
@@ -291,7 +295,10 @@ export const SafeAccess = {
         return undefined;
       }
 
-      if (typeof current === 'object' && hasOwn(current as Record<PropertyKey, unknown>, key)) {
+      if (
+        typeof current === 'object' &&
+        hasOwn(current as Record<PropertyKey, unknown>, key)
+      ) {
         current = (current as Record<PropertyKey, unknown>)[key as PropertyKey];
       } else {
         return undefined;
@@ -299,5 +306,5 @@ export const SafeAccess = {
     }
 
     return current;
-  }
+  },
 };

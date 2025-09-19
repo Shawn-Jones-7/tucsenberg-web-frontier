@@ -161,6 +161,8 @@ export type TranslationKey = keyof Messages | `${keyof Messages}.${string}`;
 
 // 支持的语言类型
 export type Locale = 'en' | 'zh';
+// 兼容旧测试代码中的别名
+export type _Locale = Locale;
 
 // 翻译参数类型
 export interface TranslationParams {

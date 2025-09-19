@@ -5,6 +5,26 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AccessibilityUtils } from '@/lib/accessibility';
 
+const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+  globalThis,
+  'window',
+);
+
+const createMediaQueryList = (
+  matches: boolean,
+  media?: string,
+): MediaQueryList =>
+  ({
+    matches,
+    media: media ?? '',
+    onchange: null,
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(() => true),
+  }) as unknown as MediaQueryList;
+
 // vi.hoisted Mock setup
 const mockCheckContrastCompliance = vi.hoisted(() => vi.fn());
 
@@ -25,45 +45,71 @@ vi.mock('@/lib/colors', () => ({
   },
 }));
 
+const setGlobalWindow = (value: Window | undefined) => {
+  Object.defineProperty(globalThis, 'window', {
+    value,
+    configurable: true,
+    writable: true,
+  });
+};
+
+type MatchMediaMock = ReturnType<
+  typeof vi.fn<(query: string) => MediaQueryList>
+>;
+
+let matchMediaMock: MatchMediaMock;
+let mockWindow: Window & { matchMedia: MatchMediaMock };
+
 describe('AccessibilityManager Static Methods', () => {
-  let mockWindow: any;
-
   beforeEach(() => {
-    // Mock window
-    mockWindow = {
-      matchMedia: vi.fn().mockReturnValue({ matches: false }),
-    };
+    matchMediaMock = vi.fn<(query: string) => MediaQueryList>((query) =>
+      createMediaQueryList(false, query),
+    );
 
-    global.window = mockWindow as unknown as Window;
+    mockWindow = {
+      matchMedia: matchMediaMock,
+    } as unknown as Window & { matchMedia: MatchMediaMock };
+
+    setGlobalWindow(mockWindow);
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+
+    if (originalWindowDescriptor) {
+      Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+    } else {
+      Reflect.deleteProperty(globalThis as Record<string, unknown>, 'window');
+    }
   });
 
   describe('prefersReducedMotion', () => {
     it('should return false in SSR environment', () => {
-      const originalWindow = global.window;
-      delete (global as unknown).window;
+      const originalWindow = globalThis.window;
+      Reflect.deleteProperty(globalThis as Record<string, unknown>, 'window');
 
       const result = AccessibilityUtils.prefersReducedMotion();
       expect(result).toBe(false);
 
-      global.window = originalWindow;
+      setGlobalWindow(originalWindow as unknown as Window);
     });
 
     it('should return true when user prefers reduced motion', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: true });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(true, '(prefers-reduced-motion: reduce)'),
+      );
 
       const result = AccessibilityUtils.prefersReducedMotion();
       expect(result).toBe(true);
-      expect(mockWindow.matchMedia).toHaveBeenCalledWith(
+      expect(matchMediaMock).toHaveBeenCalledWith(
         '(prefers-reduced-motion: reduce)',
       );
     });
 
     it('should return false when user does not prefer reduced motion', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: false });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(false, '(prefers-reduced-motion: reduce)'),
+      );
 
       const result = AccessibilityUtils.prefersReducedMotion();
       expect(result).toBe(false);
@@ -72,105 +118,139 @@ describe('AccessibilityManager Static Methods', () => {
 
   describe('prefersHighContrast', () => {
     it('should return true when user prefers high contrast', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: true });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(true, '(prefers-contrast: high)'),
+      );
 
       const result = AccessibilityUtils.prefersHighContrast();
       expect(result).toBe(true);
-      expect(mockWindow.matchMedia).toHaveBeenCalledWith(
-        '(prefers-contrast: high)',
-      );
+      expect(matchMediaMock).toHaveBeenCalledWith('(prefers-contrast: high)');
     });
 
     it('should return false when user does not prefer high contrast', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: false });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(false, '(prefers-contrast: high)'),
+      );
 
       const result = AccessibilityUtils.prefersHighContrast();
       expect(result).toBe(false);
     });
 
     it('should handle SSR environment', () => {
-      const originalWindow = global.window;
-      delete (global as unknown).window;
+      const originalWindow = globalThis.window;
+      Reflect.deleteProperty(globalThis as Record<string, unknown>, 'window');
 
       const result = AccessibilityUtils.prefersHighContrast();
       expect(result).toBe(false);
 
-      global.window = originalWindow;
+      setGlobalWindow(originalWindow as unknown as Window);
     });
 
     it('should handle matchMedia not supported', () => {
-      const originalMatchMedia = global.window.matchMedia;
-      delete global.window.matchMedia;
+      const originalMatchMedia = globalThis.window.matchMedia;
+      Object.defineProperty(globalThis.window, 'matchMedia', {
+        value: undefined,
+        configurable: true,
+        writable: true,
+      });
 
       const result = AccessibilityUtils.prefersHighContrast();
       expect(result).toBe(false);
 
-      global.window.matchMedia = originalMatchMedia;
+      Object.defineProperty(globalThis.window, 'matchMedia', {
+        value: originalMatchMedia,
+        configurable: true,
+        writable: true,
+      });
     });
   });
 
   describe('prefersDarkColorScheme', () => {
     it('should return true when user prefers dark color scheme', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: true });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(true, '(prefers-color-scheme: dark)'),
+      );
 
       const result = AccessibilityUtils.prefersDarkColorScheme();
       expect(result).toBe(true);
-      expect(mockWindow.matchMedia).toHaveBeenCalledWith(
+      expect(matchMediaMock).toHaveBeenCalledWith(
         '(prefers-color-scheme: dark)',
       );
     });
 
     it('should return false when user does not prefer dark color scheme', () => {
-      mockWindow.matchMedia.mockReturnValue({ matches: false });
+      matchMediaMock.mockReturnValue(
+        createMediaQueryList(false, '(prefers-color-scheme: dark)'),
+      );
 
       const result = AccessibilityUtils.prefersDarkColorScheme();
       expect(result).toBe(false);
     });
 
     it('should handle SSR environment', () => {
-      const originalWindow = global.window;
-      delete (global as unknown).window;
+      const originalWindow = globalThis.window;
+      Reflect.deleteProperty(globalThis as Record<string, unknown>, 'window');
 
       const result = AccessibilityUtils.prefersDarkColorScheme();
       expect(result).toBe(false);
 
-      global.window = originalWindow;
+      setGlobalWindow(originalWindow as unknown as Window);
     });
 
     it('should handle matchMedia not supported', () => {
-      const originalMatchMedia = global.window.matchMedia;
-      delete global.window.matchMedia;
+      const originalMatchMedia = globalThis.window.matchMedia;
+      Object.defineProperty(globalThis.window, 'matchMedia', {
+        value: undefined,
+        configurable: true,
+        writable: true,
+      });
 
       const result = AccessibilityUtils.prefersDarkColorScheme();
       expect(result).toBe(false);
 
-      global.window.matchMedia = originalMatchMedia;
+      Object.defineProperty(globalThis.window, 'matchMedia', {
+        value: originalMatchMedia,
+        configurable: true,
+        writable: true,
+      });
     });
   });
 
   describe('getColorSchemePreference', () => {
     it('should return "dark" when user prefers dark', () => {
-      mockWindow.matchMedia
-        .mockReturnValueOnce({ matches: true }) // dark query
-        .mockReturnValueOnce({ matches: false }); // light query
+      matchMediaMock
+        .mockReturnValueOnce(
+          createMediaQueryList(true, '(prefers-color-scheme: dark)'),
+        )
+        .mockReturnValueOnce(
+          createMediaQueryList(false, '(prefers-color-scheme: light)'),
+        );
 
       const result = AccessibilityUtils.getColorSchemePreference();
       expect(result).toBe('dark');
     });
 
     it('should return "light" when user prefers light', () => {
-      mockWindow.matchMedia
-        .mockReturnValueOnce({ matches: false }) // dark query
-        .mockReturnValueOnce({ matches: true }); // light query
+      matchMediaMock
+        .mockReturnValueOnce(
+          createMediaQueryList(false, '(prefers-color-scheme: dark)'),
+        )
+        .mockReturnValueOnce(
+          createMediaQueryList(true, '(prefers-color-scheme: light)'),
+        );
 
       const result = AccessibilityUtils.getColorSchemePreference();
       expect(result).toBe('light');
     });
 
     it('should return "no-preference" when no preference', () => {
-      mockWindow.matchMedia
-        .mockReturnValueOnce({ matches: false }) // dark query
-        .mockReturnValueOnce({ matches: false }); // light query
+      matchMediaMock
+        .mockReturnValueOnce(
+          createMediaQueryList(false, '(prefers-color-scheme: dark)'),
+        )
+        .mockReturnValueOnce(
+          createMediaQueryList(false, '(prefers-color-scheme: light)'),
+        );
 
       const result = AccessibilityUtils.getColorSchemePreference();
       expect(result).toBe('no-preference');

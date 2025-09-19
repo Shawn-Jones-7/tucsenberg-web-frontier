@@ -13,9 +13,10 @@ try {
   const tsAlias = ts?.compilerOptions?.paths?.['@/*']?.[0];
 
   const nextConfigSrc = fs.readFileSync('next.config.ts', 'utf8');
-  const hasNextAlias = /resolve\.alias[\s\S]*['"]@['"]:\s*path\.resolve\(__dirname,\s*['"]src['"]\)/.test(
-    nextConfigSrc,
-  );
+  const hasNextAlias =
+    /resolve\.alias[\s\S]*['"]@['"]:\s*path\.resolve\(__dirname,\s*['"]src['"]\)/.test(
+      nextConfigSrc,
+    );
 
   const eslintSrc = fs.readFileSync('eslint.config.mjs', 'utf8');
   const hasTsResolver = /['"]import\/resolver['"]:\s*\{[\s\S]*typescript/.test(
@@ -37,4 +38,3 @@ try {
   console.error('config:check error', err);
   process.exit(1);
 }
-

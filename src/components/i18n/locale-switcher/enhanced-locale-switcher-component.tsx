@@ -1,10 +1,17 @@
 'use client';
 
+import { useMemo } from 'react';
+import { Languages } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import type { Locale } from '@/types/i18n';
+import { useClientLocaleDetection } from '@/lib/locale-detection';
+import type { DetectionSource } from '@/lib/locale-detector';
+import { useLocaleStorage } from '@/lib/locale-storage';
 import {
-  type EnhancedLocaleSwitcherProps,
+  getLanguageConfig,
   SOURCE_ICONS,
   SUPPORTED_LOCALES,
-  getLanguageConfig,
+  type EnhancedLocaleSwitcherProps,
 } from '@/components/i18n/locale-switcher/config';
 import { LanguageItem } from '@/components/i18n/locale-switcher/language-item';
 import { useLanguageSwitch } from '@/components/i18n/locale-switcher/use-language-switch';
@@ -19,13 +26,6 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { MAGIC_0_5, MAGIC_0_8, PERCENTAGE_FULL } from '@/constants/decimal';
 import { usePathname } from '@/i18n/routing';
-import { useClientLocaleDetection } from '@/lib/locale-detection';
-import type { DetectionSource } from '@/lib/locale-detector';
-import { useLocaleStorage } from '@/lib/locale-storage';
-import type { Locale } from '@/types/i18n';
-import { Languages } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { useMemo } from 'react';
 
 const resolveLanguageConfig = (locale: Locale) => getLanguageConfig(locale);
 
@@ -66,11 +66,17 @@ function DetectionInfoSection({
   if (!visible) return null;
   const SourceIcon = resolveSourceIcon(source);
   const confidenceColor =
-    confidence > MAGIC_0_8 ? 'green' : confidence > MAGIC_0_5 ? 'yellow' : 'red';
+    confidence > MAGIC_0_8
+      ? 'green'
+      : confidence > MAGIC_0_5
+        ? 'yellow'
+        : 'red';
   return (
     <>
       <DropdownMenuSeparator />
-      <DropdownMenuLabel className='text-muted-foreground text-xs'>Detection Info</DropdownMenuLabel>
+      <DropdownMenuLabel className='text-muted-foreground text-xs'>
+        Detection Info
+      </DropdownMenuLabel>
       <div className='px-2 py-1 text-xs'>
         <div className='mb-1 flex items-center justify-between'>
           <div className='flex items-center space-x-1'>
@@ -115,7 +121,12 @@ function LocaleTrigger({
   const t = useTranslations('language');
   return (
     <>
-      <Button variant='ghost' size='sm' className={`relative ${className}`} disabled={isPending}>
+      <Button
+        variant='ghost'
+        size='sm'
+        className={`relative ${className}`}
+        disabled={isPending}
+      >
         {compact ? (
           <div className='flex items-center space-x-1'>
             <span className='text-sm'>{cfg.flag}</span>
@@ -163,7 +174,9 @@ export const EnhancedLocaleSwitcherComponent = ({
 
     if (!detection) return null;
 
-    const resolvedSource = (stats.data?.hasOverride ? 'user' : detection.source) as DetectionSource;
+    const resolvedSource = (
+      stats.data?.hasOverride ? 'user' : detection.source
+    ) as DetectionSource;
 
     return {
       source: resolvedSource,

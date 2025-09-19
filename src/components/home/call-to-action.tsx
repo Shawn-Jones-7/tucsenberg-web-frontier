@@ -1,16 +1,16 @@
 'use client';
 
+import { ArrowRight, ExternalLink, Github, Star } from 'lucide-react';
+import { useTranslations } from 'next-intl';
 import { ActionCards } from '@/components/home/cta/action-cards';
 import { CommunitySection } from '@/components/home/cta/community-section';
 import { getCallToActionData } from '@/components/home/cta/data';
 import { StatsDisplay } from '@/components/home/cta/stats-display';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import { COUNT_700 } from "@/constants/count";
-import { MAGIC_0_2 } from "@/constants/decimal";
+import { COUNT_700 } from '@/constants/count';
+import { MAGIC_0_2 } from '@/constants/decimal';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { ArrowRight, ExternalLink, Github, Star } from 'lucide-react';
-import { useTranslations } from 'next-intl';
 
 // UI常量
 const UI_CONSTANTS = {

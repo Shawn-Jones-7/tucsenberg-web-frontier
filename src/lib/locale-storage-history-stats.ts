@@ -7,13 +7,25 @@
 
 'use client';
 
-import { MAGIC_6 } from "@/constants/count";
-import { ANGLE_90_DEG, ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_8 } from "@/constants/decimal";
-import { DAYS_PER_WEEK } from "@/constants/time";
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
-import type { } from '@/lib/locale-storage-types';
+import {
+  ANGLE_90_DEG,
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_6 } from '@/constants/count';
+import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_8 } from '@/constants/decimal';
+import { DAYS_PER_WEEK } from '@/constants/time';
+import type {} from '@/lib/locale-storage-types';
 import type { Locale } from '@/types/i18n';
 import {
   getLocaleGroupStats,
@@ -51,11 +63,19 @@ export function getDetectionStats(): {
   const records = historyResult.data.history;
   if (records.length === ZERO) return emptyStats();
 
-  const { locales, sources, totalConfidence, localeCounts, sourceCounts, buckets } = accumulateStats(records);
+  const {
+    locales,
+    sources,
+    totalConfidence,
+    localeCounts,
+    sourceCounts,
+    buckets,
+  } = accumulateStats(records);
   const mostDetectedLocale = getMaxLocale(localeCounts);
   const mostUsedSource = getMaxSource(sourceCounts);
   const timeSpan = computeTimeSpan(records);
-  const detectionFrequency = timeSpan.spanDays > ZERO ? records.length / timeSpan.spanDays : ZERO;
+  const detectionFrequency =
+    timeSpan.spanDays > ZERO ? records.length / timeSpan.spanDays : ZERO;
 
   return {
     totalDetections: records.length,
@@ -84,7 +104,9 @@ function emptyStats() {
   };
 }
 
-function accumulateStats(records: Array<{ locale: Locale; source: string; confidence: number }>) {
+function accumulateStats(
+  records: Array<{ locale: Locale; source: string; confidence: number }>,
+) {
   const locales = new Set<Locale>();
   const sources = new Set<string>();
   let totalConfidence = ZERO;
@@ -101,14 +123,29 @@ function accumulateStats(records: Array<{ locale: Locale; source: string; confid
     else if (record.confidence >= MAGIC_0_5) buckets.medium += ONE;
     else buckets.low += ONE;
 
-    localeCounts.set(record.locale, (localeCounts.get(record.locale) || ZERO) + ONE);
-    sourceCounts.set(record.source, (sourceCounts.get(record.source) || ZERO) + ONE);
+    localeCounts.set(
+      record.locale,
+      (localeCounts.get(record.locale) || ZERO) + ONE,
+    );
+    sourceCounts.set(
+      record.source,
+      (sourceCounts.get(record.source) || ZERO) + ONE,
+    );
   }
 
-  return { locales, sources, totalConfidence, localeCounts, sourceCounts, buckets };
+  return {
+    locales,
+    sources,
+    totalConfidence,
+    localeCounts,
+    sourceCounts,
+    buckets,
+  };
 }
 
-function getMaxLocale(map: Map<Locale, number>): { locale: Locale; count: number } | null {
+function getMaxLocale(
+  map: Map<Locale, number>,
+): { locale: Locale; count: number } | null {
   let result: { locale: Locale; count: number } | null = null;
   for (const [locale, count] of map.entries()) {
     if (!result || count > result.count) result = { locale, count };
@@ -116,7 +153,9 @@ function getMaxLocale(map: Map<Locale, number>): { locale: Locale; count: number
   return result;
 }
 
-function getMaxSource(map: Map<string, number>): { source: string; count: number } | null {
+function getMaxSource(
+  map: Map<string, number>,
+): { source: string; count: number } | null {
   let result: { source: string; count: number } | null = null;
   for (const [source, count] of map.entries()) {
     if (!result || count > result.count) result = { source, count };
@@ -129,7 +168,12 @@ function computeTimeSpan(records: Array<{ timestamp: number }>) {
   const oldest = Math.min(...timestamps);
   const newest = Math.max(...timestamps);
   const spanMs = newest - oldest;
-  const spanDays = spanMs / (HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+  const spanDays =
+    spanMs /
+    (HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW);
   return { oldest, newest, spanDays };
 }
 
@@ -164,7 +208,13 @@ export function getDetectionTrends(days: number = DAYS_PER_WEEK): {
 
   const records = historyResult.data.history;
   const now = Date.now();
-  const startTime = now - days * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const startTime =
+    now -
+    days *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW;
 
   // 过滤指定时间范围内的记录
   const recentRecords = records.filter(
@@ -179,15 +229,24 @@ export function getDetectionTrends(days: number = DAYS_PER_WEEK): {
 
   // 初始化所有日期
   for (let i = ZERO; i < days; i++) {
-    const date = new Date(now - i * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
-    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    const date = new Date(
+      now -
+        i *
+          HOURS_PER_DAY *
+          SECONDS_PER_MINUTE *
+          SECONDS_PER_MINUTE *
+          ANIMATION_DURATION_VERY_SLOW,
+    );
+    const dateStr =
+      date.toISOString().split('T').at(ZERO) || date.toISOString();
     dailyData.set(dateStr, { count: ZERO, totalConfidence: ZERO });
   }
 
   // 填充实际数据
   recentRecords.forEach((record) => {
     const date = new Date(record.timestamp);
-    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    const dateStr =
+      date.toISOString().split('T').at(ZERO) || date.toISOString();
     const existing = dailyData.get(dateStr);
 
     if (existing) {
@@ -201,7 +260,8 @@ export function getDetectionTrends(days: number = DAYS_PER_WEEK): {
     .map(([date, data]) => ({
       date,
       count: data.count,
-      avgConfidence: data.count > ZERO ? data.totalConfidence / data.count : ZERO,
+      avgConfidence:
+        data.count > ZERO ? data.totalConfidence / data.count : ZERO,
     }))
     .sort((a, b) => a.date.localeCompare(b.date));
 
@@ -244,7 +304,9 @@ function calculateGrowthRate(
   const previousAvg =
     previous.reduce((sum, day) => sum + day.count, ZERO) / previous.length;
 
-  return previousAvg > ZERO ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL : ZERO;
+  return previousAvg > ZERO
+    ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL
+    : ZERO;
 }
 
 /**
@@ -352,7 +414,9 @@ function addBaseInsights(
   if (stats.totalDetections > ZERO) {
     insights.push(`总共记录了 ${stats.totalDetections} 次语言检测`);
     insights.push(`检测到 ${stats.uniqueLocales} 种不同的语言`);
-    insights.push(`平均置信度为 ${(stats.averageConfidence * PERCENTAGE_FULL).toFixed(ONE)}%`);
+    insights.push(
+      `平均置信度为 ${(stats.averageConfidence * PERCENTAGE_FULL).toFixed(ONE)}%`,
+    );
   }
 }
 
@@ -361,12 +425,22 @@ function addLocaleSourceInsights(
   insights: string[],
 ) {
   if (stats.mostDetectedLocale) {
-    const percentage = ((stats.mostDetectedLocale.count / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
-    insights.push(`最常检测的语言是 ${stats.mostDetectedLocale.locale} (${percentage}%)`);
+    const percentage = (
+      (stats.mostDetectedLocale.count / stats.totalDetections) *
+      PERCENTAGE_FULL
+    ).toFixed(ONE);
+    insights.push(
+      `最常检测的语言是 ${stats.mostDetectedLocale.locale} (${percentage}%)`,
+    );
   }
   if (stats.mostUsedSource) {
-    const percentage = ((stats.mostUsedSource.count / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
-    insights.push(`最常用的检测来源是 ${stats.mostUsedSource.source} (${percentage}%)`);
+    const percentage = (
+      (stats.mostUsedSource.count / stats.totalDetections) *
+      PERCENTAGE_FULL
+    ).toFixed(ONE);
+    insights.push(
+      `最常用的检测来源是 ${stats.mostUsedSource.source} (${percentage}%)`,
+    );
   }
 }
 
@@ -376,8 +450,14 @@ function addConfidenceInsights(
   ctx: { alerts: string[]; recommendations: string[] },
 ) {
   const { high, medium, low } = stats.confidenceDistribution;
-  const highPercentage = ((high / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
-  const lowPercentage = ((low / stats.totalDetections) * PERCENTAGE_FULL).toFixed(ONE);
+  const highPercentage = (
+    (high / stats.totalDetections) *
+    PERCENTAGE_FULL
+  ).toFixed(ONE);
+  const lowPercentage = (
+    (low / stats.totalDetections) *
+    PERCENTAGE_FULL
+  ).toFixed(ONE);
 
   if (high > medium + low) {
     insights.push(`检测质量优秀，${highPercentage}% 的检测具有高置信度`);
@@ -441,30 +521,55 @@ export function getPerformanceMetrics(): {
   responseConsistency: number;
 } {
   const historyResult = getDetectionHistory();
-  if (!historyResult.success || !historyResult.data || historyResult.data.history.length === ZERO) {
-    return { averageConfidence: ZERO, confidenceStability: ZERO, sourceReliability: {}, detectionAccuracy: ZERO, responseConsistency: ZERO };
+  if (
+    !historyResult.success ||
+    !historyResult.data ||
+    historyResult.data.history.length === ZERO
+  ) {
+    return {
+      averageConfidence: ZERO,
+      confidenceStability: ZERO,
+      sourceReliability: {},
+      detectionAccuracy: ZERO,
+      responseConsistency: ZERO,
+    };
   }
 
   const records = historyResult.data.history;
 
   const averageConfidence = computeAverageConfidence(records);
-  const confidenceStability = computeConfidenceStability(records, averageConfidence);
+  const confidenceStability = computeConfidenceStability(
+    records,
+    averageConfidence,
+  );
   const sourceReliability = buildSourceReliability();
   const detectionAccuracy = computeDetectionAccuracy(records);
   const responseConsistency = computeResponseConsistency(records);
 
-  return { averageConfidence, confidenceStability, sourceReliability, detectionAccuracy, responseConsistency };
+  return {
+    averageConfidence,
+    confidenceStability,
+    sourceReliability,
+    detectionAccuracy,
+    responseConsistency,
+  };
 }
 
-function computeAverageConfidence(records: Array<{ confidence: number }>): number {
+function computeAverageConfidence(
+  records: Array<{ confidence: number }>,
+): number {
   return records.reduce((sum, r) => sum + r.confidence, ZERO) / records.length;
 }
 
-function computeConfidenceStability(records: Array<{ confidence: number }>, avg: number): number {
-  const variance = records.reduce((sum, r) => {
-    const diff = r.confidence - avg;
-    return sum + diff * diff;
-  }, ZERO) / records.length;
+function computeConfidenceStability(
+  records: Array<{ confidence: number }>,
+  avg: number,
+): number {
+  const variance =
+    records.reduce((sum, r) => {
+      const diff = r.confidence - avg;
+      return sum + diff * diff;
+    }, ZERO) / records.length;
   return ONE / (ONE + Math.sqrt(variance));
 }
 
@@ -475,15 +580,20 @@ function buildSourceReliability(): Record<string, number> {
   return Object.fromEntries(map.entries()) as Record<string, number>;
 }
 
-function computeDetectionAccuracy(records: Array<{ confidence: number }>): number {
+function computeDetectionAccuracy(
+  records: Array<{ confidence: number }>,
+): number {
   const high = records.filter((r) => r.confidence > MAGIC_0_8).length;
   return records.length > ZERO ? high / records.length : ZERO;
 }
 
-function computeResponseConsistency(records: Array<{ locale: Locale; confidence: number }>): number {
+function computeResponseConsistency(
+  records: Array<{ locale: Locale; confidence: number }>,
+): number {
   const localeConsistency = new Map<Locale, number[]>();
   records.forEach((record) => {
-    if (!localeConsistency.has(record.locale)) localeConsistency.set(record.locale, []);
+    if (!localeConsistency.has(record.locale))
+      localeConsistency.set(record.locale, []);
     localeConsistency.get(record.locale)!.push(record.confidence);
   });
 
@@ -491,8 +601,11 @@ function computeResponseConsistency(records: Array<{ locale: Locale; confidence:
   let localeCount = ZERO;
   for (const [, confidences] of localeConsistency.entries()) {
     if (confidences.length > ONE) {
-      const avg = confidences.reduce((sum, c) => sum + c, ZERO) / confidences.length;
-      const variance = confidences.reduce((sum, c) => sum + (c - avg) ** COUNT_PAIR, ZERO) / confidences.length;
+      const avg =
+        confidences.reduce((sum, c) => sum + c, ZERO) / confidences.length;
+      const variance =
+        confidences.reduce((sum, c) => sum + (c - avg) ** COUNT_PAIR, ZERO) /
+        confidences.length;
       totalConsistency += ONE / (ONE + Math.sqrt(variance));
       localeCount += ONE;
     }

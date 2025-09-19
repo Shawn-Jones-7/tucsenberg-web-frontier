@@ -7,8 +7,8 @@
  * - Basic color manipulation utilities
  */
 
-import { TEST_CONSTANTS } from '@/constants/test-constants';
 import { calculateContrast, oklchToCSS, type OKLCHColor } from '@/lib/colors';
+import { TEST_CONSTANTS } from '@/constants/test-constants';
 
 describe('OKLCH Color Conversion and Calculation Tests', () => {
   describe('oklchToCSS', () => {

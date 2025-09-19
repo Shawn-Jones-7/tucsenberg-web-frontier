@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -22,9 +21,12 @@ const categories: NumberCategory[] = [
   {
     name: 'HTTP_STATUS',
     description: 'HTTP状态码',
-    pattern: (num) => [200, 201, 204, 300, 301, 302, 400, 401, 403, 404, 415, 429, 500, 503].includes(num),
+    pattern: (num) =>
+      [
+        200, 201, 204, 300, 301, 302, 400, 401, 403, 404, 415, 429, 500, 503,
+      ].includes(num),
     generateName: (num) => `HTTP_${num}`,
-    priority: 1
+    priority: 1,
   },
 
   // 时间相关 - 毫秒
@@ -47,14 +49,18 @@ const categories: NumberCategory[] = [
       if (num === 86400000) return 'DAY_MS';
       return `TIME_${num}_MS`;
     },
-    priority: 2
+    priority: 2,
   },
 
   // 屏幕尺寸和断点
   {
     name: 'BREAKPOINT',
     description: '响应式断点',
-    pattern: (num) => [320, 375, 480, 640, 667, 720, 768, 800, 1024, 1080, 1200, 1280, 1536, 1600, 1920].includes(num),
+    pattern: (num) =>
+      [
+        320, 375, 480, 640, 667, 720, 768, 800, 1024, 1080, 1200, 1280, 1536,
+        1600, 1920,
+      ].includes(num),
     generateName: (num) => {
       const breakpoints: Record<number, string> = {
         320: 'BREAKPOINT_MOBILE_SMALL',
@@ -71,11 +77,11 @@ const categories: NumberCategory[] = [
         1280: 'BREAKPOINT_XL',
         1536: 'BREAKPOINT_2XL',
         1600: 'BREAKPOINT_DESKTOP_LARGE',
-        1920: 'BREAKPOINT_FULL_HD'
+        1920: 'BREAKPOINT_FULL_HD',
       };
       return breakpoints[num] || `BREAKPOINT_${num}`;
     },
-    priority: 3
+    priority: 3,
   },
 
   // 百分比（0-1之间的小数）
@@ -111,20 +117,26 @@ const categories: NumberCategory[] = [
         '0.95': 'PERCENT_95',
         '0.96': 'PERCENT_96',
         '0.97': 'PERCENT_97',
-        '0.99': 'PERCENT_99'
+        '0.99': 'PERCENT_99',
       };
-      return percentageMap[num.toString()] || `OPACITY_${Math.round(num * 100)}`;
+      return (
+        percentageMap[num.toString()] || `OPACITY_${Math.round(num * 100)}`
+      );
     },
-    priority: 4
+    priority: 4,
   },
 
   // 动画持续时间
   {
     name: 'ANIMATION_DURATION',
     description: '动画持续时间',
-    pattern: (num) => [150, 200, 250, 300, 400, 500, 600, 700, 750, 800, 900, 1000, 1200, 1250, 1500, 2000].includes(num),
+    pattern: (num) =>
+      [
+        150, 200, 250, 300, 400, 500, 600, 700, 750, 800, 900, 1000, 1200, 1250,
+        1500, 2000,
+      ].includes(num),
     generateName: (num) => `ANIMATION_DURATION_${num}`,
-    priority: 5
+    priority: 5,
   },
 
   // 内存和存储大小
@@ -133,7 +145,10 @@ const categories: NumberCategory[] = [
     description: '内存和存储大小',
     pattern: (num) => {
       // 2的幂次方，常见的内存大小
-      return [256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144, 524288, 1048576, 2097152, 4194304].includes(num);
+      return [
+        256, 512, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 262144,
+        524288, 1048576, 2097152, 4194304,
+      ].includes(num);
     },
     generateName: (num) => {
       const sizeMap: Record<number, string> = {
@@ -151,11 +166,11 @@ const categories: NumberCategory[] = [
         524288: 'BYTES_512KB',
         1048576: 'BYTES_1MB',
         2097152: 'BYTES_2MB',
-        4194304: 'BYTES_4MB'
+        4194304: 'BYTES_4MB',
       };
       return sizeMap[num] || `MEMORY_SIZE_${num}`;
     },
-    priority: 6
+    priority: 6,
   },
 
   // 年份
@@ -164,14 +179,15 @@ const categories: NumberCategory[] = [
     description: '年份',
     pattern: (num) => num >= 2020 && num <= 2030 && Number.isInteger(num),
     generateName: (num) => `YEAR_${num}`,
-    priority: 7
+    priority: 7,
   },
 
   // 角度
   {
     name: 'ANGLE',
     description: '角度值',
-    pattern: (num) => [0, 45, 90, 180, 270, 360].includes(num) || (num > 359 && num < 361),
+    pattern: (num) =>
+      [0, 45, 90, 180, 270, 360].includes(num) || (num > 359 && num < 361),
     generateName: (num) => {
       if (num === 0) return 'ANGLE_ZERO';
       if (num === 45) return 'ANGLE_45_DEG';
@@ -181,7 +197,7 @@ const categories: NumberCategory[] = [
       if (num === 360 || (num > 359 && num < 361)) return 'ANGLE_360_DEG';
       return `ANGLE_${num.toString().replace('.', '_')}_DEG`;
     },
-    priority: 8
+    priority: 8,
   },
 
   // 地理坐标
@@ -190,8 +206,10 @@ const categories: NumberCategory[] = [
     description: '地理坐标',
     pattern: (num, str) => {
       // 纬度范围 -90 到 90，经度范围 -180 到 180
-      return (num >= -90 && num <= 90 && str.includes('.')) ||
-             (num >= -180 && num <= 180 && str.includes('.') && Math.abs(num) > 90);
+      return (
+        (num >= -90 && num <= 90 && str.includes('.')) ||
+        (num >= -180 && num <= 180 && str.includes('.') && Math.abs(num) > 90)
+      );
     },
     generateName: (num, str) => {
       // 根据常见城市坐标进行命名
@@ -201,7 +219,7 @@ const categories: NumberCategory[] = [
       if (Math.abs(num - 74.006) < 0.001) return 'COORD_NYC_LNG';
       return `COORDINATE_${str.replace('.', '_').replace('-', 'NEG_')}`;
     },
-    priority: 9
+    priority: 9,
   },
 
   // 测试数据 - 精确小数
@@ -213,7 +231,7 @@ const categories: NumberCategory[] = [
       return str.includes('.') && str.length > 10;
     },
     generateName: (num, str) => `TEST_PRECISION_${str.replace('.', '_')}`,
-    priority: 10
+    priority: 10,
   },
 
   // 端口号
@@ -222,7 +240,7 @@ const categories: NumberCategory[] = [
     description: '端口号',
     pattern: (num) => num >= 3000 && num <= 9000 && Number.isInteger(num),
     generateName: (num) => `PORT_${num}`,
-    priority: 11
+    priority: 11,
   },
 
   // 默认分类
@@ -233,18 +251,21 @@ const categories: NumberCategory[] = [
     generateName: (num, str) => {
       if (Number.isInteger(num)) {
         return `NUMBER_${num}`;
-      } 
-        return `DECIMAL_${str.replace('.', '_').replace('-', 'NEG_')}`;
-      
+      }
+      return `DECIMAL_${str.replace('.', '_').replace('-', 'NEG_')}`;
     },
-    priority: 99
-  }
+    priority: 99,
+  },
 ];
 
 /**
  * 分析数字并分类
  */
-function analyzeNumber(numStr: string): { category: string; constantName: string; description: string } {
+function analyzeNumber(numStr: string): {
+  category: string;
+  constantName: string;
+  description: string;
+} {
   const num = parseFloat(numStr);
 
   // 按优先级排序，找到第一个匹配的分类
@@ -255,7 +276,7 @@ function analyzeNumber(numStr: string): { category: string; constantName: string
       return {
         category: category.name,
         constantName: category.generateName(num, numStr),
-        description: category.description
+        description: category.description,
       };
     }
   }
@@ -264,7 +285,7 @@ function analyzeNumber(numStr: string): { category: string; constantName: string
   return {
     category: 'UNKNOWN',
     constantName: `UNKNOWN_${numStr.replace('.', '_')}`,
-    description: '未知类型'
+    description: '未知类型',
   };
 }
 
@@ -370,10 +391,10 @@ async function main() {
     summary: {
       totalNumbers: numbers.length,
       categoriesFound: Object.keys(categoryStats).length,
-      categoryStats
+      categoryStats,
     },
     analysis,
-    recommendations: generateRecommendations(categoryStats)
+    recommendations: generateRecommendations(categoryStats),
   };
 
   // 保存分析结果
@@ -384,7 +405,7 @@ async function main() {
   console.log('');
   console.log('📈 分类统计:');
   Object.entries(categoryStats)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .forEach(([category, count]) => {
       console.log(`  ${category}: ${count} 个`);
     });

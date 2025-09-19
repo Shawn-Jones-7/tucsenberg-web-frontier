@@ -4,10 +4,6 @@
  * 主题分析核心类
  * Theme analytics core class
  */
-import { MAGIC_0_1 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_TRIPLE, DAYS_PER_MONTH, HOURS_PER_DAY, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
 import * as Sentry from '@sentry/nextjs';
 import type {
   ThemeAnalyticsConfig,
@@ -16,6 +12,19 @@ import type {
   ThemeSwitchPattern,
   ThemeUsageStats,
 } from '@/lib/theme-analytics-types';
+import { ThemeAnalyticsUtils } from '@/lib/theme-analytics-utils';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_0_1 } from '@/constants/decimal';
 
 /**
  * 主题分析管理器
@@ -63,7 +72,13 @@ export class ThemeAnalytics {
     endTime: number;
     supportsViewTransitions?: boolean;
   }): void {
-    const { fromTheme, toTheme, startTime, endTime, supportsViewTransitions = false } = args;
+    const {
+      fromTheme,
+      toTheme,
+      startTime,
+      endTime,
+      supportsViewTransitions = false,
+    } = args;
     if (
       !this.config.enabled ||
       !ThemeAnalyticsUtils.shouldSample(this.config.sampleRate)
@@ -161,6 +176,13 @@ export class ThemeAnalytics {
       this.performanceMetrics,
       this.usageStats,
     );
+  }
+
+  /**
+   * 获取记录的性能指标副本（主要用于测试和调试）
+   */
+  getPerformanceMetrics(): ThemePerformanceMetrics[] {
+    return [...this.performanceMetrics];
   }
 
   /**

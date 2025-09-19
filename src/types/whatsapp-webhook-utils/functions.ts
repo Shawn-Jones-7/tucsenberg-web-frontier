@@ -1,5 +1,3 @@
-import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_VERY_SLOW, MAGIC_600 } from '@/constants';
-
 /**
  * WhatsApp Webhook 工具函数
  * WhatsApp Webhook Utility Functions
@@ -9,6 +7,11 @@ import type {
   WebhookError,
   WebhookVerificationRequest,
 } from '@/types/whatsapp-webhook-base';
+import {
+  ANIMATION_DURATION_NORMAL,
+  ANIMATION_DURATION_VERY_SLOW,
+  MAGIC_600,
+} from '@/constants';
 
 /**
  * Webhook验证工具函数
@@ -70,7 +73,8 @@ export function isTimestampValid(
   try {
     const eventTime = new Date(timestamp);
     const now = new Date();
-    const ageSeconds = (now.getTime() - eventTime.getTime()) / ANIMATION_DURATION_VERY_SLOW;
+    const ageSeconds =
+      (now.getTime() - eventTime.getTime()) / ANIMATION_DURATION_VERY_SLOW;
     return ageSeconds <= maxAgeSeconds;
   } catch {
     return false;

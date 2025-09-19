@@ -19,12 +19,12 @@ export type ThemeType = 'light' | 'dark' | 'system';
 export interface ThemeHookMock {
   theme: ThemeType;
   isOpen: boolean;
-  setIsOpen: unknown;
+  setIsOpen: ReturnType<typeof vi.fn>;
   supportsViewTransitions: boolean;
   prefersReducedMotion: boolean;
   prefersHighContrast: boolean;
-  handleThemeChange: unknown;
-  handleKeyDown: unknown;
+  handleThemeChange: ReturnType<typeof vi.fn>;
+  handleKeyDown: ReturnType<typeof vi.fn>;
   ariaAttributes: {
     'aria-label': string;
     'aria-expanded': string;
@@ -86,7 +86,7 @@ export class ThemeTestUtils {
   /**
    * 创建View Transitions API Mock
    */
-  static createViewTransitionsMock(): unknown {
+  static createViewTransitionsMock(): ReturnType<typeof vi.fn> {
     return vi.fn().mockImplementation((callback?: () => void) => {
       callback?.();
       return Promise.resolve();
@@ -263,7 +263,7 @@ class ThemeTestAssertions {
    * 验证主题切换调用
    */
   static verifyThemeChange(
-    mockFunction: unknown,
+    mockFunction: ReturnType<typeof vi.fn>,
     expectedTheme: ThemeType,
     callIndex: number = 0,
   ): void {
@@ -295,7 +295,7 @@ class ThemeTestAssertions {
    * 验证键盘导航
    */
   static verifyKeyboardNavigation(
-    mockFunction: unknown,
+    mockFunction: ReturnType<typeof vi.fn>,
     expectedKey: string,
   ): void {
     expect(mockFunction).toHaveBeenCalledWith(

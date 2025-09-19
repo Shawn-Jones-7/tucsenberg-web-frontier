@@ -1,10 +1,17 @@
 'use client';
 
-import type { DateFormatOptions } from '@/types/i18n-enhanced';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { useFormatter, useLocale, useTranslations } from 'next-intl';
 import { memo } from 'react';
+import { useFormatter, useLocale, useTranslations } from 'next-intl';
+import type { DateFormatOptions } from '@/types/i18n-enhanced';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 interface FormatDateProps {
   date: Date | string | number;
@@ -12,7 +19,11 @@ interface FormatDateProps {
   className?: string;
 }
 
-const MILLISECONDS_PER_DAY = ANIMATION_DURATION_VERY_SLOW * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * HOURS_PER_DAY;
+const MILLISECONDS_PER_DAY =
+  ANIMATION_DURATION_VERY_SLOW *
+  SECONDS_PER_MINUTE *
+  SECONDS_PER_MINUTE *
+  HOURS_PER_DAY;
 
 const buildNumberOptions = (
   base: Record<string, unknown>,
@@ -25,7 +36,8 @@ const buildNumberOptions = (
   return opts;
 };
 
-const resolveCurrency = (locale: string, fallback: string) => (locale === 'zh' ? 'CNY' : fallback);
+const resolveCurrency = (locale: string, fallback: string) =>
+  locale === 'zh' ? 'CNY' : fallback;
 
 const FormatDateComponent = ({
   date,
@@ -112,7 +124,10 @@ const FormatNumberComponent = ({
         minimumFractionDigits,
         maximumFractionDigits,
       );
-      const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+      const num = formatter.number as unknown as (
+        v: number,
+        o?: Record<string, unknown>,
+      ) => string;
       return num(value, options);
     }
 
@@ -124,12 +139,22 @@ const FormatNumberComponent = ({
         minimumFractionDigits,
         maximumFractionDigits,
       );
-      const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+      const num = formatter.number as unknown as (
+        v: number,
+        o?: Record<string, unknown>,
+      ) => string;
       return num(value / PERCENTAGE_FULL, options);
     }
 
-    const options = buildNumberOptions({}, minimumFractionDigits, maximumFractionDigits);
-    const num = (formatter.number as unknown as (v: number, o?: Record<string, unknown>) => string);
+    const options = buildNumberOptions(
+      {},
+      minimumFractionDigits,
+      maximumFractionDigits,
+    );
+    const num = formatter.number as unknown as (
+      v: number,
+      o?: Record<string, unknown>,
+    ) => string;
     return num(value, options);
   };
 
@@ -193,7 +218,9 @@ const RichTextComponent = ({ text, values = {}, className }: RichTextProps) => {
     // Process basic markdown-like formatting
     return processed.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`)/).map((part, index) => {
       if (part.startsWith('**') && part.endsWith('**')) {
-        return <strong key={index}>{part.slice(COUNT_PAIR, -COUNT_PAIR)}</strong>;
+        return (
+          <strong key={index}>{part.slice(COUNT_PAIR, -COUNT_PAIR)}</strong>
+        );
       }
       if (part.startsWith('*') && part.endsWith('*')) {
         return <em key={index}>{part.slice(ONE, -ONE)}</em>;

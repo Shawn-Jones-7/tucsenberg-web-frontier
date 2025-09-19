@@ -45,6 +45,7 @@ export interface MetricsCollector {
   recordCacheMiss(): void;
   recordError(): void;
   recordLocaleUsage(locale: Locale): void;
+  recordTranslationCoverage(coverage: number): void;
   getMetrics(): I18nMetrics;
   reset(): void;
 }

@@ -1,5 +1,13 @@
 'use client';
 
+import { useMemo, useState } from 'react';
+import { ExternalLink } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import {
+  techStackCategories,
+  techStackData,
+  type TechStackCategory,
+} from '@/lib/tech-stack-data';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -10,16 +18,8 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MAGIC_0_3 } from "@/constants/decimal";
+import { MAGIC_0_3 } from '@/constants/decimal';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import {
-  techStackCategories,
-  techStackData,
-  type TechStackCategory,
-} from '@/lib/tech-stack-data';
-import { ExternalLink } from 'lucide-react';
-import { useTranslations } from 'next-intl';
-import { useMemo, useState } from 'react';
 
 function TechStackStats({ t }: { t: (_key: string) => string }) {
   const { ref, isVisible } = useIntersectionObserver<HTMLDivElement>({

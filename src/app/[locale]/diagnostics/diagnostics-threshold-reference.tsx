@@ -7,7 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
-import { DISPLAY_THRESHOLDS, ThresholdDisplay } from '@/app/[locale]/diagnostics/diagnostics-constants';
+import {
+  DISPLAY_THRESHOLDS,
+  ThresholdDisplay,
+} from '@/app/[locale]/diagnostics/diagnostics-constants';
 
 /**
  * 阈值参考组件

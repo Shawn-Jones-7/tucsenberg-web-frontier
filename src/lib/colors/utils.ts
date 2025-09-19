@@ -2,7 +2,11 @@
  * 颜色系统工具函数
  */
 
-import type { ContrastLevel, OKLCHColor, ThemeColors } from '@/lib/colors/types';
+import type {
+  ContrastLevel,
+  OKLCHColor,
+  ThemeColors,
+} from '@/lib/colors/types';
 
 /**
  * 将OKLCH颜色转换为CSS字符串

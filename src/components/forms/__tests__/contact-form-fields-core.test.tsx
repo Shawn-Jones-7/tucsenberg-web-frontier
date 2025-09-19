@@ -10,7 +10,7 @@ import {
 
 // Mock react-hook-form
 const mockRegister = vi.fn();
- 
+
 const mockSetValue = vi.fn();
 
 // Mock translation function

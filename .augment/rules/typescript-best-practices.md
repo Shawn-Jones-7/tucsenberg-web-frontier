@@ -1,5 +1,5 @@
 ---
-type: "agent_requested"
+type: "auto"
 description: "Comprehensive TypeScript best practices and advanced patterns"
 ---
 # TypeScript Best Practices
@@ -11,17 +11,30 @@ description: "Comprehensive TypeScript best practices and advanced patterns"
 - **Proper event handler types**: Use correct event types for handlers
 
 ```typescript
-// ❌ Incorrect: const handleClick = (event: any) => {}; const handleDrag = (event: any, info: any) => {};
+// ❌ Incorrect:
+const handleClick = (event: any) => {};
+const handleDrag = (event: any, info: any) => {};
+
 // ✅ Correct:
-const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {}; const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {};
+const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {};
+const handleDrag = (_event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {};
 ```
 
 ### 2. React 19 Component Type Standards
 
 ```typescript
-// ❌ Incorrect: interface Props { children: any; onClick?: any; }
+// ❌ Incorrect:
+interface Props {
+  children: any;
+  onClick?: any;
+}
+
 // ✅ Correct:
-interface Props { children: React.ReactNode; onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void; className?: string; }
+interface Props {
+  children: React.ReactNode;
+  onClick?: (event: React.MouseEvent<HTMLButtonElement>) => void;
+  className?: string;
+}
 ```
 
 ### 3. React 19 New Hooks Type Patterns
@@ -205,15 +218,38 @@ function ClientComponent({ id }: { id: string }) {
 ```json
 {
   "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["dom", "dom.iterable", "es6"],
+    "allowJs": true,
+    "skipLibCheck": true,
     "strict": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve",
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "exactOptionalPropertyTypes": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "moduleResolution": "bundler",
-    "jsx": "react-jsx"
-  }
+    "verbatimModuleSyntax": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+  "exclude": ["node_modules"]
 }
 ```

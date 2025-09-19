@@ -1,4 +1,3 @@
-import { MAGIC_6 } from "@/constants/count";
 import {
   ANIMATION_DURATION_VERY_SLOW,
   COUNT_PAIR,
@@ -18,6 +17,7 @@ import {
   SECONDS_PER_MINUTE,
   ZERO,
 } from '@/constants';
+import { MAGIC_6 } from '@/constants/count';
 
 /**
  * 安全令牌生成工具
@@ -142,7 +142,7 @@ export function generateOTP(length: number = MAGIC_6): string {
 
     const dv = new DataView(array.buffer);
     for (let i = ZERO; i < length; i++) {
-      const idx = (dv.getUint8(i) % digits.length) >>> 0;
+      const idx = dv.getUint8(i) % digits.length >>> 0;
       result += digits.charAt(idx);
     }
   } else {
@@ -168,7 +168,7 @@ export function generateVerificationCode(length: number = MAGIC_8): string {
 
     const dv = new DataView(array.buffer);
     for (let i = ZERO; i < length; i++) {
-      const idx = (dv.getUint8(i) % chars.length) >>> 0;
+      const idx = dv.getUint8(i) % chars.length >>> 0;
       result += chars.charAt(idx);
     }
   } else {
@@ -237,7 +237,9 @@ export function createTokenWithExpiry(
 ): TokenWithExpiry {
   return {
     token: generateSecureToken(tokenLength),
-    expiresAt: Date.now() + expiryMinutes * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+    expiresAt:
+      Date.now() +
+      expiryMinutes * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
   };
 }
 

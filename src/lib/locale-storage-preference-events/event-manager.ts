@@ -5,13 +5,12 @@
 
 'use client';
 
-import { logger } from '@/lib/logger';
-import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type {
   StorageEvent,
   StorageEventListener,
 } from '@/lib/locale-storage-types';
+import { logger } from '@/lib/logger';
+import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
 /**
  * 偏好事件管理器
@@ -121,7 +120,9 @@ export class PreferenceEventManager {
    * Get event history
    */
   static getEventHistory(limit?: number): StorageEvent[] {
-    return limit ? this.eventHistory.slice(ZERO, limit) : [...this.eventHistory];
+    return limit
+      ? this.eventHistory.slice(ZERO, limit)
+      : [...this.eventHistory];
   }
 
   /**

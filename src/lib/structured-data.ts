@@ -1,6 +1,5 @@
-import { type PageType } from '@/config/paths';
-import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
 import { getTranslations } from 'next-intl/server';
+import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
 import {
   generateArticleData,
   generateBreadcrumbData,
@@ -8,8 +7,6 @@ import {
   generateProductData,
   generateWebSiteData,
 } from '@/lib/structured-data-generators';
-// 导入需要的函数
-import { COUNT_PAIR } from "@/constants";
 import {
   generateArticleSchema,
   generateProductSchema,
@@ -23,6 +20,9 @@ import type {
   StructuredDataType,
   WebSiteData,
 } from '@/lib/structured-data-types';
+import { type PageType } from '@/config/paths';
+// 导入需要的函数
+import { COUNT_PAIR } from '@/constants';
 
 // 重新导出类型
 export type { Locale } from '@/lib/structured-data-types';
@@ -87,7 +87,7 @@ export {
   generateBreadcrumbSchema,
   generateFAQSchema,
   generateLocalBusinessSchema,
-  generateProductSchema
+  generateProductSchema,
 } from '@/lib/structured-data-helpers';
 
 // 函数重载：根据页面类型返回不同长度的元组，便于测试中按索引访问

@@ -7,19 +7,45 @@
 
 'use client';
 
-import { COUNT_23, MAGIC_12, MAGIC_17, MAGIC_18, MAGIC_6, MAGIC_9, MAGIC_95, MAGIC_99 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { DEC_0_75, MAGIC_0_2, MAGIC_0_25, MAGIC_0_3, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
-import { DAYS_PER_WEEK } from "@/constants/time";
 import { calculateStorageStats } from '@/lib/locale-storage-analytics-core';
-
-import type { StorageStats } from '@/lib/locale-storage-types';
 import {
   AccessLogger,
   ErrorLogger,
   type AccessLogEntry,
 } from '@/lib/locale-storage-analytics-events';
+import type { StorageStats } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import {
+  COUNT_23,
+  MAGIC_6,
+  MAGIC_9,
+  MAGIC_12,
+  MAGIC_17,
+  MAGIC_18,
+  MAGIC_95,
+  MAGIC_99,
+} from '@/constants/count';
+import {
+  DEC_0_75,
+  MAGIC_0_2,
+  MAGIC_0_3,
+  MAGIC_0_7,
+  MAGIC_0_8,
+  MAGIC_0_25,
+} from '@/constants/decimal';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 // ==================== 使用模式分析 ====================
 
@@ -80,7 +106,10 @@ export function getUsagePatterns(): UsagePatterns {
     mostAccessedKeys,
     leastAccessedKeys,
     peakUsageHours,
-    operationDistribution: { ...accessStats.operationCounts } as Record<string, number>,
+    operationDistribution: { ...accessStats.operationCounts } as Record<
+      string,
+      number
+    >,
     averageSessionDuration,
     userBehaviorInsights,
   };
@@ -98,7 +127,8 @@ function calculateAverageSessionDuration(accessLog: AccessLogEntry[]): number {
   let lastActivity = sessionStart;
 
   // 会话间隔阈值：30分钟
-  const sessionGap = DAYS_PER_MONTH * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const sessionGap =
+    DAYS_PER_MONTH * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
 
   for (const entry of accessLog.slice(0, -ONE).reverse()) {
     const currentTime = entry?.timestamp ?? Date.now();
@@ -133,7 +163,9 @@ function generateBehaviorInsights(
 
   function analyzeSuccessRate() {
     if (accessStats.successRate < MAGIC_95) {
-      insights.push(`存储操作成功率较低 (${accessStats.successRate.toFixed(ONE)}%)，建议检查存储配置`);
+      insights.push(
+        `存储操作成功率较低 (${accessStats.successRate.toFixed(ONE)}%)，建议检查存储配置`,
+      );
     } else if (accessStats.successRate > MAGIC_99) {
       insights.push('存储操作成功率优秀，系统运行稳定');
     }
@@ -141,7 +173,9 @@ function generateBehaviorInsights(
 
   function analyzeResponseTime() {
     if (accessStats.averageResponseTime > PERCENTAGE_FULL) {
-      insights.push(`平均响应时间较慢 (${accessStats.averageResponseTime.toFixed(ONE)}ms)，可能需要优化`);
+      insights.push(
+        `平均响应时间较慢 (${accessStats.averageResponseTime.toFixed(ONE)}ms)，可能需要优化`,
+      );
     } else if (accessStats.averageResponseTime < COUNT_TEN) {
       insights.push('响应时间优秀，存储性能良好');
     }
@@ -159,7 +193,9 @@ function generateBehaviorInsights(
   }
 
   function analyzeSessionDuration() {
-    const sessionMinutes = averageSessionDuration / (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    const sessionMinutes =
+      averageSessionDuration /
+      (SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
     if (sessionMinutes > SECONDS_PER_MINUTE) {
       insights.push('用户会话时间较长，表明深度使用');
     } else if (sessionMinutes < COUNT_FIVE) {
@@ -173,7 +209,9 @@ function generateBehaviorInsights(
     for (const [operation, count] of entries) {
       const percentage = (count / (totalOps || ONE)) * PERCENTAGE_FULL;
       if (percentage > PERCENTAGE_HALF) {
-        insights.push(`${operation}操作占主导地位 (${percentage.toFixed(ONE)}%)`);
+        insights.push(
+          `${operation}操作占主导地位 (${percentage.toFixed(ONE)}%)`,
+        );
       }
     }
   }
@@ -212,7 +250,9 @@ export function getPerformanceMetrics(): PerformanceMetrics {
   const stats = calculateStorageStats();
 
   // 计算吞吐量 (操作数/小时)
-  const oneHourAgo = Date.now() - SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const oneHourAgo =
+    Date.now() -
+    SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
   const recentOperations = AccessLogger.getAccessLog().filter(
     (entry) => entry.timestamp > oneHourAgo,
   ).length;
@@ -261,7 +301,10 @@ function calculateEfficiencyScore(
   score *= DEC_0_75 + MAGIC_0_25 * responseTimeScore;
 
   // 错误率权重 25%
-  const errorRateScore = Math.max(ZERO, ONE - errorStats.errorRate / PERCENTAGE_FULL);
+  const errorRateScore = Math.max(
+    ZERO,
+    ONE - errorStats.errorRate / PERCENTAGE_FULL,
+  );
   score *= DEC_0_75 + MAGIC_0_25 * errorRateScore;
 
   // 数据新鲜度权重 20%
@@ -363,14 +406,16 @@ function calculateDailyOperations(
   for (let i = days - ONE; i >= ZERO; i--) {
     const date = new Date(now);
     date.setDate(date.getDate() - i);
-    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    const dateStr =
+      date.toISOString().split('T').at(ZERO) || date.toISOString();
     dailyOps.set(dateStr, ZERO);
   }
 
   // 统计操作数
   for (const entry of accessLog) {
     const date = new Date(entry.timestamp);
-    const dateStr = date.toISOString().split('T').at(ZERO) || date.toISOString();
+    const dateStr =
+      date.toISOString().split('T').at(ZERO) || date.toISOString();
     if (dailyOps.has(dateStr)) {
       dailyOps.set(dateStr, (dailyOps.get(dateStr) ?? ZERO) + ONE);
     }
@@ -402,7 +447,9 @@ function calculateGrowthRate(
   const previousAvg =
     previous.reduce((sum, day) => sum + day.operations, ZERO) / previous.length;
 
-  return previousAvg > ZERO ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL : ZERO;
+  return previousAvg > ZERO
+    ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL
+    : ZERO;
 }
 
 /**
@@ -468,7 +515,8 @@ function generatePredictions(
   // 计算趋势斜率
   const trend =
     recent.length > ONE
-      ? ((recent.at(-ONE)?.operations ?? ZERO) - (recent.at(ZERO)?.operations ?? ZERO)) /
+      ? ((recent.at(-ONE)?.operations ?? ZERO) -
+          (recent.at(ZERO)?.operations ?? ZERO)) /
         (recent.length - ONE)
       : ZERO;
 

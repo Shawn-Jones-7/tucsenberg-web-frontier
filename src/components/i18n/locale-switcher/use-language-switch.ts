@@ -1,11 +1,10 @@
 'use client';
 
 import { useCallback, useEffect, useRef, useState, useTransition } from 'react';
-import { MAGIC_2000 } from '@/constants/count';
-
 import type { Locale } from '@/types/i18n';
 import { useLocaleStorage } from '@/lib/locale-storage';
 import { TRANSITION_TIMEOUT } from '@/components/i18n/locale-switcher/config';
+import { MAGIC_2000 } from '@/constants/count';
 
 export const useLanguageSwitch = () => {
   const [switchingTo, setSwitchingTo] = useState<Locale | null>(null);
@@ -54,17 +53,23 @@ export const useLanguageSwitch = () => {
   }, [finalizeSwitch]);
 
   const scheduleTransition = useCallback(() => {
-    transitionTimeoutRef.current = setTimeout(handleTransitionTimeout, TRANSITION_TIMEOUT);
+    transitionTimeoutRef.current = setTimeout(
+      handleTransitionTimeout,
+      TRANSITION_TIMEOUT,
+    );
   }, [handleTransitionTimeout]);
 
-  const handleLanguageSwitch = useCallback((newLocale: Locale) => {
-    clearTimers();
-    setSwitchingTo(newLocale);
-    setSwitchSuccess(false);
-    setUserOverride(newLocale);
+  const handleLanguageSwitch = useCallback(
+    (newLocale: Locale) => {
+      clearTimers();
+      setSwitchingTo(newLocale);
+      setSwitchSuccess(false);
+      setUserOverride(newLocale);
 
-    startTransition(scheduleTransition);
-  }, [clearTimers, scheduleTransition, setUserOverride, startTransition]);
+      startTransition(scheduleTransition);
+    },
+    [clearTimers, scheduleTransition, setUserOverride, startTransition],
+  );
 
   useEffect(() => clearTimers, [clearTimers]);
 

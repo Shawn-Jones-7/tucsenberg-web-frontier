@@ -36,5 +36,24 @@
     "vitest.config.browser.ts",
     "playwright.config.ts"
   ],
-  "exclude": ["node_modules", ".next", "out", "build", "dist"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "out",
+    "build",
+    "dist",
+    "backups",
+    "reports",
+    "scripts",
+    "coverage",
+    "outdated",
+    "docs",
+    "reports",
+    "reports-old",
+    "tmp",
+    "tmp_reports",
+    "analysis",
+    "legacy",
+    "backups"
+  ]
 }

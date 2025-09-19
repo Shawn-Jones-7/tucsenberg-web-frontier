@@ -5,18 +5,34 @@
 
 'use client';
 
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, DAYS_PER_MONTH, MAGIC_15, MAGIC_600, MAGIC_800, MAGIC_1800, ONE, PERCENTAGE_FULL, PERCENTAGE_QUARTER, THREE_SECONDS_MS, ZERO } from '@/constants';
-
 import { PERFORMANCE_THRESHOLDS } from '@/lib/web-vitals/constants';
 import type { DetailedWebVitals } from '@/lib/web-vitals/types';
+import {
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  DAYS_PER_MONTH,
+  MAGIC_15,
+  MAGIC_600,
+  MAGIC_800,
+  MAGIC_1800,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_QUARTER,
+  THREE_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * Web Vitals 性能分析器
  * 负责性能指标分析和诊断报告生成
  */
 export class WebVitalsCollectorAnalyzer {
-  private static readonly SLOW_RESOURCE_MS_THRESHOLD = PERCENTAGE_FULL * COUNT_FIVE; // 500ms
+  private static readonly SLOW_RESOURCE_MS_THRESHOLD =
+    PERCENTAGE_FULL * COUNT_FIVE; // 500ms
   /**
    * 分析 CLS 指标并生成问题和建议
    */
@@ -80,7 +96,10 @@ export class WebVitalsCollectorAnalyzer {
     recommendations: string[],
   ): void {
     const [firstSlow] = resourceTiming.slowResources;
-    if (firstSlow && firstSlow.duration > WebVitalsCollectorAnalyzer.SLOW_RESOURCE_MS_THRESHOLD) {
+    if (
+      firstSlow &&
+      firstSlow.duration > WebVitalsCollectorAnalyzer.SLOW_RESOURCE_MS_THRESHOLD
+    ) {
       issues.push(
         `发现慢速资源: ${firstSlow.name} (${firstSlow.duration.toFixed(ZERO)}ms)`,
       );
@@ -202,7 +221,12 @@ export class WebVitalsCollectorAnalyzer {
     const score = this.calculatePerformanceScore(metrics);
 
     // 构建并返回结果
-    return this.buildDiagnosticResult({ metrics, issues, recommendations, score });
+    return this.buildDiagnosticResult({
+      metrics,
+      issues,
+      recommendations,
+      score,
+    });
   }
 
   /**

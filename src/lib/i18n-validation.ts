@@ -2,8 +2,8 @@
  * 企业级国际化验证工具
  * 提供翻译完整性检查、质量验证和同步机制
  */
-import { routing } from '@/i18n/routing';
 import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
+import { routing } from '@/i18n/routing';
 
 type KnownLocale = 'en' | 'zh';
 type TranslationsMap = Partial<Record<KnownLocale, Record<string, unknown>>>;
@@ -109,7 +109,9 @@ export async function validateTranslations(): Promise<TranslationValidationResul
     const totalKeys = allKeys.size * routing.locales.length;
     const missingCount = missingKeys.length;
     const coverage =
-      totalKeys > ZERO ? ((totalKeys - missingCount) / totalKeys) * PERCENTAGE_FULL : PERCENTAGE_FULL;
+      totalKeys > ZERO
+        ? ((totalKeys - missingCount) / totalKeys) * PERCENTAGE_FULL
+        : PERCENTAGE_FULL;
 
     return {
       isValid:
@@ -279,7 +281,8 @@ function validateTranslationQuality(params: {
   errors: TranslationError[];
   warnings: TranslationWarning[];
 }): void {
-  const { translation, locale, localeKeys, translations, errors, warnings } = params;
+  const { translation, locale, localeKeys, translations, errors, warnings } =
+    params;
   for (const key of localeKeys) {
     const value = getNestedValue(translation, key);
 
@@ -297,7 +300,13 @@ function validateTranslationQuality(params: {
     // 检查是否未翻译（与其他语言相同）
     if (typeof value === 'string') {
       checkUntranslatedContent({ value, key, locale, translations, warnings });
-      checkPlaceholderConsistency({ value, key, locale, translations, warnings });
+      checkPlaceholderConsistency({
+        value,
+        key,
+        locale,
+        translations,
+        warnings,
+      });
     }
   }
 }
@@ -343,10 +352,7 @@ function checkPlaceholderConsistency(params: {
   const placeholders = value.match(/\{[^}]+\}/g) || [];
   const refLocale: KnownLocale = routing.locales.includes('en') ? 'en' : 'zh';
   const refTrans = getByLocale(translations, refLocale) || {};
-  const referencePlaceholders = getNestedValue(
-    refTrans,
-    key,
-  );
+  const referencePlaceholders = getNestedValue(refTrans, key);
   if (typeof referencePlaceholders === 'string') {
     const refPlaceholders = referencePlaceholders.match(/\{[^}]+\}/g) || [];
     if (placeholders.length !== refPlaceholders.length) {

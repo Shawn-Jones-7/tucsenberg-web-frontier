@@ -1,11 +1,4 @@
-import {
-  PERFORMANCE_THRESHOLDS,
-  QUALITY_WEIGHTS,
-  VALIDATION_THRESHOLDS,
-} from '@/constants/i18n-constants';
 import type { Locale } from '@/types/i18n';
-import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type {
   LocaleQualityReport,
   QualityIssue,
@@ -22,6 +15,12 @@ import {
   generateSuggestions,
   getNestedValue,
 } from '@/lib/translation-utils';
+import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
+import {
+  PERFORMANCE_THRESHOLDS,
+  QUALITY_WEIGHTS,
+  VALIDATION_THRESHOLDS,
+} from '@/constants/i18n-constants';
 
 /**
  * 翻译质量检查器
@@ -62,7 +61,11 @@ export class TranslationQualityChecker {
     score -= this.checkBasicQuality(aiTranslation, issues);
 
     // 占位符检查
-    score -= this.checkPlaceholderConsistency(aiTranslation, humanTranslation, issues);
+    score -= this.checkPlaceholderConsistency(
+      aiTranslation,
+      humanTranslation,
+      issues,
+    );
 
     // 术语一致性检查
     score -= await this.checkTerminology(key, aiTranslation, issues);
@@ -80,7 +83,10 @@ export class TranslationQualityChecker {
     return qualityScore;
   }
 
-  private checkBasicQuality(translation: string, issues: QualityIssue[]): number {
+  private checkBasicQuality(
+    translation: string,
+    issues: QualityIssue[],
+  ): number {
     if (translation.trim().length === ZERO) {
       issues.push({
         type: 'length',
@@ -102,7 +108,10 @@ export class TranslationQualityChecker {
     const aiPlaceholders = extractPlaceholders(ai);
     if (human) {
       const humanPlaceholders = extractPlaceholders(human);
-      if (JSON.stringify(aiPlaceholders.sort()) !== JSON.stringify(humanPlaceholders.sort())) {
+      if (
+        JSON.stringify(aiPlaceholders.sort()) !==
+        JSON.stringify(humanPlaceholders.sort())
+      ) {
         issues.push({
           type: 'placeholder',
           severity: 'high',
@@ -134,7 +143,11 @@ export class TranslationQualityChecker {
     translation: string,
     issues: QualityIssue[],
   ): Promise<number> {
-    const terminologyIssues = await checkTerminologyConsistency(key, translation, this.terminologyMap);
+    const terminologyIssues = await checkTerminologyConsistency(
+      key,
+      translation,
+      this.terminologyMap,
+    );
     issues.push(...terminologyIssues);
     return terminologyIssues.length * QUALITY_WEIGHTS.LENGTH_PENALTY;
   }

@@ -1,21 +1,20 @@
 #!/usr/bin/env tsx
-
-import { resolve, join } from 'node:path';
 import { readdirSync, statSync } from 'node:fs';
+import { join, resolve } from 'node:path';
 
 /**
  * 递归查找匹配的TypeScript文件
  */
 function findTsFiles(dir: string, pattern: RegExp = /\.(ts|tsx)$/): string[] {
   const results: string[] = [];
-  
+
   try {
     const items = readdirSync(dir);
-    
+
     for (const item of items) {
       const fullPath = join(dir, item);
       const stat = statSync(fullPath);
-      
+
       if (stat.isDirectory()) {
         // 跳过node_modules和.git等目录
         if (!item.startsWith('.') && item !== 'node_modules') {
@@ -28,7 +27,7 @@ function findTsFiles(dir: string, pattern: RegExp = /\.(ts|tsx)$/): string[] {
   } catch (error) {
     console.warn(`无法读取目录 ${dir}:`, error);
   }
-  
+
   return results;
 }
 

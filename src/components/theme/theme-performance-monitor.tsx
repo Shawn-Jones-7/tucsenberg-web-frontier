@@ -1,10 +1,15 @@
 'use client';
 
-import { logger } from '@/lib/logger';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from '@/constants';
-
-import { sendThemeReport, themeAnalytics } from '@/lib/theme-analytics';
 import { useEffect } from 'react';
+import { logger } from '@/lib/logger';
+import { sendThemeReport, themeAnalytics } from '@/lib/theme-analytics';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+  ZERO,
+} from '@/constants';
 
 /**
  * 主题性能监控组件

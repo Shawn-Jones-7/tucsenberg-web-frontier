@@ -1,7 +1,15 @@
-import { MAGIC_15 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
 import { z } from 'zod';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_15 } from '@/constants/count';
 
 /**
  * 验证常量定义
@@ -206,6 +214,12 @@ export const emailTemplateDataSchema = z.object({
   subject: z.string().optional(),
   submittedAt: z.string(),
   marketingConsent: z.boolean().optional(),
+
+  // Honeypot field - should remain empty
+  website: z
+    .string()
+    .optional()
+    .refine((value) => !value, 'Website field should be empty'),
 });
 
 export type EmailTemplateData = z.infer<typeof emailTemplateDataSchema>;

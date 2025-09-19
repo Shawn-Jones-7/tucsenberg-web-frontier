@@ -1,12 +1,14 @@
+import { logger } from '@/lib/logger';
+import type {
+  DetailedWebVitals,
+  PerformanceBaseline,
+} from '@/lib/web-vitals/types';
+import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 import {
   BASELINE_CONSTANTS,
   WEB_VITALS_THRESHOLDS,
 } from '@/constants/performance-constants';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
-import { logger } from '@/lib/logger';
-import type { DetailedWebVitals, PerformanceBaseline } from '@/lib/web-vitals/types';
 
 /**
  * 性能基准数据库管理类
@@ -91,7 +93,9 @@ export class PerformanceBaselineManager {
       });
 
       // 返回最新的基准数据
-      return filtered.length > ZERO ? filtered[filtered.length - ONE] || null : null;
+      return filtered.length > ZERO
+        ? filtered[filtered.length - ONE] || null
+        : null;
     } catch (error) {
       logger.error('Failed to get recent baseline', { error });
       return null;

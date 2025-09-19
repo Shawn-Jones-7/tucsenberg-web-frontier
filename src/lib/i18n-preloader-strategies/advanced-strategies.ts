@@ -4,19 +4,30 @@
  */
 
 import type { Locale } from '@/types/i18n';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_0_5, MAGIC_0_7, MAGIC_0_8, MAGIC_0_9, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, ZERO } from '@/constants';
-
-import type {
-  IPreloader,
-  PreloadOptions,
-  PreloadStrategy,
-} from '@/lib/i18n-preloader-types';
 // 导入基础策略以便复用
 import {
   immediateStrategy,
   lazyStrategy,
   progressiveStrategy,
 } from '@/lib/i18n-preloader-strategies/basic-strategies';
+import type {
+  IPreloader,
+  PreloadOptions,
+  PreloadStrategy,
+} from '@/lib/i18n-preloader-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  MAGIC_0_5,
+  MAGIC_0_7,
+  MAGIC_0_8,
+  MAGIC_0_9,
+  MAGIC_9,
+  MAGIC_17,
+  MAGIC_18,
+  MAGIC_22,
+  ZERO,
+} from '@/constants';
 
 /**
  * 批量预加载策略
@@ -37,7 +48,9 @@ export const batchStrategy: PreloadStrategy = async (
   for (const batch of batches) {
     await preloader.preloadMultipleLocales(batch, options);
     // 批次间延迟
-    await new Promise((resolve) => setTimeout(resolve, ANIMATION_DURATION_VERY_SLOW));
+    await new Promise((resolve) =>
+      setTimeout(resolve, ANIMATION_DURATION_VERY_SLOW),
+    );
   }
 };
 
@@ -53,7 +66,10 @@ export const adaptiveStrategy: PreloadStrategy = async (
   const stats = preloader.getPreloadStats();
 
   // 根据当前性能选择策略
-  if (stats.successRate > MAGIC_0_9 && stats.averageLoadTime < ANIMATION_DURATION_VERY_SLOW) {
+  if (
+    stats.successRate > MAGIC_0_9 &&
+    stats.averageLoadTime < ANIMATION_DURATION_VERY_SLOW
+  ) {
     // 性能良好，使用立即策略
     await immediateStrategy(preloader, locales, options);
   } else if (stats.successRate > MAGIC_0_7) {
@@ -76,7 +92,9 @@ export const networkAwareStrategy: PreloadStrategy = async (
 ) => {
   // 检测网络状况
   const isOnline = navigator.onLine;
-  const {connection} = (navigator as { connection?: { effectiveType?: string; downlink?: number } });
+  const { connection } = navigator as {
+    connection?: { effectiveType?: string; downlink?: number };
+  };
 
   if (!isOnline) {
     // 离线状态，不进行预加载
@@ -137,9 +155,9 @@ export const memoryAwareStrategy: PreloadStrategy = async (
   options?: PreloadOptions,
 ) => {
   // 检查可用内存
-  const {memory} = (performance as {
-      memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
-    });
+  const { memory } = performance as {
+    memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
+  };
 
   if (memory) {
     const { usedJSHeapSize, totalJSHeapSize } = memory;

@@ -3,7 +3,11 @@
  * Resend email service utilities
  */
 
-import { emailTemplateDataSchema, validationHelpers, type EmailTemplateData } from '@/lib/validations';
+import {
+  emailTemplateDataSchema,
+  validationHelpers,
+  type EmailTemplateData,
+} from '@/lib/validations';
 
 /**
  * 邮件配置常量

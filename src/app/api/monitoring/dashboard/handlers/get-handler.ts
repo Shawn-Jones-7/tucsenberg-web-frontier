@@ -1,10 +1,32 @@
-import { HOURS_24_IN_MS, HOURS_2_IN_MS } from '@/app/api/monitoring/dashboard/types';
-import { ZERO, COUNT_PAIR } from '@/constants';
-
-import { COUNT_120, COUNT_12000, COUNT_125000, COUNT_250, COUNT_45, COUNT_450, COUNT_45000, MAGIC_15, MAGIC_1800, MAGIC_8 } from "@/constants/count";
-import { DEC_0_001, DEC_0_02, DEC_0_05, DEC_0_08, DEC_0_65, DEC_0_94, DEC_0_96, MAGIC_0_25 } from "@/constants/decimal";
-import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import {
+  HOURS_2_IN_MS,
+  HOURS_24_IN_MS,
+} from '@/app/api/monitoring/dashboard/types';
+import { COUNT_PAIR, ZERO } from '@/constants';
+import {
+  COUNT_45,
+  COUNT_120,
+  COUNT_250,
+  COUNT_450,
+  COUNT_12000,
+  COUNT_45000,
+  COUNT_125000,
+  MAGIC_8,
+  MAGIC_15,
+  MAGIC_1800,
+} from '@/constants/count';
+import {
+  DEC_0_001,
+  DEC_0_02,
+  DEC_0_05,
+  DEC_0_08,
+  DEC_0_65,
+  DEC_0_94,
+  DEC_0_96,
+  MAGIC_0_25,
+} from '@/constants/decimal';
 
 /**
  * GET /api/monitoring/dashboard

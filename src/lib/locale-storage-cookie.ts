@@ -1,10 +1,15 @@
 'use client';
 
-import { MAGIC_4096 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, HOURS_PER_DAY, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { MAGIC_0_8 } from "@/constants/decimal";
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  HOURS_PER_DAY,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_4096 } from '@/constants/count';
+import { MAGIC_0_8 } from '@/constants/decimal';
 import { CACHE_DURATIONS } from '@/constants/i18n-constants';
+
 /**
  * Cookie 配置常量
  * Cookie configuration constants
@@ -143,7 +148,14 @@ export class CookieManager {
   }): void {
     const { name, value, expiryDays, options = {} } = params;
     const expiryDate = new Date();
-    expiryDate.setTime(expiryDate.getTime() + expiryDays * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW);
+    expiryDate.setTime(
+      expiryDate.getTime() +
+        expiryDays *
+          HOURS_PER_DAY *
+          SECONDS_PER_MINUTE *
+          SECONDS_PER_MINUTE *
+          ANIMATION_DURATION_VERY_SLOW,
+    );
 
     const cookieOptions = {
       ...COOKIE_CONFIG,

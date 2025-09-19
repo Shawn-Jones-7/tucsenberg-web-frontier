@@ -3,6 +3,8 @@
  * 用于替换测试文件中的any类型，提升类型安全性
  */
 
+import type { ReactNode } from 'react';
+
 // ============================================================================
 // DOM Mock Types - 用于测试中的DOM元素模拟
 // ============================================================================
@@ -53,6 +55,65 @@ export interface MockMouseEvent {
   target?: MockDOMElement;
   currentTarget?: MockDOMElement;
 }
+
+/**
+ * Mock按钮属性
+ */
+export interface MockButtonProps {
+  children?: ReactNode;
+  className?: string;
+  variant?: string;
+  size?: string;
+  [key: string]: unknown;
+}
+
+/**
+ * Mock React Fiber 节点
+ */
+export interface MockReactFiberNode extends HTMLElement {
+  _reactInternalFiber?: unknown;
+  _reactRootContainer?: unknown;
+  [key: string]: unknown;
+}
+
+/**
+ * Mock带有React属性的Window对象
+ */
+export type MockWindowWithReact = Window & {
+  React?: unknown;
+  __REACT_DEVTOOLS_GLOBAL_HOOK__?: unknown;
+  __NEXT_DATA__?: unknown;
+  __NEXT_ROUTER__?: unknown;
+  performance: Window['performance'];
+};
+
+/**
+ * Next.js水合状态信息
+ */
+export interface MockNextHydrationStatus {
+  hasNextData: boolean;
+  hasNextRouter: boolean;
+  documentReadyState: DocumentReadyState;
+  scriptsLoaded: number;
+}
+
+/**
+ * Mock Performance navigation entry
+ */
+export type MockPerformanceNavigationEntry =
+  Partial<PerformanceNavigationTiming> & {
+    transferSize?: number;
+    responseStatus?: number;
+  };
+
+/**
+ * 可删除属性的全局对象
+ */
+export type GlobalWithDeletableProperties = typeof globalThis & {
+  window?: typeof window;
+  document?: Document;
+  [key: string]: unknown;
+};
 
 // ============================================================================
 // Environment Mock Types - 用于环境变量和全局对象模拟
@@ -153,6 +214,58 @@ export interface MockAnalyticsConfig {
 }
 
 // ============================================================================
+// Airtable Test Types - 用于 Airtable 服务测试的类型
+// ============================================================================
+
+export interface AirtableRecordLike<Fields = Record<string, unknown>> {
+  id: string;
+  fields: Fields;
+  createdTime?: string;
+}
+
+export interface AirtableTableLike<Fields = Record<string, unknown>> {
+  create: (
+    records: Array<{ fields: Fields }> | { fields: Fields },
+  ) => Promise<AirtableRecordLike<Fields>[]>;
+  select: (_params?: Record<string, unknown>) => {
+    all: () => Promise<AirtableRecordLike<Fields>[]>;
+    firstPage?: () => Promise<AirtableRecordLike<Fields>[]>;
+  };
+  update: (
+    records:
+      | Array<{ id: string; fields: Partial<Fields> }>
+      | {
+          id: string;
+          fields: Partial<Fields>;
+        },
+  ) => Promise<AirtableRecordLike<Fields>[]>;
+  destroy: (ids: string[]) => Promise<Array<{ id: string; deleted: boolean }>>;
+}
+
+export interface AirtableBaseLike<Fields = Record<string, unknown>> {
+  table: (_name: string) => AirtableTableLike<Fields>;
+}
+
+export interface AirtableClientLike<Fields = Record<string, unknown>> {
+  configure: (_config: Record<string, unknown>) => void;
+  base: (_id: string) => AirtableBaseLike<Fields>;
+}
+
+export interface AirtableServicePrivate<Fields = Record<string, unknown>> {
+  base?: AirtableBaseLike<Fields> | null;
+  isConfigured: boolean;
+  configuration?: {
+    apiKey?: string;
+    baseId?: string;
+    tableName?: string;
+  } | null;
+}
+
+export interface DynamicImportModule {
+  [exportName: string]: unknown;
+}
+
+// ============================================================================
 // Test Utility Types - 用于测试工具函数的类型
 // ============================================================================
 
@@ -160,7 +273,7 @@ export interface MockAnalyticsConfig {
  * Jest Mock函数类型
  * 用于类型化Jest模拟函数
  */
-export type MockFunction<T extends (..._args: unknown[]) => unknown> = T & {
+export type MockFunction<T extends (..._args: any[]) => unknown> = T & {
   mock: {
     calls: unknown[][];
     results: Array<{ type: 'return' | 'throw'; value: unknown }>;
@@ -339,39 +452,13 @@ export interface CSSVariablesTest {
  * NumberFormat构造函数类型
  * 用于测试中模拟Intl.NumberFormat
  */
-export interface NumberFormatConstructor {
-  new (
-    locales?: string | string[],
-    options?: Intl.NumberFormatOptions,
-  ): Intl.NumberFormat;
-  (
-    locales?: string | string[],
-    options?: Intl.NumberFormatOptions,
-  ): Intl.NumberFormat;
-  supportedLocalesOf(
-    locales: string | string[],
-    options?: { localeMatcher?: string },
-  ): string[];
-}
+export type NumberFormatConstructor = typeof Intl.NumberFormat;
 
 /**
  * DateTimeFormat构造函数类型
  * 用于测试中模拟Intl.DateTimeFormat
  */
-export interface DateTimeFormatConstructor {
-  new (
-    locales?: string | string[],
-    options?: Intl.DateTimeFormatOptions,
-  ): Intl.DateTimeFormat;
-  (
-    locales?: string | string[],
-    options?: Intl.DateTimeFormatOptions,
-  ): Intl.DateTimeFormat;
-  supportedLocalesOf(
-    locales: string | string[],
-    options?: { localeMatcher?: string },
-  ): string[];
-}
+export type DateTimeFormatConstructor = typeof Intl.DateTimeFormat;
 
 /**
  * Mock存储管理器接口
@@ -417,9 +504,7 @@ export interface MockGeolocation {
  * 支持更复杂的模拟场景
  */
 export type ExtendedMockFunction<
-  T extends (..._args: unknown[]) => unknown = (
-    ..._args: unknown[]
-  ) => unknown,
+  T extends (..._args: any[]) => unknown = (..._args: any[]) => unknown,
 > = MockFunction<T> & {
   mockReturnValueOnce: (_value: ReturnType<T>) => ExtendedMockFunction<T>;
   mockResolvedValueOnce: (

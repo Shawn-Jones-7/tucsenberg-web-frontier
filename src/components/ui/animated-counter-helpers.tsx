@@ -1,8 +1,7 @@
-import { COUNT_4, MAGIC_16 } from "@/constants/count";
-import { COUNT_PAIR, ONE, ZERO } from '@/constants';
-
-import { MAGIC_0_5 } from "@/constants/decimal";
 import * as React from 'react';
+import { COUNT_PAIR, ONE, ZERO } from '@/constants';
+import { COUNT_4, MAGIC_16 } from '@/constants/count';
+import { MAGIC_0_5 } from '@/constants/decimal';
 
 /**
  * Animation constants to avoid magic numbers
@@ -66,16 +65,26 @@ export function formatNumber(
     suffix?: string;
   } = {},
 ): string {
-  const { decimals = ZERO, separator = ',', prefix = '', suffix = '' } = options;
+  const {
+    decimals = ZERO,
+    separator = ',',
+    prefix = '',
+    suffix = '',
+  } = options;
 
   const formattedValue = value.toFixed(decimals);
   const [integerPart = '', fractionalPart] = formattedValue.split('.');
 
   // Add thousand separators - static pattern validated for numeric grouping
   // eslint-disable-next-line security/detect-unsafe-regex
-  const formattedInteger = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, separator);
+  const formattedInteger = integerPart.replace(
+    /\B(?=(\d{3})+(?!\d))/g,
+    separator,
+  );
   const formattedParts =
-    fractionalPart !== undefined ? [formattedInteger, fractionalPart] : [formattedInteger];
+    fractionalPart !== undefined
+      ? [formattedInteger, fractionalPart]
+      : [formattedInteger];
 
   return prefix + formattedParts.join('.') + suffix;
 }

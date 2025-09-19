@@ -472,6 +472,10 @@ export const TEST_CONSTANTS = {
   PERFORMANCE_TIMESTAMPS: TEST_PERFORMANCE_TIMESTAMPS,
 } as const;
 
+// 兼容旧版测试用到的下划线命名
+export const _TEST_CONSTANTS = TEST_CONSTANTS;
+export const _WEB_VITALS_CONSTANTS = WEB_VITALS_CONSTANTS;
+
 // ==================== 单独导出常用常量 ====================
 
 // 导出常用的测试常量以便直接使用

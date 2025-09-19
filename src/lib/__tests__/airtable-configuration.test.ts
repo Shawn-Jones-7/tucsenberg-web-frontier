@@ -10,9 +10,15 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
+  AirtableBaseLike,
   AirtableServicePrivate,
   DynamicImportModule,
 } from '@/types/test-types';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import {
+  configureServiceForTesting,
+  createMockBase,
+} from './airtable/test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();
@@ -25,10 +31,17 @@ const mockTable = vi.fn().mockReturnValue({
   update: mockUpdate,
   destroy: mockDestroy,
 });
-const mockBase = vi.fn().mockReturnValue({
-  table: mockTable,
-});
+
+const tableFactory: AirtableBaseLike['table'] = (name) => {
+  void name;
+  return mockTable() as ReturnType<AirtableBaseLike['table']>;
+};
+
+const mockBase = vi.fn(() => createMockBase(tableFactory));
 const mockConfigure = vi.fn();
+
+const setServiceReady = (service: unknown) =>
+  configureServiceForTesting(service, createMockBase(tableFactory));
 
 vi.mock('airtable', () => ({
   default: {
@@ -54,7 +67,7 @@ vi.mock('./validations', async () => {
 });
 
 describe('Airtable Service - Configuration Tests', () => {
-  let AirtableServiceClass: any;
+  let AirtableServiceClass: typeof AirtableServiceType;
 
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
@@ -68,7 +81,7 @@ describe('Airtable Service - Configuration Tests', () => {
 
     // Dynamically import the module to ensure fresh instance
     const module = (await import('../airtable')) as DynamicImportModule;
-    AirtableServiceClass = module.AirtableService;
+    AirtableServiceClass = module.AirtableService as typeof AirtableServiceType;
   });
 
   afterEach(() => {
@@ -218,35 +231,29 @@ describe('Airtable Service - Configuration Tests', () => {
       expect(service.isReady()).toBe(false);
 
       // Test with valid configuration
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
       expect(service.isReady()).toBe(true);
     });
 
     it('should check base instance availability', () => {
       const service = new AirtableServiceClass();
 
+      const privateService = service as unknown as AirtableServicePrivate;
+
       // Test with null base
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = null;
+      privateService.isConfigured = true;
+      privateService.base = null;
       expect(service.isReady()).toBe(false);
 
       // Test with valid base
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      configureServiceForTesting(privateService, createMockBase(tableFactory));
       expect(service.isReady()).toBe(true);
     });
 
     it('should validate table instance', () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       expect(service.isReady()).toBe(true);
       expect(mockTable).toBeDefined();

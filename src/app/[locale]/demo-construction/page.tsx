@@ -1,6 +1,6 @@
-import { UnderConstructionV2 } from '@/components/shared/under-construction-v2';
-import { COUNT_PAIR } from "@/constants";
 import type { Metadata } from 'next';
+import { UnderConstructionV2 } from '@/components/shared/under-construction-v2';
+import { COUNT_PAIR } from '@/constants';
 
 export const metadata: Metadata = {
   title: '建设中页面演示 | Tucsenberg',

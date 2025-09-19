@@ -5,11 +5,14 @@
 
 'use client';
 
+import {
+  exportHistory,
+  importHistory,
+} from '@/lib/locale-storage-history-maintenance/import-export';
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
 } from '@/lib/locale-storage-types';
-import { exportHistory, importHistory } from '@/lib/locale-storage-history-maintenance/import-export';
 
 /**
  * 创建历史记录备份

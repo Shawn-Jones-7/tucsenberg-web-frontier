@@ -463,9 +463,14 @@ export function getMessageMediaId(
   message: IncomingWhatsAppMessage,
 ): string | null {
   if (isMediaMessage(message)) {
-    type MediaKey = Extract<IncomingMessageType, 'image' | 'document' | 'audio' | 'video' | 'sticker'>;
+    type MediaKey = Extract<
+      IncomingMessageType,
+      'image' | 'document' | 'audio' | 'video' | 'sticker'
+    >;
     const key = message.type as MediaKey;
-    const mediaData = (message as Record<MediaKey, { id?: string } | undefined>)[key];
+    const mediaData = (
+      message as Record<MediaKey, { id?: string } | undefined>
+    )[key];
     return mediaData?.id ?? null;
   }
   return null;

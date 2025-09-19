@@ -8,6 +8,7 @@
  */
 
 import { _TEST_CONSTANTS } from '@/constants/test-constants';
+import type { ThemeColors } from '@/lib/colors/types';
 import {
   checkContrastCompliance,
   darkThemeColors,
@@ -171,14 +172,14 @@ describe('Color Contrast and Compliance Tests', () => {
     });
 
     it('should handle colors with alpha values', () => {
-      const testColors = {
-        overlay: { l: 0.5, c: 0, h: 0, alpha: 0.8 },
+      const testColors: Partial<ThemeColors> = {
+        accent: { l: 0.5, c: 0, h: 0, alpha: 0.8 },
       };
 
       const result = generateCSSVariables(testColors);
 
       expect(result).toEqual({
-        '--overlay': 'oklch(0.5 0 0 / 0.8)',
+        '--accent': 'oklch(0.5 0 0 / 0.8)',
       });
     });
   });

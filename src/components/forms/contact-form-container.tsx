@@ -1,22 +1,25 @@
 'use client';
 
-import {
-    AdditionalFields,
-    CheckboxFields,
-    ContactFields,
-    NameFields,
-} from '@/components/forms/contact-form-fields';
-import { Button } from '@/components/ui/button';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE } from '@/constants';
-
-import { Card } from '@/components/ui/card';
-import { logger } from '@/lib/logger';
-import { contactFormSchema, type ContactFormData, type FormSubmissionStatus } from '@/lib/validations';
+import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
 import { useForm, type Resolver } from 'react-hook-form';
+import { logger } from '@/lib/logger';
+import {
+  contactFormSchema,
+  type ContactFormData,
+  type FormSubmissionStatus,
+} from '@/lib/validations';
+import {
+  AdditionalFields,
+  CheckboxFields,
+  ContactFields,
+  NameFields,
+} from '@/components/forms/contact-form-fields';
+import { Button } from '@/components/ui/button';
+import { Card } from '@/components/ui/card';
+import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE } from '@/constants';
 
 /**
  * Status message component
@@ -140,9 +143,9 @@ function useContactForm() {
 
   // React Hook Form setup
   const form = useForm<ContactFormData>({
-    resolver: (zodResolver as unknown as (s: unknown) => Resolver<ContactFormData>)(
-      contactFormSchema,
-    ),
+    resolver: (
+      zodResolver as unknown as (s: unknown) => Resolver<ContactFormData>
+    )(contactFormSchema),
     defaultValues: {
       firstName: '',
       lastName: '',

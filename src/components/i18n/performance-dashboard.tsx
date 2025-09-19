@@ -1,14 +1,13 @@
 'use client';
 
-import { MAGIC_80 } from "@/constants/count";
-import { FIVE_SECONDS_MS, ONE, TEN_SECONDS_MS, ZERO } from '@/constants';
-
-import { useI18nPerformance } from '@/hooks/use-enhanced-translations';
+import { useEffect, useState } from 'react';
 import {
   evaluatePerformance,
   PERFORMANCE_TARGETS,
 } from '@/lib/i18n-performance';
-import { useEffect, useState } from 'react';
+import { FIVE_SECONDS_MS, ONE, TEN_SECONDS_MS, ZERO } from '@/constants';
+import { MAGIC_80 } from '@/constants/count';
+import { useI18nPerformance } from '@/hooks/use-enhanced-translations';
 
 interface PerformanceMetrics {
   averageLoadTime: number;

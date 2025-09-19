@@ -4,7 +4,11 @@
  */
 
 // 重新导出类型定义
-export type { OKLCHColor, ContrastLevel, ThemeColors } from '@/lib/colors/types';
+export type {
+  OKLCHColor,
+  ContrastLevel,
+  ThemeColors,
+} from '@/lib/colors/types';
 
 // 重新导出主题颜色
 export { lightThemeColors } from '@/lib/colors/light-theme';

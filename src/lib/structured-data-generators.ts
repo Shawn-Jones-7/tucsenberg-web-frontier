@@ -1,5 +1,4 @@
 import { getTranslations } from 'next-intl/server';
-import { routing } from '@/i18n/routing';
 import type {
   ArticleData,
   BreadcrumbData,
@@ -8,6 +7,7 @@ import type {
   ProductData,
   WebSiteData,
 } from '@/lib/structured-data-types';
+import { routing } from '@/i18n/routing';
 
 /**
  * 生成组织结构化数据

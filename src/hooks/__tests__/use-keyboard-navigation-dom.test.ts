@@ -86,15 +86,15 @@ describe('useKeyboardNavigation DOM Tests', () => {
 
       // Test focusing different types of elements
       act(() => {
-        result.current.focusIndex(0); // Button
+        result.current.setFocusIndex(0); // Button
       });
 
       act(() => {
-        result.current.focusIndex(3); // Input
+        result.current.setFocusIndex(3); // Input
       });
 
       act(() => {
-        result.current.focusIndex(4); // Link
+        result.current.setFocusIndex(4); // Link
       });
 
       expect(result.current.getCurrentFocusIndex()).toBeGreaterThanOrEqual(-1);
@@ -212,12 +212,12 @@ describe('useKeyboardNavigation DOM Tests', () => {
 
       // 直接聚焦到第二个按钮
       act(() => {
-        result.current.focusIndex(1);
+        result.current.setFocusIndex(1);
       });
 
       // 直接聚焦到第三个按钮
       act(() => {
-        result.current.focusIndex(2);
+        result.current.setFocusIndex(2);
       });
 
       expect(result.current.getCurrentFocusIndex()).toBeGreaterThanOrEqual(-1);

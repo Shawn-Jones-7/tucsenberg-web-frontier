@@ -375,13 +375,13 @@ describe('Social Icons Accessibility & Integration - Core Tests', () => {
 
   describe('Performance Considerations', () => {
     it('renders multiple icons efficiently', () => {
-      const platforms = ['twitter', 'linkedin', 'external'];
-      const icons = [TwitterIcon, LinkedInIcon, ExternalLinkIcon];
+      const platforms = ['twitter', 'linkedin', 'external'] as const;
+      const icons = [TwitterIcon, LinkedInIcon, ExternalLinkIcon] as const;
 
       render(
         <div>
           {platforms.map((platform, index) => {
-            const IconComponent = icons[index];
+            const IconComponent = icons[index] ?? ExternalLinkIcon;
             return (
               <SocialIconLink
                 key={platform}

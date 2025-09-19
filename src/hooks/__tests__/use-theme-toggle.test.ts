@@ -12,22 +12,38 @@ const {
   mockUseAccessibility,
   mockUseSyncExternalStore,
   mockStartViewTransition,
+  mockViewTransition,
+  createMockTypeSet,
 } = vi.hoisted(() => {
-  const mockViewTransition = {
+  const createMockTypeSet = (): ViewTransitionTypeSet =>
+    new Set<string>() as unknown as ViewTransitionTypeSet;
+
+  const createMockViewTransition = (): ViewTransition => ({
     ready: Promise.resolve(),
     finished: Promise.resolve(),
     updateCallbackDone: Promise.resolve(),
-  };
+    skipTransition: vi.fn(),
+    types: createMockTypeSet(),
+  });
+
+  const mockViewTransition = createMockViewTransition();
+
+  const startViewTransitionMock = vi.fn(
+    (callback?: ViewTransitionUpdateCallback | StartViewTransitionOptions) => {
+      if (typeof callback === 'function') {
+        callback();
+      }
+      return mockViewTransition;
+    },
+  ) as unknown as NonNullable<Document['startViewTransition']>;
 
   return {
     mockUseEnhancedTheme: vi.fn(),
     mockUseAccessibility: vi.fn(),
     mockUseSyncExternalStore: vi.fn(),
-    mockStartViewTransition: vi.fn((callback) => {
-      if (callback) callback();
-      return mockViewTransition;
-    }),
+    mockStartViewTransition: startViewTransitionMock,
     mockViewTransition,
+    createMockTypeSet,
   };
 });
 
@@ -60,14 +76,13 @@ describe('useThemeToggle', () => {
     vi.clearAllMocks();
 
     // Mock setThemeWithCircularTransition to return proper View Transition object
-    mockSetThemeWithCircularTransition.mockImplementation((_theme, _event) => {
-      // Return a mock View Transition object with ready property
-      return {
-        ready: Promise.resolve(),
-        finished: Promise.resolve(),
-        updateCallbackDone: Promise.resolve(),
-      };
-    });
+    mockSetThemeWithCircularTransition.mockImplementation((_theme, _event) => ({
+      ready: Promise.resolve(),
+      finished: Promise.resolve(),
+      updateCallbackDone: Promise.resolve(),
+      skipTransition: vi.fn(),
+      types: createMockTypeSet(),
+    }));
 
     // Mock useEnhancedTheme
     mockUseEnhancedTheme.mockReturnValue({
@@ -105,7 +120,11 @@ describe('useThemeToggle', () => {
     vi.useFakeTimers();
 
     // Mock View Transitions API safely
-    (document as unknown).startViewTransition = mockStartViewTransition;
+    (
+      document as Document & {
+        startViewTransition?: typeof mockStartViewTransition;
+      }
+    ).startViewTransition = mockStartViewTransition;
   });
 
   afterEach(() => {

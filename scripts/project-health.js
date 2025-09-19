@@ -113,7 +113,7 @@ class ProjectHealthChecker {
         if (check.status === 'FAIL') {
           issues.push({
             type: 'quality',
-            message: `${check.name  }失败`,
+            message: `${check.name}失败`,
             severity: 'high',
           });
         }

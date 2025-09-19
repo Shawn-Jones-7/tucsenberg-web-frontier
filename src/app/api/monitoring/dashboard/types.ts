@@ -1,4 +1,8 @@
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+} from '@/constants';
 
 /**
  * 监控仪表板相关类型定义和常量

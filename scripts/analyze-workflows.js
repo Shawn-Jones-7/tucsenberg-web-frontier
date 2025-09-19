@@ -54,7 +54,7 @@ function extractSteps(jobs) {
         if (step.name) {
           allSteps.push(step.name);
         } else if (step.run) {
-          allSteps.push(`${step.run.split('\n')[0].substring(0, 50)  }...`);
+          allSteps.push(`${step.run.split('\n')[0].substring(0, 50)}...`);
         } else if (step.uses) {
           allSteps.push(`uses: ${step.uses}`);
         }

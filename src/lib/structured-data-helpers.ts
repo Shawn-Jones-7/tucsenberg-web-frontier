@@ -1,7 +1,5 @@
 import { getTranslations } from 'next-intl/server';
 import { I18nPerformanceMonitor } from '@/lib/i18n-performance';
-import { SITE_CONFIG, type PageType } from '@/config/paths';
-import { generateCanonicalURL } from '@/services/url-generator';
 import {
   generateArticleData,
   generateBreadcrumbData,
@@ -17,6 +15,8 @@ import type {
   ProductData,
   WebSiteData,
 } from '@/lib/structured-data-types';
+import { SITE_CONFIG, type PageType } from '@/config/paths';
+import { generateCanonicalURL } from '@/services/url-generator';
 
 /**
  * 创建面包屑导航结构化数据

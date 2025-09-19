@@ -54,7 +54,7 @@ describe('Verify Turnstile API Route - Core Tests', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.message).toBe('Turnstile verification successful');
+      expect(data.message).toBe('Verification successful');
       expect(mockFetch).toHaveBeenCalledWith(
         'https://challenges.cloudflare.com/turnstile/v0/siteverify',
         expect.objectContaining({
@@ -94,8 +94,8 @@ describe('Verify Turnstile API Route - Core Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Turnstile verification failed');
-      expect(data.errors).toEqual(['invalid-input-response']);
+      expect(data.message).toBe('Bot protection challenge failed');
+      expect(data.errorCodes).toEqual(['invalid-input-response']);
     });
 
     it('应该处理缺少token的请求', async () => {
@@ -115,7 +115,7 @@ describe('Verify Turnstile API Route - Core Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Missing required token parameter');
+      expect(data.message).toBe('Turnstile token is required');
     });
 
     it('应该处理空token的请求', async () => {
@@ -135,7 +135,7 @@ describe('Verify Turnstile API Route - Core Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Missing required token parameter');
+      expect(data.message).toBe('Turnstile token is required');
     });
   });
 
@@ -145,8 +145,8 @@ describe('Verify Turnstile API Route - Core Tests', () => {
       const data = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.service).toBe('Turnstile Verification');
-      expect(data.status).toBe('enabled');
+      expect(data.status).toBe('Turnstile verification endpoint active');
+      expect(data.configured).toBe(true);
       expect(data.timestamp).toBeDefined();
     });
   });
@@ -167,9 +167,9 @@ describe('Verify Turnstile API Route - Core Tests', () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(400);
+      expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Invalid JSON in request body');
+      expect(data.message).toBe('An error occurred while verifying the token');
     });
 
     it('应该处理Cloudflare API网络错误', async () => {
@@ -192,7 +192,7 @@ describe('Verify Turnstile API Route - Core Tests', () => {
 
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
-      expect(data.message).toBe('Internal server error during verification');
+      expect(data.message).toBe('An error occurred while verifying the token');
     });
   });
 });

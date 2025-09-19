@@ -2,7 +2,7 @@
  * @vitest-environment jsdom
  */
 
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   AccessibilityManager,
   accessibilityManager,
@@ -28,6 +28,15 @@ vi.mock('@/lib/colors', () => ({
   },
 }));
 
+const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(
+  globalThis,
+  'document',
+);
+const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+  globalThis,
+  'window',
+);
+
 describe('AccessibilityManager Global Exports', () => {
   // Mock DOM for tests
   beforeEach(() => {
@@ -52,8 +61,23 @@ describe('AccessibilityManager Global Exports', () => {
       matchMedia: vi.fn().mockReturnValue({ matches: false }),
     };
 
-    global.document = mockDocument as unknown as Document;
-    global.window = mockWindow as unknown as Window;
+    Object.defineProperty(globalThis, 'document', {
+      value: mockDocument,
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, 'window', {
+      value: mockWindow,
+      configurable: true,
+    });
+  });
+
+  afterEach(() => {
+    if (originalDocumentDescriptor) {
+      Object.defineProperty(globalThis, 'document', originalDocumentDescriptor);
+    }
+    if (originalWindowDescriptor) {
+      Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+    }
   });
 
   it('should export global accessibility manager instance', () => {
@@ -94,15 +118,11 @@ describe('AccessibilityManager Global Exports', () => {
       }).not.toThrow();
     });
 
-    it('should return static methods that work correctly', () => {
+    it('should expose preference flags', () => {
       const { prefersReducedMotion, prefersHighContrast } = useAccessibility();
 
-      expect(typeof prefersReducedMotion).toBe('function');
-      expect(typeof prefersHighContrast).toBe('function');
-
-      // Test that static methods return expected types
-      expect(typeof prefersReducedMotion()).toBe('boolean');
-      expect(typeof prefersHighContrast()).toBe('boolean');
+      expect(typeof prefersReducedMotion).toBe('boolean');
+      expect(typeof prefersHighContrast).toBe('boolean');
     });
 
     it('should return keyboard navigation handler', () => {

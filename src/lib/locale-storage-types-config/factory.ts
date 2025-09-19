@@ -3,13 +3,13 @@
  * Locale Storage System Configuration Factory
  */
 
-import { ZERO } from "@/constants";
 import type { EnvironmentType } from '@/lib/locale-storage-types-base';
 import { DEFAULT_STORAGE_CONFIG } from '@/lib/locale-storage-types-config/defaults';
 import type { StorageConfig } from '@/lib/locale-storage-types-config/interfaces';
 import { CONFIG_PRESETS } from '@/lib/locale-storage-types-config/presets';
 import { CONFIG_VALIDATION_RULES } from '@/lib/locale-storage-types-config/validation';
 import type { ValidationResult } from '@/lib/locale-storage-types-data';
+import { ZERO } from '@/constants';
 
 /**
  * 配置工厂函数
@@ -99,7 +99,7 @@ export const ConfigFactory = {
     return { isValid: errors.length === ZERO, errors, warnings };
   },
 
-  private validateRequired(
+  validateRequired(
     cfg: Record<string, unknown>,
     required: Set<string>,
     errors: string[],
@@ -111,7 +111,7 @@ export const ConfigFactory = {
     }
   },
 
-  private validateTypes(
+  validateTypes(
     cfg: Record<string, unknown>,
     typesMap: Map<string, string>,
     errors: string[],
@@ -124,7 +124,7 @@ export const ConfigFactory = {
     }
   },
 
-  private validateRanges(
+  validateRanges(
     cfg: Record<string, unknown>,
     rangesMap: Map<string, { min?: number; max?: number }>,
     errors: string[],
@@ -142,7 +142,7 @@ export const ConfigFactory = {
     }
   },
 
-  private validateEnums(
+  validateEnums(
     cfg: Record<string, unknown>,
     enumsMap: Map<string, string[]>,
     errors: string[],
@@ -150,12 +150,14 @@ export const ConfigFactory = {
     for (const [field, allowedValues] of enumsMap.entries()) {
       const value = this.getNestedValue(cfg, field) as string;
       if (typeof value === 'string' && !allowedValues.includes(value)) {
-        errors.push(`Field '${field}' must be one of: ${allowedValues.join(', ')}`);
+        errors.push(
+          `Field '${field}' must be one of: ${allowedValues.join(', ')}`,
+        );
       }
     }
   },
 
-  private validateCustom(
+  validateCustom(
     cfg: Record<string, unknown>,
     customMap: Map<string, (value: unknown) => boolean>,
     errors: string[],

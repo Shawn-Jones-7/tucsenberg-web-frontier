@@ -1,18 +1,17 @@
 'use client';
 
 /// <reference lib="dom" />
-import { animationUtils } from '@/components/ui/animated-counter-helpers';
-import { COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } from '@/constants';
-
-import { COUNT_4 } from "@/constants/count";
-import { MAGIC_0_3, MAGIC_0_5 } from "@/constants/decimal";
-import { ANIMATION_DURATIONS } from '@/constants/performance-constants';
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
+import * as React from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { AccessibilityUtils } from '@/lib/accessibility-utils';
 import { logger } from '@/lib/logger';
 import { cn } from '@/lib/utils';
-import * as React from 'react';
-import { forwardRef, useEffect, useState } from 'react';
+import { animationUtils } from '@/components/ui/animated-counter-helpers';
+import { COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } from '@/constants';
+import { COUNT_4 } from '@/constants/count';
+import { MAGIC_0_3, MAGIC_0_5 } from '@/constants/decimal';
+import { ANIMATION_DURATIONS } from '@/constants/performance-constants';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
 /**
  * 缓动函数类型
@@ -240,6 +239,9 @@ export const AnimatedCounter = forwardRef<
       delay = ZERO,
       autoStart = false,
       className,
+      role: roleProp,
+      'aria-live': ariaLiveProp,
+      'aria-atomic': ariaAtomicProp,
       ...props
     },
     ref,
@@ -273,6 +275,10 @@ export const AnimatedCounter = forwardRef<
     // 当目标值改变时重置动画 - 使用key prop来重置组件状态
     const resetKey = `${to}-${from}-${autoStart}-${triggerOnVisible}`;
 
+    const role = roleProp ?? 'status';
+    const ariaLive = ariaLiveProp ?? (role === 'status' ? 'polite' : undefined);
+    const ariaAtomic = ariaAtomicProp ?? (role === 'status' ? 'true' : undefined);
+
     return (
       <span
         key={resetKey}
@@ -282,6 +288,9 @@ export const AnimatedCounter = forwardRef<
           isAnimating && 'animate-pulse',
           className,
         )}
+        role={role}
+        aria-live={ariaLive}
+        aria-atomic={ariaAtomic}
         {...props}
       >
         {(() => {

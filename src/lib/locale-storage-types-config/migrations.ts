@@ -1,4 +1,4 @@
-import { PERCENTAGE_FULL } from "@/constants";
+import { PERCENTAGE_FULL } from '@/constants';
 
 /**
  * 语言存储系统配置迁移

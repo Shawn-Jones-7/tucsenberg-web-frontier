@@ -4,8 +4,12 @@
  */
 
 import type { DetailedWebVitals } from '@/lib/enhanced-web-vitals';
-import { COUNT_TRIPLE, COUNT_PAIR, OFFSET_NEGATIVE_MEDIUM, OFFSET_NEGATIVE_LARGE  } from '@/constants';
-
+import {
+  COUNT_PAIR,
+  COUNT_TRIPLE,
+  OFFSET_NEGATIVE_LARGE,
+  OFFSET_NEGATIVE_MEDIUM,
+} from '@/constants';
 import { calculatePercentageChange } from '@/hooks/web-vitals-diagnostics-calculator';
 import {
   WEB_VITALS_CONSTANTS,
@@ -121,7 +125,10 @@ export const comparePagePerformance = (
   };
 
   // helper: classify relation for "lower is better" metrics
-  const classify = (a?: number, b?: number): 'better' | 'worse' | 'same' | undefined => {
+  const classify = (
+    a?: number,
+    b?: number,
+  ): 'better' | 'worse' | 'same' | undefined => {
     if (typeof a !== 'number' || typeof b !== 'number') return undefined;
     if (a < b) return 'better';
     if (a > b) return 'worse';
@@ -151,17 +158,33 @@ export const comparePagePerformance = (
   const worseMetrics: string[] = [];
 
   // 对于性能指标，值越小越好 — evaluate per metric via helper to reduce complexity
-  const classifications: Array<{ key: 'lcp' | 'fid' | 'cls' | 'fcp' | 'ttfb'; kind?: 'better' | 'worse' | 'same' }> = [];
+  const classifications: Array<{
+    key: 'lcp' | 'fid' | 'cls' | 'fcp' | 'ttfb';
+    kind?: 'better' | 'worse' | 'same';
+  }> = [];
   const lcpKind = classify(currentReport.vitals.lcp, comparedReport.vitals.lcp);
-  classifications.push(lcpKind ? { key: 'lcp', kind: lcpKind } : { key: 'lcp' });
+  classifications.push(
+    lcpKind ? { key: 'lcp', kind: lcpKind } : { key: 'lcp' },
+  );
   const fidKind = classify(currentReport.vitals.fid, comparedReport.vitals.fid);
-  classifications.push(fidKind ? { key: 'fid', kind: fidKind } : { key: 'fid' });
+  classifications.push(
+    fidKind ? { key: 'fid', kind: fidKind } : { key: 'fid' },
+  );
   const clsKind = classify(currentReport.vitals.cls, comparedReport.vitals.cls);
-  classifications.push(clsKind ? { key: 'cls', kind: clsKind } : { key: 'cls' });
+  classifications.push(
+    clsKind ? { key: 'cls', kind: clsKind } : { key: 'cls' },
+  );
   const fcpKind = classify(currentReport.vitals.fcp, comparedReport.vitals.fcp);
-  classifications.push(fcpKind ? { key: 'fcp', kind: fcpKind } : { key: 'fcp' });
-  const ttfbKind = classify(currentReport.vitals.ttfb, comparedReport.vitals.ttfb);
-  classifications.push(ttfbKind ? { key: 'ttfb', kind: ttfbKind } : { key: 'ttfb' });
+  classifications.push(
+    fcpKind ? { key: 'fcp', kind: fcpKind } : { key: 'fcp' },
+  );
+  const ttfbKind = classify(
+    currentReport.vitals.ttfb,
+    comparedReport.vitals.ttfb,
+  );
+  classifications.push(
+    ttfbKind ? { key: 'ttfb', kind: ttfbKind } : { key: 'ttfb' },
+  );
 
   for (const item of classifications) {
     if (item.kind === 'better') betterMetrics.push(item.key);
@@ -192,8 +215,10 @@ export const calculatePageComparison = (
     // 安全地处理URL，避免过长的路径
     const safeUrl =
       report.pageUrl.length > WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH
-        ? `${report.pageUrl.substring(0, WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH) 
-          }...`
+        ? `${report.pageUrl.substring(
+            0,
+            WEB_VITALS_CONSTANTS.MAX_PATH_LENGTH,
+          )}...`
         : report.pageUrl;
 
     const existing = pageGroups.get(safeUrl);
@@ -297,8 +322,12 @@ export const analyzeOverallTrend = (
 ): 'improving' | 'declining' | 'stable' => {
   if (reports.length < COUNT_PAIR) return 'stable';
 
-  const recentScores = reports.slice(OFFSET_NEGATIVE_MEDIUM).map((r) => r.score);
-  const previousScores = reports.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM).map((r) => r.score);
+  const recentScores = reports
+    .slice(OFFSET_NEGATIVE_MEDIUM)
+    .map((r) => r.score);
+  const previousScores = reports
+    .slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM)
+    .map((r) => r.score);
 
   if (previousScores.length === 0) return 'stable';
 

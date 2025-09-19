@@ -59,9 +59,7 @@ export function getDefaultPreloader(): IPreloader | undefined {
  * 便捷函数：预加载语言
  * Convenience function: preload locale
  */
-export function preloadLocale(
-  locale: Locale,
-): Promise<Messages | undefined> {
+export function preloadLocale(locale: Locale): Promise<Messages | undefined> {
   const preloader = getDefaultPreloader();
   if (preloader) {
     return preloader.preloadLocale(locale);

@@ -1,10 +1,12 @@
 ---
 type: "always_apply"
+description: "Core TypeScript/React development standards and patterns"
 ---
 
 # TypeScript/React Development Standards
 
 ## Core Principles
+- **Tech Stack**: TypeScript 5.9.2, Next.js 15.5.3 App Router, React 19 Server Components, shadcn/ui, Radix UI, Tailwind CSS 4.1.11, next-intl 4.3.4, MDX, Resend, Zod, next-themes, Lucide React
 - TypeScript strict mode, functional components, Next.js 15 App Router, React 19 features
 - Server components default, client components only when necessary
 - React 19 Hooks: useActionState, useFormStatus, useOptimistic, use
@@ -29,7 +31,13 @@ type: "always_apply"
 - **State Management**: Use returned `isPending` to disable submit buttons and show loading states
 - **Form Integration**: Pass `formAction` directly to form's `action` prop
 ```typescript
-const [error, submitAction, isPending] = useActionState(async (previousState, formData) => { const result = await updateData(formData.get("field")); return result.error || null; }, null);
+const [error, submitAction, isPending] = useActionState(
+  async (previousState, formData) => {
+    const result = await updateData(formData.get("field"));
+    return result.error || null;
+  },
+  null
+);
 ```
 
 ### useFormStatus Hook Standards
@@ -38,7 +46,10 @@ const [error, submitAction, isPending] = useActionState(async (previousState, fo
 - **Prop Drilling Avoidance**: Eliminates need to pass `pending` state through props
 - **Return Values**: Destructure `{ pending, data, method, action }` as needed
 ```typescript
-function SubmitButton() { const { pending } = useFormStatus(); return <button disabled={pending} type="submit">Submit</button>; }
+function SubmitButton() {
+  const { pending } = useFormStatus();
+  return <button disabled={pending} type="submit">Submit</button>;
+}
 ```
 
 ### useOptimistic Hook Standards
@@ -47,7 +58,10 @@ function SubmitButton() { const { pending } = useFormStatus(); return <button di
 - **User Feedback**: Provide immediate UI feedback while async operation completes
 - **State Synchronization**: React automatically syncs with actual state when operation completes
 ```typescript
-const [optimisticMessages, addOptimisticMessage] = useOptimistic(messages, (state, newMessage) => [{ text: newMessage, sending: true }, ...state]);
+const [optimisticMessages, addOptimisticMessage] = useOptimistic(
+  messages,
+  (state, newMessage) => [{ text: newMessage, sending: true }, ...state]
+);
 ```
 
 ### use Hook Standards (Conditional Hook Calling)
@@ -56,7 +70,14 @@ const [optimisticMessages, addOptimisticMessage] = useOptimistic(messages, (stat
 - **Context Reading**: Alternative to `useContext` with conditional calling capability
 - **Server/Client Pattern**: Create Promises in Server Components, pass to Client Components
 ```typescript
-function MessageComponent({ messagePromise }) { if (condition) { const message = use(messagePromise); const theme = use(ThemeContext); return <div className={theme}>{message}</div>; } return null; }
+function MessageComponent({ messagePromise }) {
+  if (condition) {
+    const message = use(messagePromise);
+    const theme = use(ThemeContext);
+    return <div className={theme}>{message}</div>;
+  }
+  return null;
+}
 ```
 
 ### Form Actions Standards
@@ -65,14 +86,39 @@ function MessageComponent({ messagePromise }) { if (condition) { const message =
 - **Automatic Reset**: React automatically resets uncontrolled forms on successful submission
 - **Progressive Enhancement**: Use `permalink` parameter for non-JS fallback
 ```typescript
-<form action={updateName}><input name="name" type="text" /></form>
-<form action={formAction}><input name="name" type="text" /><button disabled={isPending}>Update</button></form>
+<form action={updateName}>
+  <input name="name" type="text" />
+</form>
+<form action={formAction}>
+  <input name="name" type="text" />
+  <button disabled={isPending}>Update</button>
+</form>
 ```
 
 ## Standards Summary
 - **Import/Export**: Use @/ path aliases, import only what you use, group imports: external first then internal, use named exports for components
 - **Naming**: Files: kebab-case, Components: PascalCase, Variables: camelCase, Constants: UPPERCASE, Booleans: descriptive verbs
-- **Organization**: 采用按功能/领域划分的组件目录结构（例如 `components/forms/`、`components/layout/`、`components/monitoring/` 等），保持复用组件放在 `components/shared/`，Utilities in src/lib, Types in src/types, Server Actions in src/app/actions.ts
+- **Organization**: This repository adopts a unified component and code organization approach based on functionality/domain (rather than technical layering by "server/client/shared"). Example:
+
+```
+src/
+├── components/
+│   ├── forms/
+│   ├── layout/
+│   ├── monitoring/
+│   ├── i18n/
+│   └── shared/
+├── features/
+├── services/
+├── lib/
+└── app/[locale]/
+```
+
+Guidelines:
+- Default to using Server Components; only create small Client component "islands" when interactivity/events/browser APIs are needed.
+- Keep interactive logic close to usage scenarios, preferably within corresponding functional domain directories (e.g., `components/forms/*`).
+- Avoid top-level technical layering directory structures like "server/client/shared".
+- Utilities in src/lib, Types in src/types, Server Actions in src/app/actions.ts
 - **Code Generation**: Use const declarations, prefix event handlers with "handle", use early returns, include ARIA attributes
 - **Functions**: Keep under 20 lines, start with verbs, use default parameters, prefer map/filter/reduce, single abstraction level
 
@@ -97,7 +143,7 @@ export const Component = memo(({ className, variant, size, ...props }) => (<div 
 ### Essential Radix UI Integration Patterns
 **Radix UI with React 19 Hooks:**
 ```typescript
-import * as Dialog from '@radix-ui/react-dialog'; import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; import { useOptimistic, useFormStatus } from 'react'
+import * as Dialog from '@radix-ui/react-dialog'; import * as DropdownMenu from '@radix-ui/react-dropdown-menu'; import { useOptimistic } from 'react'; import { useFormStatus } from 'react-dom'
 export const OptimizedDialog = ({ open, onOpenChange, title, children }) => { const [optimisticOpen, setOptimisticOpen] = useOptimistic(open, (state, newState) => newState); return (<Dialog.Root open={optimisticOpen} onOpenChange={(newOpen) => { setOptimisticOpen(newOpen); onOpenChange(newOpen) }}><Dialog.Portal><Dialog.Overlay /><Dialog.Content><Dialog.Title>{title}</Dialog.Title>{children}</Dialog.Content></Dialog.Portal></Dialog.Root>) }
 const DropdownMenuItem = ({ action }) => { const { pending } = useFormStatus(); return (<DropdownMenu.Item disabled={pending} onSelect={() => !pending && action.action()}>{action.label}</DropdownMenu.Item>) }
 ```

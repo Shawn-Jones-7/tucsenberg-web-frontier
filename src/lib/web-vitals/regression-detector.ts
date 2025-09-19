@@ -1,11 +1,10 @@
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
-import { ONE, ZERO  } from '@/constants';
-
 import type {
   DetailedWebVitals,
   PerformanceBaseline,
   RegressionDetectionResult,
 } from '@/lib/web-vitals/types';
+import { ONE, ZERO } from '@/constants';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * 性能回归检测器

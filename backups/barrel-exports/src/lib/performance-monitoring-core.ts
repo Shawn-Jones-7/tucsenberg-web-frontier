@@ -1,10 +1,10 @@
 // 导入主要功能用于向后兼容
 import { PerformanceConfigManager } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-config';
+import { PerformanceMetricsManager } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-metrics';
 import {
   PerformanceToolConflictChecker,
   type ToolConflictResult,
 } from './performance-monitoring-core-conflicts';
-import { PerformanceMetricsManager } from '@/../backups/barrel-exports/src/lib/performance-monitoring-core-metrics';
 import {
   PerformanceReportGenerator,
   type PerformanceReport,

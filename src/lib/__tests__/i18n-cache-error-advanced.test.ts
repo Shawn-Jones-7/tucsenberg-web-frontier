@@ -134,7 +134,7 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
     });
 
     it('should handle rapid concurrent operations', async () => {
-      const operations = [];
+      const operations: Array<Promise<unknown>> = [];
 
       // Create many concurrent operations
       for (let i = 0; i < 20; i++) {
@@ -193,14 +193,14 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
     });
 
     it('should handle rapid cache operations', async () => {
-      const operations = [];
+      const operations: Array<Promise<unknown>> = [];
 
       // Rapid fire operations
       for (let i = 0; i < 20; i++) {
         operations.push(cacheManager.getMessages('en'));
-        operations.push(cacheManager.clearCache());
+        operations.push(Promise.resolve().then(() => cacheManager.clearCache()));
         operations.push(cacheManager.getMessages('zh'));
-        operations.push(cacheManager.resetMetrics());
+        operations.push(Promise.resolve().then(() => cacheManager.resetMetrics()));
       }
 
       // Should not throw errors
@@ -210,14 +210,18 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
     });
 
     it('should maintain consistency under stress', async () => {
-      const stressOperations = [];
+      const stressOperations: Array<Promise<unknown>> = [];
 
       // Mix of different operations
       for (let i = 0; i < 100; i++) {
         if (i % 10 === 0) {
-          stressOperations.push(cacheManager.clearCache());
+          stressOperations.push(
+            Promise.resolve().then(() => cacheManager.clearCache()),
+          );
         } else if (i % 7 === 0) {
-          stressOperations.push(cacheManager.resetMetrics());
+          stressOperations.push(
+            Promise.resolve().then(() => cacheManager.resetMetrics()),
+          );
         } else {
           stressOperations.push(
             cacheManager.getMessages(i % 2 === 0 ? 'en' : 'zh'),

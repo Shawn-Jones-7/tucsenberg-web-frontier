@@ -2,10 +2,10 @@
  * 内容统计函数
  */
 
-import { ZERO } from "@/constants";
+import type { ContentStats, Locale } from '@/types/content';
 import { getAllPages, getAllPosts } from '@/lib/content-query/queries';
 import { getContentConfig } from '@/lib/content-utils';
-import type { ContentStats, Locale } from '@/types/content';
+import { ZERO } from '@/constants';
 
 /**
  * Get content statistics

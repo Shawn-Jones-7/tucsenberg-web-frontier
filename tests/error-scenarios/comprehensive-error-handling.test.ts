@@ -5,11 +5,11 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { NetworkErrorSimulator } from '@/../tests/error-scenarios/setup';
 import {
   TEST_APP_CONSTANTS,
   TEST_DELAY_VALUES,
 } from '@/constants/test-constants';
-import { NetworkErrorSimulator } from '@/../tests/error-scenarios/setup';
 
 // 综合错误处理系统
 class ComprehensiveErrorHandler {

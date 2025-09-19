@@ -1,8 +1,8 @@
 'use client';
 
-import { COUNT_PAIR, PERCENTAGE_FULL } from "@/constants";
-import { usePerformanceMeasurements } from '@/hooks/performance-monitor-measurements';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { COUNT_PAIR, PERCENTAGE_FULL } from '@/constants';
+import { usePerformanceMeasurements } from '@/hooks/performance-monitor-measurements';
 import type {
   PerformanceAlert,
   PerformanceMetrics,
@@ -74,7 +74,9 @@ export function usePerformanceMonitor(
       // 添加到历史记录
       alertHistory.current.push(newAlert);
       if (alertHistory.current.length > maxAlerts * COUNT_PAIR) {
-        alertHistory.current = alertHistory.current.slice(-maxAlerts * COUNT_PAIR);
+        alertHistory.current = alertHistory.current.slice(
+          -maxAlerts * COUNT_PAIR,
+        );
       }
     },
     [maxAlerts],
@@ -180,21 +182,30 @@ export function usePerformanceMonitor(
  */
 export type {
   PerformanceAlert,
-  PerformanceAlertSystem, PerformanceMetrics, UsePerformanceMonitorOptions,
-  UsePerformanceMonitorReturn
+  PerformanceAlertSystem,
+  PerformanceMetrics,
+  UsePerformanceMonitorOptions,
+  UsePerformanceMonitorReturn,
 } from '@/hooks/performance-monitor-types';
 
 /**
  * 导出工具函数
  */
 export {
-  checkPerformanceThresholds, formatMemoryUsage,
-  formatTime, PERFORMANCE_CONSTANTS
+  checkPerformanceThresholds,
+  formatMemoryUsage,
+  formatTime,
+  PERFORMANCE_CONSTANTS,
 } from '@/hooks/performance-monitor-utils';
 
 /**
  * 导出测量函数
  */
 export {
-  measureComprehensivePerformance, measureCumulativeLayoutShift, measureFirstContentfulPaint, measureFirstInputDelay, measureLargestContentfulPaint, measureNetworkLatency
+  measureComprehensivePerformance,
+  measureCumulativeLayoutShift,
+  measureFirstContentfulPaint,
+  measureFirstInputDelay,
+  measureLargestContentfulPaint,
+  measureNetworkLatency,
 } from '@/hooks/performance-monitor-measurements';

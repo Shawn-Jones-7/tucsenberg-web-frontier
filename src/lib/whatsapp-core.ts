@@ -49,9 +49,7 @@ export class WhatsAppService {
   }
 
   // 消息发送方法代理
-  sendMessage(
-    message: SendMessageRequest,
-  ): Promise<WhatsAppServiceResponse> {
+  sendMessage(message: SendMessageRequest): Promise<WhatsAppServiceResponse> {
     return this.messageService.sendMessage(message);
   }
 

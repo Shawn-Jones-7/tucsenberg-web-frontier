@@ -1,5 +1,3 @@
-import { COUNT_PAIR, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO, MAGIC_0_9, MAGIC_1_1, OFFSET_NEGATIVE_MEDIUM, OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_EXTRA_LARGE } from '@/constants';
-
 /**
  * Web Vitals 和环境检查性能监控集成
  * Web Vitals and Environment Check Performance Monitoring Integration
@@ -8,11 +6,23 @@ import { COUNT_PAIR, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO, MAGIC_0_9, MAG
  */
 
 import {
-  type PerformanceConfig,
-  type PerformanceMetrics,
   isDevelopmentEnvironment,
   isTestEnvironment,
+  type PerformanceConfig,
+  type PerformanceMetrics,
 } from '@/lib/performance-monitoring-types';
+import {
+  COUNT_PAIR,
+  MAGIC_0_9,
+  MAGIC_1_1,
+  OFFSET_NEGATIVE_EXTRA_LARGE,
+  OFFSET_NEGATIVE_LARGE,
+  OFFSET_NEGATIVE_MEDIUM,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  ZERO,
+} from '@/constants';
 
 /**
  * Web Vitals 集成钩子返回类型
@@ -124,10 +134,16 @@ function checkDevEnv(warnings: string[], recommendations: string[]): void {
   }
 }
 
-function checkProdEnv(issues: string[], warnings: string[], recommendations: string[]): void {
+function checkProdEnv(
+  issues: string[],
+  warnings: string[],
+  recommendations: string[],
+): void {
   if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
     issues.push('生产环境中 React Scan 未被禁用');
-    recommendations.push('在生产环境中设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true');
+    recommendations.push(
+      '在生产环境中设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true',
+    );
   }
 
   if (process.env.ANALYZE === 'true') {
@@ -149,7 +165,8 @@ export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult 
   if (isDevelopmentEnvironment()) checkDevEnv(warnings, recommendations);
 
   // 检查生产环境配置
-  if (environment === 'production') checkProdEnv(issues, warnings, recommendations);
+  if (environment === 'production')
+    checkProdEnv(issues, warnings, recommendations);
 
   // 检查必要的环境变量
   // 仅白名单检查，避免动态对象索引
@@ -177,10 +194,19 @@ function analyzeReactScan(config: PerformanceConfig): {
 } {
   if (config.reactScan.enabled) {
     if (isTestEnvironment())
-      return { status: 'error', detail: 'React Scan should be disabled in test environment' };
+      return {
+        status: 'error',
+        detail: 'React Scan should be disabled in test environment',
+      };
     if (isDevelopmentEnvironment())
-      return { status: 'healthy', detail: 'React Scan is properly configured for development' };
-    return { status: 'warning', detail: 'React Scan is enabled in non-development environment' };
+      return {
+        status: 'healthy',
+        detail: 'React Scan is properly configured for development',
+      };
+    return {
+      status: 'warning',
+      detail: 'React Scan is enabled in non-development environment',
+    };
   }
   return { status: 'healthy', detail: 'React Scan is disabled' };
 }
@@ -191,8 +217,14 @@ function analyzeWebEval(config: PerformanceConfig): {
 } {
   if (config.webEvalAgent.enabled) {
     if (isTestEnvironment())
-      return { status: 'healthy', detail: 'Web Eval Agent is properly configured for testing' };
-    return { status: 'warning', detail: 'Web Eval Agent is enabled outside test environment' };
+      return {
+        status: 'healthy',
+        detail: 'Web Eval Agent is properly configured for testing',
+      };
+    return {
+      status: 'warning',
+      detail: 'Web Eval Agent is enabled outside test environment',
+    };
   }
   return { status: 'healthy', detail: 'Web Eval Agent is disabled' };
 }
@@ -339,7 +371,9 @@ export class WebVitalsAnalyzer {
     this.config = config;
   }
 
-  private evaluateTrend(values: number[]): 'improving' | 'stable' | 'degrading' {
+  private evaluateTrend(
+    values: number[],
+  ): 'improving' | 'stable' | 'degrading' {
     if (values.length < COUNT_PAIR) return 'stable';
     const recent = values.slice(OFFSET_NEGATIVE_MEDIUM);
     const older = values.slice(OFFSET_NEGATIVE_LARGE, OFFSET_NEGATIVE_MEDIUM);

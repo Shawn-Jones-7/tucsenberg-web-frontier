@@ -4,7 +4,6 @@
  */
 
 import { logger } from '@/lib/logger';
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import { PerformanceAlertSystem } from '@/lib/web-vitals/alert-system';
 import { PerformanceBaselineManager } from '@/lib/web-vitals/baseline-manager';
 import { EnhancedWebVitalsCollector } from '@/lib/web-vitals/collector';
@@ -17,6 +16,7 @@ import type {
   PerformanceBaseline,
   RegressionDetectionResult,
 } from '@/lib/web-vitals/types';
+import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 /**
  * 集成的性能监控管理器

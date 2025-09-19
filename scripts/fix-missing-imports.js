@@ -15,17 +15,17 @@ function getAvailableConstants() {
   const constantsFile = 'src/constants/magic-numbers.ts';
   const content = fs.readFileSync(constantsFile, 'utf8');
   const matches = content.match(/export const (\w+)/g) || [];
-  return matches.map(match => match.replace('export const ', ''));
+  return matches.map((match) => match.replace('export const ', ''));
 }
 
 // 分析文件中使用的常量
 function analyzeFileConstants(filePath) {
   if (!fs.existsSync(filePath)) return [];
-  
+
   const content = fs.readFileSync(filePath, 'utf8');
   const availableConstants = getAvailableConstants();
   const usedConstants = [];
-  
+
   for (const constant of availableConstants) {
     // 检查常量是否在文件中使用（但不是在export语句中定义）
     const regex = new RegExp(`\\b${constant}\\b`, 'g');
@@ -33,41 +33,45 @@ function analyzeFileConstants(filePath) {
       usedConstants.push(constant);
     }
   }
-  
+
   return [...new Set(usedConstants)]; // 去重
 }
 
 // 获取现有导入
 function getExistingImports(filePath) {
   const content = fs.readFileSync(filePath, 'utf8');
-  const importMatch = content.match(/import\s*{\s*([^}]+)\s*}\s*from\s*['"]@\/constants\/magic-numbers['"]/);
-  
+  const importMatch = content.match(
+    /import\s*{\s*([^}]+)\s*}\s*from\s*['"]@\/constants\/magic-numbers['"]/,
+  );
+
   if (!importMatch) return [];
-  
+
   return importMatch[1]
     .split(',')
-    .map(item => item.trim())
-    .filter(item => item.length > 0);
+    .map((item) => item.trim())
+    .filter((item) => item.length > 0);
 }
 
 // 更新导入语句
 function updateImports(filePath, usedConstants) {
   if (usedConstants.length === 0) return false;
-  
+
   const existingImports = getExistingImports(filePath);
-  const allConstants = [...new Set([...existingImports, ...usedConstants])].sort();
-  
+  const allConstants = [
+    ...new Set([...existingImports, ...usedConstants]),
+  ].sort();
+
   let content = fs.readFileSync(filePath, 'utf8');
-  
+
   // 生成新的导入语句
   const newImportStatement = `import { ${allConstants.join(', ')} } from '@/constants/magic-numbers';`;
-  
+
   // 移除旧的导入
   content = content.replace(
     /import\s*{\s*[^}]+\s*}\s*from\s*['"]@\/constants\/magic-numbers['"];?\n?/g,
-    ''
+    '',
   );
-  
+
   // 添加新的导入
   if (existingImports.length > 0 || content.includes('import')) {
     // 在第一个import语句后添加
@@ -75,7 +79,7 @@ function updateImports(filePath, usedConstants) {
     if (firstImportMatch) {
       content = content.replace(
         firstImportMatch[0],
-        `${firstImportMatch[0]}\n${newImportStatement}`
+        `${firstImportMatch[0]}\n${newImportStatement}`,
       );
     } else {
       // 在文件开头添加
@@ -85,7 +89,7 @@ function updateImports(filePath, usedConstants) {
     // 在文件开头添加
     content = `${newImportStatement}\n\n${content}`;
   }
-  
+
   fs.writeFileSync(filePath, content);
   return true;
 }
@@ -102,35 +106,37 @@ function getFilesToFix() {
   } catch (error) {
     output = error.stdout || error.output?.join('') || '';
   }
-  
+
   const files = new Set();
   const lines = output.split('\n');
-  
+
   for (const line of lines) {
     // 匹配 "Cannot find name" 错误的文件路径
-    const match = line.match(/^([^(]+)\(\d+,\d+\):\s*error\s+TS2304:\s*Cannot find name/);
+    const match = line.match(
+      /^([^(]+)\(\d+,\d+\):\s*error\s+TS2304:\s*Cannot find name/,
+    );
     if (match) {
       files.add(match[1]);
     }
   }
-  
+
   return Array.from(files);
 }
 
 // 主执行函数
 function main() {
   console.log('🔍 分析需要修复导入的文件...');
-  
+
   const filesToFix = getFilesToFix();
   console.log(`📊 发现 ${filesToFix.length} 个文件需要修复导入`);
-  
+
   if (filesToFix.length === 0) {
     console.log('✅ 没有文件需要修复导入');
     return;
   }
-  
+
   let fixedCount = 0;
-  
+
   for (const filePath of filesToFix) {
     try {
       const usedConstants = analyzeFileConstants(filePath);
@@ -145,10 +151,10 @@ function main() {
       console.error(`❌ 处理文件失败 ${filePath}:`, error.message);
     }
   }
-  
+
   console.log(`\n🎉 修复完成！`);
   console.log(`📊 总计修复 ${fixedCount} 个文件`);
-  
+
   if (fixedCount > 0) {
     console.log('\n💡 建议运行以下命令验证修复效果：');
     console.log('pnpm run type-check');

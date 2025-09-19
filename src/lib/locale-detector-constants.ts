@@ -4,10 +4,25 @@
  * 包含语言代码映射、地理位置映射、时区映射等常量定义
  */
 
-import { DEC_0_4, MAGIC_0_1, MAGIC_0_3, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8, MAGIC_0_95 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, TEN_SECONDS_MS, THREE_SECONDS_MS } from '@/constants';
-
 import type { Locale } from '@/types/i18n';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+  ONE,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+  THREE_SECONDS_MS,
+} from '@/constants';
+import {
+  DEC_0_4,
+  MAGIC_0_1,
+  MAGIC_0_3,
+  MAGIC_0_6,
+  MAGIC_0_7,
+  MAGIC_0_8,
+  MAGIC_0_95,
+} from '@/constants/decimal';
 
 // ==================== 语言代码映射常量 ====================
 
@@ -280,7 +295,11 @@ export const GEO_API_CONFIG = {
   ],
   FALLBACK_ENDPOINT: 'https://httpbin.org/ip',
   MAX_RETRIES: COUNT_PAIR,
-  CACHE_DURATION: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 24小时缓存
+  CACHE_DURATION:
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW, // 24小时缓存
 } as const;
 
 /**

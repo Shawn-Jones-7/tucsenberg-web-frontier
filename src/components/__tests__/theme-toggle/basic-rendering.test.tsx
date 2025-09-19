@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it } from 'vitest';
-import { render } from '@/test/utils';
+import {
+  cleanupThemeToggleTest,
+  setupThemeToggleTest,
+} from '@/components/__tests__/theme-toggle/setup';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { cleanupThemeToggleTest, setupThemeToggleTest } from '@/components/__tests__/theme-toggle/setup';
+import { render } from '@/test/utils';
 
 describe('ThemeToggle - Basic Rendering', () => {
   beforeEach(() => {

@@ -4,12 +4,6 @@
  * 负责收集和管理 i18n 系统的性能指标，包括缓存命中率、加载时间、错误率等
  */
 
-import { COUNT_35, MAGIC_20, MAGIC_40, MAGIC_70, MAGIC_80, MAGIC_95 } from "@/constants/count";
-import { ANGLE_90_DEG, COUNT_PAIR, COUNT_TEN, DAYS_PER_MONTH, HTTP_OK, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, PERCENTAGE_QUARTER, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_9, MAGIC_0_95, MAGIC_0_99 } from "@/constants/decimal";
-import { MINUTE_MS } from "@/constants/time";
-import { logger } from '@/lib/logger';
 import type { I18nMetrics, Locale } from '@/types/i18n';
 import type {
   CacheEvent,
@@ -17,6 +11,36 @@ import type {
   CacheEventType,
   MetricsCollector,
 } from '@/lib/i18n-cache-types';
+import { logger } from '@/lib/logger';
+import {
+  ANGLE_90_DEG,
+  COUNT_PAIR,
+  COUNT_TEN,
+  DAYS_PER_MONTH,
+  HTTP_OK,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  PERCENTAGE_QUARTER,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import {
+  COUNT_35,
+  MAGIC_20,
+  MAGIC_40,
+  MAGIC_70,
+  MAGIC_80,
+  MAGIC_95,
+} from '@/constants/count';
+import {
+  MAGIC_0_1,
+  MAGIC_0_5,
+  MAGIC_0_9,
+  MAGIC_0_95,
+  MAGIC_0_99,
+} from '@/constants/decimal';
+import { MINUTE_MS } from '@/constants/time';
 
 // 性能指标收集器实现
 export class I18nMetricsCollector implements MetricsCollector {
@@ -33,9 +57,12 @@ export class I18nMetricsCollector implements MetricsCollector {
   private errors = ZERO;
   private loadTimes: number[] = [];
   private localeUsageCount: { en: number; zh: number } = { en: ZERO, zh: ZERO };
-  private eventListeners: Map<CacheEventType | '*', CacheEventListener[]> = new Map();
+  private eventListeners: Map<CacheEventType | '*', CacheEventListener[]> =
+    new Map();
 
-  private static isAllowedEventType(type: string): type is CacheEventType | '*' {
+  private static isAllowedEventType(
+    type: string,
+  ): type is CacheEventType | '*' {
     switch (type) {
       case 'hit':
       case 'miss':
@@ -134,8 +161,23 @@ export class I18nMetricsCollector implements MetricsCollector {
       timestamp: Date.now(),
       metadata: {
         locale,
-        usageCount: locale === 'en' ? this.localeUsageCount.en : this.localeUsageCount.zh,
+        usageCount:
+          locale === 'en' ? this.localeUsageCount.en : this.localeUsageCount.zh,
         totalUsage: this.getTotalLocaleUsage(),
+      },
+    });
+  }
+
+  // 记录翻译覆盖率
+  recordTranslationCoverage(coverage: number): void {
+    const safeCoverage = Math.min(Math.max(coverage, ZERO), ONE);
+    this.metrics.translationCoverage = safeCoverage;
+
+    this.emitEvent({
+      type: 'set',
+      timestamp: Date.now(),
+      metadata: {
+        translationCoverage: safeCoverage,
       },
     });
   }
@@ -173,7 +215,9 @@ export class I18nMetricsCollector implements MetricsCollector {
   getDetailedStats() {
     const uptime = Date.now() - this.startTime;
     const requestsPerMinute =
-      this.totalRequests > ZERO ? this.totalRequests / (uptime / MINUTE_MS) : ZERO;
+      this.totalRequests > ZERO
+        ? this.totalRequests / (uptime / MINUTE_MS)
+        : ZERO;
 
     return {
       uptime,
@@ -190,7 +234,10 @@ export class I18nMetricsCollector implements MetricsCollector {
   }
 
   // 添加事件监听器
-  addEventListener(eventType: CacheEventType | '*', listener: CacheEventListener): void {
+  addEventListener(
+    eventType: CacheEventType | '*',
+    listener: CacheEventListener,
+  ): void {
     if (!I18nMetricsCollector.isAllowedEventType(eventType)) return;
     if (!this.eventListeners.has(eventType)) {
       this.eventListeners.set(eventType, []);
@@ -199,7 +246,10 @@ export class I18nMetricsCollector implements MetricsCollector {
   }
 
   // 移除事件监听器
-  removeEventListener(eventType: CacheEventType | '*', listener: CacheEventListener): void {
+  removeEventListener(
+    eventType: CacheEventType | '*',
+    listener: CacheEventListener,
+  ): void {
     if (!I18nMetricsCollector.isAllowedEventType(eventType)) return;
     const listeners = this.eventListeners.get(eventType);
     if (listeners) {
@@ -241,13 +291,15 @@ export class I18nMetricsCollector implements MetricsCollector {
   // 更新缓存命中率
   private updateCacheHitRate(): void {
     this.metrics.cacheHitRate =
-      this.totalRequests > ZERO ? (this.cacheHits / this.totalRequests) * PERCENTAGE_FULL : ZERO;
+      this.totalRequests > ZERO
+        ? this.cacheHits / this.totalRequests
+        : ZERO;
   }
 
   // 更新错误率
   private updateErrorRate(): void {
     this.metrics.errorRate =
-      this.totalRequests > ZERO ? (this.errors / this.totalRequests) * PERCENTAGE_FULL : ZERO;
+      this.totalRequests > ZERO ? this.errors / this.totalRequests : ZERO;
   }
 
   // 更新语言使用情况
@@ -256,8 +308,8 @@ export class I18nMetricsCollector implements MetricsCollector {
     const enCount = this.localeUsageCount.en;
     const zhCount = this.localeUsageCount.zh;
     this.metrics.localeUsage = {
-      en: total > ZERO ? (enCount / total) * PERCENTAGE_FULL : ZERO,
-      zh: total > ZERO ? (zhCount / total) * PERCENTAGE_FULL : ZERO,
+      en: enCount,
+      zh: zhCount,
     };
   }
 
@@ -298,25 +350,27 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 计算性能等级
   private calculatePerformanceGrade(): 'A' | 'B' | 'C' | 'D' | 'F' {
-    const hitRate = this.metrics.cacheHitRate;
-    const {errorRate} = this.metrics;
+    const hitRatePercent =
+      this.metrics.cacheHitRate * PERCENTAGE_FULL;
+    const errorRatePercent =
+      this.metrics.errorRate * PERCENTAGE_FULL;
     const avgLoadTime = this.metrics.loadTime;
 
     // 基于多个指标计算综合评分
     let score = ZERO;
 
     // 缓存命中率评分 (40%)
-    if (hitRate >= MAGIC_95) score += MAGIC_40;
-    else if (hitRate >= ANGLE_90_DEG) score += COUNT_35;
-    else if (hitRate >= MAGIC_80) score += DAYS_PER_MONTH;
-    else if (hitRate >= MAGIC_70) score += MAGIC_20;
+    if (hitRatePercent >= MAGIC_95) score += MAGIC_40;
+    else if (hitRatePercent >= ANGLE_90_DEG) score += COUNT_35;
+    else if (hitRatePercent >= MAGIC_80) score += DAYS_PER_MONTH;
+    else if (hitRatePercent >= MAGIC_70) score += MAGIC_20;
     else score += COUNT_TEN;
 
     // 错误率评分 (30%)
-    if (errorRate <= MAGIC_0_1) score += DAYS_PER_MONTH;
-    else if (errorRate <= MAGIC_0_5) score += PERCENTAGE_QUARTER;
-    else if (errorRate <= ONE) score += MAGIC_20;
-    else if (errorRate <= COUNT_PAIR) score += COUNT_TEN;
+    if (errorRatePercent <= MAGIC_0_1) score += DAYS_PER_MONTH;
+    else if (errorRatePercent <= MAGIC_0_5) score += PERCENTAGE_QUARTER;
+    else if (errorRatePercent <= ONE) score += MAGIC_20;
+    else if (errorRatePercent <= COUNT_PAIR) score += COUNT_TEN;
     else score += ZERO;
 
     // 平均加载时间评分 (30%)
@@ -373,11 +427,14 @@ export class I18nMetricsCollector implements MetricsCollector {
   ): string[] {
     const recommendations: string[] = [];
 
-    if (this.metrics.cacheHitRate < MAGIC_80) {
+    const hitRatePercent = this.metrics.cacheHitRate * PERCENTAGE_FULL;
+    const errorRatePercent = this.metrics.errorRate * PERCENTAGE_FULL;
+
+    if (hitRatePercent < MAGIC_80) {
       recommendations.push('考虑增加缓存大小或调整 TTL 以提高缓存命中率');
     }
 
-    if (this.metrics.errorRate > ONE) {
+    if (errorRatePercent > ONE) {
       recommendations.push('错误率较高，建议检查网络连接和翻译文件完整性');
     }
 
@@ -388,7 +445,9 @@ export class I18nMetricsCollector implements MetricsCollector {
     }
 
     const requestsPerMinute =
-      typeof stats.requestsPerMinute === 'number' ? stats.requestsPerMinute : ZERO;
+      typeof stats.requestsPerMinute === 'number'
+        ? stats.requestsPerMinute
+        : ZERO;
     if (requestsPerMinute > PERCENTAGE_FULL) {
       recommendations.push('请求频率较高，建议增加缓存容量');
     }
@@ -411,9 +470,9 @@ export function createMetricsCollector(): I18nMetricsCollector {
 
 export function formatMetrics(metrics: I18nMetrics): string {
   return `
-缓存命中率: ${metrics.cacheHitRate.toFixed(COUNT_PAIR)}%
+缓存命中率: ${(metrics.cacheHitRate * PERCENTAGE_FULL).toFixed(COUNT_PAIR)}%
 平均加载时间: ${metrics.loadTime.toFixed(COUNT_PAIR)}ms
-错误率: ${metrics.errorRate.toFixed(COUNT_PAIR)}%
+错误率: ${(metrics.errorRate * PERCENTAGE_FULL).toFixed(COUNT_PAIR)}%
 翻译覆盖率: ${metrics.translationCoverage.toFixed(COUNT_PAIR)}%
 语言使用分布: ${Object.entries(metrics.localeUsage)
     .map(([locale, usage]) => `${locale}: ${usage.toFixed(ONE)}%`)

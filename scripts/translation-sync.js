@@ -258,7 +258,7 @@ function saveTranslations(translations) {
     const filePath = path.join(CONFIG.MESSAGES_DIR, `${locale}.json`);
 
     try {
-      const content = `${JSON.stringify(translations[locale], null, 2)  }\n`;
+      const content = `${JSON.stringify(translations[locale], null, 2)}\n`;
       fs.writeFileSync(filePath, content, 'utf8');
       syncResults.updated++;
       console.log(`💾 保存翻译文件: ${locale}.json`);

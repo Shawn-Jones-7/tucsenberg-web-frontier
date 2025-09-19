@@ -4,10 +4,9 @@
  * 批量修复相对路径导入脚本
  * 将所有 ../xxx 和 ./xxx 导入替换为 @/xxx 绝对路径导入
  */
-
 import { readFileSync, writeFileSync } from 'fs';
-import { glob } from 'glob';
 import path from 'path';
+import { glob } from 'glob';
 
 interface ImportReplacement {
   file: string;
@@ -19,7 +18,10 @@ interface ImportReplacement {
 /**
  * 将相对路径转换为@/绝对路径
  */
-function convertRelativeToAbsolute(relativePath: string, currentFilePath: string): string {
+function convertRelativeToAbsolute(
+  relativePath: string,
+  currentFilePath: string,
+): string {
   // 获取当前文件相对于项目根目录的目录路径
   const currentDir = path.dirname(currentFilePath);
 

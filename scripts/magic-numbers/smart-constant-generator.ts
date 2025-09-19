@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -15,53 +14,59 @@ interface SemanticAnalysis {
     categoriesFound: number;
     categoryStats: Record<string, number>;
   };
-  analysis: Record<string, {
-    category: string;
-    constantName: string;
-    description: string;
-  }>;
+  analysis: Record<
+    string,
+    {
+      category: string;
+      constantName: string;
+      description: string;
+    }
+  >;
   recommendations: string[];
 }
 
 /**
  * 生成更有意义的常量名
  */
-function generateMeaningfulConstantName(numStr: string, analysis: any): string {
+function generateMeaningfulConstantName(
+  numStr: string,
+  analysis: { category: string; constantName: string; description: string }
+): string {
   const num = parseFloat(numStr);
-  const {category} = analysis;
-  
+  const { category } = analysis;
+
   // 根据分类生成更有意义的常量名
   switch (category) {
     case 'HTTP_STATUS':
       return generateHttpStatusName(num);
-    
+
     case 'TIME_MS':
       return generateTimeConstantName(num);
-    
+
     case 'BREAKPOINT':
       return generateBreakpointName(num);
-    
+
     case 'PERCENTAGE_DECIMAL':
       return generatePercentageName(num);
-    
+
     case 'ANIMATION_DURATION':
       return generateAnimationDurationName(num);
-    
+
     case 'MEMORY_SIZE':
       return generateMemorySizeName(num);
-    
+
     case 'ANGLE':
       return generateAngleName(num);
-    
+
     case 'COORDINATE':
       return generateCoordinateName(num, numStr);
-    
+
     case 'PORT':
       return generatePortName(num);
-    
+
     case 'YEAR':
       return `YEAR_${num}`;
-    
+
     case 'NUMERIC':
     default:
       return generateNumericConstantName(num, numStr);
@@ -83,7 +88,7 @@ function generateHttpStatusName(num: number): string {
     415: 'HTTP_UNSUPPORTED_MEDIA_TYPE',
     429: 'HTTP_TOO_MANY_REQUESTS',
     500: 'HTTP_INTERNAL_SERVER_ERROR',
-    503: 'HTTP_SERVICE_UNAVAILABLE'
+    503: 'HTTP_SERVICE_UNAVAILABLE',
   };
   return statusMap[num] || `HTTP_${num}`;
 }
@@ -102,13 +107,13 @@ function generateTimeConstantName(num: number): string {
   if (num === 3600000) return 'HOUR_MS';
   if (num === 86400000) return 'DAY_MS';
   if (num === 31536000) return 'YEAR_SECONDS';
-  
+
   // 自动计算时间单位
   if (num >= 86400000) return `TIME_${Math.round(num / 86400000)}_DAYS_MS`;
   if (num >= 3600000) return `TIME_${Math.round(num / 3600000)}_HOURS_MS`;
   if (num >= 60000) return `TIME_${Math.round(num / 60000)}_MINUTES_MS`;
   if (num >= 1000) return `TIME_${Math.round(num / 1000)}_SECONDS_MS`;
-  
+
   return `TIME_${num}_MS`;
 }
 
@@ -128,14 +133,14 @@ function generateBreakpointName(num: number): string {
     1280: 'BREAKPOINT_XL',
     1536: 'BREAKPOINT_2XL',
     1600: 'BREAKPOINT_DESKTOP_LARGE',
-    1920: 'BREAKPOINT_FULL_HD'
+    1920: 'BREAKPOINT_FULL_HD',
   };
   return breakpointMap[num] || `BREAKPOINT_${num}`;
 }
 
 function generatePercentageName(num: number): string {
   const percentage = Math.round(num * 100);
-  
+
   // 特殊百分比命名
   if (percentage === 1) return 'PERCENT_1';
   if (percentage === 2) return 'PERCENT_2';
@@ -164,10 +169,10 @@ function generatePercentageName(num: number): string {
   if (percentage === 96) return 'PERCENT_96';
   if (percentage === 97) return 'PERCENT_97';
   if (percentage === 99) return 'PERCENT_99';
-  
+
   // 透明度相关
   if (num <= 1) return `OPACITY_${percentage}`;
-  
+
   return `DECIMAL_${num.toString().replace('.', '_')}`;
 }
 
@@ -188,7 +193,7 @@ function generateAnimationDurationName(num: number): string {
   if (num === 1250) return 'ANIMATION_SLOW_1_25S';
   if (num === 1500) return 'ANIMATION_SLOW_1_5S';
   if (num === 2000) return 'ANIMATION_SLOW_2S';
-  
+
   return `ANIMATION_DURATION_${num}`;
 }
 
@@ -208,7 +213,7 @@ function generateMemorySizeName(num: number): string {
     524288: 'BYTES_512KB',
     1048576: 'BYTES_1MB',
     2097152: 'BYTES_2MB',
-    4194304: 'BYTES_4MB'
+    4194304: 'BYTES_4MB',
   };
   return sizeMap[num] || `MEMORY_SIZE_${num}`;
 }
@@ -221,7 +226,7 @@ function generateAngleName(num: number): string {
   if (num === 270) return 'ANGLE_270_DEG';
   if (num === 360 || (num > 359 && num < 361)) return 'ANGLE_360_DEG';
   if (num === 720) return 'ANGLE_720_DEG';
-  
+
   return `ANGLE_${num.toString().replace('.', '_')}_DEG`;
 }
 
@@ -231,12 +236,12 @@ function generateCoordinateName(num: number, numStr: string): string {
   if (Math.abs(num - 116.4074) < 0.001) return 'COORD_BEIJING_LNG';
   if (Math.abs(num - 40.7128) < 0.001) return 'COORD_NYC_LAT';
   if (Math.abs(num - 74.006) < 0.001) return 'COORD_NYC_LNG';
-  
+
   // 测试用精确坐标
   if (numStr.includes('.') && numStr.length > 10) {
     return `TEST_COORDINATE_${numStr.replace('.', '_').replace('-', 'NEG_')}`;
   }
-  
+
   return `COORDINATE_${numStr.replace('.', '_').replace('-', 'NEG_')}`;
 }
 
@@ -249,7 +254,7 @@ function generatePortName(num: number): string {
     8000: 'PORT_HTTP_ALT',
     8080: 'PORT_HTTP_PROXY',
     8888: 'PORT_DEV_SPECIAL',
-    9000: 'PORT_DEV_BUILD'
+    9000: 'PORT_DEV_BUILD',
   };
   return portMap[num] || `PORT_${num}`;
 }
@@ -263,18 +268,19 @@ function generateNumericConstantName(num: number, numStr: string): string {
   if (num === 1234) return 'TEST_NUMBER_1234';
   if (num === 12345) return 'TEST_NUMBER_12345';
   if (num === 1234567) return 'TEST_NUMBER_LARGE';
-  
+
   // 大数字
-  if (num >= 1000000000000) return `TRILLION_${Math.floor(num / 1000000000000)}`;
+  if (num >= 1000000000000)
+    return `TRILLION_${Math.floor(num / 1000000000000)}`;
   if (num >= 1000000000) return `BILLION_${Math.floor(num / 1000000000)}`;
   if (num >= 1000000) return `MILLION_${Math.floor(num / 1000000)}`;
   if (num >= 1000) return `THOUSAND_${Math.floor(num / 1000)}`;
-  
+
   // 整数
   if (Number.isInteger(num)) {
     return `NUMBER_${num}`;
   }
-  
+
   // 小数
   return `DECIMAL_${numStr.replace('.', '_').replace('-', 'NEG_')}`;
 }
@@ -284,55 +290,57 @@ function generateNumericConstantName(num: number, numStr: string): string {
  */
 async function main() {
   console.log('🎯 开始生成智能常量映射...');
-  
+
   // 读取语义分析结果
   const analysisPath = resolve(__dirname, 'semantic-analysis-report.json');
-  const analysisData: SemanticAnalysis = JSON.parse(readFileSync(analysisPath, 'utf-8'));
-  
+  const analysisData: SemanticAnalysis = JSON.parse(
+    readFileSync(analysisPath, 'utf-8'),
+  );
+
   console.log(`📊 处理 ${analysisData.summary.totalNumbers} 个数字`);
   console.log(`📋 发现 ${analysisData.summary.categoriesFound} 个分类`);
-  
+
   // 生成新的映射
   const newMapping: Record<string, string> = {};
-  
+
   for (const [numStr, analysis] of Object.entries(analysisData.analysis)) {
     const meaningfulName = generateMeaningfulConstantName(numStr, analysis);
     newMapping[numStr] = meaningfulName;
   }
-  
+
   // 合并现有映射
   const existingMappingPath = resolve(__dirname, 'mapping.json');
   let existingMapping: Record<string, string> = {};
-  
+
   try {
     existingMapping = JSON.parse(readFileSync(existingMappingPath, 'utf-8'));
   } catch (error) {
     console.log('📝 创建新的映射文件');
   }
-  
+
   // 合并映射，新的智能映射优先
   const finalMapping = { ...existingMapping, ...newMapping };
-  
+
   // 保存映射文件
   writeFileSync(existingMappingPath, JSON.stringify(finalMapping, null, 2));
-  
+
   console.log('📊 映射生成完成！');
   console.log(`  现有常量: ${Object.keys(existingMapping).length} 个`);
   console.log(`  新增常量: ${Object.keys(newMapping).length} 个`);
   console.log(`  总计常量: ${Object.keys(finalMapping).length} 个`);
-  
+
   // 显示分类统计
   console.log('');
   console.log('📈 智能分类统计:');
   Object.entries(analysisData.summary.categoryStats)
-    .sort(([,a], [,b]) => b - a)
+    .sort(([, a], [, b]) => b - a)
     .forEach(([category, count]) => {
       console.log(`  ${category}: ${count} 个`);
     });
-  
+
   console.log('');
   console.log(`📄 映射文件已更新: ${existingMappingPath}`);
-  
+
   return finalMapping;
 }
 

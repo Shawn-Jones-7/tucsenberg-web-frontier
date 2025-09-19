@@ -11,6 +11,24 @@ export interface ReactScanData {
   totalRenderCount: number;
 }
 
+// React Scan 全局对象类型定义
+interface ReactScanGlobalData {
+  renderCount: number;
+  renderTime: number;
+  lastRenderTime: number;
+}
+
+interface ReactScanGlobal {
+  components: Record<string, ReactScanGlobalData>;
+}
+
+// 扩展 Window 接口以包含 React Scan 全局对象
+declare global {
+  interface Window {
+    __REACT_SCAN__?: ReactScanGlobal;
+  }
+}
+
 export interface ComponentStats {
   name: string;
   renderCount: number;
@@ -40,11 +58,11 @@ export const useReactScanDataReader = () => {
 
     try {
       // 尝试从全局对象读取 React Scan 数据
-      const globalScan = (window as any).__REACT_SCAN__;
+      const globalScan = window.__REACT_SCAN__;
       if (!globalScan) return null;
 
       const components = Object.entries(globalScan.components || {}).map(
-        ([name, data]: [string, any]) => ({
+        ([name, data]) => ({
           name,
           renderCount: data.renderCount || 0,
           renderTime: data.renderTime || 0,

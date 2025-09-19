@@ -1,9 +1,8 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { MAGIC_85, MAGIC_15  } from '@/constants';
-
 import { enhancedWebVitalsCollector } from '@/lib/enhanced-web-vitals';
+import { MAGIC_15, MAGIC_85 } from '@/constants';
 import { useReportExport } from '@/hooks/web-vitals-diagnostics-export';
 import {
   useWebVitalsDataPersistence,
@@ -154,7 +153,9 @@ export function useWebVitalsDiagnostics(): UseWebVitalsDiagnosticsReturn {
   // 初始化数据
   const { initialData } = useWebVitalsInitialization(
     loadHistoricalData,
-    async (): Promise<void> => { /* no-op */ },
+    async (): Promise<void> => {
+      /* no-op */
+    },
   );
 
   // 获取功能函数

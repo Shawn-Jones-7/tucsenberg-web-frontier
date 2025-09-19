@@ -3,12 +3,16 @@
  * 负责监控翻译性能、缓存命中率和错误率
  */
 
-import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { COUNT_PAIR, ONE, ZERO } from '@/constants';
-
-import type { EventCollector } from '@/lib/i18n-event-collector';
-import { ErrorLevel, type MonitoringConfig, type MonitoringEventType, type PerformanceData } from '@/lib/i18n-monitoring-types';
 import type { I18nMetrics, Locale, TranslationError } from '@/types/i18n';
+import type { EventCollector } from '@/lib/i18n-event-collector';
+import {
+  ErrorLevel,
+  type MonitoringConfig,
+  type MonitoringEventType,
+  type PerformanceData,
+} from '@/lib/i18n-monitoring-types';
+import { COUNT_PAIR, ONE, ZERO } from '@/constants';
+import { CACHE_LIMITS } from '@/constants/i18n-constants';
 
 // 性能监控器
 export class PerformanceMonitor {

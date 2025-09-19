@@ -3,16 +3,18 @@
  * Performance Alert System - Alert Sender
  */
 
-import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
-import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
-
-import type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
-import type { PerformanceAlert, PerformanceAlertConfig } from '@/lib/web-vitals/types';
 import {
   sendConsoleAlerts,
   sendWebhookNotification,
   storeAlerts,
 } from '@/lib/web-vitals/alert-notifications';
+import type { AlertInfo } from '@/lib/web-vitals/alert-system-checker';
+import type {
+  PerformanceAlert,
+  PerformanceAlertConfig,
+} from '@/lib/web-vitals/types';
+import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
+import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
 
 /**
  * 预警历史记录接口
@@ -180,7 +182,10 @@ export class AlertSystemSender {
    */
   private limitHistorySize(): void {
     if (this.alertHistory.length > PERCENTAGE_FULL) {
-      this.alertHistory.splice(ZERO, this.alertHistory.length - PERCENTAGE_FULL);
+      this.alertHistory.splice(
+        ZERO,
+        this.alertHistory.length - PERCENTAGE_FULL,
+      );
     }
   }
 

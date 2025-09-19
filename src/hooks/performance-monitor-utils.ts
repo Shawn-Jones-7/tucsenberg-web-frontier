@@ -1,7 +1,16 @@
-import { MAGIC_16 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, MAGIC_36, MAGIC_9, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, THREE_SECONDS_MS, ZERO } from '@/constants';
-
 import React from 'react';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  MAGIC_9,
+  MAGIC_36,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  THREE_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import { MAGIC_16 } from '@/constants/count';
 import type {
   MonitoringControls,
   PerformanceAlert,
@@ -222,7 +231,10 @@ export const validateAndSanitizeOptions = (
     alertThresholds: validateThresholds(o.alertThresholds),
     enableMemoryMonitoring: coerceBoolean(o.enableMemoryMonitoring, true),
     enableNetworkMonitoring: coerceBoolean(o.enableNetworkMonitoring, false),
-    enableRenderTimeMonitoring: coerceBoolean(o.enableRenderTimeMonitoring, true),
+    enableRenderTimeMonitoring: coerceBoolean(
+      o.enableRenderTimeMonitoring,
+      true,
+    ),
     enableLoadTimeMonitoring: coerceBoolean(o.enableLoadTimeMonitoring, true),
     enableAutoBaseline: coerceBoolean(o.enableAutoBaseline, false),
     maxAlerts: clampMaxAlerts(o.maxAlerts),

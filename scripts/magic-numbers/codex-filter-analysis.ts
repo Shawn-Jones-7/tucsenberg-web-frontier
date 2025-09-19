@@ -2,10 +2,9 @@
 
 /**
  * CODEX分层治理：分析过滤后的数字，识别真正有业务语义的常量
- * 
+ *
  * 目标：从162个数字中筛选出40-60个有意义的业务常量
  */
-
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -76,7 +75,11 @@ function analyzeFilteredNumbers(): NumberAnalysis[] {
 /**
  * 对单个数字进行分类和优先级评估
  */
-function categorizeNumber(value: string, constantName: string, fileCount: number): NumberAnalysis {
+function categorizeNumber(
+  value: string,
+  constantName: string,
+  fileCount: number,
+): NumberAnalysis {
   const num = parseFloat(value);
 
   // HTTP状态码 - 高优先级业务常量
@@ -87,7 +90,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'http',
       priority: 'high',
-      reason: 'HTTP状态码，API交互核心常量'
+      reason: 'HTTP状态码，API交互核心常量',
     };
   }
 
@@ -99,7 +102,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'time',
       priority: 'high',
-      reason: '时间常量，用户体验和性能相关'
+      reason: '时间常量，用户体验和性能相关',
     };
   }
 
@@ -111,7 +114,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'ui',
       priority: 'high',
-      reason: '百分比常量，UI布局和动画核心'
+      reason: '百分比常量，UI布局和动画核心',
     };
   }
 
@@ -123,7 +126,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'ui',
       priority: 'high',
-      reason: '响应式断点，移动端适配核心'
+      reason: '响应式断点，移动端适配核心',
     };
   }
 
@@ -135,7 +138,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'ui',
       priority: 'medium',
-      reason: '动画持续时间，用户体验相关'
+      reason: '动画持续时间，用户体验相关',
     };
   }
 
@@ -147,7 +150,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'business',
       priority: 'medium',
-      reason: '高频使用的基础计数，代码可读性重要'
+      reason: '高频使用的基础计数，代码可读性重要',
     };
   }
 
@@ -159,7 +162,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'ui',
       priority: 'medium',
-      reason: '角度常量，图形和动画相关'
+      reason: '角度常量，图形和动画相关',
     };
   }
 
@@ -171,7 +174,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'config',
       priority: 'medium',
-      reason: '数据大小常量，性能和存储相关'
+      reason: '数据大小常量，性能和存储相关',
     };
   }
 
@@ -183,7 +186,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'test',
       priority: 'low',
-      reason: '测试数据，可考虑豁免'
+      reason: '测试数据，可考虑豁免',
     };
   }
 
@@ -195,7 +198,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
       fileCount,
       category: 'noise',
       priority: 'low',
-      reason: '低频使用，可考虑豁免或局部常量'
+      reason: '低频使用，可考虑豁免或局部常量',
     };
   }
 
@@ -206,7 +209,7 @@ function categorizeNumber(value: string, constantName: string, fileCount: number
     fileCount,
     category: 'business',
     priority: 'medium',
-    reason: '中频业务数字，需要评估'
+    reason: '中频业务数字，需要评估',
   };
 }
 
@@ -218,40 +221,61 @@ function generateCodexRecommendations(analyses: NumberAnalysis[]): void {
   console.log('');
 
   // 高优先级常量（必须保留）
-  const highPriority = analyses.filter(a => a.priority === 'high');
+  const highPriority = analyses.filter((a) => a.priority === 'high');
   console.log(`🔴 高优先级常量 (${highPriority.length}个) - 必须保留:`);
-  highPriority.forEach(item => {
-    console.log(`  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`);
+  highPriority.forEach((item) => {
+    console.log(
+      `  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`,
+    );
   });
   console.log('');
 
   // 中优先级常量（选择性保留）
-  const mediumPriority = analyses.filter(a => a.priority === 'medium');
+  const mediumPriority = analyses.filter((a) => a.priority === 'medium');
   console.log(`🟡 中优先级常量 (${mediumPriority.length}个) - 选择性保留:`);
-  mediumPriority.forEach(item => {
-    console.log(`  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`);
+  mediumPriority.forEach((item) => {
+    console.log(
+      `  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`,
+    );
   });
   console.log('');
 
   // 低优先级常量（建议豁免）
-  const lowPriority = analyses.filter(a => a.priority === 'low');
-  console.log(`🟢 低优先级常量 (${lowPriority.length}个) - 建议豁免或局部处理:`);
-  lowPriority.forEach(item => {
-    console.log(`  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`);
+  const lowPriority = analyses.filter((a) => a.priority === 'low');
+  console.log(
+    `🟢 低优先级常量 (${lowPriority.length}个) - 建议豁免或局部处理:`,
+  );
+  lowPriority.forEach((item) => {
+    console.log(
+      `  ${item.value} → ${item.constantName} (${item.fileCount}个文件) - ${item.reason}`,
+    );
   });
   console.log('');
 
   // 统计建议
-  const recommended = highPriority.length + Math.ceil(mediumPriority.length * 0.6);
-  console.log(`📊 CODEX建议：保留 ${recommended} 个常量 (高优先级 + 60%中优先级)`);
-  console.log(`📈 优化效果：从 ${analyses.length} 个减少到 ${recommended} 个，减少 ${Math.round((1 - recommended / analyses.length) * 100)}%`);
+  const recommended =
+    highPriority.length + Math.ceil(mediumPriority.length * 0.6);
+  console.log(
+    `📊 CODEX建议：保留 ${recommended} 个常量 (高优先级 + 60%中优先级)`,
+  );
+  console.log(
+    `📈 优化效果：从 ${analyses.length} 个减少到 ${recommended} 个，减少 ${Math.round((1 - recommended / analyses.length) * 100)}%`,
+  );
   console.log('');
 
   // 按类别统计
   console.log('📋 按类别统计:');
-  const categories = ['http', 'time', 'ui', 'business', 'config', 'test', 'noise'];
-  categories.forEach(category => {
-    const items = analyses.filter(a => a.category === category);
+  const categories = [
+    'http',
+    'time',
+    'ui',
+    'business',
+    'config',
+    'test',
+    'noise',
+  ];
+  categories.forEach((category) => {
+    const items = analyses.filter((a) => a.category === category);
     if (items.length > 0) {
       console.log(`  ${category}: ${items.length}个`);
     }

@@ -5,9 +5,6 @@
  * utility types, and common type aliases for the WhatsApp service.
  */
 
-import type { WhatsAppError } from '@/types/whatsapp-service-errors';
-import { PERCENTAGE_FULL, ZERO } from '@/constants';
-
 import type {
   LogLevel,
   MessageStatus,
@@ -16,12 +13,14 @@ import type {
   WhatsAppConfig,
   WhatsAppServiceOptions,
 } from '@/types/whatsapp-service-config';
+import type { WhatsAppError } from '@/types/whatsapp-service-errors';
 import type {
   ServiceHealth,
   ServiceMetrics,
   ServiceStatus,
   WhatsAppServiceEvent,
 } from '@/types/whatsapp-service-monitoring';
+import { PERCENTAGE_FULL, ZERO } from '@/constants';
 
 // ==================== Main Service Interface ====================
 
@@ -299,9 +298,14 @@ export interface WebhookConfig {
  * Shorter type aliases for commonly used types
  */
 export type {
-  WhatsAppConfig as Config, ServiceHealth as Health,
-  ServiceMetrics as Metrics, WhatsAppError as ServiceError, WhatsAppServiceEvent as ServiceEvent, WhatsAppServiceInterface as ServiceInterface, WhatsAppServiceOptions as ServiceOptions,
-  ServiceStatus as Status
+  WhatsAppConfig as Config,
+  ServiceHealth as Health,
+  ServiceMetrics as Metrics,
+  WhatsAppError as ServiceError,
+  WhatsAppServiceEvent as ServiceEvent,
+  WhatsAppServiceInterface as ServiceInterface,
+  WhatsAppServiceOptions as ServiceOptions,
+  ServiceStatus as Status,
 };
 
 // ==================== Factory Types ====================
@@ -380,12 +384,14 @@ export function isWhatsAppService(
 
   const service = obj as Partial<WhatsAppServiceInterface>;
 
-  return Boolean(typeof service.initialize === 'function' &&
-    typeof service.getStatus === 'function' &&
-    typeof service.getHealth === 'function' &&
-    typeof service.sendMessage === 'function' &&
-    typeof service.on === 'function' &&
-    typeof service.off === 'function');
+  return Boolean(
+    typeof service.initialize === 'function' &&
+      typeof service.getStatus === 'function' &&
+      typeof service.getHealth === 'function' &&
+      typeof service.sendMessage === 'function' &&
+      typeof service.on === 'function' &&
+      typeof service.off === 'function',
+  );
 }
 
 /**

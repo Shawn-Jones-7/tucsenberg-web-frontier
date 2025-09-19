@@ -3,8 +3,8 @@
  * Locale Storage System Object Utility Functions
  */
 
-import { hasOwn } from '@/lib/security/object-guards';
 import { safeGetProperty, safeSetProperty } from '@/lib/security-object-access';
+import { hasOwn } from '@/lib/security/object-guards';
 
 /**
  * 深度克隆对象
@@ -51,8 +51,14 @@ export function mergeObjects<T extends Record<string, unknown>>(
     if (sourceValue === undefined) continue;
     const targetValue = safeGetProperty(result, key as string);
 
-    const isSourcePlain = typeof sourceValue === 'object' && sourceValue !== null && !Array.isArray(sourceValue);
-    const isTargetPlain = typeof targetValue === 'object' && targetValue !== null && !Array.isArray(targetValue);
+    const isSourcePlain =
+      typeof sourceValue === 'object' &&
+      sourceValue !== null &&
+      !Array.isArray(sourceValue);
+    const isTargetPlain =
+      typeof targetValue === 'object' &&
+      targetValue !== null &&
+      !Array.isArray(targetValue);
 
     if (isSourcePlain && isTargetPlain) {
       const mergedNested = mergeObjects(

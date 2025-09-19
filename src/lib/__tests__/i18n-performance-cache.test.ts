@@ -16,8 +16,8 @@ describe('I18n Performance - Cache Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
-    // Reset singleton instance
-    (TranslationCache as { instance?: unknown }).instance = undefined;
+    // Reset singleton实例供测试使用
+    Reflect.set(TranslationCache, 'instance', undefined);
   });
 
   afterEach(() => {
@@ -145,7 +145,11 @@ describe('I18n Performance - Cache Tests', () => {
       // Cache should still function correctly
       const testValue = cache.get('large-key-100');
       expect(testValue).toBeDefined();
-      expect(testValue.id).toBe(100);
+      if (testValue && typeof testValue === 'object') {
+        expect((testValue as { id: number }).id).toBe(100);
+      } else {
+        throw new Error('缓存未返回预期的对象结构');
+      }
     });
 
     it('should handle edge cases with null and undefined values', () => {

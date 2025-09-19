@@ -58,7 +58,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
       expect(console.warn).toHaveBeenCalled();
     });
 
@@ -82,7 +82,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
 
     it('应该处理Unicode字符', async () => {
@@ -104,7 +104,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
 
     it('应该处理深度嵌套的对象', async () => {
@@ -133,7 +133,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
   });
 
@@ -157,7 +157,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
 
     it('应该防护NoSQL注入尝试', async () => {
@@ -179,7 +179,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
 
     it('应该防护命令注入尝试', async () => {
@@ -201,7 +201,7 @@ describe('CSP Report API Route - 安全性测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(204);
+      expect(response.status).toBe(200);
     });
   });
 

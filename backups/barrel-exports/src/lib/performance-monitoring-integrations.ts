@@ -1,12 +1,13 @@
 // 向后兼容的重新导出
 import type { BundleAnalyzerIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-bundle';
+import type { ReactScanIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-react-scan';
+import type { WebEvalAgentIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-web-eval';
 import {
   BundleAnalyzerAnalyzer,
   BundleAnalyzerUtils,
   useBundleAnalyzerIntegration,
   validateBundleAnalyzerConfig,
 } from './performance-monitoring-integrations-bundle';
-import type { ReactScanIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-react-scan';
 import {
   ReactScanAnalyzer,
   ReactScanUtils,
@@ -24,7 +25,6 @@ import {
   validateWebVitalsConfig,
   WebVitalsAnalyzer,
 } from './performance-monitoring-integrations-vitals';
-import type { WebEvalAgentIntegration } from '@/../backups/barrel-exports/src/lib/performance-monitoring-integrations-web-eval';
 import {
   useWebEvalAgentIntegration,
   validateWebEvalAgentConfig,

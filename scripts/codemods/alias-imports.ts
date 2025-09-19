@@ -3,10 +3,9 @@
  * 相对路径导入修复工具
  * 将 src 内的相对路径导入 (./../...) 改为 @/ 别名导入
  */
-
-import { Project, SourceFile, ImportDeclaration, Node } from 'ts-morph';
-import { resolve, relative, dirname, join } from 'path';
 import { existsSync, writeFileSync } from 'fs';
+import { dirname, join, relative, resolve } from 'path';
+import { ImportDeclaration, Node, Project, SourceFile } from 'ts-morph';
 
 interface ImportFixResult {
   filePath: string;
@@ -29,7 +28,10 @@ class AliasImportFixer {
   /**
    * 检查导入路径是否指向 src 内部
    */
-  private isInternalSrcImport(importPath: string, currentFilePath: string): boolean {
+  private isInternalSrcImport(
+    importPath: string,
+    currentFilePath: string,
+  ): boolean {
     if (!importPath.startsWith('.')) {
       return false; // 不是相对路径
     }
@@ -44,7 +46,10 @@ class AliasImportFixer {
   /**
    * 将相对路径转换为 @/ 别名路径
    */
-  private convertToAliasPath(importPath: string, currentFilePath: string): string {
+  private convertToAliasPath(
+    importPath: string,
+    currentFilePath: string,
+  ): string {
     const currentDir = dirname(currentFilePath);
     const resolvedPath = resolve(currentDir, importPath);
     const relativePath = relative(this.srcPath, resolvedPath);
@@ -71,8 +76,10 @@ class AliasImportFixer {
         return true;
       }
       // 检查是否是目录（index文件）
-      if (existsSync(join(fullPath + ext, 'index.ts')) ||
-          existsSync(join(fullPath + ext, 'index.tsx'))) {
+      if (
+        existsSync(join(fullPath + ext, 'index.ts')) ||
+        existsSync(join(fullPath + ext, 'index.tsx'))
+      ) {
         return true;
       }
     }
@@ -88,7 +95,7 @@ class AliasImportFixer {
     const result: ImportFixResult = {
       filePath: relative(process.cwd(), filePath),
       fixedImports: 0,
-      errors: []
+      errors: [],
     };
 
     // 只处理 src 目录内的文件
@@ -111,7 +118,9 @@ class AliasImportFixer {
             result.fixedImports++;
             console.log(`  ✓ ${moduleSpecifier} → ${aliasPath}`);
           } else {
-            result.errors.push(`无法验证路径: ${moduleSpecifier} → ${aliasPath}`);
+            result.errors.push(
+              `无法验证路径: ${moduleSpecifier} → ${aliasPath}`,
+            );
           }
         } catch (error) {
           result.errors.push(`转换失败: ${moduleSpecifier} - ${error}`);
@@ -134,7 +143,7 @@ class AliasImportFixer {
     // 获取所有 TypeScript 文件
     const sourceFiles = this.project.getSourceFiles([
       'src/**/*.ts',
-      'src/**/*.tsx'
+      'src/**/*.tsx',
     ]);
 
     console.log(`📊 找到 ${sourceFiles.length} 个文件`);
@@ -156,7 +165,7 @@ class AliasImportFixer {
 
         if (result.errors.length > 0) {
           console.log(`  ❌ ${result.errors.length} 个错误:`);
-          result.errors.forEach(error => console.log(`    - ${error}`));
+          result.errors.forEach((error) => console.log(`    - ${error}`));
           totalErrors += result.errors.length;
         }
 
@@ -177,7 +186,9 @@ class AliasImportFixer {
     console.log('📊 修复总结:');
     console.log(`  修复导入: ${totalFixed} 个`);
     console.log(`  错误数量: ${totalErrors} 个`);
-    console.log(`  处理文件: ${this.results.filter(r => r.fixedImports > 0).length} 个`);
+    console.log(
+      `  处理文件: ${this.results.filter((r) => r.fixedImports > 0).length} 个`,
+    );
 
     if (dryRun) {
       console.log('\n🔍 这是干跑模式，未实际修改文件');
@@ -207,14 +218,16 @@ async function main() {
       timestamp: new Date().toISOString(),
       dryRun,
       totalFiles: results.length,
-      filesWithFixes: results.filter(r => r.fixedImports > 0).length,
+      filesWithFixes: results.filter((r) => r.fixedImports > 0).length,
       totalFixes: results.reduce((sum, r) => sum + r.fixedImports, 0),
-      results
+      results,
     };
 
-    writeFileSync('alias-imports-result.json', JSON.stringify(summary, null, 2));
+    writeFileSync(
+      'alias-imports-result.json',
+      JSON.stringify(summary, null, 2),
+    );
     console.log('结果已保存到 alias-imports-result.json');
-
   } catch (error) {
     console.error('❌ 修复失败:', error);
     process.exit(1);

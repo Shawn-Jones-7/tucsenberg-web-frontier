@@ -7,20 +7,36 @@
 
 'use client';
 
-import { MAGIC_0_1 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { AccessLogger, ErrorLogger } from '@/lib/locale-storage-analytics-events';
-import type { StorageHealthCheck, StorageStats } from '@/lib/locale-storage-types';
 import {
   getStorageStats,
   performHealthCheck,
 } from '@/lib/locale-storage-analytics-core';
 import {
+  AccessLogger,
+  ErrorLogger,
+} from '@/lib/locale-storage-analytics-events';
+import {
   getPerformanceMetrics,
   getUsagePatterns,
   getUsageTrends,
 } from '@/lib/locale-storage-analytics-performance';
+import type {
+  StorageHealthCheck,
+  StorageStats,
+} from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_0_1 } from '@/constants/decimal';
 
 // ==================== 缓存管理 ====================
 
@@ -39,7 +55,8 @@ interface CacheEntry {
  */
 export class CacheManager {
   private static metricsCache: Map<string, CacheEntry> = new Map();
-  private static readonly CACHE_TTL = COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
+  private static readonly CACHE_TTL =
+    COUNT_FIVE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 5 minutes
 
   /**
    * 获取缓存的指标
@@ -118,7 +135,10 @@ export class CacheManager {
 
     // 简单的命中率计算（基于有效条目比例）
     const totalEntries = validEntries + expiredEntries;
-    const hitRate = totalEntries > ZERO ? (validEntries / totalEntries) * PERCENTAGE_FULL : ZERO;
+    const hitRate =
+      totalEntries > ZERO
+        ? (validEntries / totalEntries) * PERCENTAGE_FULL
+        : ZERO;
 
     return {
       totalEntries,
@@ -288,8 +308,12 @@ function runLogChecks(issues: string[], recommendations: string[]): void {
 function runRecencyChecks(issues: string[], recommendations: string[]): void {
   const accessLog = AccessLogger.getAccessLog();
   const now = Date.now();
-  const oneHourAgo = now - SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
-  const recentAccess = accessLog.filter((entry) => entry.timestamp > oneHourAgo);
+  const oneHourAgo =
+    now -
+    SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW;
+  const recentAccess = accessLog.filter(
+    (entry) => entry.timestamp > oneHourAgo,
+  );
 
   if (recentAccess.length === ZERO && accessLog.length > ZERO) {
     issues.push('最近一小时无活动记录');
@@ -324,7 +348,9 @@ export function compressAnalyticsData(): {
   const compressedSize = compressedData.length;
 
   const compressionRatio =
-    originalSize > ZERO ? (ONE - compressedSize / originalSize) * PERCENTAGE_FULL : ZERO;
+    originalSize > ZERO
+      ? (ONE - compressedSize / originalSize) * PERCENTAGE_FULL
+      : ZERO;
 
   return {
     originalSize,
@@ -384,7 +410,11 @@ export function optimizeAnalyticsStorage(): {
   };
 }
 
-function snapshotState(): { accessLogSize: number; errorLogSize: number; cacheSize: number } {
+function snapshotState(): {
+  accessLogSize: number;
+  errorLogSize: number;
+  cacheSize: number;
+} {
   const accessLogSize = AccessLogger.getAccessLog().length;
   const errorLogSize = ErrorLogger.getErrorLog().length;
   const cacheSize = CacheManager.getCacheStats().totalEntries;
@@ -401,14 +431,19 @@ function cleanExpiredCache(): boolean {
 function compressAccessLog(beforeSize: number): boolean {
   if (beforeSize <= ANIMATION_DURATION_VERY_SLOW) return false;
   const beforeAccessLog = AccessLogger.getAccessLog();
-  const recentAccessLog = beforeAccessLog.slice(ZERO, ANIMATION_DURATION_VERY_SLOW);
+  const recentAccessLog = beforeAccessLog.slice(
+    ZERO,
+    ANIMATION_DURATION_VERY_SLOW,
+  );
   AccessLogger.clearAccessLog();
   recentAccessLog.forEach((entry) => {
     AccessLogger.logAccess({
       key: entry.key,
       operation: entry.operation,
       success: entry.success,
-      ...(entry.responseTime !== undefined && { responseTime: entry.responseTime }),
+      ...(entry.responseTime !== undefined && {
+        responseTime: entry.responseTime,
+      }),
       ...(entry.error !== undefined && { error: entry.error }),
     });
   });
@@ -448,11 +483,16 @@ export function formatByteSize(bytes: number): string {
 
   const unit = ((): 'B' | 'KB' | 'MB' | 'GB' => {
     switch (unitIndex) {
-      case 0: return 'B';
-      case 1: return 'KB';
-      case 2: return 'MB';
-      case 3: return 'GB';
-      default: return 'GB';
+      case 0:
+        return 'B';
+      case 1:
+        return 'KB';
+      case 2:
+        return 'MB';
+      case 3:
+        return 'GB';
+      default:
+        return 'GB';
     }
   })();
 
@@ -485,7 +525,10 @@ export function formatDuration(milliseconds: number): string {
  * 格式化百分比
  * Format percentage
  */
-export function formatPercentage(value: number, decimals: number = ONE): string {
+export function formatPercentage(
+  value: number,
+  decimals: number = ONE,
+): string {
   return `${value.toFixed(decimals)}%`;
 }
 

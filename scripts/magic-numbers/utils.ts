@@ -1,6 +1,6 @@
-import { SourceFile, Node, ts, SyntaxKind } from 'ts-morph';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { Node, SourceFile, SyntaxKind, ts } from 'ts-morph';
 
 /**
  * 映射条目接口
@@ -22,9 +22,17 @@ export interface MappingEntry {
  */
 export function loadEnhancedMapping(): Record<string, MappingEntry> {
   // 优先使用增强版映射 - 修复路径解析
-  const baseDir = __dirname.includes('scripts/magic-numbers') ? resolve(__dirname, '../..') : process.cwd();
-  const enhancedMappingPath = resolve(baseDir, 'scripts/magic-numbers/enhanced-codex-mapping.json');
-  const fallbackMappingPath = resolve(baseDir, 'scripts/magic-numbers/codex-mapping.json');
+  const baseDir = __dirname.includes('scripts/magic-numbers')
+    ? resolve(__dirname, '../..')
+    : process.cwd();
+  const enhancedMappingPath = resolve(
+    baseDir,
+    'scripts/magic-numbers/enhanced-codex-mapping.json',
+  );
+  const fallbackMappingPath = resolve(
+    baseDir,
+    'scripts/magic-numbers/codex-mapping.json',
+  );
 
   try {
     let content: string;
@@ -47,9 +55,9 @@ export function loadEnhancedMapping(): Record<string, MappingEntry> {
           // 兼容原始格式
           mapping[key] = {
             export: value,
-            module: "@/constants/magic-numbers",
-            source: "原始CODEX映射",
-            type: "codex-legacy",
+            module: '@/constants/magic-numbers',
+            source: '原始CODEX映射',
+            type: 'codex-legacy',
           };
         } else if (typeof value === 'object' && value !== null) {
           // 增强格式
@@ -93,15 +101,17 @@ export function normalize(text: string): string {
   // 处理整数和小数
   if (Number.isInteger(num)) {
     return num.toString();
-  } 
-    return num.toString();
-  
+  }
+  return num.toString();
 }
 
 /**
  * 确保常量已定义 - 支持增强版映射格式
  */
-export function ensureConstDefined(map: Record<string, MappingEntry | string>, text: string) {
+export function ensureConstDefined(
+  map: Record<string, MappingEntry | string>,
+  text: string,
+) {
   const normalized = normalize(text);
   const entry = map[normalized];
 
@@ -114,7 +124,7 @@ export function ensureConstDefined(map: Record<string, MappingEntry | string>, t
     return {
       constantName: entry,
       isSupported: true,
-      module: '@/constants/magic-numbers'
+      module: '@/constants/magic-numbers',
     };
   }
 
@@ -122,7 +132,7 @@ export function ensureConstDefined(map: Record<string, MappingEntry | string>, t
   return {
     constantName: entry.export,
     isSupported: true,
-    module: entry.module
+    module: entry.module,
   };
 }
 
@@ -131,7 +141,7 @@ export function ensureConstDefined(map: Record<string, MappingEntry | string>, t
  * 跳过类型域、BigInt、字符串/模板/JSX/正则/注释、测试文件、数据型数字等
  */
 export function shouldSkipNode(node: Node): boolean {
-  const {compilerNode} = node;
+  const { compilerNode } = node;
   const sourceFile = node.getSourceFile();
   const filePath = sourceFile.getFilePath();
 
@@ -146,18 +156,20 @@ export function shouldSkipNode(node: Node): boolean {
   }
 
   // 3. 跳过常量定义文件和单位工具库，避免循环引用
-  if (filePath.includes('constants/magic-numbers.ts') ||
-      filePath.includes('constants/count.ts') ||
-      filePath.includes('constants/decimal.ts') ||
-      filePath.includes('constants/hex.ts') ||
-      filePath.includes('constants/time.ts') ||
-      filePath.includes('lib/units.ts') ||
-      filePath.includes('constants/app-constants.ts') ||
-      filePath.includes('constants/performance-constants.ts') ||
-      filePath.includes('constants/security-constants.ts') ||
-      filePath.includes('constants/i18n-constants.ts') ||
-      filePath.includes('constants/performance.ts') ||
-      (filePath.includes('constants/') && filePath.includes('-constants.ts'))) {
+  if (
+    filePath.includes('constants/magic-numbers.ts') ||
+    filePath.includes('constants/count.ts') ||
+    filePath.includes('constants/decimal.ts') ||
+    filePath.includes('constants/hex.ts') ||
+    filePath.includes('constants/time.ts') ||
+    filePath.includes('lib/units.ts') ||
+    filePath.includes('constants/app-constants.ts') ||
+    filePath.includes('constants/performance-constants.ts') ||
+    filePath.includes('constants/security-constants.ts') ||
+    filePath.includes('constants/i18n-constants.ts') ||
+    filePath.includes('constants/performance.ts') ||
+    (filePath.includes('constants/') && filePath.includes('-constants.ts'))
+  ) {
     return true;
   }
 
@@ -244,7 +256,7 @@ function shouldSkipByPath(filePath: string): boolean {
     /types\/.*-config\/.*\.ts$/,
   ];
 
-  return skipPatterns.some(pattern => pattern.test(filePath));
+  return skipPatterns.some((pattern) => pattern.test(filePath));
 }
 
 /**
@@ -262,12 +274,19 @@ function shouldSkipByContext(node: Node): boolean {
   }
 
   // 跳过字符串字面量中的内容
-  if (ts.isStringLiteral(parentNode) || ts.isNoSubstitutionTemplateLiteral(parentNode)) {
+  if (
+    ts.isStringLiteral(parentNode) ||
+    ts.isNoSubstitutionTemplateLiteral(parentNode)
+  ) {
     return true;
   }
 
   // 跳过模板字面量的非表达式部分
-  if (ts.isTemplateHead(parentNode) || ts.isTemplateMiddle(parentNode) || ts.isTemplateTail(parentNode)) {
+  if (
+    ts.isTemplateHead(parentNode) ||
+    ts.isTemplateMiddle(parentNode) ||
+    ts.isTemplateTail(parentNode)
+  ) {
     return true;
   }
 
@@ -365,12 +384,18 @@ function shouldSkipByMethodContext(node: Node): boolean {
   }
 
   // 跳过数组切片方法
-  if (callText.includes('.slice(') && (node.getText() === '500' || node.getText() === '-500')) {
+  if (
+    callText.includes('.slice(') &&
+    (node.getText() === '500' || node.getText() === '-500')
+  ) {
     return true;
   }
 
   // 跳过数学运算方法
-  if (callText.includes('Math.') && ['36', '16', '10', '2'].includes(node.getText())) {
+  if (
+    callText.includes('Math.') &&
+    ['36', '16', '10', '2'].includes(node.getText())
+  ) {
     return true;
   }
 
@@ -397,11 +422,19 @@ function shouldSkipBySemanticMismatch(node: Node): boolean {
   if (['200', '400', '401', '404', '500'].includes(value)) {
     // 如果上下文包含动画、持续时间、延迟等关键词，跳过HTTP状态码映射
     const animationKeywords = [
-      'animation', 'duration', 'delay', 'timeout', 'interval',
-      'transition', 'easing', 'timing', 'debounce', 'throttle'
+      'animation',
+      'duration',
+      'delay',
+      'timeout',
+      'interval',
+      'transition',
+      'easing',
+      'timing',
+      'debounce',
+      'throttle',
     ];
 
-    if (animationKeywords.some(keyword => contextText.includes(keyword))) {
+    if (animationKeywords.some((keyword) => contextText.includes(keyword))) {
       return true;
     }
   }
@@ -410,11 +443,19 @@ function shouldSkipBySemanticMismatch(node: Node): boolean {
   if (['300', '500', '1000'].includes(value)) {
     // 如果上下文包含HTTP、状态、响应等关键词，跳过动画持续时间映射
     const httpKeywords = [
-      'http', 'status', 'response', 'request', 'api', 'error',
-      'success', 'fail', 'code', 'result'
+      'http',
+      'status',
+      'response',
+      'request',
+      'api',
+      'error',
+      'success',
+      'fail',
+      'code',
+      'result',
     ];
 
-    if (httpKeywords.some(keyword => contextText.includes(keyword))) {
+    if (httpKeywords.some((keyword) => contextText.includes(keyword))) {
       return true;
     }
   }
@@ -423,14 +464,24 @@ function shouldSkipBySemanticMismatch(node: Node): boolean {
   if (['640', '768', '1024', '1280', '1920'].includes(value)) {
     // 如果上下文不包含屏幕、宽度、断点等关键词，可能是其他用途
     const sizeKeywords = [
-      'width', 'height', 'screen', 'breakpoint', 'viewport',
-      'resolution', 'size', 'dimension'
+      'width',
+      'height',
+      'screen',
+      'breakpoint',
+      'viewport',
+      'resolution',
+      'size',
+      'dimension',
     ];
 
-    if (!sizeKeywords.some(keyword => contextText.includes(keyword))) {
+    if (!sizeKeywords.some((keyword) => contextText.includes(keyword))) {
       // 进一步检查是否为时间戳或其他数据
-      if (contextText.includes('timestamp') || contextText.includes('time') ||
-          contextText.includes('date') || contextText.includes('id')) {
+      if (
+        contextText.includes('timestamp') ||
+        contextText.includes('time') ||
+        contextText.includes('date') ||
+        contextText.includes('id')
+      ) {
         return true;
       }
     }
@@ -464,7 +515,7 @@ function shouldSkipBySemanticContext(node: Node): boolean {
 
     // 检查变量声明：const lat = 39.9042
     if (ts.isVariableDeclaration(currentNode)) {
-      const {name} = currentNode;
+      const { name } = currentNode;
       if (ts.isIdentifier(name)) {
         const varName = name.getText().toLowerCase();
         if (isCoordinatePropertyName(varName)) {
@@ -510,7 +561,7 @@ function isHugeInteger(num: number): boolean {
  */
 function isCoordinateRange(num: number): boolean {
   // 纬度范围 -90 到 90，经度范围 -180 到 180
-  return (num >= -180 && num <= 180) && (num % 1 !== 0); // 有小数部分
+  return num >= -180 && num <= 180 && num % 1 !== 0; // 有小数部分
 }
 
 /**
@@ -526,7 +577,7 @@ function isCoordinatePropertyName(name: string): boolean {
     /location/i,
   ];
 
-  return coordinatePatterns.some(pattern => pattern.test(name));
+  return coordinatePatterns.some((pattern) => pattern.test(name));
 }
 
 /**
@@ -537,22 +588,32 @@ function isCommonNumber(num: number): boolean {
   if (num >= 0 && num <= 10) return true;
 
   // 常见小数字
-  if ([12, 15, 16, 20, 24, 25, 30, 32, 40, 42, 45, 49, 50].includes(num)) return true;
+  if ([12, 15, 16, 20, 24, 25, 30, 32, 40, 42, 45, 49, 50].includes(num))
+    return true;
 
   // 百分比相关
   if ([60, 65, 70, 75, 80, 85, 90, 95, 99, 100].includes(num)) return true;
 
   // 尺寸和像素
-  if ([120, 128, 150, 160, 190, 250, 256, 300, 360, 365].includes(num)) return true;
+  if ([120, 128, 150, 160, 190, 250, 256, 300, 360, 365].includes(num))
+    return true;
 
   // 数据大小
   if ([512, 640, 700, 750, 768, 800, 900].includes(num)) return true;
 
   // 大数字和时间
-  if ([1000, 1024, 1200, 1280, 1500, 1536, 1600, 1800, 1920].includes(num)) return true;
-  if ([2000, 2048, 2500, 3000, 4000, 4096, 5000, 6000, 7000, 8000, 8192, 9000].includes(num)) return true;
-  if ([10000, 12000, 15000, 30000, 45000, 50000, 60000, 65536].includes(num)) return true;
-  if ([100000, 120000, 125000, 170000, 200000, 300000, 500000].includes(num)) return true;
+  if ([1000, 1024, 1200, 1280, 1500, 1536, 1600, 1800, 1920].includes(num))
+    return true;
+  if (
+    [
+      2000, 2048, 2500, 3000, 4000, 4096, 5000, 6000, 7000, 8000, 8192, 9000,
+    ].includes(num)
+  )
+    return true;
+  if ([10000, 12000, 15000, 30000, 45000, 50000, 60000, 65536].includes(num))
+    return true;
+  if ([100000, 120000, 125000, 170000, 200000, 300000, 500000].includes(num))
+    return true;
 
   return false;
 }
@@ -561,8 +622,10 @@ function isCommonNumber(num: number): boolean {
  * 判断是否为测试数据
  */
 function isTestData(num: number): boolean {
-  return [42, 999, 1234, 12345, 996, 997, 998].includes(num) ||
-         (num >= 131000 && num <= 131100); // WhatsApp错误码范围
+  return (
+    [42, 999, 1234, 12345, 996, 997, 998].includes(num) ||
+    (num >= 131000 && num <= 131100)
+  ); // WhatsApp错误码范围
 }
 
 /**
@@ -585,7 +648,7 @@ function isConfigNumber(num: number): boolean {
 export function mergeAndAliasImports(
   sourceFile: SourceFile,
   constantsWithModules: Array<{ constant: string; module: string }>,
-  log: { imports: { added: string[]; aliased: Record<string, string> } }
+  log: { imports: { added: string[]; aliased: Record<string, string> } },
 ): void {
   if (constantsWithModules.length === 0) return;
 
@@ -611,18 +674,18 @@ function processModuleImports(
   sourceFile: SourceFile,
   module: string,
   newConstants: string[],
-  log: { imports: { added: string[]; aliased: Record<string, string> } }
+  log: { imports: { added: string[]; aliased: Record<string, string> } },
 ): void {
-
   // 获取现有的导入声明
-  const existingImports = sourceFile.getImportDeclarations()
-    .filter(imp => imp.getModuleSpecifierValue() === module);
+  const existingImports = sourceFile
+    .getImportDeclarations()
+    .filter((imp) => imp.getModuleSpecifierValue() === module);
 
   // 收集现有的导入名称
   const existingNames = new Set<string>();
-  existingImports.forEach(imp => {
+  existingImports.forEach((imp) => {
     const namedImports = imp.getNamedImports();
-    namedImports.forEach(namedImport => {
+    namedImports.forEach((namedImport) => {
       existingNames.add(namedImport.getName());
     });
   });
@@ -631,21 +694,21 @@ function processModuleImports(
   const localIdentifiers = new Set<string>();
   const newConstantNames = new Set(newConstants);
 
-  sourceFile.getDescendantsOfKind(SyntaxKind.Identifier).forEach(identifier => {
-    const identifierText = identifier.getText();
-    // 排除我们刚刚添加的常量名，避免误判为冲突
-    if (!newConstantNames.has(identifierText)) {
-      localIdentifiers.add(identifierText);
-    }
-  });
-
-
+  sourceFile
+    .getDescendantsOfKind(SyntaxKind.Identifier)
+    .forEach((identifier) => {
+      const identifierText = identifier.getText();
+      // 排除我们刚刚添加的常量名，避免误判为冲突
+      if (!newConstantNames.has(identifierText)) {
+        localIdentifiers.add(identifierText);
+      }
+    });
 
   // 处理新常量，生成别名如果需要
   const finalImports: string[] = [];
   const aliasMap: Record<string, string> = {};
 
-  [...existingNames, ...newConstants].forEach(constName => {
+  [...existingNames, ...newConstants].forEach((constName) => {
     if (localIdentifiers.has(constName) && !existingNames.has(constName)) {
       // 需要别名
       const aliasName = `${constName}_CONST`;
@@ -661,7 +724,7 @@ function processModuleImports(
   });
 
   // 移除所有现有的导入
-  existingImports.forEach(imp => imp.remove());
+  existingImports.forEach((imp) => imp.remove());
 
   // 添加新的合并导入
   if (finalImports.length > 0) {
@@ -674,9 +737,10 @@ function processModuleImports(
 
   // 如果有别名，需要替换对应的引用
   Object.entries(aliasMap).forEach(([original, alias]) => {
-    sourceFile.getDescendantsOfKind(SyntaxKind.Identifier)
-      .filter(identifier => identifier.getText() === original)
-      .forEach(identifier => {
+    sourceFile
+      .getDescendantsOfKind(SyntaxKind.Identifier)
+      .filter((identifier) => identifier.getText() === original)
+      .forEach((identifier) => {
         identifier.replaceWithText(alias);
       });
   });

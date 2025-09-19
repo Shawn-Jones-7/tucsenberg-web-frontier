@@ -1,7 +1,6 @@
 import { act, renderHook } from '@testing-library/react';
-import { BYTES_PER_KB  } from '@/constants';
-
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { BYTES_PER_KB } from '@/constants';
 import { TEST_BASE_NUMBERS } from '@/constants/test-constants';
 import { usePerformanceMonitor } from '@/hooks/use-performance-monitor';
 
@@ -558,8 +557,11 @@ describe('usePerformanceMonitor', () => {
 
   describe('性能警报系统边缘情况', () => {
     it('should handle alert system with missing memory API', () => {
-      const originalMemory = global.performance.memory;
-      delete (global.performance as unknown).memory;
+      const performanceWithMemory = globalThis.performance as Performance & {
+        memory?: { usedJSHeapSize?: number };
+      };
+      const originalMemory = performanceWithMemory.memory;
+      delete performanceWithMemory.memory;
 
       const { result } = renderHook(() =>
         usePerformanceMonitor({
@@ -577,11 +579,15 @@ describe('usePerformanceMonitor', () => {
         expect(result.current.metrics?.memoryUsage).toBeUndefined();
       });
 
-      // Restore memory property
-      Object.defineProperty(global.performance, 'memory', {
-        writable: true,
-        value: originalMemory,
-      });
+      if (originalMemory !== undefined) {
+        Object.defineProperty(performanceWithMemory, 'memory', {
+          configurable: true,
+          writable: true,
+          value: originalMemory,
+        });
+      } else {
+        delete performanceWithMemory.memory;
+      }
     });
 
     it('should handle alert threshold edge cases', () => {

@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { UnsafeLocaleCode } from '@/types/test-types';
 import type {
-  MockTranslationManagerConfig,
-  TranslationManagerPrivate,
-  UnsafeLocaleCode,
-} from '@/types/test-types';
-import type { TranslationManagerConfig } from '@/types/translation-manager';
+  LocaleQualityReport,
+  TranslationManagerConfig,
+} from '@/types/translation-manager';
 import { TranslationManagerCore } from '@/lib/translation-manager-core';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置

@@ -1,19 +1,19 @@
-import {
-    getMetricLabel,
-    getMetricStatus,
-    PERFORMANCE_CONSTANTS,
-    type TestResults,
-} from '@/app/[locale]/diagnostics/demo/utils';
+import { Download, Play, RefreshCw } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
 } from '@/components/ui/card';
-import { Download, Play, RefreshCw } from 'lucide-react';
+import {
+  getMetricLabel,
+  getMetricStatus,
+  PERFORMANCE_CONSTANTS,
+  type TestResults,
+} from '@/app/[locale]/diagnostics/demo/utils';
 
 // 子组件：页面头部
 export function PageHeader() {

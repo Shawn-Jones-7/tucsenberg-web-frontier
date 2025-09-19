@@ -1,18 +1,6 @@
 'use client';
 
-import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
-import { PERCENTAGE_FULL, ZERO } from '@/constants';
-import { MAGIC_0_5, MAGIC_0_8 } from '@/constants/decimal';
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { Separator } from '@/components/ui/separator';
+import { useCallback, useEffect, useState } from 'react';
 import {
   useClientLocaleDetection,
   type LocaleDetectionResult,
@@ -25,7 +13,19 @@ import type {
   StorageOperationResult,
   StorageStats,
 } from '@/lib/locale-storage-manager';
-import { useCallback, useEffect, useState } from 'react';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
+import { PERCENTAGE_FULL, ZERO } from '@/constants';
+import { MAGIC_0_5, MAGIC_0_8 } from '@/constants/decimal';
 
 type StorageStatsResult = StorageOperationResult<StorageStats>;
 
@@ -158,7 +158,9 @@ const PreferenceDetails = ({ preference }: PreferenceDetailsProps) => (
       <div className='grid grid-cols-2 gap-2 text-sm'>
         <div>语言: {preference.locale}</div>
         <div>来源: {preference.source}</div>
-        <div>置信度: {Math.round(preference.confidence * PERCENTAGE_FULL)}%</div>
+        <div>
+          置信度: {Math.round(preference.confidence * PERCENTAGE_FULL)}%
+        </div>
         <div>时间: {new Date(preference.timestamp).toLocaleString()}</div>
       </div>
     </div>
@@ -174,7 +176,9 @@ const BrowserInfo = () => (
         <>
           <div>语言: {navigator.language}</div>
           <div>语言列表: {navigator.languages?.join(', ')}</div>
-          <div>用户代理: {navigator.userAgent.substring(ZERO, PERCENTAGE_FULL)}...</div>
+          <div>
+            用户代理: {navigator.userAgent.substring(ZERO, PERCENTAGE_FULL)}...
+          </div>
         </>
       )}
     </div>

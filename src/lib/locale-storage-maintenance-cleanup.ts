@@ -7,13 +7,24 @@
 
 'use client';
 
-import { MINUTE_MS } from "@/constants/time";
-import { ANIMATION_DURATION_VERY_SLOW, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { STORAGE_KEYS, type LocaleDetectionHistory, type StorageOperationResult, type UserLocalePreference } from '@/lib/locale-storage-types';
+import {
+  STORAGE_KEYS,
+  type LocaleDetectionHistory,
+  type StorageOperationResult,
+  type UserLocalePreference,
+} from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  ONE,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MINUTE_MS } from '@/constants/time';
 
 /**
  * 语言存储清理管理器
@@ -29,7 +40,9 @@ export class LocaleCleanupManager {
     STORAGE_KEYS.LOCALE_SETTINGS,
   ] as const;
 
-  private static forEachStorageKey(cb: (key: (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]) => void): void {
+  private static forEachStorageKey(
+    cb: (key: (typeof STORAGE_KEYS)[keyof typeof STORAGE_KEYS]) => void,
+  ): void {
     for (const key of LocaleCleanupManager.ALL_KEYS) cb(key);
   }
   /**
@@ -60,7 +73,11 @@ export class LocaleCleanupManager {
    * Clean up expired detection records
    */
   static cleanupExpiredDetections(
-    maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+    maxAgeMs: number = DAYS_PER_MONTH *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW,
   ): StorageOperationResult {
     try {
       const historyData = LocalStorageManager.get<LocaleDetectionHistory>(
@@ -208,9 +225,7 @@ export class LocaleCleanupManager {
     issues: string[],
     onClean: () => void,
   ): void {
-    const cookiePreference = CookieManager.get(
-      STORAGE_KEYS.LOCALE_PREFERENCE,
-    );
+    const cookiePreference = CookieManager.get(STORAGE_KEYS.LOCALE_PREFERENCE);
     if (!cookiePreference) return;
     try {
       const parsed = JSON.parse(cookiePreference) as UserLocalePreference;
@@ -311,7 +326,8 @@ export class LocaleCleanupManager {
     if (typeof preference.confidence !== 'number') return false;
 
     // 验证值的合理性
-    if (preference.confidence < ZERO || preference.confidence > ONE) return false;
+    if (preference.confidence < ZERO || preference.confidence > ONE)
+      return false;
     if (preference.timestamp > Date.now() || preference.timestamp < ZERO)
       return false;
 
@@ -360,7 +376,10 @@ export class LocaleCleanupManager {
     return total;
   }
 
-  private static computeHistoryStats(): { expired: number; duplicates: number } {
+  private static computeHistoryStats(): {
+    expired: number;
+    duplicates: number;
+  } {
     const historyData = LocalStorageManager.get<LocaleDetectionHistory>(
       STORAGE_KEYS.LOCALE_DETECTION_HISTORY,
     );
@@ -393,9 +412,7 @@ export class LocaleCleanupManager {
     if (localPreference && !this.isValidPreferenceData(localPreference)) {
       invalid += ONE;
     }
-    const cookiePreference = CookieManager.get(
-      STORAGE_KEYS.LOCALE_PREFERENCE,
-    );
+    const cookiePreference = CookieManager.get(STORAGE_KEYS.LOCALE_PREFERENCE);
     if (cookiePreference) {
       try {
         const parsed = JSON.parse(cookiePreference) as UserLocalePreference;

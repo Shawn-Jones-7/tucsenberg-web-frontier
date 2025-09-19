@@ -2,9 +2,9 @@ import fs from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContentError, type ContentType } from '@/types/content';
+import { getContentFiles, parseContentFile } from '@/lib/content-parser';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
-import { getContentFiles, parseContentFile } from '@/lib/content-parser';
 
 // Mock dependencies
 vi.mock('fs');

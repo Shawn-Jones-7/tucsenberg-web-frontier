@@ -1,5 +1,6 @@
-import { INPUT_VALIDATION_CONSTANTS } from "@/constants/security-constants";
-import { ANIMATION_DURATION_VERY_SLOW, ZERO  } from '@/constants';
+import { ANIMATION_DURATION_VERY_SLOW, ZERO } from '@/constants';
+import { INPUT_VALIDATION_CONSTANTS } from '@/constants/security-constants';
+
 /**
  * 安全验证工具
  * Security validation utilities

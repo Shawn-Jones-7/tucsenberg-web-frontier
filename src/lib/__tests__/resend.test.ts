@@ -1,8 +1,8 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type {
-  DynamicImportModule,
-  ResendServicePrivate,
-} from '@/types/test-types';
+import type { DynamicImportModule } from '@/types/test-types';
+import type { ResendService as ResendServiceInstance } from '../resend-core';
+
+type ResendServiceConstructor = new () => ResendServiceInstance;
 
 // Mock dependencies
 const mockResendSend = vi.fn();
@@ -40,7 +40,7 @@ vi.mock('./validations', async () => {
 });
 
 // 共享的Resend测试设置
-const setupResendTest = async () => {
+const setupResendTest = async (): Promise<ResendServiceConstructor> => {
   // Clear mocks but preserve the mock functions
   mockResendSend.mockReset();
   mockResend.mockClear();
@@ -48,8 +48,11 @@ const setupResendTest = async () => {
   // Dynamic import to ensure mocks are applied
   const module = await import('../resend');
   const typedModule = module as DynamicImportModule;
-  const ResendService = typedModule.default || typedModule.ResendService;
-  return ResendService;
+  const ResendService = typedModule.ResendService ?? typedModule.default;
+  if (typeof ResendService !== 'function') {
+    throw new Error('ResendService class 未找到，无法执行测试');
+  }
+  return ResendService as unknown as ResendServiceConstructor;
 };
 
 const cleanupResendTest = () => {
@@ -57,7 +60,7 @@ const cleanupResendTest = () => {
 };
 
 describe('resend - Service Initialization', () => {
-  let ResendServiceClass: any;
+  let ResendServiceClass: ResendServiceConstructor;
 
   beforeEach(async () => {
     ResendServiceClass = await setupResendTest();
@@ -94,9 +97,7 @@ describe('resend - Service Initialization', () => {
       vi.stubEnv('EMAIL_REPLY_TO', '');
       vi.resetModules();
 
-      const module = await import('../resend');
-      const typedModule = module as DynamicImportModule;
-      const ServiceClass = typedModule.default || typedModule.ResendService;
+      const ServiceClass = await setupResendTest();
       const service = new ServiceClass();
 
       expect(service).toBeDefined();
@@ -107,10 +108,10 @@ describe('resend - Service Initialization', () => {
 });
 
 describe('resend - Email Operations', () => {
-  let ResendService: typeof import('../resend');
+  let ResendServiceClass: ResendServiceConstructor;
 
   beforeEach(async () => {
-    ResendService = await setupResendTest();
+    ResendServiceClass = await setupResendTest();
   });
 
   afterEach(() => {
@@ -130,15 +131,11 @@ describe('resend - Email Operations', () => {
     it('should send contact form email successfully', async () => {
       const service = new ResendServiceClass();
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'test-message-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       const result = await service.sendContactFormEmail(validEmailData);
 
@@ -163,15 +160,11 @@ describe('resend - Email Operations', () => {
       const service = new ResendServiceClass();
       const dataWithSubject = { ...validEmailData, subject: 'Custom Subject' };
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'test-message-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       await service.sendContactFormEmail(dataWithSubject);
 
@@ -223,15 +216,11 @@ describe('resend - Email Operations', () => {
     it('should return unknown when message ID is not available', async () => {
       const service = new ResendServiceClass();
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: null,
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       const result = await service.sendContactFormEmail(validEmailData);
       expect(result).toBe('unknown');
@@ -240,10 +229,10 @@ describe('resend - Email Operations', () => {
 });
 
 describe('resend - Confirmation and Validation', () => {
-  let ResendService: typeof import('../resend');
+  let ResendServiceClass: ResendServiceConstructor;
 
   beforeEach(async () => {
-    ResendService = await setupResendTest();
+    ResendServiceClass = await setupResendTest();
   });
 
   afterEach(() => {
@@ -263,15 +252,11 @@ describe('resend - Confirmation and Validation', () => {
     it('should send confirmation email successfully', async () => {
       const service = new ResendServiceClass();
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'confirmation-message-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       const result = await service.sendConfirmationEmail(validEmailData);
 
@@ -347,15 +332,11 @@ describe('resend - Confirmation and Validation', () => {
         submittedAt: '2023-01-01T00:00:00Z',
       };
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'test-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       await service.sendContactFormEmail(emailData);
 
@@ -377,15 +358,11 @@ describe('resend - Confirmation and Validation', () => {
         submittedAt: '2023-01-01T00:00:00Z',
       };
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'test-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       await service.sendConfirmationEmail(emailData);
 
@@ -401,15 +378,11 @@ describe('resend - Confirmation and Validation', () => {
     it('should validate email data before sending', async () => {
       const service = new ResendServiceClass();
 
-      // Directly mock the service's resend instance
       mockResendSend.mockClear();
       mockResendSend.mockResolvedValue({
         data: { id: 'test-id' },
         error: null,
       });
-
-      // Override the service's resend instance with our mock
-      (service as ResendServicePrivate).resend = mockResendInstance;
 
       const emailData = {
         firstName: 'John',

@@ -1,10 +1,10 @@
 'use client';
 
-import { PERCENTAGE_HALF } from "@/constants";
+import React, { useCallback, useState } from 'react';
+import { useAccessibility } from '@/lib/accessibility';
+import { PERCENTAGE_HALF } from '@/constants';
 import { supportsViewTransitions } from '@/hooks/theme-transition-utils';
 import { useEnhancedTheme } from '@/hooks/use-enhanced-theme';
-import { useAccessibility } from '@/lib/accessibility';
-import React, { useCallback, useState } from 'react';
 
 /**
  * 检查组件是否已挂载的hook

@@ -1,4 +1,4 @@
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 
 /**
  * WhatsApp API Base Type Definitions
@@ -325,5 +325,10 @@ export function validateWhatsAppMessage(
 
 // Export commonly used types with shorter names
 export type {
-  WhatsAppContact as Contact, ContactData as ContactInfo, WhatsAppError as Error, LocationData as Location, WhatsAppMessage as Message, MessageStatusUpdate as StatusUpdate
+  WhatsAppContact as Contact,
+  ContactData as ContactInfo,
+  WhatsAppError as Error,
+  LocationData as Location,
+  WhatsAppMessage as Message,
+  MessageStatusUpdate as StatusUpdate,
 };

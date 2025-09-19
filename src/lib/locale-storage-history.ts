@@ -8,14 +8,11 @@
 'use client';
 
 // 导入主要功能用于向后兼容
-import { DAYS_PER_WEEK } from "@/constants/time";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
 import type { Locale } from '@/types/i18n';
 import {
   addDetectionRecord,
   getDetectionHistory,
-  getHistorySummary
+  getHistorySummary,
 } from '@/lib/locale-storage-history-core';
 import {
   createCleanupEvent,
@@ -23,7 +20,7 @@ import {
   createExportEvent,
   createImportEvent,
   createRecordAddedEvent,
-  HistoryEventManager
+  HistoryEventManager,
 } from '@/lib/locale-storage-history-events';
 import {
   cleanupExpiredDetections,
@@ -31,7 +28,7 @@ import {
   exportHistory,
   getMaintenanceRecommendations,
   importHistory,
-  performMaintenance
+  performMaintenance,
 } from '@/lib/locale-storage-history-maintenance';
 import {
   getDetectionsByLocale,
@@ -39,7 +36,7 @@ import {
   getRecentDetections,
   queryDetections,
   searchDetections,
-  type QueryConditions
+  type QueryConditions,
 } from '@/lib/locale-storage-history-query';
 import {
   generateHistoryInsights,
@@ -54,30 +51,77 @@ import type {
   StorageEventListener,
   StorageOperationResult,
 } from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 // 重新导出所有模块的功能
 export {
-  addDetectionRecord, createDefaultHistory, getDetectionHistory, getHistorySummary, HistoryCacheManager, needsCleanup, updateDetectionHistory,
-  validateHistoryData
+  addDetectionRecord,
+  createDefaultHistory,
+  getDetectionHistory,
+  getHistorySummary,
+  HistoryCacheManager,
+  needsCleanup,
+  updateDetectionHistory,
+  validateHistoryData,
 } from '@/lib/locale-storage-history-core';
 export {
-  addMultipleListeners, cleanupEventSystem, consoleLogListener, createCleanupEvent, createDebugListener, createErrorEvent, createErrorListener, createExportEvent,
-  createImportEvent, createRecordAddedEvent, createStatsListener, getEventSystemStatus, HistoryEventManager, performanceListener, setupDefaultListeners
+  addMultipleListeners,
+  cleanupEventSystem,
+  consoleLogListener,
+  createCleanupEvent,
+  createDebugListener,
+  createErrorEvent,
+  createErrorListener,
+  createExportEvent,
+  createImportEvent,
+  createRecordAddedEvent,
+  createStatsListener,
+  getEventSystemStatus,
+  HistoryEventManager,
+  performanceListener,
+  setupDefaultListeners,
 } from '@/lib/locale-storage-history-events';
 export {
-  cleanupDuplicateDetections, cleanupExpiredDetections, clearAllHistory, createBackup, exportHistory,
-  exportHistoryAsJson, getMaintenanceRecommendations, importHistory,
-  importHistoryFromJson, limitHistorySize, performMaintenance, restoreFromBackup
+  cleanupDuplicateDetections,
+  cleanupExpiredDetections,
+  clearAllHistory,
+  createBackup,
+  exportHistory,
+  exportHistoryAsJson,
+  getMaintenanceRecommendations,
+  importHistory,
+  importHistoryFromJson,
+  limitHistorySize,
+  performMaintenance,
+  restoreFromBackup,
 } from '@/lib/locale-storage-history-maintenance';
 export {
-  getDetectionsByConfidence, getDetectionsByLocale, getDetectionsBySource, getDetectionsByTimeRange, getLocaleGroupStats, getRecentDetections, getSourceGroupStats,
-  getTimeDistributionStats, getUniqueLocales,
-  getUniqueSources, queryDetections,
-  searchDetections
+  getDetectionsByConfidence,
+  getDetectionsByLocale,
+  getDetectionsBySource,
+  getDetectionsByTimeRange,
+  getLocaleGroupStats,
+  getRecentDetections,
+  getSourceGroupStats,
+  getTimeDistributionStats,
+  getUniqueLocales,
+  getUniqueSources,
+  queryDetections,
+  searchDetections,
 } from '@/lib/locale-storage-history-query';
 export {
-  generateHistoryInsights, getDetectionStats,
-  getDetectionTrends, getPerformanceMetrics
+  generateHistoryInsights,
+  getDetectionStats,
+  getDetectionTrends,
+  getPerformanceMetrics,
 } from '@/lib/locale-storage-history-stats';
 
 /**
@@ -128,7 +172,9 @@ export class LocaleHistoryManager {
    * 获取最近的检测记录
    * Get recent detections
    */
-  static getRecentDetections(limit: number = COUNT_TEN): LocaleDetectionRecord[] {
+  static getRecentDetections(
+    limit: number = COUNT_TEN,
+  ): LocaleDetectionRecord[] {
     return getRecentDetections(limit);
   }
 
@@ -161,7 +207,11 @@ export class LocaleHistoryManager {
    * Cleanup expired detection records
    */
   static cleanupExpiredDetections(
-    maxAgeMs: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW,
+    maxAgeMs: number = DAYS_PER_MONTH *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW,
   ): StorageOperationResult<number> {
     const result = cleanupExpiredDetections(maxAgeMs);
 

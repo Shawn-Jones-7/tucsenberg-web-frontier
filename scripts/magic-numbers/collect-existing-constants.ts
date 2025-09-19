@@ -1,8 +1,7 @@
 #!/usr/bin/env tsx
-
-import { Project, ts, VariableDeclaration, ExportAssignment } from 'ts-morph';
-import { resolve } from 'node:path';
 import { writeFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { ExportAssignment, Project, ts, VariableDeclaration } from 'ts-morph';
 
 interface ConstantInfo {
   export: string;
@@ -22,14 +21,11 @@ async function collectExistingConstants() {
 
   // 初始化项目
   const project = new Project({
-    tsConfigFilePath: resolve(process.cwd(), 'tsconfig.json')
+    tsConfigFilePath: resolve(process.cwd(), 'tsconfig.json'),
   });
 
   // 扫描目标目录
-  const targetPatterns = [
-    'src/constants/**/*.ts',
-    'src/config/**/*.ts',
-  ];
+  const targetPatterns = ['src/constants/**/*.ts', 'src/config/**/*.ts'];
 
   // 添加源文件
   for (const pattern of targetPatterns) {
@@ -124,7 +120,9 @@ async function collectExistingConstants() {
               }
               valueToConstants.get(value)!.push(constantInfo);
 
-              console.log(`  ✅ 发现对象常量: ${exportName} = ${value} (行 ${line})`);
+              console.log(
+                `  ✅ 发现对象常量: ${exportName} = ${value} (行 ${line})`,
+              );
             }
           }
         }
@@ -159,11 +157,13 @@ async function collectExistingConstants() {
         export: prioritized.export,
         module: prioritized.module,
         source: `${prioritized.filePath}:${prioritized.line}`,
-        alternatives: constantInfos.filter(c => c !== prioritized).map(c => ({
-          export: c.export,
-          module: c.module,
-          source: `${c.filePath}:${c.line}`,
-        })),
+        alternatives: constantInfos
+          .filter((c) => c !== prioritized)
+          .map((c) => ({
+            export: c.export,
+            module: c.module,
+            source: `${c.filePath}:${c.line}`,
+          })),
       };
     }
   }
@@ -171,7 +171,7 @@ async function collectExistingConstants() {
   // 保存结果
   const outputPath = 'scripts/magic-numbers/existing-constants-analysis.json';
   const result = {
-    _comment: "现有常量分析结果",
+    _comment: '现有常量分析结果',
     _generated: new Date().toISOString(),
     _stats: {
       totalConstants: constants.length,
@@ -191,7 +191,7 @@ async function collectExistingConstants() {
     console.log('\n⚠️  发现冲突的数值:');
     for (const [value, infos] of Object.entries(conflicts)) {
       console.log(`  ${value}: ${infos.length} 个常量`);
-      infos.forEach(info => {
+      infos.forEach((info) => {
         console.log(`    - ${info.export} (${info.module})`);
       });
     }
@@ -221,7 +221,7 @@ function prioritizeConstant(constants: ConstantInfo[]): ConstantInfo {
   ];
 
   for (const pattern of priorityOrder) {
-    const match = constants.find(c => pattern.test(c.filePath));
+    const match = constants.find((c) => pattern.test(c.filePath));
     if (match) return match;
   }
 

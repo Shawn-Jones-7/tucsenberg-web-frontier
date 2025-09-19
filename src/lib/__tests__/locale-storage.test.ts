@@ -1,11 +1,12 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale } from '@/types/i18n';
+import { LocaleStorageManager } from '@/lib/locale-storage';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,
 } from '../locale-storage';
-import { LocaleStorageManager } from '@/lib/locale-storage';
+import type { LocaleDetectionRecord } from '@/lib/locale-storage-types-data';
 
 // Mock constants
 vi.mock('@/constants/i18n-constants', () => ({
@@ -29,6 +30,16 @@ const mockLocalStorage = {
   removeItem: vi.fn(),
   clear: vi.fn(),
 };
+
+const createDetectionRecord = (
+  overrides: Partial<LocaleDetectionRecord> = {},
+): LocaleDetectionRecord => ({
+  locale: 'en',
+  source: 'browser',
+  timestamp: Date.now(),
+  confidence: 0.8,
+  ...overrides,
+});
 
 // Mock document.cookie
 const mockDocumentCookie = {
@@ -250,16 +261,13 @@ describe('LocaleStorageManager', () => {
 
   describe('getDetectionHistory', () => {
     it('should return detection history from localStorage', () => {
+      const detectionRecords: LocaleDetectionRecord[] = [createDetectionRecord()];
+
       const history: LocaleDetectionHistory = {
-        detections: [
-          {
-            locale: 'en',
-            source: 'browser',
-            timestamp: Date.now(),
-            confidence: 0.8,
-          },
-        ],
-        lastUpdated: Date.now(),
+        detections: detectionRecords,
+        history: [...detectionRecords],
+        lastUpdated: detectionRecords[0]?.timestamp ?? Date.now(),
+        totalDetections: detectionRecords.length,
       };
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(history));
@@ -291,16 +299,15 @@ describe('LocaleStorageManager', () => {
 
   describe('addDetectionRecord', () => {
     it('should add new detection record to existing history', () => {
+      const existingRecords: LocaleDetectionRecord[] = [
+        createDetectionRecord({ timestamp: Date.now() - 1000 }),
+      ];
+
       const existingHistory: LocaleDetectionHistory = {
-        detections: [
-          {
-            locale: 'en',
-            source: 'browser',
-            timestamp: Date.now() - 1000,
-            confidence: 0.8,
-          },
-        ],
-        lastUpdated: Date.now() - 1000,
+        detections: existingRecords,
+        history: [...existingRecords],
+        lastUpdated: existingRecords[0]?.timestamp ?? Date.now(),
+        totalDetections: existingRecords.length,
       };
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(existingHistory));
@@ -315,9 +322,9 @@ describe('LocaleStorageManager', () => {
       mockLocalStorage.getItem.mockReturnValue(null);
 
       // Call addDetectionRecord through the public method
-      (LocaleStorageManager as unknown).addDetectionRecord({
-        locale: 'en',
-        source: 'test',
+      LocaleStorageManager.addDetectionRecord({
+        locale: 'en' as Locale,
+        source: 'user',
         timestamp: Date.now(),
         confidence: 0.9,
       });
@@ -331,14 +338,20 @@ describe('LocaleStorageManager', () => {
 
     it('should limit history to maximum entries', () => {
       // Create history with 50 entries (at limit)
+      const detectionHistoryRecords: LocaleDetectionRecord[] = Array.from(
+        { length: 50 },
+        (_, i) =>
+          createDetectionRecord({
+            locale: 'en' as Locale,
+            timestamp: Date.now() - i * 1000,
+          }),
+      );
+
       const existingHistory: LocaleDetectionHistory = {
-        detections: Array.from({ length: 50 }, (_, i) => ({
-          locale: 'en' as Locale,
-          source: 'browser',
-          timestamp: Date.now() - i * 1000,
-          confidence: 0.8,
-        })),
-        lastUpdated: Date.now(),
+        detections: detectionHistoryRecords,
+        history: [...detectionHistoryRecords],
+        lastUpdated: detectionHistoryRecords[0]?.timestamp ?? Date.now(),
+        totalDetections: detectionHistoryRecords.length,
       };
 
       mockLocalStorage.getItem.mockReturnValue(JSON.stringify(existingHistory));

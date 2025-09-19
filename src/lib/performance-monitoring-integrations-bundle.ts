@@ -5,14 +5,28 @@
  * 提供与Bundle Analyzer工具的集成钩子，用于监控打包大小和优化
  */
 
-import { KB, MB } from '@/constants/units';
-import { ANIMATION_DURATION_SLOW, ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, MAGIC_0_8, MAGIC_8, MAGIC_512, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, PERCENTAGE_QUARTER, ZERO } from '@/constants';
-
 import { logger } from '@/lib/logger';
 import type {
   PerformanceConfig,
   PerformanceMetrics,
 } from '@/lib/performance-monitoring-types';
+import {
+  ANIMATION_DURATION_SLOW,
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  MAGIC_0_8,
+  MAGIC_8,
+  MAGIC_512,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  PERCENTAGE_QUARTER,
+  ZERO,
+} from '@/constants';
+import { KB, MB } from '@/constants/units';
 
 /**
  * Bundle Analyzer 集成钩子返回类型
@@ -225,7 +239,10 @@ export class BundleAnalyzerAnalyzer {
     recommendations: string[];
   } {
     const bundles = Array.from(this.bundles.entries());
-    const totalSize = bundles.reduce((sum, [, bundle]) => sum + bundle.size, ZERO);
+    const totalSize = bundles.reduce(
+      (sum, [, bundle]) => sum + bundle.size,
+      ZERO,
+    );
     const totalGzipSize = bundles.reduce(
       (sum, [, bundle]) => sum + (bundle.gzipSize || ZERO),
       ZERO,
@@ -253,7 +270,9 @@ export class BundleAnalyzerAnalyzer {
       );
     }
 
-    const largeBundles = largestBundles.filter((b) => b.size > BYTES_PER_KB * BYTES_PER_KB); // 1MB
+    const largeBundles = largestBundles.filter(
+      (b) => b.size > BYTES_PER_KB * BYTES_PER_KB,
+    ); // 1MB
     if (largeBundles.length > ZERO) {
       recommendations.push(
         `${largeBundles.length} bundles are larger than 1MB. Consider splitting them.`,

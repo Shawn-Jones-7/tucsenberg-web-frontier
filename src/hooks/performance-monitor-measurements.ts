@@ -1,14 +1,13 @@
-import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
-import { FIVE_SECONDS_MS, MAGIC_10000, ZERO } from '@/constants';
-
-import { logger } from '@/lib/logger';
 import React from 'react';
+import { logger } from '@/lib/logger';
+import { FIVE_SECONDS_MS, MAGIC_10000, ZERO } from '@/constants';
 import type {
   PerformanceAlert,
   PerformanceAlertThresholds,
   PerformanceMeasurements,
   PerformanceMetrics,
 } from '@/hooks/performance-monitor-types';
+import { checkMemoryUsageAlert } from '@/hooks/performance-monitor-utils';
 
 /**
  * 创建性能测量函数的辅助函数
@@ -98,7 +97,11 @@ export function usePerformanceMeasurements({
       }));
 
       if (enableAlerts) {
-        checkMemoryUsageAlert(memoryUsage, alertThresholds.memoryUsage, addAlert);
+        checkMemoryUsageAlert(
+          memoryUsage,
+          alertThresholds.memoryUsage,
+          addAlert,
+        );
       }
     } catch (error) {
       logger.warn('Failed to measure memory usage', { error: error as Error });
@@ -119,7 +122,11 @@ export const measureNetworkLatency = async (): Promise<number | null> => {
   try {
     if (typeof window !== 'undefined') {
       const nav = navigator as Navigator & {
-        connection?: { rtt?: number; effectiveType?: string; downlink?: number };
+        connection?: {
+          rtt?: number;
+          effectiveType?: string;
+          downlink?: number;
+        };
       };
       if (nav.connection?.rtt) {
         return nav.connection.rtt;
@@ -299,7 +306,9 @@ export const measureComprehensivePerformance = async (): Promise<
     // 测量基本指标
     if (typeof window !== 'undefined' && window.performance) {
       // 加载时间
-      const navigation = performance.getEntriesByType('navigation')[0] as PerformanceNavigationTiming;
+      const navigation = performance.getEntriesByType(
+        'navigation',
+      )[0] as PerformanceNavigationTiming;
       if (navigation) {
         metrics.loadTime = navigation.loadEventEnd - navigation.startTime;
       }

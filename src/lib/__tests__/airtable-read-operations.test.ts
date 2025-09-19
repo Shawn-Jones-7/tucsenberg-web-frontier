@@ -10,9 +10,15 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
+  AirtableBaseLike,
   AirtableServicePrivate,
   DynamicImportModule,
 } from '@/types/test-types';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import {
+  configureServiceForTesting,
+  createMockBase,
+} from './airtable/test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();
@@ -25,10 +31,17 @@ const mockTable = vi.fn().mockReturnValue({
   update: mockUpdate,
   destroy: mockDestroy,
 });
-const mockBase = vi.fn().mockReturnValue({
-  table: mockTable,
-});
+
+const tableFactory: AirtableBaseLike['table'] = (name) => {
+  void name;
+  return mockTable() as ReturnType<AirtableBaseLike['table']>;
+};
+
+const mockBase = vi.fn(() => createMockBase(tableFactory));
 const mockConfigure = vi.fn();
+
+const setServiceReady = (service: unknown) =>
+  configureServiceForTesting(service, createMockBase(tableFactory));
 
 vi.mock('airtable', () => ({
   default: {
@@ -54,7 +67,7 @@ vi.mock('./validations', async () => {
 });
 
 describe('Airtable Service - Read Operations Tests', () => {
-  let AirtableServiceClass: any;
+  let AirtableServiceClass: typeof AirtableServiceType;
 
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
@@ -68,7 +81,7 @@ describe('Airtable Service - Read Operations Tests', () => {
 
     // Dynamically import the module to ensure fresh instance
     const module = (await import('../airtable')) as DynamicImportModule;
-    AirtableServiceClass = module.AirtableService;
+    AirtableServiceClass = module.AirtableService as typeof AirtableServiceType;
   });
 
   afterEach(() => {
@@ -80,10 +93,7 @@ describe('Airtable Service - Read Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const mockRecords = [
         {
@@ -107,10 +117,7 @@ describe('Airtable Service - Read Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const options = {
         maxRecords: 10,
@@ -141,10 +148,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle retrieval errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockSelect.mockReturnValue({
         all: vi.fn().mockRejectedValue(new Error('Retrieval failed')),
@@ -156,10 +160,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle empty results', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockSelect.mockReturnValue({
         all: vi.fn().mockResolvedValue([]),
@@ -173,10 +174,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle complex query options', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const complexOptions = {
         maxRecords: 50,
@@ -200,10 +198,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle large result sets', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       // Create a large mock dataset
       const largeDataset = Array.from({ length: 1000 }, (_, index) => ({
@@ -223,17 +218,21 @@ describe('Airtable Service - Read Operations Tests', () => {
       const result = await service.getContacts();
 
       expect(result).toHaveLength(1000);
-      expect(result[0].fields['First Name']).toBe('User0');
-      expect(result[999].fields['First Name']).toBe('User999');
+      const first = result[0];
+      const last = result[result.length - 1];
+      expect(first).toBeDefined();
+      expect(last).toBeDefined();
+      if (!first || !last) {
+        throw new Error('分页数据生成失败，无法继续断言');
+      }
+      expect(first.fields['First Name']).toBe('User0');
+      expect(last.fields['First Name']).toBe('User999');
     });
 
     it('should handle pagination options', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const paginationOptions = {
         maxRecords: 100,
@@ -253,10 +252,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle network timeout during retrieval', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const timeoutError = new Error('Request timeout');
       timeoutError.name = 'TimeoutError';
@@ -271,10 +267,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle API rate limiting during retrieval', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const rateLimitError = new Error('Rate limit exceeded');
       rateLimitError.name = 'RateLimitError';
@@ -291,10 +284,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle malformed response data', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       // Mock malformed data (missing required fields)
       const malformedData = [
@@ -323,10 +313,7 @@ describe('Airtable Service - Read Operations Tests', () => {
     it('should handle view-based queries', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const viewOptions = {
         view: 'Grid view',

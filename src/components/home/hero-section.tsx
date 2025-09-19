@@ -1,11 +1,11 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import { MAGIC_0_3 } from "@/constants/decimal";
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { MAGIC_0_3 } from '@/constants/decimal';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
 // Hero Badge Component
 function HeroBadge({

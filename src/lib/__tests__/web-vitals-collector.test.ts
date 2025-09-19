@@ -1,10 +1,15 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { DEVICE_DEFAULTS } from '@/lib/web-vitals/constants';
+import type { DetailedWebVitals } from '@/lib/web-vitals/types';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import {
   EnhancedWebVitalsCollector,
   enhancedWebVitalsCollector,
 } from '../enhanced-web-vitals';
-import { DEVICE_DEFAULTS } from '@/lib/web-vitals/constants';
+
+type ConnectionInfo = NonNullable<DetailedWebVitals['connection']>;
+
+type ResourceTimingInfo = DetailedWebVitals['resourceTiming'];
 
 // Mock logger
 vi.mock('@/lib/logger', () => ({
@@ -16,14 +21,21 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 // Mock PerformanceObserver
-const mockPerformanceObserver = vi.fn();
-const mockObserve = vi.fn();
-const mockDisconnect = vi.fn();
-
-mockPerformanceObserver.mockImplementation(() => ({
-  observe: mockObserve,
-  disconnect: mockDisconnect,
-}));
+const mockObserve = vi.fn<(options?: PerformanceObserverInit) => void>(
+  () => {},
+);
+const mockDisconnect = vi.fn<() => void>(() => {});
+const mockTakeRecords = vi.fn<() => PerformanceEntry[]>(() => []);
+const mockPerformanceObserver = vi.fn<
+  (callback: PerformanceObserverCallback) => PerformanceObserver
+>(
+  (callback) =>
+    ({
+      observe: mockObserve,
+      disconnect: mockDisconnect,
+      takeRecords: mockTakeRecords,
+    }) as PerformanceObserver,
+);
 
 Object.defineProperty(global, 'PerformanceObserver', {
   value: mockPerformanceObserver,
@@ -32,14 +44,13 @@ Object.defineProperty(global, 'PerformanceObserver', {
 
 // Mock performance API
 const mockPerformance = {
-  now: vi.fn(() => 1000),
-  getEntriesByType: vi.fn(() => []),
-  getEntriesByName: vi.fn(() => []),
-  mark: vi.fn(),
-  measure: vi.fn(),
-  navigation: {
-    type: 'navigate',
-  },
+  now: vi.fn<() => number>(() => 1000),
+  getEntriesByType: vi.fn<(type: string) => PerformanceEntry[]>(() => []),
+  getEntriesByName: vi.fn<(name: string) => PerformanceEntry[]>(() => []),
+  mark: vi.fn<(name: string) => void>(),
+  measure:
+    vi.fn<(name: string, startMark?: string, endMark?: string) => void>(),
+  navigation: { type: 'navigate' },
   timing: {
     navigationStart: 1000,
     loadEventEnd: 2000,
@@ -48,9 +59,116 @@ const mockPerformance = {
 };
 
 Object.defineProperty(global, 'performance', {
-  value: mockPerformance,
+  value: mockPerformance as unknown as Performance,
   writable: true,
+  configurable: true,
 });
+
+const createResourceEntry = (entry: {
+  name: string;
+  duration: number;
+  transferSize?: number;
+  initiatorType?: string;
+  startTime?: number;
+}): PerformanceEntry & {
+  transferSize: number;
+  initiatorType: string;
+} => ({
+  name: entry.name,
+  entryType: 'resource',
+  startTime: entry.startTime ?? 0,
+  duration: entry.duration,
+  transferSize: entry.transferSize ?? 0,
+  initiatorType: entry.initiatorType ?? 'img',
+  toJSON: () => ({}),
+});
+
+const createDetailedMetrics = (
+  overrides: Partial<DetailedWebVitals> = {},
+): DetailedWebVitals => {
+  const baseConnection: ConnectionInfo = {
+    effectiveType: '4g',
+    downlink: WEB_VITALS_CONSTANTS.TEST_DOWNLINK_SPEED,
+    rtt: WEB_VITALS_CONSTANTS.TEST_RTT_LATENCY,
+    saveData: false,
+  };
+
+  const base: DetailedWebVitals = {
+    cls: 0,
+    fid: 0,
+    lcp: 0,
+    fcp: 0,
+    ttfb: 0,
+    inp: 0,
+    domContentLoaded: 0,
+    loadComplete: 0,
+    firstPaint: 0,
+    connection: baseConnection,
+    device: {
+      memory: WEB_VITALS_CONSTANTS.DEVICE_MEMORY,
+      cores: DEVICE_DEFAULTS.CPU_CORES,
+      userAgent: 'Test Browser',
+      viewport: {
+        width: DEVICE_DEFAULTS.VIEWPORT_WIDTH,
+        height: DEVICE_DEFAULTS.VIEWPORT_HEIGHT,
+      },
+    },
+    page: {
+      url: 'https://test.com/page',
+      referrer: '',
+      title: 'Test Page',
+      timestamp: Date.now(),
+    },
+    resourceTiming: {
+      totalResources: 0,
+      slowResources: [],
+      totalSize: 0,
+      totalDuration: 0,
+    },
+  };
+
+  const mergedConnection: ConnectionInfo = overrides.connection
+    ? { ...baseConnection, ...overrides.connection }
+    : baseConnection;
+
+  const mergedDevice: DetailedWebVitals['device'] = {
+    ...base.device,
+    ...(overrides.device ?? {}),
+  };
+
+  const mergedPage: DetailedWebVitals['page'] = {
+    ...base.page,
+    ...(overrides.page ?? {}),
+  };
+
+  const mergedResourceTiming: ResourceTimingInfo = {
+    ...base.resourceTiming,
+    ...(overrides.resourceTiming ?? {}),
+    slowResources:
+      overrides.resourceTiming?.slowResources ??
+      base.resourceTiming.slowResources,
+  };
+
+  return {
+    ...base,
+    ...overrides,
+    connection: mergedConnection,
+    device: mergedDevice,
+    page: mergedPage,
+    resourceTiming: mergedResourceTiming,
+  };
+};
+
+const toObserverEntryList = <T extends PerformanceEntry>(
+  entries: T[],
+): PerformanceObserverEntryList =>
+  ({
+    getEntries: () => entries,
+    getEntriesByType: () => entries,
+    getEntriesByName: () => entries,
+    length: entries.length,
+    item: (index: number) => entries[index] ?? null,
+  }) as unknown as PerformanceObserverEntryList;
 
 // Mock navigator
 Object.defineProperty(global, 'navigator', {
@@ -58,12 +176,12 @@ Object.defineProperty(global, 'navigator', {
     userAgent: 'Test Browser',
     connection: {
       effectiveType: '4g',
-      downlink: WEB_VITALS_CONSTANTS.NETWORK_DOWNLINK,
-      rtt: 100,
+      downlink: WEB_VITALS_CONSTANTS.TEST_DOWNLINK_SPEED,
+      rtt: WEB_VITALS_CONSTANTS.TEST_RTT_LATENCY,
       saveData: false,
     },
-    deviceMemory: 8,
-    hardwareConcurrency: 4,
+    deviceMemory: WEB_VITALS_CONSTANTS.DEVICE_MEMORY,
+    hardwareConcurrency: DEVICE_DEFAULTS.CPU_CORES,
   },
   writable: true,
 });
@@ -91,6 +209,23 @@ describe('EnhancedWebVitalsCollector', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    mockObserve.mockClear();
+    mockDisconnect.mockClear();
+    mockTakeRecords.mockClear();
+    mockPerformanceObserver.mockClear();
+    mockPerformanceObserver.mockImplementation(
+      (_callback) =>
+        ({
+          observe: mockObserve,
+          disconnect: mockDisconnect,
+          takeRecords: mockTakeRecords,
+        }) as PerformanceObserver,
+    );
+
+    mockPerformance.now.mockReturnValue(1000);
+    mockPerformance.getEntriesByType.mockImplementation(() => []);
+    mockPerformance.getEntriesByName.mockImplementation(() => []);
+
     // Ensure window is properly mocked before creating collector
     Object.defineProperty(global, 'window', {
       value: {
@@ -111,13 +246,6 @@ describe('EnhancedWebVitalsCollector', () => {
     });
 
     collector = new EnhancedWebVitalsCollector();
-
-    // Reset mock implementations
-    mockObserve.mockClear();
-    mockDisconnect.mockClear();
-    mockPerformanceObserver.mockClear();
-    mockPerformance.now.mockReturnValue(1000);
-    mockPerformance.getEntriesByType.mockReturnValue([]);
   });
 
   afterEach(() => {
@@ -159,22 +287,30 @@ describe('EnhancedWebVitalsCollector', () => {
   describe('Web Vitals 指标收集', () => {
     it('should collect CLS (Cumulative Layout Shift) metrics', () => {
       const mockLayoutShiftEntry = {
+        name: 'layout-shift-entry',
+        entryType: 'layout-shift',
+        startTime: 1000,
+        duration: 0,
         value: 0.1,
         hadRecentInput: false,
-        startTime: 1000,
-      };
+        toJSON: () => ({}),
+      } as PerformanceEntry & { value: number; hadRecentInput: boolean };
 
       // Simulate CLS observer callback
-      const clsCallback = mockPerformanceObserver.mock.calls.find(
-        (call) =>
-          call[0].toString().includes('layout-shift') ||
-          call[0].toString().includes('clsValue'),
+      const observerCalls = mockPerformanceObserver.mock.calls as Array<
+        [PerformanceObserverCallback]
+      >;
+      const clsCallback = observerCalls.find(
+        ([callback]) =>
+          callback.toString().includes('layout-shift') ||
+          callback.toString().includes('clsValue'),
       )?.[0];
 
       if (clsCallback) {
-        clsCallback({
-          getEntries: () => [mockLayoutShiftEntry],
-        });
+        clsCallback(
+          toObserverEntryList([mockLayoutShiftEntry]),
+          {} as PerformanceObserver,
+        );
       }
 
       const metrics = collector.getDetailedMetrics();
@@ -183,22 +319,30 @@ describe('EnhancedWebVitalsCollector', () => {
 
     it('should collect LCP (Largest Contentful Paint) metrics', () => {
       const mockLCPEntry = {
-        startTime: 2500,
+        name: 'largest-contentful-paint',
+        entryType: 'largest-contentful-paint',
+        startTime: 2_500,
+        duration: 0,
         element: document.createElement('img'),
-        size: 1000,
-      };
+        size: 1_000,
+        toJSON: () => ({}),
+      } as PerformanceEntry & { element: Element; size: number };
 
       // Simulate LCP observer callback
-      const lcpCallback = mockPerformanceObserver.mock.calls.find(
-        (call) =>
-          call[0].toString().includes('largest-contentful-paint') ||
-          call[0].toString().includes('lcp'),
+      const observerCalls = mockPerformanceObserver.mock.calls as Array<
+        [PerformanceObserverCallback]
+      >;
+      const lcpCallback = observerCalls.find(
+        ([callback]) =>
+          callback.toString().includes('largest-contentful-paint') ||
+          callback.toString().includes('lcp'),
       )?.[0];
 
       if (lcpCallback) {
-        lcpCallback({
-          getEntries: () => [mockLCPEntry],
-        });
+        lcpCallback(
+          toObserverEntryList([mockLCPEntry]),
+          {} as PerformanceObserver,
+        );
       }
 
       const metrics = collector.getDetailedMetrics();
@@ -207,22 +351,29 @@ describe('EnhancedWebVitalsCollector', () => {
 
     it('should collect FID (First Input Delay) metrics', () => {
       const mockFIDEntry = {
-        processingStart: 1100,
-        startTime: 1000,
-        name: 'click',
-      };
+        name: 'first-input',
+        entryType: 'first-input',
+        startTime: 1_000,
+        duration: 100,
+        processingStart: 1_100,
+        toJSON: () => ({}),
+      } as PerformanceEntry & { processingStart: number };
 
       // Simulate FID observer callback
-      const fidCallback = mockPerformanceObserver.mock.calls.find(
-        (call) =>
-          call[0].toString().includes('first-input') ||
-          call[0].toString().includes('fid'),
+      const observerCalls = mockPerformanceObserver.mock.calls as Array<
+        [PerformanceObserverCallback]
+      >;
+      const fidCallback = observerCalls.find(
+        ([callback]) =>
+          callback.toString().includes('first-input') ||
+          callback.toString().includes('fid'),
       )?.[0];
 
       if (fidCallback) {
-        fidCallback({
-          getEntries: () => [mockFIDEntry],
-        });
+        fidCallback(
+          toObserverEntryList([mockFIDEntry]),
+          {} as PerformanceObserver,
+        );
       }
 
       const metrics = collector.getDetailedMetrics();
@@ -267,7 +418,9 @@ describe('EnhancedWebVitalsCollector', () => {
       expect(metrics.connection?.downlink).toBe(
         WEB_VITALS_CONSTANTS.NETWORK_DOWNLINK,
       );
-      expect(metrics.connection?.rtt).toBe(100);
+      expect(metrics.connection?.rtt).toBe(
+        WEB_VITALS_CONSTANTS.TEST_RTT_LATENCY,
+      );
       expect(metrics.connection?.saveData).toBe(false);
     });
 
@@ -329,27 +482,22 @@ describe('EnhancedWebVitalsCollector', () => {
   describe('慢资源检测', () => {
     it('should detect slow loading resources', () => {
       const mockResourceEntries = [
-        {
+        createResourceEntry({
           name: 'https://example.com/slow-image.jpg',
-          duration: WEB_VITALS_CONSTANTS.SLOW_RESOURCE_DURATION, // Slow resource
-          transferSize: 500000,
+          duration: WEB_VITALS_CONSTANTS.SLOW_RESOURCE_DURATION,
+          transferSize: 500_000,
           initiatorType: 'img',
-        },
-        {
+        }),
+        createResourceEntry({
           name: 'https://example.com/fast-script.js',
-          duration: 200, // Fast resource
-          transferSize: 50000,
+          duration: 200,
+          transferSize: 50_000,
           initiatorType: 'script',
-        },
+        }),
       ];
 
-      (mockPerformance.getEntriesByType as unknown).mockImplementation(
-        (type: unknown) => {
-          if (type === 'resource') {
-            return mockResourceEntries;
-          }
-          return [];
-        },
+      mockPerformance.getEntriesByType.mockImplementation((type) =>
+        type === 'resource' ? mockResourceEntries : [],
       );
 
       // Create a new collector instance after setting up the mock
@@ -367,20 +515,17 @@ describe('EnhancedWebVitalsCollector', () => {
     });
 
     it('should limit slow resources to maximum count', () => {
-      const manySlowResources = Array.from({ length: 20 }, (_, i) => ({
-        name: `https://example.com/slow-resource-${i}.jpg`,
-        duration: WEB_VITALS_CONSTANTS.SLOW_RESOURCE_DURATION,
-        transferSize: 500000,
-        initiatorType: 'img',
-      }));
+      const manySlowResources = Array.from({ length: 20 }, (_, index) =>
+        createResourceEntry({
+          name: `https://example.com/slow-resource-${index}.jpg`,
+          duration: WEB_VITALS_CONSTANTS.SLOW_RESOURCE_DURATION,
+          transferSize: 500_000,
+          initiatorType: 'img',
+        }),
+      );
 
-      (mockPerformance.getEntriesByType as unknown).mockImplementation(
-        (type: unknown) => {
-          if (type === 'resource') {
-            return manySlowResources;
-          }
-          return [];
-        },
+      mockPerformance.getEntriesByType.mockImplementation((type) =>
+        type === 'resource' ? manySlowResources : [],
       );
 
       // Create a new collector instance after setting up the mock
@@ -393,13 +538,8 @@ describe('EnhancedWebVitalsCollector', () => {
     });
 
     it('should handle missing resource entries', () => {
-      (mockPerformance.getEntriesByType as unknown).mockImplementation(
-        (type: unknown) => {
-          if (type === 'resource') {
-            return [];
-          }
-          return [];
-        },
+      mockPerformance.getEntriesByType.mockImplementation((type) =>
+        type === 'resource' ? [] : [],
       );
 
       const metrics = collector.getDetailedMetrics();
@@ -423,29 +563,27 @@ describe('EnhancedWebVitalsCollector', () => {
 
     it('should identify performance issues in analysis', () => {
       // Mock poor performance metrics
-      const poorMetrics = {
-        cls: 0.5, // Very poor CLS
-        lcp: 8000, // Very poor LCP
-        fid: 600, // Very poor FID
+      const poorDetailedMetrics: DetailedWebVitals = {
+        cls: 0.5,
+        lcp: 8000,
+        fid: 600,
         inp: 800,
-        ttfb: 3000, // Very poor TTFB
-        fcp: 6000, // Very poor FCP
-      };
-
-      // Override getDetailedMetrics to return poor metrics
-      vi.spyOn(collector, 'getDetailedMetrics').mockReturnValue({
-        ...poorMetrics,
-        device: {
-          memory: 8,
-          cores: 4,
-          userAgent: 'Test Browser',
-          viewport: { width: 1920, height: 1080 },
-        },
+        ttfb: 3000,
+        fcp: 6000,
+        domContentLoaded: 1500,
+        loadComplete: 2000,
+        firstPaint: 1200,
         connection: {
           effectiveType: '4g',
           downlink: 10,
           rtt: 100,
           saveData: false,
+        },
+        device: {
+          memory: 8,
+          cores: 4,
+          userAgent: 'Test Browser',
+          viewport: { width: 1920, height: 1080 },
         },
         page: {
           url: 'https://test.com/page',
@@ -455,19 +593,21 @@ describe('EnhancedWebVitalsCollector', () => {
         },
         resourceTiming: {
           totalResources: 10,
-          slowResources: Array.from({ length: 8 }, (_, i) => ({
-            name: `https://example.com/slow-resource-${i}.jpg`,
+          slowResources: Array.from({ length: 8 }, (_, index) => ({
+            name: `https://example.com/slow-resource-${index}.jpg`,
             duration: WEB_VITALS_CONSTANTS.SLOW_RESOURCE_DURATION,
-            size: 500000,
+            size: 500_000,
             type: 'image',
           })),
-          totalSize: 4000000,
-          totalDuration: 16000,
+          totalSize: 4_000_000,
+          totalDuration: 16_000,
         },
-        domContentLoaded: 1500,
-        loadComplete: 2000,
-        firstPaint: 1200,
-      } as unknown);
+      };
+
+      // Override getDetailedMetrics to return poor metrics
+      vi.spyOn(collector, 'getDetailedMetrics').mockReturnValue(
+        poorDetailedMetrics,
+      );
 
       const report = collector.generateDiagnosticReport();
 
@@ -479,38 +619,24 @@ describe('EnhancedWebVitalsCollector', () => {
     });
 
     it('should provide good score for excellent metrics', () => {
-      // Mock excellent performance metrics
-      const excellentMetrics = {
-        cls: 0.05, // Excellent CLS
-        lcp: 1500, // Excellent LCP
-        fid: 50, // Excellent FID
+      const excellentDetailedMetrics = createDetailedMetrics({
+        cls: 0.05,
+        lcp: 1_500,
+        fid: 50,
         inp: 100,
-        ttfb: 400, // Excellent TTFB
-        fcp: 1200, // Excellent FCP
-      };
+        ttfb: 400,
+        fcp: 1_200,
+        resourceTiming: {
+          totalResources: 5,
+          slowResources: [],
+          totalSize: 1_000_000,
+          totalDuration: 1_000,
+        },
+      });
 
-      vi.spyOn(collector, 'getDetailedMetrics').mockReturnValue({
-        ...excellentMetrics,
-        deviceInfo: {
-          memory: 8,
-          cores: 4,
-          userAgent: 'Test Browser',
-          viewport: '1920x1080',
-        },
-        connection: {
-          effectiveType: '4g',
-          downlink: 10,
-          rtt: 100,
-          saveData: false,
-        },
-        page: {
-          url: 'https://test.com/page',
-          referrer: '',
-          title: 'Test Page',
-          timestamp: Date.now(),
-        },
-        slowResources: [],
-      } as unknown);
+      vi.spyOn(collector, 'getDetailedMetrics').mockReturnValue(
+        excellentDetailedMetrics,
+      );
 
       const report = collector.generateDiagnosticReport();
 
@@ -522,7 +648,7 @@ describe('EnhancedWebVitalsCollector', () => {
 
   describe('性能观察器错误处理', () => {
     it('should handle PerformanceObserver errors gracefully', () => {
-      mockPerformanceObserver.mockImplementation(() => {
+      mockPerformanceObserver.mockImplementation((_callback) => {
         throw new Error('PerformanceObserver failed');
       });
 
@@ -551,18 +677,29 @@ describe('EnhancedWebVitalsCollector', () => {
       // });
 
       mockPerformanceObserver.mockImplementation((callback) => {
-        // Call the callback with mock data to trigger error
+        const errorEntry = {
+          name: 'observer-error',
+          entryType: 'layout-shift',
+          startTime: 0,
+          duration: 0,
+          value: 0.1,
+          hadRecentInput: false,
+          toJSON: () => ({}),
+        } as PerformanceEntry & { value: number; hadRecentInput: boolean };
+
         try {
-          callback({
-            getEntries: () => [{ value: 0.1, hadRecentInput: false }],
-          });
+          callback(
+            toObserverEntryList([errorEntry]),
+            {} as PerformanceObserver,
+          );
         } catch {
           // Expected to catch the error
         }
         return {
           observe: mockObserve,
           disconnect: mockDisconnect,
-        };
+          takeRecords: mockTakeRecords,
+        } as PerformanceObserver;
       });
 
       expect(() => {
@@ -593,7 +730,8 @@ describe('EnhancedWebVitalsCollector', () => {
 
   describe('边缘情况处理', () => {
     it('should handle null performance entries', () => {
-      mockPerformance.getEntriesByType.mockReturnValue(null as unknown);
+      const nullEntries = null as unknown as PerformanceEntry[];
+      mockPerformance.getEntriesByType.mockImplementation(() => nullEntries);
 
       expect(() => {
         collector.getDetailedMetrics();

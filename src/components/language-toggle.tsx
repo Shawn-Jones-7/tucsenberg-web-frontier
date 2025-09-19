@@ -1,19 +1,25 @@
 'use client';
 
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+import { Check, Languages, Loader2 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
-import { ANIMATION_DURATION_VERY_SLOW  } from '@/constants';
-
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { MAGIC_2000 } from "@/constants/count";
+import { ANIMATION_DURATION_VERY_SLOW } from '@/constants';
+import { MAGIC_2000 } from '@/constants/count';
 import { Link, usePathname } from '@/i18n/routing';
-import { Check, Languages, Loader2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { memo, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 const TRANSITION_TIMEOUT = ANIMATION_DURATION_VERY_SLOW; // 1 second timeout for language switch
 
@@ -56,7 +62,10 @@ const useLanguageSwitch = () => {
   }, [scheduleSuccessReset]);
 
   const scheduleTransition = useCallback(() => {
-    transitionTimeoutRef.current = setTimeout(finalizeSwitch, TRANSITION_TIMEOUT);
+    transitionTimeoutRef.current = setTimeout(
+      finalizeSwitch,
+      TRANSITION_TIMEOUT,
+    );
   }, [finalizeSwitch]);
 
   const handleLanguageSwitch = useCallback(

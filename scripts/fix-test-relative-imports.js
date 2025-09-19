@@ -9,11 +9,11 @@ const path = require('path');
 
 const testFiles = [
   'tests/e2e/homepage.spec.ts',
-  'tests/e2e/i18n.spec.ts', 
+  'tests/e2e/i18n.spec.ts',
   'tests/e2e/navigation.spec.ts',
   'tests/e2e/safe-navigation.spec.ts',
   'tests/error-scenarios/error-handling-summary.test.ts',
-  'tests/error-scenarios/network-errors.test.ts'
+  'tests/error-scenarios/network-errors.test.ts',
 ];
 
 function fixTestRelativeImports(filePath) {
@@ -32,17 +32,14 @@ function fixTestRelativeImports(filePath) {
     () => {
       changeCount++;
       return `from '@/tests/e2e/test-environment-setup'`;
-    }
+    },
   );
 
   // 修复 './setup' 导入
-  modifiedContent = modifiedContent.replace(
-    /from\s+['"]\.\/setup['"]/g,
-    () => {
-      changeCount++;
-      return `from '@/tests/error-scenarios/setup'`;
-    }
-  );
+  modifiedContent = modifiedContent.replace(/from\s+['"]\.\/setup['"]/g, () => {
+    changeCount++;
+    return `from '@/tests/error-scenarios/setup'`;
+  });
 
   if (changeCount > 0) {
     fs.writeFileSync(filePath, modifiedContent, 'utf8');
@@ -54,10 +51,10 @@ function fixTestRelativeImports(filePath) {
 
 function main() {
   console.log('🔧 开始修复测试文件的相对路径导入...\n');
-  
+
   let totalFixed = 0;
-  
-  testFiles.forEach(filePath => {
+
+  testFiles.forEach((filePath) => {
     try {
       fixTestRelativeImports(filePath);
       totalFixed++;
@@ -65,7 +62,7 @@ function main() {
       console.error(`❌ 修复失败 ${filePath}:`, error.message);
     }
   });
-  
+
   console.log(`\n🎉 修复完成! 处理了 ${totalFixed} 个文件`);
 }
 

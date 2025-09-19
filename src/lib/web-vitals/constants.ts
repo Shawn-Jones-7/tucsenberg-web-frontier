@@ -1,7 +1,9 @@
-import { COUNT_4 } from "@/constants/count";
-import { BREAKPOINT_FULL_HD  } from '@/constants';
-
-import { TEST_APP_CONSTANTS, WEB_VITALS_CONSTANTS } from "@/constants/test-constants";
+import { BREAKPOINT_FULL_HD } from '@/constants';
+import { COUNT_4 } from '@/constants/count';
+import {
+  TEST_APP_CONSTANTS,
+  WEB_VITALS_CONSTANTS,
+} from '@/constants/test-constants';
 
 /**
  * Web Vitals 性能阈值常量

@@ -13,7 +13,6 @@ const isDev =
 function devOnly(fn: (...args: LogArgs) => void) {
   return (...args: LogArgs) => {
     if (isDev) {
-       
       fn(...args);
     }
   };

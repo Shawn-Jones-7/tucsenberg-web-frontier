@@ -1,7 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import { ControlPanel, PageHeader } from '@/app/[locale]/diagnostics/demo/components';
+import {
+  ControlPanel,
+  PageHeader,
+} from '@/app/[locale]/diagnostics/demo/components';
 import { useDiagnostics } from '@/app/[locale]/diagnostics/demo/hooks';
 import { MainContent } from '@/app/[locale]/diagnostics/demo/main-content';
 import { PERFORMANCE_CONSTANTS } from '@/app/[locale]/diagnostics/demo/utils';

@@ -1,5 +1,4 @@
 #!/usr/bin/env tsx
-
 import { readFileSync, writeFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 
@@ -21,58 +20,58 @@ function groupConstants(mapping: Record<string, string>): ConstantGroup[] {
     {
       title: 'HTTP状态码',
       description: 'HTTP响应状态码常量',
-      constants: []
+      constants: [],
     },
     {
       title: '时间相关常量',
       description: '时间、持续时间相关常量（毫秒）',
-      constants: []
+      constants: [],
     },
     {
       title: '响应式断点',
       description: '屏幕尺寸断点常量（像素）',
-      constants: []
+      constants: [],
     },
     {
       title: '百分比和透明度',
       description: '百分比、透明度相关常量（0-1之间的小数）',
-      constants: []
+      constants: [],
     },
     {
       title: '动画持续时间',
       description: '动画和过渡效果持续时间（毫秒）',
-      constants: []
+      constants: [],
     },
     {
       title: '内存和存储大小',
       description: '内存、存储大小相关常量（字节）',
-      constants: []
+      constants: [],
     },
     {
       title: '角度常量',
       description: '角度相关常量（度）',
-      constants: []
+      constants: [],
     },
     {
       title: '地理坐标',
       description: '地理坐标和测试坐标常量',
-      constants: []
+      constants: [],
     },
     {
       title: '端口号',
       description: '网络端口号常量',
-      constants: []
+      constants: [],
     },
     {
       title: '年份',
       description: '年份相关常量',
-      constants: []
+      constants: [],
     },
     {
       title: '数值常量',
       description: '通用数值常量',
-      constants: []
-    }
+      constants: [],
+    },
   ];
 
   // 分组映射
@@ -82,19 +81,37 @@ function groupConstants(mapping: Record<string, string>): ConstantGroup[] {
 
     if (constantName.startsWith('HTTP_')) {
       groups[0].constants.push(constant);
-    } else if (constantName.includes('_MS') || constantName.includes('SECOND') || constantName.includes('MINUTE') || constantName.includes('HOUR') || constantName.includes('DAY') || constantName.includes('TIME_')) {
+    } else if (
+      constantName.includes('_MS') ||
+      constantName.includes('SECOND') ||
+      constantName.includes('MINUTE') ||
+      constantName.includes('HOUR') ||
+      constantName.includes('DAY') ||
+      constantName.includes('TIME_')
+    ) {
       groups[1].constants.push(constant);
     } else if (constantName.startsWith('BREAKPOINT_')) {
       groups[2].constants.push(constant);
-    } else if (constantName.startsWith('PERCENT_') || constantName.startsWith('OPACITY_') || constantName.startsWith('DECIMAL_')) {
+    } else if (
+      constantName.startsWith('PERCENT_') ||
+      constantName.startsWith('OPACITY_') ||
+      constantName.startsWith('DECIMAL_')
+    ) {
       groups[3].constants.push(constant);
     } else if (constantName.startsWith('ANIMATION_')) {
       groups[4].constants.push(constant);
-    } else if (constantName.startsWith('BYTES_') || constantName.startsWith('MEMORY_')) {
+    } else if (
+      constantName.startsWith('BYTES_') ||
+      constantName.startsWith('MEMORY_')
+    ) {
       groups[5].constants.push(constant);
     } else if (constantName.startsWith('ANGLE_')) {
       groups[6].constants.push(constant);
-    } else if (constantName.startsWith('COORD_') || constantName.startsWith('TEST_COORDINATE') || constantName.startsWith('COORDINATE_')) {
+    } else if (
+      constantName.startsWith('COORD_') ||
+      constantName.startsWith('TEST_COORDINATE') ||
+      constantName.startsWith('COORDINATE_')
+    ) {
       groups[7].constants.push(constant);
     } else if (constantName.startsWith('PORT_')) {
       groups[8].constants.push(constant);
@@ -107,14 +124,14 @@ function groupConstants(mapping: Record<string, string>): ConstantGroup[] {
 
   // 过滤空组并排序
   return groups
-    .filter(group => group.constants.length > 0)
-    .map(group => ({
+    .filter((group) => group.constants.length > 0)
+    .map((group) => ({
       ...group,
       constants: group.constants.sort((a, b) => {
         const aNum = parseFloat(a.value);
         const bNum = parseFloat(b.value);
         return aNum - bNum;
-      })
+      }),
     }));
 }
 
@@ -123,12 +140,11 @@ function groupConstants(mapping: Record<string, string>): ConstantGroup[] {
  */
 function generateConstantDefinition(name: string, value: string): string {
   const num = parseFloat(value);
-  
+
   if (Number.isInteger(num)) {
     return `export const ${name} = ${num};`;
-  } 
-    return `export const ${name} = ${num};`;
-  
+  }
+  return `export const ${name} = ${num};`;
 }
 
 /**
@@ -152,48 +168,50 @@ function generateFileHeader(): string {
  */
 async function main() {
   console.log('📝 开始生成常量定义文件...');
-  
+
   // 读取映射文件
   const mappingPath = resolve(__dirname, 'mapping.json');
-  const mapping: Record<string, string> = JSON.parse(readFileSync(mappingPath, 'utf-8'));
-  
+  const mapping: Record<string, string> = JSON.parse(
+    readFileSync(mappingPath, 'utf-8'),
+  );
+
   console.log(`📊 处理 ${Object.keys(mapping).length} 个常量`);
-  
+
   // 分组常量
   const groups = groupConstants(mapping);
-  
+
   // 生成文件内容
   let content = generateFileHeader();
-  
+
   for (const group of groups) {
     content += `// ${group.title}\n`;
     content += `// ${group.description}\n`;
-    
+
     for (const constant of group.constants) {
-      content += `${generateConstantDefinition(constant.name, constant.value)  }\n`;
+      content += `${generateConstantDefinition(constant.name, constant.value)}\n`;
     }
-    
+
     content += '\n';
   }
-  
+
   // 写入文件
   const outputPath = resolve(process.cwd(), 'src/constants/magic-numbers.ts');
   writeFileSync(outputPath, content);
-  
+
   console.log('📊 常量定义文件生成完成！');
   console.log(`  总常量数: ${Object.keys(mapping).length} 个`);
   console.log(`  分组数: ${groups.length} 个`);
-  
+
   // 显示分组统计
   console.log('');
   console.log('📈 分组统计:');
-  groups.forEach(group => {
+  groups.forEach((group) => {
     console.log(`  ${group.title}: ${group.constants.length} 个`);
   });
-  
+
   console.log('');
   console.log(`📄 文件已保存到: ${outputPath}`);
-  
+
   return content;
 }
 

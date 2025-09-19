@@ -1,4 +1,4 @@
-import { ZERO } from "@/constants";
+import { ZERO } from '@/constants';
 
 /**
  * WhatsApp Template Message Type Definitions
@@ -432,5 +432,8 @@ export function createMediaParameter(
 
 // Export commonly used types with shorter names
 export type {
-  TemplateComponent as Component, TemplateLanguage as Language, TemplateParameter as Parameter, TemplateMessage as Template
+  TemplateComponent as Component,
+  TemplateLanguage as Language,
+  TemplateParameter as Parameter,
+  TemplateMessage as Template,
 };

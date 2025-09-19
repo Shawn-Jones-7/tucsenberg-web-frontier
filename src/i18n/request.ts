@@ -1,13 +1,12 @@
-import { routing } from '@/i18n/routing';
-import { COUNT_FIVE, ONE } from '@/constants';
-
+import { headers } from 'next/headers';
+import { getRequestConfig } from 'next-intl/server';
 import {
   getCachedMessages,
   I18nPerformanceMonitor,
   TranslationCache,
 } from '@/lib/i18n-performance';
-import { getRequestConfig } from 'next-intl/server';
-import { headers } from 'next/headers';
+import { COUNT_FIVE, ONE } from '@/constants';
+import { routing } from '@/i18n/routing';
 
 // 辅助函数：获取格式配置
 function getFormats(locale: string) {

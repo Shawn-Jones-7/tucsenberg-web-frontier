@@ -1,7 +1,10 @@
 import React from 'react';
 import { logger } from '@/lib/logger';
 import { themeAnalytics } from '@/lib/theme-analytics';
-import type { ViewTransition, ViewTransitionAPI } from '@/hooks/theme-transition-types';
+import type {
+  ViewTransition,
+  ViewTransitionAPI,
+} from '@/hooks/theme-transition-types';
 import {
   calculateEndRadius,
   DEFAULT_CONFIG,
@@ -20,7 +23,13 @@ function performViewTransition(args: {
   startTime: number;
   animationSetup?: (_transition: ViewTransition) => void;
 }) {
-  const { originalSetTheme, newTheme, currentTheme, startTime, animationSetup } = args;
+  const {
+    originalSetTheme,
+    newTheme,
+    currentTheme,
+    startTime,
+    animationSetup,
+  } = args;
   const documentWithTransition = document as Document & ViewTransitionAPI;
   const transition = documentWithTransition.startViewTransition(() => {
     originalSetTheme(newTheme);
@@ -79,7 +88,12 @@ export function executeThemeTransition(args: {
     // 检查是否支持 View Transitions API
     if (!supportsViewTransitions()) {
       logger.debug('View Transitions API not supported, using fallback');
-      fallbackThemeChange({ originalSetTheme, newTheme, currentTheme, startTime });
+      fallbackThemeChange({
+        originalSetTheme,
+        newTheme,
+        currentTheme,
+        startTime,
+      });
       return;
     }
 
@@ -156,7 +170,11 @@ export function executeBasicThemeTransition(
   newTheme: string,
   currentTheme?: string,
 ): void {
-  const base = { originalSetTheme, newTheme } as { originalSetTheme: (_theme: string) => void; newTheme: string; currentTheme?: string };
+  const base = { originalSetTheme, newTheme } as {
+    originalSetTheme: (_theme: string) => void;
+    newTheme: string;
+    currentTheme?: string;
+  };
   if (currentTheme) base.currentTheme = currentTheme;
   executeThemeTransition(base);
 }

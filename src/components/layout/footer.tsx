@@ -7,19 +7,18 @@
 
 'use client';
 
-import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
-import { ZERO  } from '@/constants';
-
-import { COUNT_14 } from "@/constants/count";
+import type { FC } from 'react';
+import Link from 'next/link';
+import { useLocale, useTranslations } from 'next-intl';
 import {
   FOOTER_CONFIG,
   getCopyrightText,
   type FooterLink,
   type FooterSection,
 } from '@/lib/footer-config';
-import { useLocale, useTranslations } from 'next-intl';
-import Link from 'next/link';
-import type { FC } from 'react';
+import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
+import { ZERO } from '@/constants';
+import { COUNT_14 } from '@/constants/count';
 
 // Footer Link Component
 interface FooterLinkComponentProps {

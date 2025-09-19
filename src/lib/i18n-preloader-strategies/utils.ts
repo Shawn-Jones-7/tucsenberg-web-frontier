@@ -4,9 +4,21 @@
  */
 
 import { strategyConfigs } from '@/lib/i18n-preloader-strategies/configs';
-import { COUNT_PAIR, MAGIC_0_5, MAGIC_0_9, MAGIC_9, MAGIC_17, MAGIC_18, MAGIC_22, ONE, ZERO } from '@/constants';
-
-import type { PreloadStrategyName, PreloaderMetrics } from '@/lib/i18n-preloader-types';
+import type {
+  PreloaderMetrics,
+  PreloadStrategyName,
+} from '@/lib/i18n-preloader-types';
+import {
+  COUNT_PAIR,
+  MAGIC_0_5,
+  MAGIC_0_9,
+  MAGIC_9,
+  MAGIC_17,
+  MAGIC_18,
+  MAGIC_22,
+  ONE,
+  ZERO,
+} from '@/constants';
 
 /**
  * 策略工具函数
@@ -22,9 +34,9 @@ export const StrategyUtils = {
       return 'offline';
     }
 
-    const {connection} = (navigator as {
-        connection?: { effectiveType?: string; downlink?: number };
-      });
+    const { connection } = navigator as {
+      connection?: { effectiveType?: string; downlink?: number };
+    };
     if (connection) {
       const { effectiveType, downlink } = connection;
       if (effectiveType === '4g' && (downlink ?? ZERO) > COUNT_PAIR) {
@@ -40,9 +52,9 @@ export const StrategyUtils = {
    * Check memory usage
    */
   getMemoryUsage(): number {
-    const {memory} = (performance as {
-        memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
-      });
+    const { memory } = performance as {
+      memory?: { usedJSHeapSize: number; totalJSHeapSize: number };
+    };
     if (memory) {
       const { usedJSHeapSize, totalJSHeapSize } = memory;
       return usedJSHeapSize / totalJSHeapSize;

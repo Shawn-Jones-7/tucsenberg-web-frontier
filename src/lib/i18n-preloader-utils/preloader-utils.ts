@@ -3,9 +3,6 @@
  * Preloader Utility Functions
  */
 
-import { MINUTE_MS } from "@/constants/time";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, COUNT_TRIPLE, FIVE_SECONDS_MS, HOURS_PER_DAY, MAGIC_0_1, MAGIC_0_2, MAGIC_0_8, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, SECONDS_PER_MINUTE, TEN_SECONDS_MS, ZERO } from '@/constants';
-
 import type { Locale, Messages } from '@/types/i18n';
 import type {
   IPreloader,
@@ -13,6 +10,26 @@ import type {
   PreloaderMetrics,
   PreloadResult,
 } from '@/lib/i18n-preloader-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  COUNT_TRIPLE,
+  FIVE_SECONDS_MS,
+  HOURS_PER_DAY,
+  MAGIC_0_1,
+  MAGIC_0_2,
+  MAGIC_0_8,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  SECONDS_PER_MINUTE,
+  TEN_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import { MINUTE_MS } from '@/constants/time';
 
 /**
  * 预加载器工具函数
@@ -67,7 +84,10 @@ export const PreloaderUtils = {
     const basePriority = locale === 'en' ? COUNT_TEN : COUNT_FIVE;
 
     // 根据使用频率调整
-    const usageBonus = Math.min(metrics.successfulPreloads * MAGIC_0_1, COUNT_FIVE);
+    const usageBonus = Math.min(
+      metrics.successfulPreloads * MAGIC_0_1,
+      COUNT_FIVE,
+    );
 
     // 根据错误率调整
     const errorPenalty = metrics.failedPreloads * MAGIC_0_2;
@@ -137,7 +157,9 @@ export const PreloaderUtils = {
 
     // 检查成功率
     if (stats.successRate < MAGIC_0_8) {
-      issues.push(`Low success rate: ${(stats.successRate * PERCENTAGE_FULL).toFixed(ONE)}%`);
+      issues.push(
+        `Low success rate: ${(stats.successRate * PERCENTAGE_FULL).toFixed(ONE)}%`,
+      );
       recommendations.push('Check network connectivity and API endpoints');
     }
 
@@ -193,7 +215,11 @@ export const PreloaderUtils = {
       networkThrottling: false,
       priorityQueue: true,
       cacheStrategy: 'adaptive',
-      cacheTTL: HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY hours
+      cacheTTL:
+        HOURS_PER_DAY *
+        SECONDS_PER_MINUTE *
+        SECONDS_PER_MINUTE *
+        ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY hours
       maxCacheSize: PERCENTAGE_FULL,
       enableMetrics: true,
       metricsInterval: MINUTE_MS, // 1 minute

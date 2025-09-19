@@ -1,7 +1,10 @@
 // 导入核心功能
-import { ZERO } from "@/constants";
 import { PerformanceMonitoringCore } from '@/lib/performance-monitoring-core';
-import { generateEnvironmentConfig, type PerformanceConfig } from '@/lib/performance-monitoring-types';
+import {
+  generateEnvironmentConfig,
+  type PerformanceConfig,
+} from '@/lib/performance-monitoring-types';
+import { ZERO } from '@/constants';
 
 /**
  * 性能监控协调器 - 主入口文件
@@ -17,16 +20,67 @@ import { generateEnvironmentConfig, type PerformanceConfig } from '@/lib/perform
 
 // 重新导出所有模块的类型和功能
 export {
-  createConfigManager, createConflictChecker, createMetricsManager, createReportGenerator, getDefaultConfig, PerformanceConfigManager, PerformanceCoordinator, PerformanceMetricsManager, PerformanceMonitoringCore, PerformanceReport,
-  PerformanceReportGenerator, PerformanceToolConflictChecker, quickConflictCheck, ToolConflictResult, validatePerformanceConfig
+  createConfigManager,
+  createConflictChecker,
+  createMetricsManager,
+  createReportGenerator,
+  getDefaultConfig,
+  PerformanceConfigManager,
+  PerformanceCoordinator,
+  PerformanceMetricsManager,
+  PerformanceMonitoringCore,
+  PerformanceReport,
+  PerformanceReportGenerator,
+  PerformanceToolConflictChecker,
+  quickConflictCheck,
+  ToolConflictResult,
+  validatePerformanceConfig,
 } from '@/lib/performance-monitoring-core';
 export {
-  BundleAnalyzer, BundleAnalyzerAnalyzer, BundleAnalyzerIntegration, BundleAnalyzerUtils, checkEnvironmentCompatibility, EnvironmentCheck, EnvironmentCompatibilityResult, performHealthCheck, ReactScan, ReactScanAnalyzer, ReactScanIntegration, ReactScanUtils, useBundleAnalyzerIntegration, useReactScanIntegration, useWebEvalAgentIntegration, useWebVitalsIntegration, validateBundleAnalyzerConfig, validateReactScanConfig, validateWebEvalAgentConfig, validateWebVitalsConfig, WebEvalAgent, WebEvalAgentAnalyzer, WebEvalAgentIntegration, WebVitals, WebVitalsAnalyzer, WebVitalsIntegration
+  BundleAnalyzer,
+  BundleAnalyzerAnalyzer,
+  BundleAnalyzerIntegration,
+  BundleAnalyzerUtils,
+  checkEnvironmentCompatibility,
+  EnvironmentCheck,
+  EnvironmentCompatibilityResult,
+  performHealthCheck,
+  ReactScan,
+  ReactScanAnalyzer,
+  ReactScanIntegration,
+  ReactScanUtils,
+  useBundleAnalyzerIntegration,
+  useReactScanIntegration,
+  useWebEvalAgentIntegration,
+  useWebVitalsIntegration,
+  validateBundleAnalyzerConfig,
+  validateReactScanConfig,
+  validateWebEvalAgentConfig,
+  validateWebVitalsConfig,
+  WebEvalAgent,
+  WebEvalAgentAnalyzer,
+  WebEvalAgentIntegration,
+  WebVitals,
+  WebVitalsAnalyzer,
+  WebVitalsIntegration,
 } from '@/lib/performance-monitoring-integrations';
 export {
-  BundleAnalyzerConfig, Environment, generateEnvironmentConfig, getCurrentEnvironment, isDevelopmentEnvironment,
-  isProductionEnvironment, isTestEnvironment, PerformanceConfig, PerformanceMetrics, PerformanceMetricSource,
-  PerformanceMetricType, ReactScanConfig, SizeLimitConfig, validateConfig, WebEvalAgentConfig, WebVitalsConfig
+  BundleAnalyzerConfig,
+  Environment,
+  generateEnvironmentConfig,
+  getCurrentEnvironment,
+  isDevelopmentEnvironment,
+  isProductionEnvironment,
+  isTestEnvironment,
+  PerformanceConfig,
+  PerformanceMetrics,
+  PerformanceMetricSource,
+  PerformanceMetricType,
+  ReactScanConfig,
+  SizeLimitConfig,
+  validateConfig,
+  WebEvalAgentConfig,
+  WebVitalsConfig,
 } from '@/lib/performance-monitoring-types';
 
 /**
@@ -121,9 +175,12 @@ export function useWebEvalAgentIntegration() {
         });
       }
     },
-    recordNetworkRequest: (
-      params: { url: string; method: string; status: number; timing: number },
-    ) => {
+    recordNetworkRequest: (params: {
+      url: string;
+      method: string;
+      status: number;
+      timing: number;
+    }) => {
       const { url, method, status, timing } = params;
       if (config.webEvalAgent.enabled && config.webEvalAgent.captureNetwork) {
         performanceCoordinator.recordMetric({

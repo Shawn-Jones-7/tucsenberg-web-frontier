@@ -3,8 +3,8 @@
  * Locale Storage System Async Utility Functions
  */
 
-import { ONE, ZERO } from "@/constants";
 import { STORAGE_CONSTANTS } from '@/lib/locale-storage-types-base';
+import { ONE, ZERO } from '@/constants';
 
 /**
  * 节流函数
@@ -65,7 +65,7 @@ export async function retry<T>(
   maxAttempts: number = STORAGE_CONSTANTS.MAX_RETRY_ATTEMPTS,
   delay: number = STORAGE_CONSTANTS.RETRY_DELAY,
 ): Promise<T> {
-  let lastError: Error;
+  let lastError: Error | null = null;
 
   for (let attempt = ONE; attempt <= maxAttempts; attempt++) {
     try {
@@ -81,5 +81,5 @@ export async function retry<T>(
     }
   }
 
-  throw (lastError ?? new Error('Unknown error'));
+  throw lastError ?? new Error('Unknown error');
 }

@@ -1,4 +1,8 @@
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, PERCENTAGE_FULL } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  PERCENTAGE_FULL,
+} from '@/constants';
 
 type ViewTransitionCapable = Document & {
   startViewTransition?: (callback: () => void) => unknown;
@@ -16,8 +20,12 @@ export const createCircleBlurAnimation = (
   if (!buttonElement) return '';
 
   const rect = buttonElement.getBoundingClientRect();
-  const centerX = ((rect.left + rect.width / COUNT_PAIR) / window.innerWidth) * PERCENTAGE_FULL;
-  const centerY = ((rect.top + rect.height / COUNT_PAIR) / window.innerHeight) * PERCENTAGE_FULL;
+  const centerX =
+    ((rect.left + rect.width / COUNT_PAIR) / window.innerWidth) *
+    PERCENTAGE_FULL;
+  const centerY =
+    ((rect.top + rect.height / COUNT_PAIR) / window.innerHeight) *
+    PERCENTAGE_FULL;
 
   return `
     @supports (view-transition-name: root) {

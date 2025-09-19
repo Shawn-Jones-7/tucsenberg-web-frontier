@@ -29,6 +29,15 @@ vi.mock('@/lib/colors', () => ({
   },
 }));
 
+const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(
+  globalThis,
+  'document',
+);
+const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
+  globalThis,
+  'window',
+);
+
 describe('AccessibilityManager Core Tests', () => {
   let mockElement: any;
   let mockDocument: any;
@@ -62,13 +71,25 @@ describe('AccessibilityManager Core Tests', () => {
     };
 
     // Set up global mocks
-    global.document = mockDocument as unknown as Document;
-    global.window = mockWindow as unknown as Window;
+    Object.defineProperty(globalThis, 'document', {
+      value: mockDocument,
+      configurable: true,
+    });
+    Object.defineProperty(globalThis, 'window', {
+      value: mockWindow,
+      configurable: true,
+    });
   });
 
   afterEach(() => {
     vi.useRealTimers();
     vi.clearAllMocks();
+    if (originalDocumentDescriptor) {
+      Object.defineProperty(globalThis, 'document', originalDocumentDescriptor);
+    }
+    if (originalWindowDescriptor) {
+      Object.defineProperty(globalThis, 'window', originalWindowDescriptor);
+    }
   });
 
   describe('Constants', () => {
@@ -123,15 +144,18 @@ describe('AccessibilityManager Core Tests', () => {
     });
 
     it('should handle SSR environment gracefully', () => {
-      const originalDocument = global.document;
-      delete (global as unknown).document;
+      const globalWithDocument = globalThis as { document?: Document };
+      const originalDocument = globalWithDocument.document;
+      delete globalWithDocument.document;
 
       expect(() => {
         new AccessibilityManager();
       }).not.toThrow();
 
       // Restore document
-      global.document = originalDocument;
+      if (originalDocument) {
+        globalWithDocument.document = originalDocument;
+      }
     });
   });
 

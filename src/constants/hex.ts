@@ -29,17 +29,17 @@ export const HEX_MASK_LOW_NIBBLE = 15 as const; // 15
 
 export const HEX_PNG_SIGNATURE_1 = 0x89 as const; // PNG signature byte 1
 export const HEX_PNG_SIGNATURE_2 = 0x50 as const; // PNG signature byte 2 ('P')
-export const HEX_PNG_SIGNATURE_3 = 0x4E as const; // PNG signature byte 3 ('N')
+export const HEX_PNG_SIGNATURE_3 = 0x4e as const; // PNG signature byte 3 ('N')
 export const HEX_PNG_SIGNATURE_4 = 0x47 as const; // PNG signature byte 4 ('G')
-export const HEX_PNG_SIGNATURE_5 = 0x0D as const; // PNG signature byte 5
-export const HEX_PNG_SIGNATURE_6 = 0x0A as const; // PNG signature byte 6
+export const HEX_PNG_SIGNATURE_5 = 0x0d as const; // PNG signature byte 5
+export const HEX_PNG_SIGNATURE_6 = 0x0a as const; // PNG signature byte 6
 
 // ============================================================================
 // 文件签名常量 - JPEG
 // ============================================================================
 
-export const HEX_JPEG_MARKER_1 = 0xFF as const; // JPEG marker start
-export const HEX_JPEG_SOI = 0xD8 as const; // JPEG Start of Image
+export const HEX_JPEG_MARKER_1 = 0xff as const; // JPEG marker start
+export const HEX_JPEG_SOI = 0xd8 as const; // JPEG Start of Image
 
 // ============================================================================
 // 文件签名常量 - PDF

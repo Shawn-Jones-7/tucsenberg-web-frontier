@@ -1,12 +1,21 @@
 'use client';
 
-import { LocaleStorageManager, type LocaleDetectionHistory, type UserLocalePreference } from '@/lib/locale-storage-manager';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, DAYS_PER_MONTH, HOURS_PER_DAY, SECONDS_PER_MINUTE } from '@/constants';
-
+import { useCallback, useEffect, useState } from 'react';
+import type { Locale } from '@/types/i18n';
+import {
+  LocaleStorageManager,
+  type LocaleDetectionHistory,
+  type UserLocalePreference,
+} from '@/lib/locale-storage-manager';
 import { STORAGE_KEYS } from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
-import type { Locale } from '@/types/i18n';
-import { useCallback, useEffect, useState } from 'react';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  SECONDS_PER_MINUTE,
+} from '@/constants';
 
 /**
  * React Hook: 使用语言偏好存储
@@ -241,7 +250,9 @@ export function useStorageAvailability() {
     const checkAvailability = async () => {
       try {
         // 动态导入以避免 SSR 问题
-        const { LocalStorageManager } = await import('@/lib/locale-storage-local');
+        const { LocalStorageManager } = await import(
+          '@/lib/locale-storage-local'
+        );
         const { CookieManager } = await import('@/lib/locale-storage-cookie');
 
         setIsLocalStorageAvailable(LocalStorageManager.isAvailable());
@@ -279,8 +290,14 @@ export function useAutoCleanup(
 ) {
   const {
     enabled = true,
-    intervalMs = SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 1 hour
-    maxAgeMs = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // 30 days
+    intervalMs = SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW, // 1 hour
+    maxAgeMs = DAYS_PER_MONTH *
+      HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW, // 30 days
   } = options;
 
   useEffect(() => {
@@ -325,7 +342,10 @@ export function useStorageEvents() {
 
   useEffect(() => {
     const handleStorageChange = (event: StorageEvent) => {
-      if (event.key && (Object.values(STORAGE_KEYS) as string[]).includes(event.key)) {
+      if (
+        event.key &&
+        (Object.values(STORAGE_KEYS) as string[]).includes(event.key)
+      ) {
         setLastStorageEvent({
           key: event.key,
           newValue: event.newValue,

@@ -7,12 +7,36 @@
 
 'use client';
 
-import { DEC_0_4, MAGIC_0_1, MAGIC_0_2, MAGIC_0_3, MAGIC_0_5, MAGIC_0_6, MAGIC_0_7, MAGIC_0_8 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, BYTES_PER_KB, COUNT_FIVE, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { DAYS_PER_WEEK } from "@/constants/time";
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { estimateStorageSize, type ErrorType, type PriorityLevel, type StorageHealthCheck, type StorageOperationResult, type StorageStats } from '@/lib/locale-storage-types';
+import {
+  estimateStorageSize,
+  type ErrorType,
+  type PriorityLevel,
+  type StorageHealthCheck,
+  type StorageOperationResult,
+  type StorageStats,
+} from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  BYTES_PER_KB,
+  COUNT_FIVE,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import {
+  DEC_0_4,
+  MAGIC_0_1,
+  MAGIC_0_2,
+  MAGIC_0_3,
+  MAGIC_0_5,
+  MAGIC_0_6,
+  MAGIC_0_7,
+  MAGIC_0_8,
+} from '@/constants/decimal';
+import { DAYS_PER_WEEK } from '@/constants/time';
 
 // ==================== 核心统计功能 ====================
 
@@ -28,7 +52,11 @@ interface UserPreferencePartial {
 }
 
 interface DetectionHistoryPartial {
-  history?: Array<{ detectedLocale?: string; locale?: string; timestamp?: number }>;
+  history?: Array<{
+    detectedLocale?: string;
+    locale?: string;
+    timestamp?: number;
+  }>;
   lastUpdated?: number;
 }
 
@@ -36,8 +64,12 @@ export function calculateStorageStats(): StorageStats {
   const now = Date.now();
 
   // 获取所有存储的数据
-  const userPreference = LocalStorageManager.get('user-locale-preference') as UserPreferencePartial | null;
-  const detectionHistory = (LocalStorageManager.get('locale-detection-history') || { history: [], lastUpdated: ZERO }) as DetectionHistoryPartial;
+  const userPreference = LocalStorageManager.get(
+    'user-locale-preference',
+  ) as UserPreferencePartial | null;
+  const detectionHistory = (LocalStorageManager.get(
+    'locale-detection-history',
+  ) || { history: [], lastUpdated: ZERO }) as DetectionHistoryPartial;
   const fallbackLocale = LocalStorageManager.get('fallback-locale');
 
   // 计算存储大小
@@ -47,14 +79,22 @@ export function calculateStorageStats(): StorageStats {
   const totalSize = userPreferenceSize + historySize + fallbackSize;
 
   // 计算历史记录统计
-  const historyCount = Array.isArray(detectionHistory?.history) ? detectionHistory.history.length : ZERO;
+  const historyCount = Array.isArray(detectionHistory?.history)
+    ? detectionHistory.history.length
+    : ZERO;
   const uniqueLocales = Array.isArray(detectionHistory?.history)
-    ? new Set(detectionHistory.history.map((h) => h.detectedLocale ?? h.locale ?? 'unknown')).size
+    ? new Set(
+        detectionHistory.history.map(
+          (h) => h.detectedLocale ?? h.locale ?? 'unknown',
+        ),
+      ).size
     : ZERO;
 
   // 计算最近活动
   const fallbackLastUpdated =
-    typeof fallbackLocale === 'object' && fallbackLocale !== null && 'lastUpdated' in (fallbackLocale as Record<string, unknown>)
+    typeof fallbackLocale === 'object' &&
+    fallbackLocale !== null &&
+    'lastUpdated' in (fallbackLocale as Record<string, unknown>)
       ? Number((fallbackLocale as { lastUpdated?: number }).lastUpdated ?? ZERO)
       : ZERO;
   const lastActivity = Math.max(
@@ -64,7 +104,12 @@ export function calculateStorageStats(): StorageStats {
   );
 
   // 计算数据新鲜度 (0-1, 1表示最新)
-  const maxAge = DAYS_PER_WEEK * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 7天
+  const maxAge =
+    DAYS_PER_WEEK *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW; // 7天
   const dataAge = now - lastActivity;
   const freshness = Math.max(ZERO, ONE - dataAge / maxAge);
 
@@ -83,8 +128,7 @@ export function calculateStorageStats(): StorageStats {
     historyStats: {
       totalEntries: historyCount,
       uniqueLocales,
-      oldestEntry:
-        detectionHistory?.history?.at(-ONE)?.timestamp || ZERO,
+      oldestEntry: detectionHistory?.history?.at(-ONE)?.timestamp || ZERO,
       newestEntry: detectionHistory?.history?.at(ZERO)?.timestamp || ZERO,
     },
   };
@@ -133,7 +177,12 @@ export function getStorageStats(): StorageOperationResult<StorageStats> {
 export function calculateHealthCheck(): StorageHealthCheck {
   const stats = calculateStorageStats();
   const availability = checkStorageAvailability();
-  type Issue = { type: ErrorType; severity: PriorityLevel; message: string; timestamp: number };
+  type Issue = {
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  };
   let healthScore = ONE;
   const issues: Issue[] = [];
 
@@ -180,38 +229,121 @@ export function calculateHealthCheck(): StorageHealthCheck {
 function checkAvailabilityIssues(availability: {
   localStorageAvailable: boolean;
   cookiesAvailable: boolean;
-}): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
-  const list: Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }> = [];
+}): [
+  number,
+  Array<{
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  }>,
+] {
+  const list: Array<{
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  }> = [];
   let delta = ZERO;
   if (!availability.localStorageAvailable) {
     delta += DEC_0_4;
-    list.push({ type: 'access_denied', severity: 'high', message: 'localStorage不可用', timestamp: Date.now() });
+    list.push({
+      type: 'access_denied',
+      severity: 'high',
+      message: 'localStorage不可用',
+      timestamp: Date.now(),
+    });
   }
   if (!availability.cookiesAvailable) {
     delta += MAGIC_0_2;
-    list.push({ type: 'access_denied', severity: 'medium', message: 'Cookies不可用', timestamp: Date.now() });
+    list.push({
+      type: 'access_denied',
+      severity: 'medium',
+      message: 'Cookies不可用',
+      timestamp: Date.now(),
+    });
   }
   return [delta, list];
 }
 
-function checkFreshnessIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+function checkFreshnessIssue(
+  stats: StorageStats,
+): [
+  number,
+  Array<{
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  }>,
+] {
   if (stats.freshness < MAGIC_0_5) {
-    return [MAGIC_0_2, [{ type: 'validation_error', severity: 'medium', message: '数据过期', timestamp: Date.now() }]];
+    return [
+      MAGIC_0_2,
+      [
+        {
+          type: 'validation_error',
+          severity: 'medium',
+          message: '数据过期',
+          timestamp: Date.now(),
+        },
+      ],
+    ];
   }
   return [ZERO, []];
 }
 
-function checkSizeIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+function checkSizeIssue(
+  stats: StorageStats,
+): [
+  number,
+  Array<{
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  }>,
+] {
   const maxSize = COUNT_FIVE * BYTES_PER_KB * BYTES_PER_KB; // 5MB
   if (stats.totalSize > maxSize * MAGIC_0_8) {
-    return [MAGIC_0_1, [{ type: 'storage_full', severity: 'medium', message: '存储空间使用过多', timestamp: Date.now() }]];
+    return [
+      MAGIC_0_1,
+      [
+        {
+          type: 'storage_full',
+          severity: 'medium',
+          message: '存储空间使用过多',
+          timestamp: Date.now(),
+        },
+      ],
+    ];
   }
   return [ZERO, []];
 }
 
-function checkHistoryIssue(stats: StorageStats): [number, Array<{ type: ErrorType; severity: PriorityLevel; message: string; timestamp: number }>] {
+function checkHistoryIssue(
+  stats: StorageStats,
+): [
+  number,
+  Array<{
+    type: ErrorType;
+    severity: PriorityLevel;
+    message: string;
+    timestamp: number;
+  }>,
+] {
   if (stats.historyStats.totalEntries > ANIMATION_DURATION_VERY_SLOW) {
-    return [MAGIC_0_1, [{ type: 'validation_error', severity: 'low', message: '历史记录过多', timestamp: Date.now() }]];
+    return [
+      MAGIC_0_1,
+      [
+        {
+          type: 'validation_error',
+          severity: 'low',
+          message: '历史记录过多',
+          timestamp: Date.now(),
+        },
+      ],
+    ];
   }
   return [ZERO, []];
 }

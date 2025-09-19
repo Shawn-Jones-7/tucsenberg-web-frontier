@@ -5,13 +5,13 @@
 
 'use client';
 
-import { ONE, ZERO } from "@/constants";
-import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
-import { safeGetArrayItem } from '@/lib/security-object-access';
 import {
   consoleLogListener,
   historyRecordingListener,
 } from '@/lib/locale-storage-preference-events/event-listeners';
+import { PreferenceEventManager } from '@/lib/locale-storage-preference-events/event-manager';
+import { safeGetArrayItem } from '@/lib/security-object-access';
+import { ONE, ZERO } from '@/constants';
 
 /**
  * 事件管理工具函数

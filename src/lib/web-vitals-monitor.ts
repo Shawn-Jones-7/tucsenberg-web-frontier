@@ -1,10 +1,21 @@
 'use client';
 
-import { COUNT_800, MAGIC_1800, MAGIC_2500, MAGIC_4000 } from "@/constants/count";
-import { ANIMATION_DURATION_NORMAL, ANIMATION_DURATION_SLOW, HTTP_OK, PERCENTAGE_FULL, THREE_SECONDS_MS, ZERO } from '@/constants';
-
-import { MAGIC_0_1, MAGIC_0_25 } from "@/constants/decimal";
 import { logger } from '@/lib/logger';
+import {
+  ANIMATION_DURATION_NORMAL,
+  ANIMATION_DURATION_SLOW,
+  HTTP_OK,
+  PERCENTAGE_FULL,
+  THREE_SECONDS_MS,
+  ZERO,
+} from '@/constants';
+import {
+  COUNT_800,
+  MAGIC_1800,
+  MAGIC_2500,
+  MAGIC_4000,
+} from '@/constants/count';
+import { MAGIC_0_1, MAGIC_0_25 } from '@/constants/decimal';
 
 /**
  * 扩展的PerformanceEntry接口，包含Layout Shift特定属性
@@ -181,19 +192,19 @@ export class WebVitalsMonitor {
     if ('performance' in window && 'getEntriesByType' in performance) {
       // 使用 setTimeout 确保导航时间数据可用
       setTimeout(() => {
-        const navigationEntries = performance.getEntriesByType(
-          'navigation',
-        ) as PerformanceNavigationTiming[];
-        if (navigationEntries.length > ZERO) {
-          const [navigation] = navigationEntries;
-          if (
-            navigation &&
-            navigation.responseStart &&
-            navigation.requestStart
-          ) {
-            const ttfb = navigation.responseStart - navigation.requestStart;
-            this.recordTTFB(ttfb);
-          }
+        const navigationEntries = performance.getEntriesByType('navigation') as
+          | PerformanceNavigationTiming[]
+          | undefined;
+        if (
+          !Array.isArray(navigationEntries) ||
+          navigationEntries.length <= ZERO
+        ) {
+          return;
+        }
+        const [navigation] = navigationEntries;
+        if (navigation && navigation.responseStart && navigation.requestStart) {
+          const ttfb = navigation.responseStart - navigation.requestStart;
+          this.recordTTFB(ttfb);
         }
       }, ZERO);
     }
@@ -291,7 +302,9 @@ export class WebVitalsMonitor {
     // 计算总体性能评分
     const ratingValues = Object.values(ratings);
     const goodCount = ratingValues.filter((r) => r.rating === 'good').length;
-    const score = Math.round((goodCount / ratingValues.length) * PERCENTAGE_FULL);
+    const score = Math.round(
+      (goodCount / ratingValues.length) * PERCENTAGE_FULL,
+    );
 
     return { metrics, ratings, score };
   }

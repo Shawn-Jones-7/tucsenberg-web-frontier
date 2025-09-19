@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
-export const dynamic = 'force-dynamic';
 import { getAllPages, getAllPosts, getContentStats } from '@/lib/content';
 import { logger } from '@/lib/logger';
+
+export const dynamic = 'force-dynamic';
 
 // Helper function to safely extract content example
 function getContentExample<

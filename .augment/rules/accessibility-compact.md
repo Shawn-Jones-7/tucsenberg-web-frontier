@@ -1,6 +1,6 @@
 ---
-type: "agent_requested"
-description: "Accessibility testing and WCAG 2.1 AA compliance with jest-axe integration and React 19 "
+type: "auto"
+description: "Accessibility testing and WCAG 2.1 AA compliance with jest-axe integration and React 19"
 ---
 # Accessibility Standards and Testing
 ## WCAG 2.1 AA Compliance
@@ -12,14 +12,27 @@ description: "Accessibility testing and WCAG 2.1 AA compliance with jest-axe int
 ## jest-axe Testing Setup
 ```javascript
 // jest.setup.js
-import '@testing-library/jest-dom'; import { toHaveNoViolations } from 'jest-axe'; expect.extend(toHaveNoViolations);
+import '@testing-library/jest-dom';
+import { toHaveNoViolations } from 'jest-axe';
+expect.extend(toHaveNoViolations);
 ```
 ### Testing Patterns
 ```typescript
-import { render } from '@testing-library/react'; import { axe } from 'jest-axe';
+import { render } from '@testing-library/react';
+import { axe } from 'jest-axe';
+
 describe('Component Accessibility', () => {
-  it('meets WCAG 2.1 AA standards', async () => { const { container } = render(<Component />); expect(await axe(container)).toHaveNoViolations(); });
-  it('supports keyboard navigation', async () => { const { container } = render(<InteractiveComponent />); expect(await axe(container, { rules: { 'keyboard': { enabled: true } } })).toHaveNoViolations(); });
+  it('meets WCAG 2.1 AA standards', async () => {
+    const { container } = render(<Component />);
+    expect(await axe(container)).toHaveNoViolations();
+  });
+
+  it('supports keyboard navigation', async () => {
+    const { container } = render(<InteractiveComponent />);
+    expect(await axe(container, {
+      rules: { 'keyboard': { enabled: true } }
+    })).toHaveNoViolations();
+  });
 });
 ```
 
@@ -27,10 +40,29 @@ describe('Component Accessibility', () => {
 
 ### Form Actions with Accessibility
 ```typescript
-import { useActionState, useFormStatus } from 'react';
+import { useActionState } from 'react';
+import { useFormStatus } from 'react-dom';
 function AccessibleForm() {
   const [state, formAction] = useActionState(submitAction, { message: '' });
-  return (<form action={formAction}><label htmlFor="email">Email Address</label><input id="email" name="email" type="email" required aria-describedby={state.errors?.email ? "email-error" : undefined} aria-invalid={state.errors?.email ? "true" : "false"} />{state.errors?.email && (<div id="email-error" role="alert" className="text-red-600">{state.errors.email}</div>)}<SubmitButton /></form>);
+  return (
+    <form action={formAction}>
+      <label htmlFor="email">Email Address</label>
+      <input
+        id="email"
+        name="email"
+        type="email"
+        required
+        aria-describedby={state.errors?.email ? "email-error" : undefined}
+        aria-invalid={state.errors?.email ? "true" : "false"}
+      />
+      {state.errors?.email && (
+        <div id="email-error" role="alert" className="text-red-600">
+          {state.errors.email}
+        </div>
+      )}
+      <SubmitButton />
+    </form>
+  );
 }
 function SubmitButton() {
   const { pending } = useFormStatus();

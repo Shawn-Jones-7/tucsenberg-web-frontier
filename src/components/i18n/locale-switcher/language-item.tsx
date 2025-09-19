@@ -1,9 +1,9 @@
 import { memo } from 'react';
 import { Check, Loader2 } from 'lucide-react';
 import type { Locale } from '@/types/i18n';
+import { getLanguageConfig } from '@/components/i18n/locale-switcher/config';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 import { Link } from '@/i18n/routing';
-import { getLanguageConfig } from '@/components/i18n/locale-switcher/config';
 
 interface LanguageItemProps {
   targetLocale: Locale;

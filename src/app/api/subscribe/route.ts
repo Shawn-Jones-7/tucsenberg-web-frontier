@@ -1,8 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
-export const dynamic = 'force-dynamic';
-import { HTTP_OK_CONST, HTTP_BAD_REQUEST_CONST, COUNT_FIVE, PERCENTAGE_FULL } from '@/constants';
 import { z } from 'zod';
 import { logger } from '@/lib/logger';
+import {
+  COUNT_FIVE,
+  HTTP_BAD_REQUEST_CONST,
+  HTTP_OK_CONST,
+  PERCENTAGE_FULL,
+} from '@/constants';
+
+export const dynamic = 'force-dynamic';
 
 // 邮件订阅请求验证模式
 const subscribeSchema = z.object({

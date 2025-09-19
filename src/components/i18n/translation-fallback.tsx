@@ -1,12 +1,11 @@
 'use client';
 
-import { MAGIC_0_1, PERCENTAGE_FULL } from '@/constants/decimal';
-import { ZERO } from '@/constants/magic-numbers';
-
+import { memo, useEffect, useState } from 'react';
 import { AlertTriangle } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
-import { memo, useEffect, useState } from 'react';
 import type { TranslationParams } from '@/types/i18n';
+import { MAGIC_0_1, PERCENTAGE_FULL } from '@/constants/decimal';
+import { ZERO } from '@/constants/magic-numbers';
 
 // import { Alert, AlertDescription } from '@/components/ui/alert';
 
@@ -91,7 +90,7 @@ export const SafeTranslation = memo(
       // 通过宽松的局部签名适配（不使用 any）避免类型不匹配，同时保留运行时安全
       const tAny = t as unknown as (
         key: string,
-        params?: Record<string, unknown>
+        params?: Record<string, unknown>,
       ) => string;
       const translation = values
         ? tAny(translationKey, values as Record<string, unknown>)

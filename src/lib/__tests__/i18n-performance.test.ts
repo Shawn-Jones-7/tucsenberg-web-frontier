@@ -81,7 +81,7 @@ describe('I18n Performance - Main Integration Tests', () => {
     vi.clearAllMocks();
     vi.useFakeTimers();
     // Reset singleton instance
-    (TranslationCache as { instance?: unknown }).instance = undefined;
+    Reflect.set(TranslationCache, 'instance', undefined);
     I18nPerformanceMonitor.reset();
 
     // 重新设置Mock实现

@@ -7,12 +7,26 @@
 
 'use client';
 
-import { CACHE_LIMITS } from '@/constants/i18n-constants';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_TEN, DAYS_PER_MONTH, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { LocalStorageManager } from '@/lib/locale-storage-local';
 import type { Locale } from '@/types/i18n';
-import { isLocaleDetectionHistory, type LocaleDetectionHistory, type LocaleDetectionRecord, type LocaleSource, type StorageOperationResult } from '@/lib/locale-storage-types';
+import { LocalStorageManager } from '@/lib/locale-storage-local';
+import {
+  isLocaleDetectionHistory,
+  type LocaleDetectionHistory,
+  type LocaleDetectionRecord,
+  type LocaleSource,
+  type StorageOperationResult,
+} from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_TEN,
+  DAYS_PER_MONTH,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { CACHE_LIMITS } from '@/constants/i18n-constants';
 
 // ==================== 缓存管理 ====================
 
@@ -23,7 +37,8 @@ import { isLocaleDetectionHistory, type LocaleDetectionHistory, type LocaleDetec
 export class HistoryCacheManager {
   private static cache: LocaleDetectionHistory | null = null;
   private static cacheTimestamp = ZERO;
-  private static readonly CACHE_TTL = COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 10 minutes
+  private static readonly CACHE_TTL =
+    COUNT_TEN * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW; // 10 minutes
 
   /**
    * 获取缓存的历史记录
@@ -254,7 +269,9 @@ export function validateHistoryData(
   return isLocaleDetectionHistory(history);
 }
 
-function createAndCacheDefaultHistory(startTime: number): StorageOperationResult<LocaleDetectionHistory> {
+function createAndCacheDefaultHistory(
+  startTime: number,
+): StorageOperationResult<LocaleDetectionHistory> {
   const defaultHistory: LocaleDetectionHistory = {
     detections: [],
     history: [],
@@ -339,8 +356,10 @@ export function getHistorySummary(): {
   return {
     totalRecords: records.length,
     lastUpdated: history.lastUpdated,
-    oldestRecord: records.length > ZERO ? (records.at(-ONE)?.timestamp ?? ZERO) : ZERO,
-    newestRecord: records.length > ZERO ? (records.at(ZERO)?.timestamp ?? ZERO) : ZERO,
+    oldestRecord:
+      records.length > ZERO ? (records.at(-ONE)?.timestamp ?? ZERO) : ZERO,
+    newestRecord:
+      records.length > ZERO ? (records.at(ZERO)?.timestamp ?? ZERO) : ZERO,
     cacheStatus: HistoryCacheManager.getCacheStatus(),
   };
 }
@@ -349,7 +368,13 @@ export function getHistorySummary(): {
  * 检查历史记录是否需要清理
  * Check if history needs cleanup
  */
-export function needsCleanup(maxAge: number = DAYS_PER_MONTH * HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW): {
+export function needsCleanup(
+  maxAge: number = DAYS_PER_MONTH *
+    HOURS_PER_DAY *
+    SECONDS_PER_MINUTE *
+    SECONDS_PER_MINUTE *
+    ANIMATION_DURATION_VERY_SLOW,
+): {
   needsCleanup: boolean;
   expiredCount: number;
   totalCount: number;

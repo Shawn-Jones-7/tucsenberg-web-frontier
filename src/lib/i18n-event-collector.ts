@@ -3,14 +3,14 @@
  * 负责收集、记录和发送监控事件
  */
 
-import { MONITORING_CONFIG } from '@/constants/i18n-constants';
-import { ZERO } from "@/constants";
-import { logger } from '@/lib/logger';
 import type {
   ErrorLevel,
   MonitoringConfig,
   MonitoringEvent,
 } from '@/lib/i18n-monitoring-types';
+import { logger } from '@/lib/logger';
+import { ZERO } from '@/constants';
+import { MONITORING_CONFIG } from '@/constants/i18n-constants';
 
 // 事件收集器
 export class EventCollector {

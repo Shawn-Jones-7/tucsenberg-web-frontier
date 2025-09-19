@@ -36,18 +36,19 @@ function fixImportsInFile(filePath) {
     let modified = false;
 
     // 匹配 magic-numbers 导入语句
-    const importRegex = /import\s*{\s*([^}]+)\s*}\s*from\s*['"]@\/constants\/magic-numbers['"];?/g;
-    
+    const importRegex =
+      /import\s*{\s*([^}]+)\s*}\s*from\s*['"]@\/constants\/magic-numbers['"];?/g;
+
     let match;
     while ((match = importRegex.exec(content)) !== null) {
       const fullImport = match[0];
       const importList = match[1];
-      
+
       // 替换为统一导入
       const newImport = `import { ${importList} } from '@/constants';`;
       content = content.replace(fullImport, newImport);
       modified = true;
-      
+
       console.log(`✅ 修复导入: ${filePath}`);
       console.log(`  原始: ${fullImport}`);
       console.log(`  修复: ${newImport}`);
@@ -70,16 +71,16 @@ function main() {
   console.log('🔧 开始修复常量导入语句...\n');
 
   const files = findFilesWithMagicNumbersImports();
-  
+
   if (files.length === 0) {
     console.log('✅ 没有找到需要修复的文件');
     return;
   }
 
   console.log(`📁 找到 ${files.length} 个需要修复的文件:\n`);
-  
+
   let fixedCount = 0;
-  
+
   for (const file of files) {
     if (fs.existsSync(file)) {
       fixedCount += fixImportsInFile(file);
@@ -87,7 +88,7 @@ function main() {
   }
 
   console.log(`\n🎉 修复完成！共修复 ${fixedCount} 个文件`);
-  
+
   // 验证修复结果
   console.log('\n🔍 验证修复结果...');
   try {

@@ -4,6 +4,7 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
+
 // Avoid importing TS/alias-based runtime modules into next.config to keep config load stable.
 function computeSecurityHeaders(nonce?: string) {
   const isEnabled = process.env.SECURITY_HEADERS_ENABLED !== 'false';
@@ -57,7 +58,8 @@ function computeSecurityHeaders(nonce?: string) {
   const csp = Object.entries(cspDirectives)
     .filter(([, value]) => value !== undefined)
     .map(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0) return `${key} ${value.join(' ')}`;
+      if (Array.isArray(value) && value.length > 0)
+        return `${key} ${value.join(' ')}`;
       return key;
     })
     .join('; ');
@@ -66,12 +68,22 @@ function computeSecurityHeaders(nonce?: string) {
     { key: 'X-Frame-Options', value: 'DENY' },
     { key: 'X-Content-Type-Options', value: 'nosniff' },
     { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-    { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains; preload' },
+    {
+      key: 'Strict-Transport-Security',
+      value: 'max-age=63072000; includeSubDomains; preload',
+    },
     { key: 'X-XSS-Protection', value: '1; mode=block' },
     { key: 'Content-Security-Policy', value: csp },
     {
       key: 'Permissions-Policy',
-      value: ['camera=()', 'microphone=()', 'geolocation=()', 'interest-cohort=()', 'payment=()', 'usb=()'].join(', '),
+      value: [
+        'camera=()',
+        'microphone=()',
+        'geolocation=()',
+        'interest-cohort=()',
+        'payment=()',
+        'usb=()',
+      ].join(', '),
     },
     { key: 'Cross-Origin-Embedder-Policy', value: 'unsafe-none' },
     { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
@@ -146,7 +158,9 @@ const nextConfig: NextConfig = {
       // 避免在构建期/收集阶段加载第三方库内部复杂依赖
       // 尤其是 airtable 等 SDK
       // 说明：commonjs 形式 external 不会影响运行时 require/import
-      (config.externals ||= [] as any[]).push({ airtable: 'commonjs airtable' });
+      (config.externals ||= [] as unknown[]).push({
+        airtable: 'commonjs airtable',
+      });
     }
 
     // 生产环境包大小优化 - 细粒度代码分割

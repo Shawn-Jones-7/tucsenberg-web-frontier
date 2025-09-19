@@ -1,11 +1,10 @@
 'use client';
 
-import { MAGIC_0_1 } from "@/constants/decimal";
-import { ZERO  } from '@/constants';
-
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { AccessibilityUtils } from '@/lib/accessibility';
 import { logger } from '@/lib/logger';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ZERO } from '@/constants';
+import { MAGIC_0_1 } from '@/constants/decimal';
 
 /**
  * Intersection Observer Hook 配置选项

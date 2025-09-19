@@ -402,13 +402,12 @@ describe('OKLCH颜色系统', () => {
 
   describe('generateCSSVariables', () => {
     it('should generate CSS variables with correct naming', () => {
-      const testColors = {
+      const testColors: Partial<ThemeColors> = {
         background: { l: 1, c: 0, h: 0 },
         foreground: { l: 0, c: 0, h: 0 },
         primaryForeground: { l: 1, c: 0, h: 0 },
       };
 
-      // @ts-expect-error - Testing with incomplete theme colors
       const variables = generateCSSVariables(testColors);
 
       expect(variables).toEqual({
@@ -419,11 +418,10 @@ describe('OKLCH颜色系统', () => {
     });
 
     it('should handle prefix correctly', () => {
-      const testColors = {
+      const testColors: Partial<ThemeColors> = {
         background: { l: 1, c: 0, h: 0 },
       };
 
-      // @ts-expect-error - Testing with incomplete theme colors
       const variables = generateCSSVariables(testColors, 'theme-');
 
       expect(variables).toEqual({
@@ -438,15 +436,14 @@ describe('OKLCH颜色系统', () => {
     });
 
     it('should handle colors with alpha values', () => {
-      const testColors = {
-        overlay: { l: 0.5, c: 0, h: 0, alpha: 0.8 },
+      const testColors: Partial<ThemeColors> = {
+        accent: { l: 0.5, c: 0, h: 0, alpha: 0.8 },
       };
 
-      // @ts-expect-error - Testing with incomplete theme colors
       const variables = generateCSSVariables(testColors);
 
       expect(variables).toEqual({
-        '--overlay': 'oklch(0.5 0 0 / 0.8)',
+        '--accent': 'oklch(0.5 0 0 / 0.8)',
       });
     });
   });
@@ -510,11 +507,13 @@ describe('OKLCH颜色系统', () => {
       const lowContrastColor1 = { l: 0.5, c: 0, h: 0 };
       const lowContrastColor2 = { l: 0.55, c: 0, h: 0 };
 
-      const badTheme = {
+      const badTheme: ThemeColors = {
         background: lowContrastColor1,
         foreground: lowContrastColor2,
         card: lowContrastColor1,
         cardForeground: lowContrastColor2,
+        popover: lowContrastColor1,
+        popoverForeground: lowContrastColor2,
         primary: lowContrastColor1,
         primaryForeground: lowContrastColor2,
         secondary: lowContrastColor1,
@@ -525,6 +524,9 @@ describe('OKLCH颜色系统', () => {
         accentForeground: lowContrastColor2,
         destructive: lowContrastColor1,
         destructiveForeground: lowContrastColor2,
+        border: lowContrastColor1,
+        input: lowContrastColor1,
+        ring: lowContrastColor1,
         success: lowContrastColor1,
         successForeground: lowContrastColor2,
         warning: lowContrastColor1,
@@ -535,7 +537,6 @@ describe('OKLCH颜色系统', () => {
         infoForeground: lowContrastColor2,
       };
 
-      // @ts-expect-error - Testing with incomplete theme colors
       const validation = validateThemeContrast(badTheme);
 
       expect(validation.compliant).toBe(false);

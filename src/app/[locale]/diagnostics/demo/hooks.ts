@@ -1,14 +1,14 @@
 import { useCallback, useState } from 'react';
 import {
-  analyzePerformance,
-  testWebVitalsCollection,
-} from '@/scripts/test-web-vitals';
-import {
   exportTestResults,
   PERFORMANCE_CONSTANTS,
   simulatePerformanceIssues,
   type TestResults,
 } from '@/app/[locale]/diagnostics/demo/utils';
+import {
+  analyzePerformance,
+  testWebVitalsCollection,
+} from '@/scripts/test-web-vitals';
 
 // 诊断功能 Hook
 export function useDiagnostics() {

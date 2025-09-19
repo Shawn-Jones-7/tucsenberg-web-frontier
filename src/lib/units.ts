@@ -1,19 +1,19 @@
 /**
  * 单位转换工具库
- * 
+ *
  * 用于替代硬编码的时间、尺寸、百分比等数值常量
  * 提供语义化的单位转换函数，提升代码可读性
- * 
+ *
  * @example
  * ```typescript
  * // 时间相关
  * setTimeout(callback, seconds(5)); // 替代 5000
  * setInterval(poll, minutes(2));    // 替代 120000
- * 
+ *
  * // 百分比相关
  * opacity: percent(85);             // 替代 0.85
  * width: `${percent(50) * 100}%`;   // 替代 50
- * 
+ *
  * // 尺寸相关
  * padding: pixels(16);              // 替代 16
  * margin: rem(2);                   // 替代 2
@@ -28,7 +28,7 @@
  * 将秒转换为毫秒
  * @param seconds 秒数
  * @returns 毫秒数
- * 
+ *
  * @example
  * ```typescript
  * setTimeout(callback, seconds(5));     // 5000ms
@@ -41,7 +41,7 @@ export const seconds = (value: number): number => value * 1000;
  * 将分钟转换为毫秒
  * @param minutes 分钟数
  * @returns 毫秒数
- * 
+ *
  * @example
  * ```typescript
  * setInterval(poll, minutes(2));        // 120000ms
@@ -54,7 +54,7 @@ export const minutes = (value: number): number => value * (60 * 1000);
  * 将小时转换为毫秒
  * @param hours 小时数
  * @returns 毫秒数
- * 
+ *
  * @example
  * ```typescript
  * const cacheExpiry = hours(24);        // 86400000ms
@@ -67,7 +67,7 @@ export const hours = (value: number): number => value * (60 * 60 * 1000);
  * 将天转换为毫秒
  * @param days 天数
  * @returns 毫秒数
- * 
+ *
  * @example
  * ```typescript
  * const weekInMs = days(7);             // 604800000ms
@@ -84,7 +84,7 @@ export const days = (value: number): number => value * (24 * 60 * 60 * 1000);
  * 将百分比转换为小数（0-1之间）
  * @param percentage 百分比数值（0-100）
  * @returns 小数值（0-1）
- * 
+ *
  * @example
  * ```typescript
  * opacity: percent(85);                 // 0.85
@@ -97,7 +97,7 @@ export const percent = (percentage: number): number => percentage / 100;
  * 将小数转换为百分比
  * @param decimal 小数值（0-1）
  * @returns 百分比数值（0-100）
- * 
+ *
  * @example
  * ```typescript
  * const progress = toPercent(0.75);     // 75
@@ -111,14 +111,14 @@ export const toPercent = (decimal: number): number => decimal * 100;
  * @param numerator 分子
  * @param denominator 分母
  * @returns 小数值
- * 
+ *
  * @example
  * ```typescript
  * const ratio = fraction(3, 4);         // 0.75
  * const portion = fraction(1, 3);       // 0.333...
  * ```
  */
-export const fraction = (numerator: number, denominator: number): number => 
+export const fraction = (numerator: number, denominator: number): number =>
   numerator / denominator;
 
 // ============================================================================
@@ -129,7 +129,7 @@ export const fraction = (numerator: number, denominator: number): number =>
  * 像素值（语义化标识）
  * @param px 像素数值
  * @returns 像素数值（原样返回，用于语义标识）
- * 
+ *
  * @example
  * ```typescript
  * padding: pixels(16);                  // 16
@@ -142,7 +142,7 @@ export const pixels = (value: number): number => value;
  * rem单位值（语义化标识）
  * @param rem rem数值
  * @returns rem数值（原样返回，用于语义标识）
- * 
+ *
  * @example
  * ```typescript
  * fontSize: rem(1.5);                   // 1.5
@@ -155,7 +155,7 @@ export const rem = (value: number): number => value;
  * em单位值（语义化标识）
  * @param em em数值
  * @returns em数值（原样返回，用于语义标识）
- * 
+ *
  * @example
  * ```typescript
  * padding: em(0.5);                     // 0.5
@@ -172,7 +172,7 @@ export const em = (value: number): number => value;
  * 角度值（语义化标识）
  * @param degrees 角度数值
  * @returns 角度数值（原样返回，用于语义标识）
- * 
+ *
  * @example
  * ```typescript
  * transform: `rotate(${degrees(45)}deg)`;   // rotate(45deg)
@@ -185,27 +185,29 @@ export const degrees = (value: number): number => value;
  * 弧度转角度
  * @param radians 弧度值
  * @returns 角度值
- * 
+ *
  * @example
  * ```typescript
  * const angle = radiansToDegrees(Math.PI);  // 180
  * const rotation = radiansToDegrees(Math.PI / 2); // 90
  * ```
  */
-export const radiansToDegrees = (value: number): number => value * ((360 / 2) / Math.PI);
+export const radiansToDegrees = (value: number): number =>
+  value * (360 / 2 / Math.PI);
 
 /**
  * 角度转弧度
  * @param degrees 角度值
  * @returns 弧度值
- * 
+ *
  * @example
  * ```typescript
  * const radians = degreesToRadians(180);    // Math.PI
  * const halfPi = degreesToRadians(90);      // Math.PI / 2
  * ```
  */
-export const degreesToRadians = (value: number): number => value * (Math.PI / (360 / 2));
+export const degreesToRadians = (value: number): number =>
+  value * (Math.PI / (360 / 2));
 
 // ============================================================================
 // 数据大小单位转换
@@ -237,7 +239,8 @@ export const megabytes = (value: number): number => value * (1024 * 1024);
  * @param gb GB数值
  * @returns 字节数
  */
-export const gigabytes = (value: number): number => value * (1024 * 1024 * 1024);
+export const gigabytes = (value: number): number =>
+  value * (1024 * 1024 * 1024);
 
 // ============================================================================
 // 常用数学常量和比例

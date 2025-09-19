@@ -3,7 +3,6 @@
  * Translation Preloader Strategy Factory and Collections
  */
 
-import type { PreloadStrategy, PreloadStrategyName, PreloaderMetrics } from '@/lib/i18n-preloader-types';
 import {
   adaptiveStrategy,
   batchStrategy,
@@ -21,6 +20,11 @@ import {
 } from '@/lib/i18n-preloader-strategies/basic-strategies';
 import { strategyConfigs } from '@/lib/i18n-preloader-strategies/configs';
 import { PreloadStrategyManager } from '@/lib/i18n-preloader-strategies/manager';
+import type {
+  PreloaderMetrics,
+  PreloadStrategy,
+  PreloadStrategyName,
+} from '@/lib/i18n-preloader-types';
 
 /**
  * 预加载策略集合
@@ -63,16 +67,28 @@ export function createStrategyManager(): PreloadStrategyManager {
   for (const key of keys) {
     switch (key) {
       case 'immediate':
-        manager.registerStrategy('immediate', immediateStrategy, strategyConfigs.immediate);
+        manager.registerStrategy(
+          'immediate',
+          immediateStrategy,
+          strategyConfigs.immediate,
+        );
         break;
       case 'smart':
         manager.registerStrategy('smart', smartStrategy, strategyConfigs.smart);
         break;
       case 'progressive':
-        manager.registerStrategy('progressive', progressiveStrategy, strategyConfigs.progressive);
+        manager.registerStrategy(
+          'progressive',
+          progressiveStrategy,
+          strategyConfigs.progressive,
+        );
         break;
       case 'priority':
-        manager.registerStrategy('priority', priorityStrategy, strategyConfigs.priority);
+        manager.registerStrategy(
+          'priority',
+          priorityStrategy,
+          strategyConfigs.priority,
+        );
         break;
       case 'lazy':
         manager.registerStrategy('lazy', lazyStrategy, strategyConfigs.lazy);
@@ -81,7 +97,11 @@ export function createStrategyManager(): PreloadStrategyManager {
         manager.registerStrategy('batch', batchStrategy, strategyConfigs.batch);
         break;
       case 'adaptive':
-        manager.registerStrategy('adaptive', adaptiveStrategy, strategyConfigs.adaptive);
+        manager.registerStrategy(
+          'adaptive',
+          adaptiveStrategy,
+          strategyConfigs.adaptive,
+        );
         break;
       case 'networkAware':
         manager.registerStrategy(
@@ -91,7 +111,11 @@ export function createStrategyManager(): PreloadStrategyManager {
         );
         break;
       case 'timeAware':
-        manager.registerStrategy('timeAware', timeAwareStrategy, strategyConfigs.timeAware);
+        manager.registerStrategy(
+          'timeAware',
+          timeAwareStrategy,
+          strategyConfigs.timeAware,
+        );
         break;
       case 'memoryAware':
         manager.registerStrategy(

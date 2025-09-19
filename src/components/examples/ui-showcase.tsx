@@ -1,14 +1,14 @@
 'use client';
 
 import * as React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { useToast } from '@/hooks/use-toast';
 import {
   CarouselDemoSection,
   ProgressBarDemoSection,
   ToastDemoSection,
   TypographyDemoSection,
 } from '@/components/examples/ui-showcase-sections';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { useToast } from '@/hooks/use-toast';
 
 /**
  * UI Showcase component demonstrating the new UI enhancement components

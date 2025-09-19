@@ -1,6 +1,6 @@
-import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
 import { COUNT_PAIR, ZERO } from '@/constants';
 import { MAGIC_15 } from '@/constants/count';
+import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
 
 /**
  * Security configuration for the application
@@ -92,7 +92,7 @@ export function getSecurityHeaders(nonce?: string, testMode = false) {
   // Use process.env here to keep this module safe for Next config evaluation.
   // Runtime env validation lives in env.mjs, but importing it here would break next.config load.
   const isSecurityEnabled =
-    (testMode || process.env.NODE_ENV === 'test')
+    testMode || process.env.NODE_ENV === 'test'
       ? process.env.SECURITY_HEADERS_ENABLED !== 'false'
       : process.env.SECURITY_HEADERS_ENABLED !== 'false';
 

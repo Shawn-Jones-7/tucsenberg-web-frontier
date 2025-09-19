@@ -478,7 +478,7 @@ class BarrelExportTransformer {
                 (this.transformStats.filesTransformed /
                   this.transformStats.filesProcessed) *
                 100
-              ).toFixed(2)  }%`
+              ).toFixed(2)}%`
             : '0%',
       },
     };

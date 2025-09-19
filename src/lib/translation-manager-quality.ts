@@ -1,9 +1,3 @@
-import { MAGIC_0_8 } from "@/constants/decimal";
-import { COUNT_FIVE, COUNT_TRIPLE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from '@/constants';
-
-import { QUALITY_SCORING } from '@/constants/i18n-constants';
-import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
-import { TranslationQualityChecker } from '@/lib/translation-quality-checker';
 import type { Locale } from '@/types/i18n';
 import type {
   LocaleQualityReport,
@@ -14,6 +8,8 @@ import type {
   TranslationManagerConfig,
   ValidationReport,
 } from '@/types/translation-manager';
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
+import { TranslationQualityChecker } from '@/lib/translation-quality-checker';
 import {
   calculateConfidence,
   flattenTranslations,
@@ -21,6 +17,15 @@ import {
   generateSuggestions,
   isEmptyTranslation,
 } from '@/lib/translation-utils';
+import {
+  COUNT_FIVE,
+  COUNT_TRIPLE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  ZERO,
+} from '@/constants';
+import { MAGIC_0_8 } from '@/constants/decimal';
+import { QUALITY_SCORING } from '@/constants/i18n-constants';
 
 /**
  * 翻译质量管理器
@@ -42,10 +47,16 @@ export class TranslationQualityManager {
     translations: Partial<Record<Locale, Record<string, unknown>>>,
   ): Promise<ValidationReport> {
     const issues: QualityIssue[] = [];
-    const byLocale: Record<Locale, LocaleQualityReport> = {} as Record<Locale, LocaleQualityReport>;
+    const byLocale: Record<Locale, LocaleQualityReport> = {} as Record<
+      Locale,
+      LocaleQualityReport
+    >;
 
     for (const locale of this.config.locales) {
-      const { localeReport, collectedIssues } = await this.processLocale(translations, locale);
+      const { localeReport, collectedIssues } = await this.processLocale(
+        translations,
+        locale,
+      );
       issues.push(...collectedIssues);
 
       // 安全赋值：避免动态索引
@@ -62,7 +73,9 @@ export class TranslationQualityManager {
     }
 
     const overallScore =
-      issues.length === ZERO ? PERCENTAGE_FULL : Math.max(ZERO, PERCENTAGE_FULL - issues.length * COUNT_FIVE);
+      issues.length === ZERO
+        ? PERCENTAGE_FULL
+        : Math.max(ZERO, PERCENTAGE_FULL - issues.length * COUNT_FIVE);
 
     return {
       isValid: issues.length === ZERO,
@@ -225,7 +238,8 @@ export class TranslationQualityManager {
       return value && !isEmptyTranslation(value);
     }).length;
 
-    const completeness = totalKeys > ZERO ? (translatedKeys / totalKeys) * PERCENTAGE_FULL : ZERO;
+    const completeness =
+      totalKeys > ZERO ? (translatedKeys / totalKeys) * PERCENTAGE_FULL : ZERO;
     const accuracy = this.calculateAccuracy(qualityIssues);
     const consistency = this.calculateConsistency(flatTranslations);
 
@@ -294,9 +308,13 @@ export class TranslationQualityManager {
   private async processLocale(
     translations: Partial<Record<Locale, Record<string, unknown>>>,
     locale: Locale,
-  ): Promise<{ localeReport: LocaleQualityReport; collectedIssues: QualityIssue[] }> {
+  ): Promise<{
+    localeReport: LocaleQualityReport;
+    collectedIssues: QualityIssue[];
+  }> {
     const collectedIssues: QualityIssue[] = [];
-    const localeTranslations = TranslationManagerSecurity.getTranslationsForLocale(translations, locale);
+    const localeTranslations =
+      TranslationManagerSecurity.getTranslationsForLocale(translations, locale);
     const flatTranslations = flattenTranslations(localeTranslations);
 
     // 检查缺失与空翻译
@@ -308,19 +326,29 @@ export class TranslationQualityManager {
     const qualityIssues: QualityIssue[] = [];
     for (const [key, translation] of Object.entries(flatTranslations)) {
       if (translation && typeof translation === 'string') {
-        const qualityResult = await this.qualityChecker.checkLingoTranslation(key, translation);
+        const qualityResult = await this.qualityChecker.checkLingoTranslation(
+          key,
+          translation,
+        );
         qualityIssues.push(...qualityResult.issues);
       }
     }
     collectedIssues.push(...qualityIssues);
 
     // 生成本地化报告
-    const qualityScore = this.calculateQualityScore(flatTranslations, qualityIssues);
+    const qualityScore = this.calculateQualityScore(
+      flatTranslations,
+      qualityIssues,
+    );
     const totalKeys = Object.keys(flatTranslations).length;
-    const translatedKeysCount = Object.keys(flatTranslations).filter((key) =>
-      !isEmptyTranslation(
-        TranslationManagerSecurity.getTranslationValue(flatTranslations, key) || '',
-      ),
+    const translatedKeysCount = Object.keys(flatTranslations).filter(
+      (key) =>
+        !isEmptyTranslation(
+          TranslationManagerSecurity.getTranslationValue(
+            flatTranslations,
+            key,
+          ) || '',
+        ),
     ).length;
 
     const localeReport: LocaleQualityReport = {

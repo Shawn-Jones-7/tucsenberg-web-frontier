@@ -7,13 +7,23 @@
 
 'use client';
 
-import { DEC_0_01, MAGIC_0_5, MAGIC_0_7 } from "@/constants/decimal";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, COUNT_TRIPLE, ONE, ZERO } from '@/constants';
-
+import type { Locale } from '@/types/i18n';
 import { CookieManager } from '@/lib/locale-storage-cookie';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { isUserLocalePreference, type StorageOperationResult, type UserLocalePreference, type ValidationResult } from '@/lib/locale-storage-types';
-import type { Locale } from '@/types/i18n';
+import {
+  isUserLocalePreference,
+  type StorageOperationResult,
+  type UserLocalePreference,
+  type ValidationResult,
+} from '@/lib/locale-storage-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  COUNT_TRIPLE,
+  ONE,
+  ZERO,
+} from '@/constants';
+import { DEC_0_01, MAGIC_0_5, MAGIC_0_7 } from '@/constants/decimal';
 
 // ==================== 数据验证功能 ====================
 
@@ -52,7 +62,10 @@ export function validatePreferenceData(preference: unknown): ValidationResult {
   }
 
   // 验证时间戳
-  if (typeof preference.timestamp !== 'number' || preference.timestamp <= ZERO) {
+  if (
+    typeof preference.timestamp !== 'number' ||
+    preference.timestamp <= ZERO
+  ) {
     errors.push('Invalid timestamp');
   }
 
@@ -275,7 +288,9 @@ export function getPreferenceSourcePriority(): Array<{
   return [
     {
       source: 'localStorage',
-      available: Boolean(localPreference && validatePreferenceData(localPreference).isValid),
+      available: Boolean(
+        localPreference && validatePreferenceData(localPreference).isValid,
+      ),
       priority: ONE,
     },
     {
@@ -316,7 +331,9 @@ export function comparePreferences(
     differences.push(`confidence: ${pref1.confidence} vs ${pref2.confidence}`);
   }
 
-  if (Math.abs(pref1.timestamp - pref2.timestamp) > ANIMATION_DURATION_VERY_SLOW) {
+  if (
+    Math.abs(pref1.timestamp - pref2.timestamp) > ANIMATION_DURATION_VERY_SLOW
+  ) {
     differences.push(`timestamp: ${pref1.timestamp} vs ${pref2.timestamp}`);
   }
 

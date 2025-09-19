@@ -133,18 +133,29 @@ Object.defineProperty(window, 'matchMedia', {
 });
 
 // Mock ResizeObserver for React components that use it
-globalThis.ResizeObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+class MockResizeObserver {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
+
+globalThis.ResizeObserver = MockResizeObserver as unknown as typeof ResizeObserver;
 
 // Mock IntersectionObserver for React components that use it
-globalThis.IntersectionObserver = vi.fn().mockImplementation(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+class MockIntersectionObserver {
+  readonly observe = vi.fn();
+  readonly unobserve = vi.fn();
+  readonly disconnect = vi.fn();
+  readonly takeRecords = vi.fn().mockReturnValue([]);
+
+  constructor(
+    _callback?: IntersectionObserverCallback,
+    _options?: IntersectionObserverInit,
+  ) {}
+}
+
+globalThis.IntersectionObserver =
+  MockIntersectionObserver as unknown as typeof IntersectionObserver;
 
 // Mock PerformanceObserver for performance monitoring
 const MockPerformanceObserver = vi.fn().mockImplementation((_callback) => ({
@@ -199,21 +210,32 @@ vi.mock('../../env.mjs', () => ({
   },
 }));
 
-// Mock validations module for API tests
-vi.mock('../lib/validations', () => ({
-  contactFormSchema: {
-    extend: vi.fn(() => ({
-      safeParse: vi.fn(() => ({
-        success: true,
-        data: {},
-      })),
-    })),
-    safeParse: vi.fn(() => ({
-      success: true,
-      data: {},
-    })),
-  },
-}));
+// Mock validations 模块 - 采用局部代理保留真实逻辑，方便测试按需覆写
+vi.mock('../lib/validations', async () => {
+  const actual =
+    await vi.importActual<typeof import('../lib/validations')>(
+      '../lib/validations',
+    );
+
+  const schema = actual.contactFormSchema;
+
+  const extendMock = vi.fn(schema.extend.bind(schema));
+  const safeParseMock = vi.fn(schema.safeParse.bind(schema));
+  const parseMock = vi.fn(schema.parse.bind(schema));
+  const parseAsyncMock = vi.fn(schema.parseAsync.bind(schema));
+
+  Object.assign(schema, {
+    extend: extendMock,
+    safeParse: safeParseMock,
+    parse: parseMock,
+    parseAsync: parseAsyncMock,
+  });
+
+  return {
+    ...actual,
+    contactFormSchema: schema,
+  };
+});
 
 // Mock requestAnimationFrame for animations
 globalThis.requestAnimationFrame = vi.fn((cb) => {

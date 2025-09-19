@@ -1,4 +1,10 @@
-import { ANIMATION_DURATION_VERY_SLOW, ONE, PERCENTAGE_FULL, THIRTY_SECONDS_MS, ZERO } from '@/constants';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  ONE,
+  PERCENTAGE_FULL,
+  THIRTY_SECONDS_MS,
+  ZERO,
+} from '@/constants';
 
 interface I18nEvent {
   type: 'locale_change' | 'translation_error' | 'fallback_used' | 'load_time';
@@ -197,7 +203,9 @@ export class I18nAnalytics {
     try {
       // Google Analytics 4
       if (typeof window !== 'undefined' && 'gtag' in window) {
-        const win = window as Window & { gtag?: (type: string, action: string, data: unknown) => void };
+        const win = window as Window & {
+          gtag?: (type: string, action: string, data: unknown) => void;
+        };
         if (typeof win.gtag === 'function') {
           win.gtag('event', eventType, data);
         }
@@ -323,7 +331,9 @@ export class I18nAnalytics {
     const errorEvents = events.filter(
       (e) => e.type === 'translation_error',
     ).length;
-    return events.length > ZERO ? (errorEvents / events.length) * PERCENTAGE_FULL : ZERO;
+    return events.length > ZERO
+      ? (errorEvents / events.length) * PERCENTAGE_FULL
+      : ZERO;
   }
 
   private calculatePerformanceScore(events: I18nEvent[]): number {

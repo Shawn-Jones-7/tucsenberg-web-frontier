@@ -1,17 +1,5 @@
 'use client';
 
-import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui/card';
-import { MAGIC_0_2 } from "@/constants/decimal";
-import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
-import { PROJECT_STATS, TECH_ARCHITECTURE } from '@/lib/site-config';
 import {
   ArrowRight,
   CheckCircle,
@@ -24,6 +12,18 @@ import {
   Zap,
 } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { PROJECT_STATS, TECH_ARCHITECTURE } from '@/lib/site-config';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@/components/ui/card';
+import { MAGIC_0_2 } from '@/constants/decimal';
+import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
 function FeatureGrid({ t }: { t: (_key: string) => string }) {
   const features = [

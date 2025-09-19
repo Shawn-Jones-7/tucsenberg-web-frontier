@@ -13,9 +13,15 @@
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type {
+  AirtableBaseLike,
   AirtableServicePrivate,
   DynamicImportModule,
 } from '@/types/test-types';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import {
+  configureServiceForTesting,
+  createMockBase,
+} from './airtable/test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();
@@ -28,10 +34,18 @@ const mockTable = vi.fn().mockReturnValue({
   update: mockUpdate,
   destroy: mockDestroy,
 });
-const mockBase = vi.fn().mockReturnValue({
-  table: mockTable,
-});
+
+const tableFactory: AirtableBaseLike['table'] = (name) => {
+  // ensure junction for tests that inspect table name if needed
+  void name;
+  return mockTable() as ReturnType<AirtableBaseLike['table']>;
+};
+
+const mockBase = vi.fn(() => createMockBase(tableFactory));
 const mockConfigure = vi.fn();
+
+const setServiceReady = (service: unknown) =>
+  configureServiceForTesting(service, createMockBase(tableFactory));
 
 vi.mock('airtable', () => ({
   default: {
@@ -57,7 +71,8 @@ vi.mock('./validations', async () => {
 });
 
 describe('Airtable Service - Main Operations Tests', () => {
-  let AirtableServiceClass: any;
+  let AirtableServiceClass: typeof AirtableServiceType;
+  let AirtableService: typeof AirtableServiceType;
 
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
@@ -71,7 +86,8 @@ describe('Airtable Service - Main Operations Tests', () => {
 
     // Dynamically import the module to ensure fresh instance
     const module = (await import('../airtable')) as DynamicImportModule;
-    AirtableServiceClass = module.AirtableService;
+    AirtableServiceClass = module.AirtableService as typeof AirtableServiceType;
+    AirtableService = module.AirtableService as typeof AirtableServiceType;
   });
 
   afterEach(() => {
@@ -105,10 +121,7 @@ describe('Airtable Service - Main Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Override service configuration to make it ready
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       // Mock successful creation
       mockCreate.mockResolvedValue([
@@ -128,11 +141,7 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle basic contact retrieval', async () => {
       const service = new AirtableServiceClass();
 
-      // Override service configuration to make it ready
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       const mockRecords = [
         {
@@ -155,22 +164,19 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle contact status updates', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockUpdate.mockResolvedValue([
         {
           id: 'rec123456',
-          fields: { Status: 'Contacted' },
+          fields: { Status: 'Completed' },
           createdTime: '2023-01-01T00:00:00Z',
         },
       ]);
 
       const result = await service.updateContactStatus(
         'rec123456',
-        'Contacted',
+        'Completed',
       );
 
       expect(result).toEqual({ id: 'rec123456' });
@@ -180,10 +186,7 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle contact deletion', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockDestroy.mockResolvedValue([{ id: 'rec123456', deleted: true }]);
 
@@ -201,10 +204,7 @@ describe('Airtable Service - Main Operations Tests', () => {
       expect(service.isReady()).toBe(false);
 
       // Test with valid configuration
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
       expect(service.isReady()).toBe(true);
     });
   });
@@ -214,8 +214,8 @@ describe('Airtable Service - Main Operations Tests', () => {
       const service = new AirtableServiceClass();
 
       // Ensure service is not configured
-      (service as AirtableServicePrivate).isConfigured = false;
-      (service as AirtableServicePrivate).base = null;
+      (service as unknown as AirtableServicePrivate).isConfigured = false;
+      (service as unknown as AirtableServicePrivate).base = null;
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
         'Airtable service is not configured',
@@ -225,10 +225,7 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle API errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as AirtableServicePrivate).isConfigured = true;
-      (service as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockCreate.mockRejectedValue(new Error('API Error'));
 
@@ -240,10 +237,7 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle retrieval errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockSelect.mockReturnValue({
         all: vi.fn().mockRejectedValue(new Error('Retrieval failed')),
@@ -255,25 +249,19 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle update errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockUpdate.mockRejectedValue(new Error('Update failed'));
 
       await expect(
-        service.updateContactStatus('rec123456', 'Contacted'),
+        service.updateContactStatus('rec123456', 'Completed'),
       ).rejects.toThrow('Update failed');
     });
 
     it('should handle deletion errors gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       mockDestroy.mockRejectedValue(new Error('Deletion failed'));
 
@@ -306,11 +294,7 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should return true when properly configured', () => {
       const service = new AirtableServiceClass();
 
-      // Override service configuration to make it ready
-      (service as unknown as AirtableServicePrivate).isConfigured = true;
-      (service as unknown as AirtableServicePrivate).base = {
-        table: mockTable,
-      };
+      setServiceReady(service);
 
       expect(service.isReady()).toBe(true);
     });

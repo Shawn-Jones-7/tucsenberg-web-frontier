@@ -1,17 +1,18 @@
-import { MAGIC_85 } from "@/constants/count";
-import { MAGIC_0_8 } from "@/constants/decimal";
-import { logger } from '@/lib/logger';
-import { TranslationQualityManager } from '@/lib/translation-manager-quality';
-import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
-import { safeSetProperty } from '@/lib/security-object-access';
 import type { Locale } from '@/types/i18n';
 import type {
+  LocaleQualityReport,
   QualityReport,
   QualityScore,
   TranslationManagerConfig,
   TranslationQualityCheck,
   ValidationReport,
 } from '@/types/translation-manager';
+import { logger } from '@/lib/logger';
+import { safeSetProperty } from '@/lib/security-object-access';
+import { TranslationQualityManager } from '@/lib/translation-manager-quality';
+import { TranslationManagerSecurity } from '@/lib/translation-manager-security';
+import { MAGIC_85 } from '@/constants/count';
+import { MAGIC_0_8 } from '@/constants/decimal';
 
 /**
  * 翻译管理器核心类
@@ -20,6 +21,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
   private config: TranslationManagerConfig;
   private translations: Partial<Record<Locale, Record<string, unknown>>> = {};
   private qualityManager: TranslationQualityManager;
+  private localeValidationCache = new Map<Locale, LocaleQualityReport>();
 
   constructor(config: TranslationManagerConfig) {
     this.config = config;
@@ -150,6 +152,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
       locale,
       translations,
     );
+    this.localeValidationCache.clear();
   }
 
   /**
@@ -165,6 +168,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
   async reload(): Promise<void> {
     this.translations = {};
     await this.loadTranslations();
+    this.localeValidationCache.clear();
   }
 
   /**
@@ -180,6 +184,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
   updateConfig(newConfig: Partial<TranslationManagerConfig>): void {
     this.config = { ...this.config, ...newConfig };
     this.qualityManager = new TranslationQualityManager(this.config);
+    this.localeValidationCache.clear();
   }
 
   /**
@@ -224,6 +229,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     safeSetProperty({ obj: updatedTranslations, key, value });
 
     this.setTranslations(locale, updatedTranslations);
+    this.localeValidationCache.clear();
   }
 
   /**
@@ -243,6 +249,7 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     );
 
     this.setTranslations(locale, updatedTranslations);
+    this.localeValidationCache.clear();
   }
 
   /**
@@ -261,7 +268,10 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     >;
 
     const setStatsForLocale = (
-      target: Record<Locale, { total: number; translated: number; missing: number }>,
+      target: Record<
+        Locale,
+        { total: number; translated: number; missing: number }
+      >,
       locale: Locale,
       data: { total: number; translated: number; missing: number },
     ) => {
@@ -296,5 +306,64 @@ export class TranslationManagerCore implements TranslationQualityCheck {
     }
 
     return stats;
+  }
+
+  /**
+   * 批量获取翻译，便于测试与批处理场景
+   */
+  getBatchTranslations(keys: string[], locale: Locale): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
+    for (const key of keys) {
+      result[key] = this.getTranslation(locale, key);
+    }
+    return result;
+  }
+
+  /**
+   * 验证指定语言的翻译质量
+   */
+  async validateTranslationQuality(locale: Locale): Promise<LocaleQualityReport> {
+    if (!this.config.locales.includes(locale)) {
+      throw new Error(`Locale ${locale} is not configured for validation`);
+    }
+
+    const cached = this.localeValidationCache.get(locale);
+    if (cached) {
+      return cached;
+    }
+
+    const validation = await this.qualityManager.validateTranslations(
+      this.translations,
+    );
+    const localeReport = validation.byLocale[locale];
+
+    const normalizedReport: LocaleQualityReport = localeReport
+      ? { ...localeReport }
+      : {
+          locale,
+          totalKeys: 0,
+          validKeys: 0,
+          translatedKeys: 0,
+          missingKeys: 0,
+          emptyKeys: 0,
+          issues: [],
+          score: validation.score,
+          timestamp: validation.timestamp,
+          confidence: 0,
+          suggestions: [],
+        };
+
+    this.localeValidationCache.set(locale, normalizedReport);
+    return normalizedReport;
+  }
+
+  /**
+   * 验证所有已配置语言
+   */
+  async validateAllLocales(): Promise<LocaleQualityReport[]> {
+    const reports = await Promise.all(
+      this.config.locales.map((locale) => this.validateTranslationQuality(locale)),
+    );
+    return reports;
   }
 }

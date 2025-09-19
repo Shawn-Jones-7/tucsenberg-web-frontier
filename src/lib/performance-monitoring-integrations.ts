@@ -1,7 +1,10 @@
 // 向后兼容的重新导出（仅保留别名所需的类型导入）
 import type { BundleAnalyzerIntegration } from '@/lib/performance-monitoring-integrations-bundle';
 import type { ReactScanIntegration } from '@/lib/performance-monitoring-integrations-react-scan';
-import type { EnvironmentCompatibilityResult, WebVitalsIntegration } from '@/lib/performance-monitoring-integrations-vitals';
+import type {
+  EnvironmentCompatibilityResult,
+  WebVitalsIntegration,
+} from '@/lib/performance-monitoring-integrations-vitals';
 import type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
 
 /**

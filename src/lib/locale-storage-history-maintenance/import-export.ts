@@ -11,12 +11,11 @@ import {
   validateHistoryData,
 } from '@/lib/locale-storage-history-core';
 import { LocalStorageManager } from '@/lib/locale-storage-local';
-import { COUNT_PAIR  } from '@/constants';
-
 import type {
   LocaleDetectionHistory,
   StorageOperationResult,
 } from '@/lib/locale-storage-types';
+import { COUNT_PAIR } from '@/constants';
 
 /**
  * 导出历史记录

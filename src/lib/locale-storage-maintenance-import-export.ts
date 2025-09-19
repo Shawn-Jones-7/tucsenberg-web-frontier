@@ -7,14 +7,18 @@
 
 'use client';
 
+import type { Locale } from '@/types/i18n';
 import { CookieManager } from '@/lib/locale-storage-cookie';
-import { COUNT_FIVE, COUNT_PAIR, ONE, ZERO } from '@/constants';
-
 import { LocalStorageManager } from '@/lib/locale-storage-local';
 import { LocaleValidationManager } from '@/lib/locale-storage-maintenance-validation';
-import { STORAGE_KEYS, type LocaleDetectionHistory, type StorageOperationResult, type UserLocalePreference } from '@/lib/locale-storage-types';
+import {
+  STORAGE_KEYS,
+  type LocaleDetectionHistory,
+  type StorageOperationResult,
+  type UserLocalePreference,
+} from '@/lib/locale-storage-types';
 import { logger } from '@/lib/logger';
-import type { Locale } from '@/types/i18n';
+import { COUNT_FIVE, COUNT_PAIR, ONE, ZERO } from '@/constants';
 
 /**
  * 导出数据接口
@@ -122,16 +126,10 @@ export class LocaleImportExportManager {
     }
   }
 
-  private static importPreference(
-    data: ImportData,
-    errors: string[],
-  ): number {
+  private static importPreference(data: ImportData, errors: string[]): number {
     if (!data.preference) return ZERO;
     if (LocaleValidationManager.validatePreferenceData(data.preference)) {
-      LocalStorageManager.set(
-        STORAGE_KEYS.LOCALE_PREFERENCE,
-        data.preference,
-      );
+      LocalStorageManager.set(STORAGE_KEYS.LOCALE_PREFERENCE, data.preference);
       CookieManager.set(
         STORAGE_KEYS.LOCALE_PREFERENCE,
         JSON.stringify(data.preference),
@@ -142,16 +140,10 @@ export class LocaleImportExportManager {
     return ZERO;
   }
 
-  private static importOverride(
-    data: ImportData,
-    errors: string[],
-  ): number {
+  private static importOverride(data: ImportData, errors: string[]): number {
     if (!data.override) return ZERO;
     if (typeof data.override === 'string') {
-      LocalStorageManager.set(
-        STORAGE_KEYS.USER_LOCALE_OVERRIDE,
-        data.override,
-      );
+      LocalStorageManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, data.override);
       CookieManager.set(STORAGE_KEYS.USER_LOCALE_OVERRIDE, data.override);
       return ONE;
     }
@@ -159,10 +151,7 @@ export class LocaleImportExportManager {
     return ZERO;
   }
 
-  private static importHistory(
-    data: ImportData,
-    errors: string[],
-  ): number {
+  private static importHistory(data: ImportData, errors: string[]): number {
     if (!data.history) return ZERO;
     if (LocaleValidationManager.validateHistoryData(data.history)) {
       LocalStorageManager.set(
@@ -341,7 +330,9 @@ export class LocaleImportExportManager {
    * 清理旧备份
    * Clean up old backups
    */
-  static cleanupOldBackups(maxBackups: number = COUNT_FIVE): StorageOperationResult {
+  static cleanupOldBackups(
+    maxBackups: number = COUNT_FIVE,
+  ): StorageOperationResult {
     try {
       const backups = this.listBackups();
 

@@ -32,9 +32,18 @@ export const recordThemeSwitch = (
   fromTheme: string,
   toTheme: string,
   duration?: number,
+  options?: { supportsViewTransitions?: boolean },
 ) => {
   const now = Date.now();
   const startTime = duration ? now - duration : now;
-  themeAnalytics.recordThemeSwitch(fromTheme, toTheme, startTime, now);
+  themeAnalytics.recordThemeSwitch({
+    fromTheme,
+    toTheme,
+    startTime,
+    endTime: now,
+    ...(options?.supportsViewTransitions !== undefined && {
+      supportsViewTransitions: options.supportsViewTransitions,
+    }),
+  });
 };
 export const sendThemeReport = () => themeAnalytics.sendPerformanceReport();

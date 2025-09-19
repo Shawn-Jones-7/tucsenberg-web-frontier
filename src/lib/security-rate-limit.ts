@@ -1,7 +1,15 @@
-import { MAGIC_20 } from "@/constants/count";
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE, COUNT_PAIR, COUNT_TEN, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
-import { MINUTE_MS } from "@/constants/time";
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_FIVE,
+  COUNT_PAIR,
+  COUNT_TEN,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
+import { MAGIC_20 } from '@/constants/count';
+import { MINUTE_MS } from '@/constants/time';
 
 /**
  * 速率限制工具
@@ -155,7 +163,9 @@ export interface RateLimitTier {
   windowMs: number;
 }
 
-const defaultTiers: Record<string, RateLimitTier> = {
+type DefaultTierKey = 'strict' | 'normal' | 'relaxed' | 'premium';
+
+const defaultTiers: Record<DefaultTierKey, RateLimitTier> = {
   strict: {
     name: 'strict',
     maxRequests: COUNT_FIVE,
@@ -176,32 +186,30 @@ const defaultTiers: Record<string, RateLimitTier> = {
     maxRequests: PERCENTAGE_FULL,
     windowMs: MINUTE_MS, // 1 minute
   },
-};
+} as const;
+
+const allowedTierKeys: ReadonlyArray<DefaultTierKey> = [
+  'strict',
+  'normal',
+  'relaxed',
+  'premium',
+];
+
+const isDefaultTierKey = (value: string): value is DefaultTierKey =>
+  allowedTierKeys.includes(value as DefaultTierKey);
 
 /**
  * Rate limit with tier support
  */
 export function rateLimitWithTier(
   identifier: string,
-  tierName: keyof typeof defaultTiers = 'normal',
+  tierName: string = 'normal',
 ): boolean {
-  const allowed = ['strict', 'normal', 'relaxed', 'premium'] as const;
-  const tierKey = allowed.includes(tierName as typeof allowed[number]) ? (tierName as typeof allowed[number]) : 'normal';
-  // 使用安全访问器避免动态对象注入
-  const tier = ((): RateLimitTier => {
-    switch (tierKey) {
-      case 'strict':
-        return defaultTiers.strict;
-      case 'normal':
-        return defaultTiers.normal;
-      case 'relaxed':
-        return defaultTiers.relaxed;
-      case 'premium':
-        return defaultTiers.premium;
-      default:
-        return defaultTiers.normal;
-    }
-  })();
+  const tierKey: DefaultTierKey = isDefaultTierKey(tierName)
+    ? tierName
+    : 'normal';
+
+  const tier = defaultTiers[tierKey];
 
   return rateLimit(identifier, tier.maxRequests, tier.windowMs);
 }

@@ -6,10 +6,9 @@
  * 按照CODEX建议，验证enhanced-codex-mapping.json中每个映射条目
  * 与实际模块导出的一致性，生成缺失/冲突报告
  */
-
-import { Project, SourceFile } from 'ts-morph';
 import fs from 'fs';
 import path from 'path';
+import { Project, SourceFile } from 'ts-morph';
 
 interface MappingEntry {
   export: string;
@@ -47,7 +46,7 @@ class MappingValidator {
       valid: [],
       missing: [],
       conflicts: [],
-      duplicates: []
+      duplicates: [],
     };
 
     // 检查重复导出
@@ -76,7 +75,10 @@ class MappingValidator {
   /**
    * 检查重复导出
    */
-  private checkDuplicateExports(mappingData: Record<string, MappingEntry>, result: ValidationResult) {
+  private checkDuplicateExports(
+    mappingData: Record<string, MappingEntry>,
+    result: ValidationResult,
+  ) {
     const exportMap = new Map<string, string[]>();
 
     for (const entry of Object.values(mappingData)) {
@@ -97,13 +99,17 @@ class MappingValidator {
   /**
    * 验证单个映射条目
    */
-  private async validateEntry(value: string, entry: MappingEntry, result: ValidationResult) {
+  private async validateEntry(
+    value: string,
+    entry: MappingEntry,
+    result: ValidationResult,
+  ) {
     try {
       // 检查条目是否有效
       if (!entry || !entry.export || !entry.module) {
         result.conflicts.push({
           entry,
-          reason: `Invalid mapping entry: missing export or module field`
+          reason: `Invalid mapping entry: missing export or module field`,
         });
         return;
       }
@@ -114,7 +120,7 @@ class MappingValidator {
       if (!sourceFile) {
         result.missing.push({
           entry,
-          reason: `Module file not found: ${modulePath}`
+          reason: `Module file not found: ${modulePath}`,
         });
         return;
       }
@@ -123,7 +129,7 @@ class MappingValidator {
       if (!hasExport) {
         result.missing.push({
           entry,
-          reason: `Export '${entry.export}' not found in module ${entry.module}`
+          reason: `Export '${entry.export}' not found in module ${entry.module}`,
         });
         return;
       }
@@ -132,7 +138,7 @@ class MappingValidator {
     } catch (error) {
       result.conflicts.push({
         entry,
-        reason: `Validation error: ${error}`
+        reason: `Validation error: ${error}`,
       });
     }
   }
@@ -143,22 +149,29 @@ class MappingValidator {
   private resolveModulePath(moduleSpecifier: string): string {
     // 处理 @/ 别名
     if (moduleSpecifier.startsWith('@/')) {
-      return path.resolve(this.srcPath, `${moduleSpecifier.slice(2)  }.ts`);
+      return path.resolve(this.srcPath, `${moduleSpecifier.slice(2)}.ts`);
     }
 
     // 处理相对路径
     if (moduleSpecifier.startsWith('./')) {
-      return path.resolve(this.srcPath, 'constants', `${moduleSpecifier.slice(2)  }.ts`);
+      return path.resolve(
+        this.srcPath,
+        'constants',
+        `${moduleSpecifier.slice(2)}.ts`,
+      );
     }
 
     // 处理绝对路径
-    return path.resolve(this.srcPath, `${moduleSpecifier  }.ts`);
+    return path.resolve(this.srcPath, `${moduleSpecifier}.ts`);
   }
 
   /**
    * 检查导出是否存在
    */
-  private checkExportExists(sourceFile: SourceFile, exportName: string): boolean {
+  private checkExportExists(
+    sourceFile: SourceFile,
+    exportName: string,
+  ): boolean {
     // 检查命名导出
     const namedExports = sourceFile.getExportedDeclarations();
     if (namedExports.has(exportName)) {
@@ -172,8 +185,14 @@ class MappingValidator {
         // 这是 export * from '...' 的情况
         const moduleSpecifier = exportDecl.getModuleSpecifierValue();
         if (moduleSpecifier) {
-          const reexportedFile = this.resolveReexportedFile(sourceFile, moduleSpecifier);
-          if (reexportedFile && this.checkExportExists(reexportedFile, exportName)) {
+          const reexportedFile = this.resolveReexportedFile(
+            sourceFile,
+            moduleSpecifier,
+          );
+          if (
+            reexportedFile &&
+            this.checkExportExists(reexportedFile, exportName)
+          ) {
             return true;
           }
         }
@@ -186,16 +205,22 @@ class MappingValidator {
   /**
    * 解析重新导出的文件
    */
-  private resolveReexportedFile(sourceFile: SourceFile, moduleSpecifier: string): SourceFile | undefined {
+  private resolveReexportedFile(
+    sourceFile: SourceFile,
+    moduleSpecifier: string,
+  ): SourceFile | undefined {
     const sourceDir = path.dirname(sourceFile.getFilePath());
     let resolvedPath: string;
 
     if (moduleSpecifier.startsWith('./') || moduleSpecifier.startsWith('../')) {
-      resolvedPath = path.resolve(sourceDir, `${moduleSpecifier  }.ts`);
+      resolvedPath = path.resolve(sourceDir, `${moduleSpecifier}.ts`);
     } else if (moduleSpecifier.startsWith('@/')) {
-      resolvedPath = path.resolve(this.srcPath, `${moduleSpecifier.slice(2)  }.ts`);
+      resolvedPath = path.resolve(
+        this.srcPath,
+        `${moduleSpecifier.slice(2)}.ts`,
+      );
     } else {
-      resolvedPath = path.resolve(sourceDir, `${moduleSpecifier  }.ts`);
+      resolvedPath = path.resolve(sourceDir, `${moduleSpecifier}.ts`);
     }
 
     return this.project.getSourceFile(resolvedPath);
@@ -224,7 +249,9 @@ class MappingValidator {
     if (result.missing.length > 0) {
       lines.push('## 缺失导出');
       for (const item of result.missing) {
-        lines.push(`- **${item.entry.export}** (${item.entry.module}): ${item.reason}`);
+        lines.push(
+          `- **${item.entry.export}** (${item.entry.module}): ${item.reason}`,
+        );
       }
       lines.push('');
     }
@@ -233,7 +260,9 @@ class MappingValidator {
     if (result.conflicts.length > 0) {
       lines.push('## 冲突错误');
       for (const item of result.conflicts) {
-        lines.push(`- **${item.entry.export}** (${item.entry.module}): ${item.reason}`);
+        lines.push(
+          `- **${item.entry.export}** (${item.entry.module}): ${item.reason}`,
+        );
       }
       lines.push('');
     }
@@ -272,7 +301,6 @@ async function main() {
     // 返回适当的退出码
     const hasErrors = result.missing.length > 0 || result.conflicts.length > 0;
     process.exit(hasErrors ? 1 : 0);
-
   } catch (error) {
     console.error('❌ 验证失败:', error);
     process.exit(1);

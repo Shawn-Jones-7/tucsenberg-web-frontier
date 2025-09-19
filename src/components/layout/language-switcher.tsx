@@ -6,6 +6,18 @@
  */
 'use client';
 
+import {
+  memo,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from 'react';
+import { Check, Globe, Languages, Loader2 } from 'lucide-react';
+import { useLocale, useTranslations } from 'next-intl';
+import { NAVIGATION_ARIA } from '@/lib/navigation';
+import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -14,14 +26,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { LOCALES_CONFIG } from '@/config/paths';
+import { COUNT_PAIR } from '@/constants';
 import { UI_TIMINGS } from '@/constants/i18n-constants';
-import { COUNT_PAIR } from "@/constants";
 import { Link, usePathname } from '@/i18n/routing';
-import { NAVIGATION_ARIA } from '@/lib/navigation';
-import { cn } from '@/lib/utils';
-import { Check, Globe, Languages, Loader2 } from 'lucide-react';
-import { useLocale, useTranslations } from 'next-intl';
-import { memo, useCallback, useEffect, useRef, useState, useTransition } from 'react';
 
 /**
  * Language Switcher Component
@@ -94,7 +101,10 @@ const useLanguageSwitch = () => {
   }, [scheduleSuccessReset]);
 
   const scheduleTransition = useCallback(() => {
-    transitionTimeoutRef.current = setTimeout(finalizeSwitch, TRANSITION_TIMEOUT);
+    transitionTimeoutRef.current = setTimeout(
+      finalizeSwitch,
+      TRANSITION_TIMEOUT,
+    );
   }, [finalizeSwitch]);
 
   const handleLanguageSwitch = useCallback(

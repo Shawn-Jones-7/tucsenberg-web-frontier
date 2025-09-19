@@ -1,10 +1,10 @@
 'use client';
 
-import { ZERO } from '@/constants/magic-numbers';
-import { logger } from '@/lib/logger';
+import { useEffect, type ReactNode } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import { useLocale } from 'next-intl';
-import { type ReactNode, useEffect } from 'react';
+import { logger } from '@/lib/logger';
+import { ZERO } from '@/constants/magic-numbers';
 
 /**
  * 使用全局 logger（开发环境输出，生产环境静默）
@@ -40,7 +40,10 @@ const hasGoogleAnalytics = (
 ): candidate is Window & { gtag: GoogleAnalyticsTracker } =>
   typeof candidate.gtag === 'function';
 
-const trackWithVercelAnalytics = (eventName: string, properties: Record<string, unknown>) => {
+const trackWithVercelAnalytics = (
+  eventName: string,
+  properties: Record<string, unknown>,
+) => {
   if (typeof window === 'undefined') return;
   const analyticsWindow = window as Window & { va?: unknown };
   if (hasVercelAnalytics(analyticsWindow)) {
@@ -48,7 +51,10 @@ const trackWithVercelAnalytics = (eventName: string, properties: Record<string, 
   }
 };
 
-const trackWithGoogleAnalytics = (eventName: string, properties: Record<string, unknown>) => {
+const trackWithGoogleAnalytics = (
+  eventName: string,
+  properties: Record<string, unknown>,
+) => {
   if (typeof window === 'undefined') return;
   const analyticsWindow = window as Window & { gtag?: unknown };
   if (hasGoogleAnalytics(analyticsWindow)) {
@@ -170,7 +176,9 @@ function trackNavigation(locale: string): void {
 function initPerformanceMonitoring(locale: string): void {
   // 监控页面加载性能
   const collectPerformanceMetrics = () => {
-    const navigationEntries = performance.getEntriesByType('navigation') as PerformanceNavigationTiming[];
+    const navigationEntries = performance.getEntriesByType(
+      'navigation',
+    ) as PerformanceNavigationTiming[];
     const navigation = navigationEntries.find(() => true);
 
     if (!navigation) {

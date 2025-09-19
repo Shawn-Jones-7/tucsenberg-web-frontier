@@ -67,6 +67,7 @@ describe('i18n Request Configuration', () => {
     get: vi.fn(),
     set: vi.fn(),
   };
+  let performanceNowSpy: ReturnType<typeof vi.spyOn>;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -80,9 +81,13 @@ describe('i18n Request Configuration', () => {
     });
 
     // Mock performance.now
-    global.performance = {
-      now: vi.fn().mockReturnValue(100),
-    } as Performance;
+    performanceNowSpy = vi
+      .spyOn(globalThis.performance, 'now')
+      .mockReturnValue(100);
+  });
+
+  afterEach(() => {
+    performanceNowSpy.mockRestore();
   });
 
   describe('基础配置', () => {

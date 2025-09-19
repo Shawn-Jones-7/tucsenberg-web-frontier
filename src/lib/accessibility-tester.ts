@@ -1,4 +1,11 @@
-import { COUNT_TRIPLE, MAGIC_0_8, ONE, PERCENTAGE_FULL, PERCENTAGE_HALF, ZERO } from '@/constants';
+import {
+  COUNT_TRIPLE,
+  MAGIC_0_8,
+  ONE,
+  PERCENTAGE_FULL,
+  PERCENTAGE_HALF,
+  ZERO,
+} from '@/constants';
 
 /**
  * 无障碍性测试工具
@@ -117,11 +124,16 @@ export class AccessibilityTester {
       const links = document.querySelectorAll('a[href]');
 
       const triggerResults = await this.runActivationTestsOnTriggers(triggers);
-      const linkResults = await this.runActivationTestsOnLinks(links, COUNT_TRIPLE);
-      const activationTests = triggerResults.activationTests + linkResults.activationTests;
+      const linkResults = await this.runActivationTestsOnLinks(
+        links,
+        COUNT_TRIPLE,
+      );
+      const activationTests =
+        triggerResults.activationTests + linkResults.activationTests;
       const passedTests = triggerResults.passedTests + linkResults.passedTests;
 
-      const successRate = activationTests > ZERO ? passedTests / activationTests : ZERO;
+      const successRate =
+        activationTests > ZERO ? passedTests / activationTests : ZERO;
 
       return {
         testName,
@@ -148,7 +160,9 @@ export class AccessibilityTester {
     }
   }
 
-  private async runActivationTestsOnTriggers(triggers: NodeListOf<Element>): Promise<{ activationTests: number; passedTests: number }> {
+  private async runActivationTestsOnTriggers(
+    triggers: NodeListOf<Element>,
+  ): Promise<{ activationTests: number; passedTests: number }> {
     let activationTests = 0;
     let passedTests = 0;
     for (const trigger of triggers) {
@@ -164,7 +178,10 @@ export class AccessibilityTester {
     return { activationTests, passedTests };
   }
 
-  private async runActivationTestsOnLinks(links: NodeListOf<Element>, maxCount: number): Promise<{ activationTests: number; passedTests: number }> {
+  private async runActivationTestsOnLinks(
+    links: NodeListOf<Element>,
+    maxCount: number,
+  ): Promise<{ activationTests: number; passedTests: number }> {
     let activationTests = 0;
     let passedTests = 0;
     const list = Array.from(links).slice(0, maxCount);
@@ -226,16 +243,26 @@ export class AccessibilityTester {
     }
   }
 
-  private async testEscapeOnTrigger(element: HTMLElement): Promise<boolean | null> {
+  private async testEscapeOnTrigger(
+    element: HTMLElement,
+  ): Promise<boolean | null> {
     element.focus();
     element.click();
     await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
-    const isOpen = element.getAttribute('data-state') === 'open' || element.getAttribute('aria-expanded') === 'true';
+    const isOpen =
+      element.getAttribute('data-state') === 'open' ||
+      element.getAttribute('aria-expanded') === 'true';
     if (!isOpen) return null;
-    const escapeEvent = new KeyboardEvent('keydown', { key: 'Escape', bubbles: true, cancelable: true });
+    const escapeEvent = new KeyboardEvent('keydown', {
+      key: 'Escape',
+      bubbles: true,
+      cancelable: true,
+    });
     element.dispatchEvent(escapeEvent);
     await new Promise((resolve) => setTimeout(resolve, PERCENTAGE_FULL));
-    const isClosed = element.getAttribute('data-state') !== 'open' && element.getAttribute('aria-expanded') !== 'true';
+    const isClosed =
+      element.getAttribute('data-state') !== 'open' &&
+      element.getAttribute('aria-expanded') !== 'true';
     return isClosed;
   }
 

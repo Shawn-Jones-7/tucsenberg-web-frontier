@@ -1,12 +1,12 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 import { AnimatedIcon } from '@/components/shared/animated-icon';
 import { ProgressIndicator } from '@/components/shared/progress-indicator';
 import { Button } from '@/components/ui/button';
-import { ONE } from "@/constants";
+import { ONE } from '@/constants';
 import { Link } from '@/i18n/routing';
-import { cn } from '@/lib/utils';
-import { useTranslations } from 'next-intl';
 
 interface UnderConstructionProps {
   pageType: 'products' | 'blog' | 'about' | 'contact';

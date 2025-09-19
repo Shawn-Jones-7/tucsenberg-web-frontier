@@ -1,7 +1,7 @@
-import { validateMonitoringData } from '@/app/api/monitoring/dashboard/types';
-import { HTTP_BAD_REQUEST } from "@/constants";
-import { logger } from '@/lib/logger';
 import { NextRequest, NextResponse } from 'next/server';
+import { logger } from '@/lib/logger';
+import { validateMonitoringData } from '@/app/api/monitoring/dashboard/types';
+import { HTTP_BAD_REQUEST } from '@/constants';
 
 /**
  * POST /api/monitoring/dashboard

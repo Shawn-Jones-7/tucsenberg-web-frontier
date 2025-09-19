@@ -3,9 +3,9 @@
  * Security headers and configuration utilities
  */
 
-import { env } from '@/../env.mjs';
-import { ZERO } from "@/constants";
 import { logger } from '@/lib/logger';
+import { env } from '@/../env.mjs';
+import { ZERO } from '@/constants';
 
 /**
  * Security headers for API responses
@@ -274,7 +274,9 @@ export function validateSecurityHeaders(headers: Record<string, string>): {
 
   const headerKeys = new Set(Object.keys(headers));
   const missing = requiredHeaders.filter((header) => !headerKeys.has(header));
-  const recommendations = recommendedHeaders.filter((header) => !headerKeys.has(header));
+  const recommendations = recommendedHeaders.filter(
+    (header) => !headerKeys.has(header),
+  );
 
   return {
     valid: missing.length === ZERO,

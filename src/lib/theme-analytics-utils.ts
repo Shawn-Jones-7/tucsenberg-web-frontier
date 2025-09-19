@@ -4,14 +4,21 @@
  */
 
 import * as Sentry from '@sentry/nextjs';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_PAIR, HOURS_PER_DAY, ONE, PERCENTAGE_FULL, SECONDS_PER_MINUTE, ZERO } from '@/constants';
-
 import type {
   ThemePerformanceMetrics,
   ThemePerformanceSummary,
   ThemeSwitchPattern,
   ThemeUsageStats,
 } from '@/lib/theme-analytics-types';
+import {
+  ANIMATION_DURATION_VERY_SLOW,
+  COUNT_PAIR,
+  HOURS_PER_DAY,
+  ONE,
+  PERCENTAGE_FULL,
+  SECONDS_PER_MINUTE,
+  ZERO,
+} from '@/constants';
 
 /**
  * 主题分析工具类
@@ -141,7 +148,10 @@ export class ThemeAnalyticsUtils {
    */
   static cleanupOldData(
     performanceMetrics: ThemePerformanceMetrics[],
-    maxAge: number = HOURS_PER_DAY * SECONDS_PER_MINUTE * SECONDS_PER_MINUTE * ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY小时
+    maxAge: number = HOURS_PER_DAY *
+      SECONDS_PER_MINUTE *
+      SECONDS_PER_MINUTE *
+      ANIMATION_DURATION_VERY_SLOW, // HOURS_PER_DAY小时
   ): void {
     const cutoffTime = Date.now() - maxAge;
 
