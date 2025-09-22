@@ -5,9 +5,9 @@
  * 注意：高级功能测试请参考 progress-indicator.test.tsx
  */
 
-import { ProgressIndicator } from '@/components/shared/progress-indicator';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 // Mock useTranslations
 const mockUseTranslations = vi.fn();
@@ -204,7 +204,10 @@ describe('ProgressIndicator - 核心功能测试', () => {
       expect(currentStepButton).toHaveAttribute('aria-current', 'step');
 
       // 验证这个按钮确实是开发阶段的按钮
-      expect(currentStepButton).toHaveAttribute('aria-label', expect.stringContaining('开发阶段'));
+      expect(currentStepButton).toHaveAttribute(
+        'aria-label',
+        expect.stringContaining('开发阶段'),
+      );
     });
   });
 

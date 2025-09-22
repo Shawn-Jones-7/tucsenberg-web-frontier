@@ -5,10 +5,10 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuPortal,
-    DropdownMenuTrigger,
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuPortal,
+  DropdownMenuTrigger,
 } from '../dropdown-menu';
 
 describe('DropdownMenu - Basic Components', () => {

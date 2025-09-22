@@ -5,9 +5,9 @@
  * 注意：高级测试场景请参考 contact-form-container.test.tsx
  */
 
-import { ContactFormContainer } from '@/components/forms/contact-form-container';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 // 确保使用真实的Zod库和validations模块
 vi.unmock('zod');
@@ -249,7 +249,9 @@ describe('ContactFormContainer - 核心功能', () => {
       });
 
       // 应该有验证错误 - 匹配实际的验证消息
-      expect(screen.getByText(/last name must be at least 2 characters/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/last name must be at least 2 characters/i),
+      ).toBeInTheDocument();
     });
   });
 

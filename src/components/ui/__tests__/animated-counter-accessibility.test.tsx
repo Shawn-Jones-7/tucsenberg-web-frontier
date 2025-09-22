@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Mock requestAnimationFrame and cancelAnimationFrame
 let animationFrameCallbacks: Array<() => void> = [];
@@ -37,7 +37,7 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
     // Mock matchMedia to simulate prefers-reduced-motion: reduce
     Object.defineProperty(window, 'matchMedia', {
       writable: true,
-      value: vi.fn().mockImplementation(query => ({
+      value: vi.fn().mockImplementation((query) => ({
         matches: query === '(prefers-reduced-motion: reduce)',
         media: query,
         onchange: null,

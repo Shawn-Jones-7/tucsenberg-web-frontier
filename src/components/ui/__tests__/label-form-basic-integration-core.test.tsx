@@ -12,10 +12,10 @@
  * - 多表单页面
  */
 
-import { Label } from '@/components/ui/label';
 import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label Form Basic Integration - Advanced Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;

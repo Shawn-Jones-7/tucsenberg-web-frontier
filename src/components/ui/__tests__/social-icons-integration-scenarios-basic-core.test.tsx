@@ -12,9 +12,9 @@
  * - 基础响应式布局
  */
 
-import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Integration Scenarios - Core Basic Tests', () => {
   describe('核心导航菜单集成', () => {

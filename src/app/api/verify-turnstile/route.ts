@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 
 interface TurnstileVerificationRequest {
   token: string;

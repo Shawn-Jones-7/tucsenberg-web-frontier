@@ -60,18 +60,18 @@ vi.mock('next/navigation', () => ({
 // Mock lucide-react icons - 返回真正的React元素而不是字符串
 const MockIcon = vi.fn(({ className, ...props }: any) =>
   React.createElement('svg', {
-    className: className || '',
+    'className': className || '',
     'data-testid': 'mock-icon',
-    width: '24',
-    height: '24',
-    viewBox: '0 0 24 24',
-    fill: 'none',
-    stroke: 'currentColor',
-    strokeWidth: '2',
-    strokeLinecap: 'round',
-    strokeLinejoin: 'round',
-    ...props
-  })
+    'width': '24',
+    'height': '24',
+    'viewBox': '0 0 24 24',
+    'fill': 'none',
+    'stroke': 'currentColor',
+    'strokeWidth': '2',
+    'strokeLinecap': 'round',
+    'strokeLinejoin': 'round',
+    ...props,
+  }),
 );
 
 vi.mock('lucide-react', () => ({

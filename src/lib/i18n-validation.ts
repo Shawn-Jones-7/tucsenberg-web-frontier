@@ -6,7 +6,8 @@ import { ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 import { routing } from '@/i18n/routing';
 
 // 测试环境检测
-const isTestEnvironment = typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+const isTestEnvironment =
+  typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
 
 type KnownLocale = 'en' | 'zh';
 type TranslationsMap = Partial<Record<KnownLocale, Record<string, unknown>>>;
@@ -53,6 +54,49 @@ export interface TranslationWarning {
   suggestion?: string;
 }
 
+function processMockTranslation(params: {
+  locale: string;
+  getMockTranslation: (locale: string) => unknown;
+  translations: Record<string, Record<string, unknown>>;
+  errors: TranslationError[];
+}): void {
+  const { locale, getMockTranslation, translations, errors } = params;
+  const mockData = getMockTranslation(locale);
+
+  if (!mockData) {
+    errors.push({
+      type: 'missing_key',
+      key: 'translation_file',
+      locale,
+      message: `Translation file for locale ${locale} not found`,
+      severity: 'critical',
+    });
+    return;
+  }
+
+  if (!isKnownLocale(locale)) {
+    return;
+  }
+
+  // 验证Mock数据格式
+  if (typeof mockData === 'string') {
+    errors.push({
+      type: 'invalid_format',
+      key: 'translation_file',
+      locale,
+      message: `Translation file for locale ${locale} contains malformed data: expected object, got string`,
+      severity: 'critical',
+    });
+    return;
+  }
+
+  if (locale === 'en') {
+    translations.en = mockData as Record<string, unknown>;
+  } else if (locale === 'zh') {
+    translations.zh = mockData as Record<string, unknown>;
+  }
+}
+
 /**
  * 加载所有语言的翻译文件
  */
@@ -65,36 +109,19 @@ async function loadTranslations(
   if (isTestEnvironment) {
     try {
       // 动态导入Mock翻译数据
-      const { getMockTranslation } = await import('./__tests__/mocks/translations');
+      const { getMockTranslation } = await import(
+        './__tests__/mocks/translations'
+      );
 
       for (const locale of routing.locales) {
-        const mockData = getMockTranslation(locale);
-        if (mockData && isKnownLocale(locale)) {
-          // 验证Mock数据格式
-          if (typeof mockData === 'string') {
-            errors.push({
-              type: 'invalid_format',
-              key: 'translation_file',
-              locale,
-              message: `Translation file for locale ${locale} contains malformed data: expected object, got string`,
-              severity: 'critical',
-            });
-            continue;
-          }
-
-          if (locale === 'en') translations.en = mockData as Record<string, unknown>;
-          else if (locale === 'zh') translations.zh = mockData as Record<string, unknown>;
-        } else if (mockData === undefined) {
-          errors.push({
-            type: 'missing_key',
-            key: 'translation_file',
-            locale,
-            message: `Translation file for locale ${locale} not found`,
-            severity: 'critical',
-          });
-        }
+        processMockTranslation({
+          locale,
+          getMockTranslation,
+          translations,
+          errors,
+        });
       }
-    } catch (error) {
+    } catch {
       // 如果Mock导入失败，回退到原始逻辑
       return loadProductionTranslations(errors);
     }
@@ -134,6 +161,58 @@ async function loadProductionTranslations(
 }
 
 /**
+ * 计算翻译覆盖率
+ */
+function calculateCoverage(
+  allKeys: Set<string>,
+  missingKeys: string[],
+): number {
+  const totalKeys = allKeys.size * routing.locales.length;
+  const missingCount = missingKeys.length;
+
+  if (allKeys.size === ZERO) {
+    return PERCENTAGE_FULL;
+  }
+
+  if (totalKeys > ZERO) {
+    return ((totalKeys - missingCount) / totalKeys) * PERCENTAGE_FULL;
+  }
+
+  return PERCENTAGE_FULL;
+}
+
+/**
+ * 验证空翻译文件
+ */
+function validateEmptyTranslations(
+  allKeys: Set<string>,
+  translations: Record<string, unknown>,
+  errors: TranslationError[],
+): void {
+  if (allKeys.size === ZERO && Object.keys(translations).length > ZERO) {
+    const allEmpty = Object.values(translations).every(
+      (trans) => trans && Object.keys(trans).length === ZERO,
+    );
+
+    if (allEmpty) {
+      const hasEmptyFileError = errors.some((e) =>
+        e.message.includes('All translation files are empty'),
+      );
+
+      if (!hasEmptyFileError) {
+        errors.push({
+          type: 'empty_value',
+          key: 'all_translations',
+          locale: 'all',
+          message: 'All translation files are empty',
+          severity: 'critical',
+        });
+      }
+    }
+  }
+}
+
+/**
  * 验证翻译文件的完整性和质量
  */
 export async function validateTranslations(): Promise<TranslationValidationResult> {
@@ -160,49 +239,17 @@ export async function validateTranslations(): Promise<TranslationValidationResul
       missingKeys,
     });
 
-    // 计算覆盖率 - 修复空翻译文件的覆盖率计算
-    const totalKeys = allKeys.size * routing.locales.length;
-    const missingCount = missingKeys.length;
-    let coverage: number;
+    // 计算覆盖率
+    const coverage = calculateCoverage(allKeys, missingKeys);
 
-    if (allKeys.size === ZERO) {
-      // 如果没有任何翻译键，覆盖率为100%（空文件的100%覆盖）
-      coverage = PERCENTAGE_FULL;
-    } else if (totalKeys > ZERO) {
-      coverage = ((totalKeys - missingCount) / totalKeys) * PERCENTAGE_FULL;
-    } else {
-      coverage = PERCENTAGE_FULL;
-    }
+    // 验证空翻译文件
+    validateEmptyTranslations(allKeys, translations, errors);
 
-    // 修复空翻译文件的有效性判断
-    const criticalErrors = errors.filter((e) => e.severity === 'critical' || e.severity === 'high');
-    let isValid = criticalErrors.length === ZERO;
-
-    // 如果所有翻译文件都为空，在某些测试场景下视为无效
-    // 这里通过检查是否有翻译文件但没有键来判断
-    if (allKeys.size === ZERO && Object.keys(translations).length > ZERO) {
-      // 检查是否所有翻译文件都是空对象
-      const allEmpty = Object.values(translations).every(
-        (trans) => trans && Object.keys(trans).length === ZERO
-      );
-
-      if (allEmpty) {
-        // 如果所有文件都是空对象，在基础测试中视为无效
-        // 但在边界测试中仍然有效（通过错误数量判断）
-        const hasEmptyFileError = errors.some(e => e.message.includes('All translation files are empty'));
-        if (!hasEmptyFileError) {
-          // 只有在没有明确的空文件错误时才添加错误
-          errors.push({
-            type: 'empty_value',
-            key: 'all_translations',
-            locale: 'all',
-            message: 'All translation files are empty',
-            severity: 'critical',
-          });
-          isValid = false;
-        }
-      }
-    }
+    // 判断有效性
+    const criticalErrors = errors.filter(
+      (e) => e.severity === 'critical' || e.severity === 'high',
+    );
+    const isValid = criticalErrors.length === ZERO;
 
     return {
       isValid,
@@ -259,7 +306,8 @@ function getNestedValue(obj: Record<string, unknown>, path: string): unknown {
   let current: unknown = obj;
   // 更宽松的安全检查，支持更多特殊字符和Unicode
   // 包括：字母、数字、下划线、连字符、中文、日文、韩文、拉丁扩展字符等
-  const safe = /^[a-z0-9_\-\u00a0-\u024f\u1e00-\u1eff\u2000-\u206f\u2070-\u209f\u20a0-\u20cf\u2100-\u214f\u2190-\u21ff\u2200-\u22ff\u2300-\u23ff\u2460-\u24ff\u2500-\u257f\u2580-\u259f\u25a0-\u25ff\u2600-\u26ff\u2700-\u27bf\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u3100-\u312f\u3130-\u318f\u3190-\u319f\u31a0-\u31bf\u31c0-\u31ef\u31f0-\u31ff\u3200-\u32ff\u3300-\u33ff\u3400-\u4dbf\u4e00-\u9fff\ua000-\ua48f\ua490-\ua4cf\uac00-\ud7af\uf900-\ufaff\ufe30-\ufe4f\ufe50-\ufe6f\uff00-\uffef]+$/i;
+  const safe =
+    /^[a-z0-9_\-\u00a0-\u024f\u1e00-\u1eff\u2000-\u206f\u2070-\u209f\u20a0-\u20cf\u2100-\u214f\u2190-\u21ff\u2200-\u22ff\u2300-\u23ff\u2460-\u24ff\u2500-\u257f\u2580-\u259f\u25a0-\u25ff\u2600-\u26ff\u2700-\u27bf\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\u3100-\u312f\u3130-\u318f\u3190-\u319f\u31a0-\u31bf\u31c0-\u31ef\u31f0-\u31ff\u3200-\u32ff\u3300-\u33ff\u3400-\u4dbf\u4e00-\u9fff\ua000-\ua48f\ua490-\ua4cf\uac00-\ud7af\uf900-\ufaff\ufe30-\ufe4f\ufe50-\ufe6f\uff00-\uffef]+$/i;
   for (const seg of segments) {
     if (!safe.test(seg)) return undefined;
     if (
@@ -461,8 +509,12 @@ function checkPlaceholderConsistency(params: {
     // 检查占位符名称一致性
     const refPlaceholderSet = new Set(refPlaceholders);
     const currentPlaceholderSet = new Set(placeholders);
-    const missingPlaceholders = refPlaceholders.filter(p => !currentPlaceholderSet.has(p));
-    const extraPlaceholders = placeholders.filter(p => !refPlaceholderSet.has(p));
+    const missingPlaceholders = refPlaceholders.filter(
+      (p) => !currentPlaceholderSet.has(p),
+    );
+    const extraPlaceholders = placeholders.filter(
+      (p) => !refPlaceholderSet.has(p),
+    );
 
     if (missingPlaceholders.length > 0 || extraPlaceholders.length > 0) {
       warnings.push({

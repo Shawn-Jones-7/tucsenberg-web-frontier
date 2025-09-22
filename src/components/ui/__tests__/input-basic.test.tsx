@@ -2,10 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import { Input } from '@/components/ui/input';
-import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { Input } from '@/components/ui/input';
 
 describe('Input - Basic Rendering & Types', () => {
   describe('Basic Rendering', () => {

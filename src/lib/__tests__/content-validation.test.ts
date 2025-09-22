@@ -121,7 +121,9 @@ describe('content-validation', () => {
         const result = validateContentMetadata(metadata, 'posts');
 
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Published date must be a valid ISO date');
+        expect(result.errors).toContain(
+          'Published date must be a valid ISO date',
+        );
       });
 
       it('should fail validation with invalid updatedAt date', () => {
@@ -130,7 +132,9 @@ describe('content-validation', () => {
         const result = validateContentMetadata(metadata, 'posts');
 
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Updated date must be a valid ISO date');
+        expect(result.errors).toContain(
+          'Updated date must be a valid ISO date',
+        );
       });
 
       it('should fail validation with both invalid dates', () => {
@@ -143,8 +147,12 @@ describe('content-validation', () => {
         const result = validateContentMetadata(metadata, 'posts');
 
         expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Published date must be a valid ISO date');
-        expect(result.errors).toContain('Updated date must be a valid ISO date');
+        expect(result.errors).toContain(
+          'Published date must be a valid ISO date',
+        );
+        expect(result.errors).toContain(
+          'Updated date must be a valid ISO date',
+        );
       });
 
       it('should handle missing updatedAt gracefully', () => {

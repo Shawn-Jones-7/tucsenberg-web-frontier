@@ -233,10 +233,7 @@ describe('useThemeToggle', () => {
       });
 
       expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetCircularTheme).toHaveBeenCalledWith(
-        'dark',
-        undefined,
-      );
+      expect(mockSetCircularTheme).toHaveBeenCalledWith('dark', undefined);
     });
 
     it('should handle theme change with click event', () => {
@@ -251,10 +248,7 @@ describe('useThemeToggle', () => {
       });
 
       expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetCircularTheme).toHaveBeenCalledWith(
-        'dark',
-        mockEvent,
-      );
+      expect(mockSetCircularTheme).toHaveBeenCalledWith('dark', mockEvent);
     });
 
     it('should close dropdown after theme change', () => {

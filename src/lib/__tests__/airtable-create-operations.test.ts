@@ -36,7 +36,8 @@ const createMockRecord = (data: Record<string, unknown>) => ({
   fields: data.fields || {},
   createdTime: data.createdTime || '2023-01-01T00:00:00Z',
   get: vi.fn((field: string) => {
-    if (field === 'Created Time') return data.createdTime || '2023-01-01T00:00:00Z';
+    if (field === 'Created Time')
+      return data.createdTime || '2023-01-01T00:00:00Z';
     return (data.fields as Record<string, unknown>)?.[field];
   }),
 });
@@ -188,7 +189,9 @@ describe('Airtable Service - Create Operations Tests', () => {
         fields: formDataWithOptionals,
         createdTime: '2023-01-01T00:00:00Z',
       };
-      mockCreate.mockResolvedValue([createMockRecord(mockRecordDataWithOptionals)]);
+      mockCreate.mockResolvedValue([
+        createMockRecord(mockRecordDataWithOptionals),
+      ]);
 
       await service.createContact(formDataWithOptionals);
 

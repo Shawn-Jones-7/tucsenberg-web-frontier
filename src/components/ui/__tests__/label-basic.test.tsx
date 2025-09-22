@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label - Basic Rendering', () => {
   describe('Basic Rendering', () => {

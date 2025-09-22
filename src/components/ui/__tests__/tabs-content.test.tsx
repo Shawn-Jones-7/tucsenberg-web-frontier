@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('TabsContent Component', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -54,10 +54,7 @@ describe('TabsContent Component', () => {
     );
 
     const tabContent = screen.getByTestId('tab-content');
-    expect(tabContent).toHaveClass(
-      'flex-1',
-      'outline-none',
-    );
+    expect(tabContent).toHaveClass('flex-1', 'outline-none');
   });
 
   it('accepts custom className', () => {

@@ -230,7 +230,12 @@ export class AccessibilityUtils {
     }
 
     // 默认返回中等灰色
-    return { l: OPACITY_CONSTANTS.MEDIUM_OPACITY, c: ZERO, h: ZERO, alpha: ONE };
+    return {
+      l: OPACITY_CONSTANTS.MEDIUM_OPACITY,
+      c: ZERO,
+      h: ZERO,
+      alpha: ONE,
+    };
   }
 
   /**
@@ -243,9 +248,13 @@ export class AccessibilityUtils {
   ): boolean {
     try {
       // 检查输入是否为有效颜色字符串
-      if (!foreground || !background ||
-          foreground === 'invalid' || background === 'color' ||
-          foreground === 'invalid' && background === 'color') {
+      if (
+        !foreground ||
+        !background ||
+        foreground === 'invalid' ||
+        background === 'color' ||
+        (foreground === 'invalid' && background === 'color')
+      ) {
         return false;
       }
 

@@ -15,10 +15,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    ExternalLinkIcon,
-    LinkedInIcon,
-    SocialIconLink,
-    TwitterIcon,
+  ExternalLinkIcon,
+  LinkedInIcon,
+  SocialIconLink,
+  TwitterIcon,
 } from '../social-icons';
 
 describe('Social Icons Accessibility & Integration - Core Tests', () => {
@@ -218,7 +218,11 @@ describe('Social Icons Accessibility & Integration - Core Tests', () => {
         </div>,
       );
 
-      const container = document.querySelector('.flex.flex-wrap.gap-4') || screen.getAllByRole('generic').find(el => el.classList.contains('flex'));
+      const container =
+        document.querySelector('.flex.flex-wrap.gap-4') ||
+        screen
+          .getAllByRole('generic')
+          .find((el) => el.classList.contains('flex'));
       expect(container).toHaveClass('flex', 'flex-wrap', 'gap-4');
 
       const links = screen.getAllByRole('link');
@@ -299,7 +303,8 @@ describe('Social Icons Accessibility & Integration - Core Tests', () => {
         ></SocialIconLink>,
       );
 
-      const link = screen.queryByRole('link') || document.querySelector('a[href=""]');
+      const link =
+        screen.queryByRole('link') || document.querySelector('a[href=""]');
       expect(link).toHaveAttribute('href', '');
     });
 
@@ -346,7 +351,11 @@ describe('Social Icons Accessibility & Integration - Core Tests', () => {
         </div>,
       );
 
-      const container = document.querySelector('.dark') || screen.getAllByRole('generic').find(el => el.classList.contains('dark'));
+      const container =
+        document.querySelector('.dark') ||
+        screen
+          .getAllByRole('generic')
+          .find((el) => el.classList.contains('dark'));
       expect(container).toHaveClass('dark');
 
       const link = screen.getByRole('link');
@@ -365,7 +374,11 @@ describe('Social Icons Accessibility & Integration - Core Tests', () => {
         </div>,
       );
 
-      const container = document.querySelector('.light') || screen.getAllByRole('generic').find(el => el.classList.contains('light'));
+      const container =
+        document.querySelector('.light') ||
+        screen
+          .getAllByRole('generic')
+          .find((el) => el.classList.contains('light'));
       expect(container).toHaveClass('light');
 
       const link = screen.getByRole('link');

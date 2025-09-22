@@ -15,11 +15,11 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
-    ExternalLinkIcon,
-    LinkedInIcon,
-    SocialIconLink,
-    SocialIconMapper,
-    TwitterIcon,
+  ExternalLinkIcon,
+  LinkedInIcon,
+  SocialIconLink,
+  SocialIconMapper,
+  TwitterIcon,
 } from '../social-icons';
 
 describe('Social Icons Accessibility & Integration - Advanced Tests', () => {

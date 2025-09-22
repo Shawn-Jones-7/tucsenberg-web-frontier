@@ -97,7 +97,9 @@ export class TranslationBenchmarks {
     }
 
     // 计算改进百分比
-    const improvement = ((currentScore.score - benchmark.averageScore) / benchmark.averageScore) * 100;
+    const improvement =
+      ((currentScore.score - benchmark.averageScore) / benchmark.averageScore) *
+      100;
 
     // 生成建议
     const recommendations: string[] = [];
@@ -106,26 +108,38 @@ export class TranslationBenchmarks {
     if (improvement > 10) {
       recommendations.push('Excellent quality! Above benchmark standards.');
     } else if (improvement < -10) {
-      recommendations.push('Overall quality is significantly below benchmark. Consider comprehensive review.');
+      recommendations.push(
+        'Overall quality is significantly below benchmark. Consider comprehensive review.',
+      );
     } else if (improvement < 0) {
-      recommendations.push('Quality is below benchmark. Focus on identified issues.');
+      recommendations.push(
+        'Quality is below benchmark. Focus on identified issues.',
+      );
     }
 
     // 生成具体分类建议
     if (currentScore.grammar < benchmark.categories.grammar) {
-      recommendations.push('Grammar score below benchmark. Review grammatical accuracy.');
+      recommendations.push(
+        'Grammar score below benchmark. Review grammatical accuracy.',
+      );
     }
 
     if (currentScore.consistency < benchmark.categories.consistency) {
-      recommendations.push('Consistency score below benchmark. Ensure terminology consistency.');
+      recommendations.push(
+        'Consistency score below benchmark. Ensure terminology consistency.',
+      );
     }
 
     if (currentScore.terminology < benchmark.categories.terminology) {
-      recommendations.push('Terminology score below benchmark. Review domain-specific terms.');
+      recommendations.push(
+        'Terminology score below benchmark. Review domain-specific terms.',
+      );
     }
 
     if (currentScore.fluency < benchmark.categories.fluency) {
-      recommendations.push('Fluency score below benchmark. Improve natural language flow.');
+      recommendations.push(
+        'Fluency score below benchmark. Improve natural language flow.',
+      );
     }
 
     return {

@@ -194,15 +194,10 @@ export class AccessibilityManager {
    */
   cleanup(): void {
     if (this.liveRegion) {
-      try {
-        if (this.liveRegion.parentNode) {
-          this.liveRegion.parentNode.removeChild(this.liveRegion);
-        } else if (typeof document !== 'undefined' && document.body) {
-          document.body.removeChild(this.liveRegion);
-        }
-      } catch (error) {
-        // 重新抛出错误以便测试可以捕获
-        throw error;
+      if (this.liveRegion.parentNode) {
+        this.liveRegion.parentNode.removeChild(this.liveRegion);
+      } else if (typeof document !== 'undefined' && document.body) {
+        document.body.removeChild(this.liveRegion);
       }
       this.liveRegion = null;
     }

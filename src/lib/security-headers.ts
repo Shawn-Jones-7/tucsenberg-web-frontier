@@ -3,8 +3,8 @@
  * Security headers and configuration utilities
  */
 
-import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 import { ZERO } from '@/constants';
 
 /**

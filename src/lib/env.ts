@@ -5,21 +5,25 @@
  * 提供统一的环境变量访问接口
  */
 
-import { env } from '../../env.mjs';
+import { env } from '@/../env.mjs';
 
 // 重新导出环境变量，保持类型安全
 export { env };
 
 // 提供类型安全的环境变量访问函数
 export function getEnvVar(key: keyof typeof env): string | boolean | undefined {
+  // eslint-disable-next-line security/detect-object-injection
   return env[key];
 }
 
 // 提供必需环境变量检查（仅用于字符串类型的环境变量）
 export function requireEnvVar(key: keyof typeof env): string {
+  // eslint-disable-next-line security/detect-object-injection
   const value = env[key];
   if (!value || typeof value === 'boolean') {
-    throw new Error(`Required environment variable ${key} is not set or is not a string`);
+    throw new Error(
+      `Required environment variable ${key} is not set or is not a string`,
+    );
   }
   return value;
 }

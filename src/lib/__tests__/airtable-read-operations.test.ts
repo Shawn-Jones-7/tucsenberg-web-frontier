@@ -36,7 +36,8 @@ const createMockRecord = (data: Record<string, unknown>) => ({
   fields: data.fields || {},
   createdTime: data.createdTime || '2023-01-01T00:00:00Z',
   get: vi.fn((field: string) => {
-    if (field === 'Created Time') return data.createdTime || '2023-01-01T00:00:00Z';
+    if (field === 'Created Time')
+      return data.createdTime || '2023-01-01T00:00:00Z';
     return (data.fields as Record<string, unknown>)?.[field];
   }),
 });
@@ -133,7 +134,7 @@ describe('Airtable Service - Read Operations Tests', () => {
       const result = await service.getContacts();
 
       // Service transforms records, removing the get method
-      const expectedRecords = mockRecords.map(record => ({
+      const expectedRecords = mockRecords.map((record) => ({
         id: record.id,
         fields: record.fields,
         createdTime: record.get('Created Time'),
@@ -180,7 +181,9 @@ describe('Airtable Service - Read Operations Tests', () => {
 
       mockSelectAll.mockRejectedValue(new Error('Retrieval failed'));
 
-      await expect(service.getContacts()).rejects.toThrow('Failed to fetch contact records');
+      await expect(service.getContacts()).rejects.toThrow(
+        'Failed to fetch contact records',
+      );
     });
 
     it('should handle empty results', async () => {
@@ -242,7 +245,7 @@ describe('Airtable Service - Read Operations Tests', () => {
             'Email': `user${index}@example.com`,
           },
           createdTime: '2023-01-01T00:00:00Z',
-        })
+        }),
       );
 
       mockSelectAll.mockResolvedValue(largeDataset);
@@ -294,7 +297,9 @@ describe('Airtable Service - Read Operations Tests', () => {
 
       mockSelectAll.mockRejectedValue(timeoutError);
 
-      await expect(service.getContacts()).rejects.toThrow('Failed to fetch contact records');
+      await expect(service.getContacts()).rejects.toThrow(
+        'Failed to fetch contact records',
+      );
     });
 
     it('should handle API rate limiting during retrieval', async () => {
@@ -336,7 +341,7 @@ describe('Airtable Service - Read Operations Tests', () => {
       const result = await service.getContacts();
 
       // Service transforms records, removing the get method
-      const expectedRecords = malformedData.map(record => ({
+      const expectedRecords = malformedData.map((record) => ({
         id: record.id,
         fields: record.fields,
         createdTime: record.get('Created Time'),

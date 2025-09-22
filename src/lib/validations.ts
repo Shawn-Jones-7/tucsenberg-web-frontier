@@ -17,34 +17,34 @@ import { MAGIC_15 } from '@/constants/count';
  */
 const VALIDATION_CONSTANTS = {
   // Name field constraints
-  NAME_MIN_LENGTH: 2, // COUNT_PAIR
-  NAME_MAX_LENGTH: 50, // PERCENTAGE_HALF
+  NAME_MIN_LENGTH: COUNT_PAIR,
+  NAME_MAX_LENGTH: PERCENTAGE_HALF,
 
   // Email constraints
-  EMAIL_MAX_LENGTH: 100, // PERCENTAGE_FULL
+  EMAIL_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Company constraints
-  COMPANY_MIN_LENGTH: 2, // COUNT_PAIR
-  COMPANY_MAX_LENGTH: 100, // PERCENTAGE_FULL
+  COMPANY_MIN_LENGTH: COUNT_PAIR,
+  COMPANY_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Message constraints
-  MESSAGE_MIN_LENGTH: 10, // COUNT_TEN
-  MESSAGE_MAX_LENGTH: 2000, // ANIMATION_DURATION_VERY_SLOW
+  MESSAGE_MIN_LENGTH: COUNT_TEN,
+  MESSAGE_MAX_LENGTH: ANIMATION_DURATION_VERY_SLOW,
 
   // Subject constraints
-  SUBJECT_MIN_LENGTH: 5, // COUNT_FIVE
-  SUBJECT_MAX_LENGTH: 100, // PERCENTAGE_FULL
+  SUBJECT_MIN_LENGTH: COUNT_FIVE,
+  SUBJECT_MAX_LENGTH: PERCENTAGE_FULL,
 
   // Phone constraints
-  PHONE_MAX_DIGITS: 15, // MAGIC_15
+  PHONE_MAX_DIGITS: MAGIC_15,
 
   // Honeypot constraint
-  HONEYPOT_MAX_LENGTH: 0, // ZERO
+  HONEYPOT_MAX_LENGTH: ZERO,
 
   // Rate limiting
-  DEFAULT_COOLDOWN_MINUTES: 5, // COUNT_FIVE
-  COOLDOWN_TO_MS_MULTIPLIER: 60000, // SECONDS_PER_MINUTE
-  MS_PER_SECOND: 2000, // ANIMATION_DURATION_VERY_SLOW
+  DEFAULT_COOLDOWN_MINUTES: COUNT_FIVE,
+  COOLDOWN_TO_MS_MULTIPLIER: SECONDS_PER_MINUTE * 1000, // Convert to milliseconds
+  MS_PER_SECOND: ANIMATION_DURATION_VERY_SLOW,
 } as const;
 
 /**
@@ -89,7 +89,7 @@ export const contactFormSchema = z.object({
       VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH,
       `Email must be less than ${VALIDATION_CONSTANTS.EMAIL_MAX_LENGTH} characters`,
     )
-    .transform(val => val.toLowerCase()),
+    .transform((val) => val.toLowerCase()),
 
   company: z
     .string()
@@ -116,7 +116,7 @@ export const contactFormSchema = z.object({
       VALIDATION_CONSTANTS.MESSAGE_MAX_LENGTH,
       `Message must be less than ${VALIDATION_CONSTANTS.MESSAGE_MAX_LENGTH} characters`,
     )
-    .transform(val => val.trim()),
+    .transform((val) => val.trim()),
 
   // Optional fields for enhanced form functionality
   phone: z

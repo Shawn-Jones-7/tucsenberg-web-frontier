@@ -3,6 +3,13 @@
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
+import {
+  AccessibilityManager,
+  accessibilityManager,
+  announceSwitching,
+  announceThemeChange,
+  useAccessibility,
+} from '../accessibility';
 
 // 使用全局Mock配置，不需要局部覆盖
 
@@ -18,14 +25,6 @@ vi.mock('@/lib/logger', () => ({
 vi.mock('@/lib/colors', () => ({
   checkContrastCompliance: vi.fn().mockReturnValue(true),
 }));
-
-import {
-  AccessibilityManager,
-  accessibilityManager,
-  announceSwitching,
-  announceThemeChange,
-  useAccessibility,
-} from '../accessibility';
 
 // Mock constants
 vi.mock('@/constants', () => ({

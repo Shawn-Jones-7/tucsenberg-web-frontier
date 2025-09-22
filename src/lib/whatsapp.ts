@@ -1,6 +1,6 @@
 import WhatsApp from 'whatsapp';
-import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 import { COUNT_TEN, ZERO } from '@/constants';
 
 /**

@@ -445,7 +445,6 @@ describe('ThemeAnalytics', () => {
       analytics.sendPerformanceReport();
 
       expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
-
     });
 
     it('should send all performance measurements', () => {

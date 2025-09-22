@@ -35,14 +35,14 @@ const renderDiagnosticsHook = (): RenderHookResult<
 > => renderHook(() => useWebVitalsDiagnostics());
 
 // 2. 使用vi.hoisted确保Mock函数在模块导入前设置
-const { mockLocalStorage, mockLogger } = vi.hoisted(() => ({
+const { mockLocalStorage, _mockLogger } = vi.hoisted(() => ({
   mockLocalStorage: {
     getItem: vi.fn(),
     setItem: vi.fn(),
     removeItem: vi.fn(),
     clear: vi.fn(),
   },
-  mockLogger: {
+  _mockLogger: {
     info: vi.fn(),
     warn: vi.fn(),
     error: vi.fn(),
@@ -312,9 +312,7 @@ describe('useWebVitalsDiagnostics', () => {
       const { enhancedWebVitalsCollector } = await import(
         '@/lib/enhanced-web-vitals'
       );
-      expect(
-        enhancedWebVitalsCollector.getDetailedMetrics,
-      ).toHaveBeenCalled();
+      expect(enhancedWebVitalsCollector.getDetailedMetrics).toHaveBeenCalled();
 
       // 验证结果
       expect(result.current.currentReport).toBeTruthy();

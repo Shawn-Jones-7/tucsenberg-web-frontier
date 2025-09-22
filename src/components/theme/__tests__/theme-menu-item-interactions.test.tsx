@@ -14,15 +14,21 @@
  * - theme-menu-item-interactions-basic.test.tsx - 基本交互功能测试
  */
 
-import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 
 // Mock the DropdownMenuItem component
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenuItem: ({ children, onKeyDown, ...props }: React.ComponentProps<'div'> & { onKeyDown?: (e: React.KeyboardEvent) => void }) => (
+  DropdownMenuItem: ({
+    children,
+    onKeyDown,
+    ...props
+  }: React.ComponentProps<'div'> & {
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+  }) => (
     <div
       role='menuitem'
       onKeyDown={onKeyDown}

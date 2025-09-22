@@ -14,13 +14,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '../card';
 
 describe('Card Structure & Accessibility Tests - Core', () => {
@@ -217,7 +217,17 @@ describe('Card Structure & Accessibility Tests - Core', () => {
       );
 
       const cardElement = container.firstChild as HTMLElement;
-      expect(cardElement).toHaveClass('bg-card', 'text-card-foreground', 'flex', 'flex-col', 'gap-6', 'rounded-xl', 'border', 'py-6', 'shadow-sm');
+      expect(cardElement).toHaveClass(
+        'bg-card',
+        'text-card-foreground',
+        'flex',
+        'flex-col',
+        'gap-6',
+        'rounded-xl',
+        'border',
+        'py-6',
+        'shadow-sm',
+      );
     });
 
     it('applies correct CSS classes to header', () => {
@@ -270,7 +280,12 @@ describe('Card Structure & Accessibility Tests - Core', () => {
       const footerElement = screen
         .getByText('Footer styling test')
         .closest('[data-slot="card-footer"]');
-      expect(footerElement).toHaveClass('flex', 'items-center', 'px-6', '[.border-t]:pt-6');
+      expect(footerElement).toHaveClass(
+        'flex',
+        'items-center',
+        'px-6',
+        '[.border-t]:pt-6',
+      );
     });
   });
 

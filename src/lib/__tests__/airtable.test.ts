@@ -190,7 +190,10 @@ describe('Airtable Tests - Index', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      const initSpy = vi.spyOn(
+        service as unknown as AirtableServicePrivate,
+        'initializeAirtable',
+      );
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });
@@ -255,7 +258,10 @@ describe('Airtable Tests - Index', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      const initSpy = vi.spyOn(
+        service as unknown as AirtableServicePrivate,
+        'initializeAirtable',
+      );
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });
@@ -296,10 +302,7 @@ describe('Airtable Tests - Index', () => {
         },
       ]);
 
-      await service.updateContactStatus(
-        'rec123456',
-        'Completed',
-      );
+      await service.updateContactStatus('rec123456', 'Completed');
 
       expect(mockUpdate).toHaveBeenCalledWith([
         {
@@ -316,7 +319,10 @@ describe('Airtable Tests - Index', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      const initSpy = vi.spyOn(
+        service as unknown as AirtableServicePrivate,
+        'initializeAirtable',
+      );
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });
@@ -360,7 +366,10 @@ describe('Airtable Tests - Index', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      const initSpy = vi.spyOn(
+        service as unknown as AirtableServicePrivate,
+        'initializeAirtable',
+      );
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });

@@ -105,11 +105,11 @@ vi.stubGlobal(
   }),
 );
 
-// Helper function to manually trigger timers in tests
-const triggerTimers = () => {
+// Helper function to manually trigger timers in tests (currently unused)
+const _triggerTimers = () => {
   const timers = Array.from(activeTimers.values());
   activeTimers.clear();
-  timers.forEach(fn => fn());
+  timers.forEach((fn) => fn());
 };
 
 describe('usePerformanceMonitor', () => {
@@ -130,12 +130,14 @@ describe('usePerformanceMonitor', () => {
     });
 
     // Reset performance.getEntriesByType mock
-    vi.mocked(global.performance.getEntriesByType).mockImplementation((type: string) => {
-      if (type === 'navigation') {
-        return [mockNavigationTiming];
-      }
-      return [];
-    });
+    vi.mocked(global.performance.getEntriesByType).mockImplementation(
+      (type: string) => {
+        if (type === 'navigation') {
+          return [mockNavigationTiming];
+        }
+        return [];
+      },
+    );
   });
 
   afterEach(() => {

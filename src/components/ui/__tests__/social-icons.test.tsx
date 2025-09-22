@@ -1,12 +1,12 @@
-import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import {
-    ExternalLinkIcon,
-    LinkedInIcon,
-    SocialIconLink,
-    SocialIconMapper,
-    TwitterIcon,
+  ExternalLinkIcon,
+  LinkedInIcon,
+  SocialIconLink,
+  SocialIconMapper,
+  TwitterIcon,
 } from '../social-icons';
 
 describe('Social Icons Components', () => {

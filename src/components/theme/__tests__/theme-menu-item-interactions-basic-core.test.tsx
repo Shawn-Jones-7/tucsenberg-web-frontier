@@ -11,15 +11,21 @@
  * - 基本视图过渡
  */
 
-import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 
 // Mock the DropdownMenuItem component
 vi.mock('@/components/ui/dropdown-menu', () => ({
-  DropdownMenuItem: ({ children, onKeyDown, ...props }: React.ComponentProps<'div'> & { onKeyDown?: (e: React.KeyboardEvent) => void }) => (
+  DropdownMenuItem: ({
+    children,
+    onKeyDown,
+    ...props
+  }: React.ComponentProps<'div'> & {
+    onKeyDown?: (e: React.KeyboardEvent) => void;
+  }) => (
     <div
       role='menuitem'
       onKeyDown={onKeyDown}
@@ -258,7 +264,10 @@ describe('Theme Menu Item - Core Basic Interactions Tests', () => {
       render(<ThemeMenuItem {...defaultProps} />);
 
       const menuItem = screen.getByRole('menuitem');
-      expect(menuItem).toHaveClass('focus:bg-accent', 'focus:text-accent-foreground');
+      expect(menuItem).toHaveClass(
+        'focus:bg-accent',
+        'focus:text-accent-foreground',
+      );
     });
   });
 

@@ -37,11 +37,11 @@ const {
   mockUseThemeToggle,
 } = mocks;
 export {
-    mockResolvedTheme,
-    mockSetTheme,
-    mockSystemTheme,
-    mockTheme,
-    mockUseThemeToggle
+  mockResolvedTheme,
+  mockSetTheme,
+  mockSystemTheme,
+  mockTheme,
+  mockUseThemeToggle,
 };
 
 vi.mock('next-themes', () => ({
@@ -175,7 +175,7 @@ vi.mock('@/components/ui/button', () => ({
         'data-slot': 'button',
         'data-variant': variant,
         'data-size': size,
-        className: className,
+        'className': className,
         ...props,
         ...(children.props || {}),
       });

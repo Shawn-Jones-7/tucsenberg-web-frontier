@@ -39,7 +39,8 @@ const createMockRecord = (data: Record<string, unknown>) => ({
   fields: data.fields || {},
   createdTime: data.createdTime || '2023-01-01T00:00:00Z',
   get: vi.fn((field: string) => {
-    if (field === 'Created Time') return data.createdTime || '2023-01-01T00:00:00Z';
+    if (field === 'Created Time')
+      return data.createdTime || '2023-01-01T00:00:00Z';
     return (data.fields as Record<string, unknown>)?.[field];
   }),
 });
@@ -273,7 +274,9 @@ describe('Airtable Service - Main Operations Tests', () => {
 
       mockSelectAll.mockRejectedValue(new Error('Retrieval failed'));
 
-      await expect(service.getContacts()).rejects.toThrow('Failed to fetch contact records');
+      await expect(service.getContacts()).rejects.toThrow(
+        'Failed to fetch contact records',
+      );
     });
 
     it('should handle update errors gracefully', async () => {

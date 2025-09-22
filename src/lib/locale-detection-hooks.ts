@@ -5,10 +5,10 @@ import {
   SUPPORTED_LOCALES,
 } from '@/lib/locale-constants';
 import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
+import { CONFIDENCE_WEIGHTS } from '@/lib/locale-detector-constants';
 import { LocaleStorageManager } from '@/lib/locale-storage';
 import { ONE } from '@/constants';
 import { MAGIC_0_7 } from '@/constants/decimal';
-import { CONFIDENCE_WEIGHTS } from '@/lib/locale-detector-constants';
 
 /**
  * 客户端语言检测 Hook
@@ -28,7 +28,8 @@ export function useClientLocaleDetection() {
 
     // 浏览器语言检测
     if (typeof navigator !== 'undefined') {
-      const languages = navigator.languages || (navigator.language ? [navigator.language] : []);
+      const languages =
+        navigator.languages || (navigator.language ? [navigator.language] : []);
 
       for (const lang of languages) {
         if (!lang || typeof lang !== 'string') continue;
@@ -55,7 +56,7 @@ export function useClientLocaleDetection() {
             confidence: MAGIC_0_7,
             details: {
               browserLocale: detectedLocale,
-              browserLanguages: [...languages]
+              browserLanguages: [...languages],
             },
           };
         }

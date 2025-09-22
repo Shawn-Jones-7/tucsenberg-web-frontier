@@ -237,9 +237,10 @@ export function evaluatePerformance(
   );
 
   // 计算错误率惩罚
-  const errorRate = metrics.totalRequests > 0
-    ? (metrics.totalErrors / metrics.totalRequests) * 100
-    : 0;
+  const errorRate =
+    metrics.totalRequests > 0
+      ? (metrics.totalErrors / metrics.totalRequests) * 100
+      : 0;
 
   // 错误率惩罚：每1%错误率减少2分
   const errorPenalty = Math.min(errorRate * 2, 50); // 最大惩罚50分

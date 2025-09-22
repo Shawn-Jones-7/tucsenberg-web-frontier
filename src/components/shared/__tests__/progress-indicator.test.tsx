@@ -1,6 +1,6 @@
-import { ProgressIndicator } from '@/components/shared/progress-indicator';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 // Mock next-intl
 const mockUseTranslations = vi.fn();

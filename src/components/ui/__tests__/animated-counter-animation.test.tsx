@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Mock the useIntersectionObserver hook
 vi.mock('@/hooks/use-intersection-observer', () => ({
@@ -41,7 +41,9 @@ const { mockGetTime, mockScheduleFrame, mockCancelFrame } = vi.hoisted(() => {
     }),
     mockCancelFrame: vi.fn((id: number) => {
       // Remove callback from array
-      animationFrameCallbacks = animationFrameCallbacks.filter((_, index) => index !== id - 1);
+      animationFrameCallbacks = animationFrameCallbacks.filter(
+        (_, index) => index !== id - 1,
+      );
     }),
     timeRef, // Export timeRef so we can update it
   };
@@ -57,7 +59,8 @@ vi.mock('@/components/ui/animated-counter-helpers', () => ({
     linear: (t: number) => t,
     easeOut: (t: number) => 1 - (1 - t) ** 3,
     easeIn: (t: number) => t ** 3,
-    easeInOut: (t: number) => t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2,
+    easeInOut: (t: number) =>
+      t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2,
   },
 }));
 
@@ -99,7 +102,9 @@ describe('AnimatedCounter - Animation Behavior', () => {
       return frameId;
     });
     mockCancelFrame.mockImplementation((id: number) => {
-      animationFrameCallbacks = animationFrameCallbacks.filter((_, index) => index !== id - 1);
+      animationFrameCallbacks = animationFrameCallbacks.filter(
+        (_, index) => index !== id - 1,
+      );
     });
   });
 
@@ -360,7 +365,8 @@ describe('AnimatedCounter - Animation Behavior', () => {
       let counter = screen.getByRole('status');
 
       // Rapidly change values
-      for (let i = 0; i < 5; i++) { // Reduce iterations to avoid DOM issues
+      for (let i = 0; i < 5; i++) {
+        // Reduce iterations to avoid DOM issues
         rerender(
           <AnimatedCounter
             to={100 + i * 10}

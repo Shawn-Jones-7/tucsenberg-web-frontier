@@ -80,8 +80,8 @@ describe('Content Validation - Advanced Tests', () => {
         const result = validateContentMetadata(metadataWithManyTags, 'posts');
 
         // Direct string check instead of stringContaining
-        const hasTagWarning = result.warnings.some(warning =>
-          warning.includes('Too many tags')
+        const hasTagWarning = result.warnings.some((warning) =>
+          warning.includes('Too many tags'),
         );
         expect(hasTagWarning).toBe(true);
         expect(result.isValid).toBe(true);
@@ -283,8 +283,8 @@ describe('Content Validation - Advanced Tests', () => {
 
         expect(result.isValid).toBe(true);
         // Direct string check instead of stringContaining
-        const hasTagWarning = result.warnings.some(warning =>
-          warning.includes('Too many tags')
+        const hasTagWarning = result.warnings.some((warning) =>
+          warning.includes('Too many tags'),
         );
         expect(hasTagWarning).toBe(true);
       });

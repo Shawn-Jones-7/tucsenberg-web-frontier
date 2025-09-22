@@ -86,7 +86,9 @@ describe('CSP Report API Route - GET & OPTIONS Tests', () => {
     it('应该设置正确的Access-Control-Allow-Origin', async () => {
       const response = await OPTIONS();
 
-      expect(response.headers.get('Access-Control-Allow-Methods')).toBe('POST, GET, OPTIONS');
+      expect(response.headers.get('Access-Control-Allow-Methods')).toBe(
+        'POST, GET, OPTIONS',
+      );
     });
 
     it('应该返回空的响应体', async () => {

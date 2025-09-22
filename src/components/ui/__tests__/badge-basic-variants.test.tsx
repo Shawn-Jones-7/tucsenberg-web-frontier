@@ -12,10 +12,10 @@
  * - badge-content-rendering.test.tsx - Content rendering tests
  */
 
-import { Badge } from '@/components/ui/badge';
-import { fireEvent, render, screen } from '@testing-library/react';
 import { createRef } from 'react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { Badge } from '@/components/ui/badge';
 
 describe('Badge Basic Rendering & Variants Tests - Index', () => {
   it('renders badge with default props', () => {
@@ -375,7 +375,7 @@ describe('Badge Basic Rendering & Variants Tests - Index', () => {
   });
 
   it('renders boolean content', () => {
-    render(<Badge data-testid="boolean-badge">{true}</Badge>);
+    render(<Badge data-testid='boolean-badge'>{true}</Badge>);
 
     const badge = screen.getByTestId('boolean-badge');
     // React doesn't render boolean values, so the badge should be empty

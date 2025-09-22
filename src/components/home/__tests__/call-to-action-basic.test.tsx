@@ -7,9 +7,9 @@
  * - 图标渲染测试
  */
 
-import { CallToAction } from '@/components/home/call-to-action';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CallToAction } from '@/components/home/call-to-action';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -161,7 +161,9 @@ describe('CallToAction Component - Basic Tests', () => {
       expect(
         screen.getByRole('link', { name: /community\.discussions/i }),
       ).toBeInTheDocument();
-      expect(screen.getByRole('link', { name: /community\.issues/i })).toBeInTheDocument();
+      expect(
+        screen.getByRole('link', { name: /community\.issues/i }),
+      ).toBeInTheDocument();
     });
 
     it('应该渲染正确的结构元素', () => {
@@ -194,7 +196,9 @@ describe('CallToAction Component - Basic Tests', () => {
     it('Star GitHub按钮应该有正确的链接', () => {
       render(<CallToAction />);
 
-      const starLink = screen.getByRole('link', { name: /buttons\.getStarted/i });
+      const starLink = screen.getByRole('link', {
+        name: /buttons\.getStarted/i,
+      });
       expect(starLink).toHaveAttribute(
         'href',
         'https://github.com/tucsenberg/web-frontier',
@@ -206,7 +210,9 @@ describe('CallToAction Component - Basic Tests', () => {
     it('文档链接应该有正确的地址', () => {
       render(<CallToAction />);
 
-      const docsLink = screen.getByRole('link', { name: /buttons\.learnMore.*→/i });
+      const docsLink = screen.getByRole('link', {
+        name: /buttons\.learnMore.*→/i,
+      });
       expect(docsLink).toHaveAttribute('href', '/docs');
     });
 
@@ -216,7 +222,10 @@ describe('CallToAction Component - Basic Tests', () => {
       const communityLink = screen.getByRole('link', {
         name: /community\.discussions/i,
       });
-      expect(communityLink).toHaveAttribute('href', 'https://github.com/tucsenberg/web-frontier/discussions');
+      expect(communityLink).toHaveAttribute(
+        'href',
+        'https://github.com/tucsenberg/web-frontier/discussions',
+      );
     });
 
     it('Discussions链接应该有正确的地址', () => {
@@ -253,7 +262,10 @@ describe('CallToAction Component - Basic Tests', () => {
       expect(githubIcons.length).toBeGreaterThanOrEqual(1);
 
       // 其他图标
-      expect(screen.queryByTestId('book-open-icon') || screen.queryByTestId('download-icon')).toBeInTheDocument();
+      expect(
+        screen.queryByTestId('book-open-icon') ||
+          screen.queryByTestId('download-icon'),
+      ).toBeInTheDocument();
       expect(screen.queryByTestId('message-circle-icon')).toBeInTheDocument();
       expect(screen.queryByTestId('star-icon')).toBeInTheDocument();
       const externalLinkIcons = screen.getAllByTestId('external-link-icon');

@@ -4,11 +4,11 @@
  */
 
 import { Resend } from 'resend';
+import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { ResendTemplates } from '@/lib/resend-templates';
 import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
 import type { EmailTemplateData } from '@/lib/validations';
-import { env } from '@/lib/env';
 import { ZERO } from '@/constants';
 
 /**

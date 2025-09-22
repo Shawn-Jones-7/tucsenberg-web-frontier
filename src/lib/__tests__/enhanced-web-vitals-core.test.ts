@@ -55,7 +55,7 @@ const createMockPerformanceObserver = () => ({
   takeRecords: mockTakeRecords,
 });
 
-const mockPerformanceObserver = createMockPerformanceObserver();
+const _mockPerformanceObserver = createMockPerformanceObserver();
 
 Object.defineProperty(global, 'PerformanceObserver', {
   value: vi.fn(() => createMockPerformanceObserver()),
@@ -177,7 +177,7 @@ describe('Enhanced Web Vitals - Core Tests', () => {
 
       // 验证PerformanceObserver被调用来观察layout-shift
       expect(mockObserve).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'layout-shift' })
+        expect.objectContaining({ type: 'layout-shift' }),
       );
     });
 
@@ -187,7 +187,7 @@ describe('Enhanced Web Vitals - Core Tests', () => {
 
       // 验证PerformanceObserver被调用来观察first-input
       expect(mockObserve).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'first-input' })
+        expect.objectContaining({ type: 'first-input' }),
       );
     });
 
@@ -197,7 +197,7 @@ describe('Enhanced Web Vitals - Core Tests', () => {
 
       // 验证PerformanceObserver被调用来观察paint
       expect(mockObserve).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'paint' })
+        expect.objectContaining({ type: 'paint' }),
       );
     });
 
@@ -207,7 +207,7 @@ describe('Enhanced Web Vitals - Core Tests', () => {
 
       // 验证PerformanceObserver被调用来观察largest-contentful-paint
       expect(mockObserve).toHaveBeenCalledWith(
-        expect.objectContaining({ type: 'largest-contentful-paint' })
+        expect.objectContaining({ type: 'largest-contentful-paint' }),
       );
     });
 

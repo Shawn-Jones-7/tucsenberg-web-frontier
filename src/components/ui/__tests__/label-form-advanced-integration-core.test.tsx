@@ -12,11 +12,11 @@
  * - 表单提交处理
  */
 
-import { Label } from '@/components/ui/label';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label Form Advanced Integration Core Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;

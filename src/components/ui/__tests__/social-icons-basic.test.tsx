@@ -2,13 +2,13 @@
  * @vitest-environment jsdom
  */
 
-import {
-    ExternalLinkIcon,
-    LinkedInIcon,
-    TwitterIcon,
-} from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import {
+  ExternalLinkIcon,
+  LinkedInIcon,
+  TwitterIcon,
+} from '@/components/ui/social-icons';
 
 describe('Social Icons - Basic Icons', () => {
   describe('TwitterIcon', () => {

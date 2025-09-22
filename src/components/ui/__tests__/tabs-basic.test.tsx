@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('Tabs Basic Components', () => {
   let user: ReturnType<typeof userEvent.setup>;

@@ -2,17 +2,17 @@
  * @vitest-environment jsdom
  */
 
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    NavigationMenu,
-    NavigationMenuContent,
-    NavigationMenuIndicator,
-    NavigationMenuItem,
-    NavigationMenuList,
-    NavigationMenuTrigger,
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuList,
+  NavigationMenuTrigger,
 } from '../navigation-menu';
 
 // Mock Lucide React icons

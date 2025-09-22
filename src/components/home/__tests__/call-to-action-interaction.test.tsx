@@ -7,10 +7,10 @@
  * - 动画和可见性测试
  */
 
-import { CallToAction } from '@/components/home/call-to-action';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { CallToAction } from '@/components/home/call-to-action';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -176,11 +176,15 @@ describe('CallToAction Component - Interaction Tests', () => {
 
       // GitHub链接
       const githubLink = screen.getByRole('link', { name: /primary\.github/i });
-      const getStartedLink = screen.getByRole('link', { name: /buttons\.getStarted/i });
+      const getStartedLink = screen.getByRole('link', {
+        name: /buttons\.getStarted/i,
+      });
       const discussionsLink = screen.getByRole('link', {
         name: /community\.discussions/i,
       });
-      const issuesLink = screen.getByRole('link', { name: /community\.issues/i });
+      const issuesLink = screen.getByRole('link', {
+        name: /community\.issues/i,
+      });
 
       // 验证外部链接有正确的target属性
       expect(githubLink).toHaveAttribute('target', '_blank');

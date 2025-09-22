@@ -14,12 +14,12 @@
  * - 事件处理
  */
 
-import { MobileNavigation } from '@/components/layout/mobile-navigation';
+import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MobileNavigation } from '@/components/layout/mobile-navigation';
 
 // Mock next-intl - 完整的Mock配置
 vi.mock('next-intl', () => ({
@@ -47,7 +47,11 @@ vi.mock('next/navigation', () => ({
 // Mock @/i18n/routing
 vi.mock('@/i18n/routing', () => ({
   Link: ({ children, href, className, ...props }: any) => (
-    <a href={href} className={className} {...props}>
+    <a
+      href={href}
+      className={className}
+      {...props}
+    >
       {children}
     </a>
   ),

@@ -12,11 +12,11 @@
  * - Form library integration patterns
  */
 
-import { Label } from '@/components/ui/label';
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label Validation Scenarios Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -326,7 +326,10 @@ describe('Label Validation Scenarios Tests', () => {
         const [companyName, setCompanyName] = React.useState('');
         const [error, _setError] = React.useState('');
 
-        const validateCompanyName = (value: string, currentUserType?: string) => {
+        const validateCompanyName = (
+          value: string,
+          currentUserType?: string,
+        ) => {
           const typeToCheck = currentUserType || userType;
           if (typeToCheck === 'business' && !value) {
             _setError('Company name is required for business accounts');

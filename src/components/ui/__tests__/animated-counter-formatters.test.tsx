@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Mock the useIntersectionObserver hook
 vi.mock('@/hooks/use-intersection-observer', () => ({
@@ -28,24 +28,28 @@ let currentTime = 0;
 let frameId = 0;
 
 // Use vi.hoisted to ensure proper initialization order
-const { mockGetTime, mockScheduleFrame, mockCancelFrame, timeRef } = vi.hoisted(() => {
-  // Create a time reference that can be updated
-  const timeRef = { current: 0 };
+const { mockGetTime, mockScheduleFrame, mockCancelFrame, timeRef } = vi.hoisted(
+  () => {
+    // Create a time reference that can be updated
+    const timeRef = { current: 0 };
 
-  return {
-    mockGetTime: vi.fn(() => timeRef.current),
-    mockScheduleFrame: vi.fn((callback: (time: number) => void) => {
-      frameId += 1;
-      animationFrameCallbacks.push(callback);
-      return frameId;
-    }),
-    mockCancelFrame: vi.fn((id: number) => {
-      // Remove callback from array
-      animationFrameCallbacks = animationFrameCallbacks.filter((_, index) => index !== id - 1);
-    }),
-    timeRef, // Export timeRef so we can update it
-  };
-});
+    return {
+      mockGetTime: vi.fn(() => timeRef.current),
+      mockScheduleFrame: vi.fn((callback: (time: number) => void) => {
+        frameId += 1;
+        animationFrameCallbacks.push(callback);
+        return frameId;
+      }),
+      mockCancelFrame: vi.fn((id: number) => {
+        // Remove callback from array
+        animationFrameCallbacks = animationFrameCallbacks.filter(
+          (_, index) => index !== id - 1,
+        );
+      }),
+      timeRef, // Export timeRef so we can update it
+    };
+  },
+);
 
 vi.mock('@/components/ui/animated-counter-helpers', () => ({
   animationUtils: {
@@ -57,7 +61,8 @@ vi.mock('@/components/ui/animated-counter-helpers', () => ({
     linear: (t: number) => t,
     easeOut: (t: number) => 1 - (1 - t) ** 3,
     easeIn: (t: number) => t ** 3,
-    easeInOut: (t: number) => t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2,
+    easeInOut: (t: number) =>
+      t < 0.5 ? 4 * t ** 3 : 1 - (-2 * t + 2) ** 3 / 2,
   },
 }));
 
@@ -96,7 +101,9 @@ describe('AnimatedCounter - Formatters and Easing', () => {
       return frameId;
     });
     mockCancelFrame.mockImplementation((id: number) => {
-      animationFrameCallbacks = animationFrameCallbacks.filter((_, index) => index !== id - 1);
+      animationFrameCallbacks = animationFrameCallbacks.filter(
+        (_, index) => index !== id - 1,
+      );
     });
   });
 
@@ -208,7 +215,13 @@ describe('AnimatedCounter - Formatters and Easing', () => {
 
   describe('Formatters', () => {
     it('default formatter works correctly', () => {
-      render(<AnimatedCounter to={123.456} autoStart={true} duration={0} />);
+      render(
+        <AnimatedCounter
+          to={123.456}
+          autoStart={true}
+          duration={0}
+        />,
+      );
 
       const counter = screen.getByRole('status');
       advanceTime(0); // Trigger animation completion

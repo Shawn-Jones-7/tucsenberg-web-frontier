@@ -2,18 +2,18 @@
  * @vitest-environment jsdom
  */
 
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetFooter,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from '../sheet';
 
 // Mock Lucide React icons
@@ -251,12 +251,7 @@ describe('Sheet - Basic Components', () => {
 
       await waitFor(() => {
         const header = screen.getByTestId('sheet-header');
-        expect(header).toHaveClass(
-          'flex',
-          'flex-col',
-          'gap-1.5',
-          'p-4',
-        );
+        expect(header).toHaveClass('flex', 'flex-col', 'gap-1.5', 'p-4');
       });
     });
 

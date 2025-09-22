@@ -17,12 +17,12 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '../card';
 
 describe('Card Accessibility Features - Main Tests', () => {
@@ -95,7 +95,10 @@ describe('Card Accessibility Features - Main Tests', () => {
 
     it('supports keyboard navigation', () => {
       render(
-        <Card tabIndex={0} data-testid='keyboard-card'>
+        <Card
+          tabIndex={0}
+          data-testid='keyboard-card'
+        >
           <CardHeader>
             <CardTitle>Keyboard Accessible Card</CardTitle>
           </CardHeader>

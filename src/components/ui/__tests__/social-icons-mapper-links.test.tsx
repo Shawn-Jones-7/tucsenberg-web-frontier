@@ -11,10 +11,10 @@
  * - social-icons-link.test.tsx - SocialIconLink tests
  */
 
-import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Mapper & Links Tests - Index', () => {
   let user: ReturnType<typeof userEvent.setup>;

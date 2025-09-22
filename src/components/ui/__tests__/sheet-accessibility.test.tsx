@@ -2,18 +2,18 @@
  * @vitest-environment jsdom
  */
 
+import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-    Sheet,
-    SheetClose,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
 } from '../sheet';
 
 // Mock Lucide React icons
@@ -114,7 +114,9 @@ describe('Sheet - Accessibility', () => {
     await user.tab();
     // Continue checking focus is trapped within the sheet
     const secondFocusedElement = document.activeElement;
-    expect([firstButton, secondButton, closeButton]).toContain(secondFocusedElement);
+    expect([firstButton, secondButton, closeButton]).toContain(
+      secondFocusedElement,
+    );
   });
 
   it('returns focus to trigger when closed', async () => {
@@ -173,7 +175,9 @@ describe('Sheet - Accessibility', () => {
 
       // Verify the title and description elements exist and are properly connected
       const title = screen.getByText('Settings');
-      const description = screen.getByText('Configure your application settings');
+      const description = screen.getByText(
+        'Configure your application settings',
+      );
       expect(title).toBeInTheDocument();
       expect(description).toBeInTheDocument();
     });

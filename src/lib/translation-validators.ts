@@ -24,7 +24,15 @@ export const VALIDATION_THRESHOLDS = {
  * Quality issue types
  */
 export interface QualityIssue {
-  type: 'missing' | 'placeholder' | 'length' | 'grammar' | 'language' | 'context' | 'accuracy' | 'terminology';
+  type:
+    | 'missing'
+    | 'placeholder'
+    | 'length'
+    | 'grammar'
+    | 'language'
+    | 'context'
+    | 'accuracy'
+    | 'terminology';
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   suggestion?: string;
@@ -58,7 +66,11 @@ export class TranslationValidators {
 
     // 检查空翻译（包括只有空白字符和无意义字符的情况）
     const cleanedText = translatedText?.trim().replace(/[_\s\n\r\t]+/g, '');
-    if (!translatedText || translatedText.trim() === '' || cleanedText.length <= 2) {
+    if (
+      !translatedText ||
+      translatedText.trim() === '' ||
+      cleanedText.length <= 2
+    ) {
       issues.push({
         type: 'missing',
         severity: 'high',
@@ -163,10 +175,16 @@ export class TranslationValidators {
     let penalty = 0;
 
     // 计算相似度（改进的词汇重叠度算法）
-    const aiWords = aiTranslation.toLowerCase().split(/\s+/).filter(word => word.length > 2);
-    const humanWords = humanTranslation.toLowerCase().split(/\s+/).filter(word => word.length > 2);
+    const aiWords = aiTranslation
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 2);
+    const humanWords = humanTranslation
+      .toLowerCase()
+      .split(/\s+/)
+      .filter((word) => word.length > 2);
 
-    const commonWords = aiWords.filter(word => humanWords.includes(word));
+    const commonWords = aiWords.filter((word) => humanWords.includes(word));
     const maxWords = Math.max(aiWords.length, humanWords.length);
     const similarity = maxWords > 0 ? commonWords.length / maxWords : 0;
 
@@ -192,7 +210,9 @@ export class TranslationValidators {
     // 检查关键术语缺失
     const humanKeyTerms = this.extractKeyTerms(humanTranslation);
     const aiKeyTerms = this.extractKeyTerms(aiTranslation);
-    const missingTerms = humanKeyTerms.filter(term => !aiKeyTerms.includes(term));
+    const missingTerms = humanKeyTerms.filter(
+      (term) => !aiKeyTerms.includes(term),
+    );
 
     if (missingTerms.length > 0) {
       issues.push({
@@ -218,7 +238,10 @@ export class TranslationValidators {
     const issues: QualityIssue[] = [];
 
     // 检查错误上下文
-    if (translationKey.includes('error') && !this.containsErrorTerms(translatedText)) {
+    if (
+      translationKey.includes('error') &&
+      !this.containsErrorTerms(translatedText)
+    ) {
       issues.push({
         type: 'context',
         severity: 'medium',
@@ -228,7 +251,10 @@ export class TranslationValidators {
     }
 
     // 检查成功上下文
-    if (translationKey.includes('success') && !this.containsSuccessTerms(translatedText)) {
+    if (
+      translationKey.includes('success') &&
+      !this.containsSuccessTerms(translatedText)
+    ) {
       issues.push({
         type: 'context',
         severity: 'medium',
@@ -277,7 +303,11 @@ export class TranslationValidators {
   private static extractKeyTerms(text: string): string[] {
     // 简单的关键术语提取（实际应用中可能需要更复杂的NLP）
     const words = text.toLowerCase().split(/\s+/);
-    return words.filter(word => word.length > 3 && !/^(the|and|or|but|for|with|from|to|in|on|at|by)$/.test(word));
+    return words.filter(
+      (word) =>
+        word.length > 3 &&
+        !/^(the|and|or|but|for|with|from|to|in|on|at|by)$/.test(word),
+    );
   }
 
   /**

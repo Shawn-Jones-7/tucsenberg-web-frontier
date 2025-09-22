@@ -1,7 +1,7 @@
 /**
  * 翻译质量相关类型定义
  * Translation Quality Type Definitions
- * 
+ *
  * 提供翻译质量评估、基准测试和比较分析的类型定义
  */
 
@@ -77,7 +77,16 @@ export interface QualityScore {
  */
 export interface QualityIssue {
   /** 问题类型 */
-  type: 'missing' | 'placeholder' | 'length' | 'grammar' | 'language' | 'context' | 'consistency' | 'terminology' | 'fluency';
+  type:
+    | 'missing'
+    | 'placeholder'
+    | 'length'
+    | 'grammar'
+    | 'language'
+    | 'context'
+    | 'consistency'
+    | 'terminology'
+    | 'fluency';
   /** 严重程度 */
   severity: 'low' | 'medium' | 'high' | 'critical';
   /** 问题描述 */

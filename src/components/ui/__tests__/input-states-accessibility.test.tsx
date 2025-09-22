@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import { Input } from '@/components/ui/input';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Input } from '@/components/ui/input';
 
 describe('Input - States & Accessibility', () => {
   let user: ReturnType<typeof userEvent.setup>;

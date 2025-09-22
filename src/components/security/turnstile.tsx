@@ -1,9 +1,9 @@
 'use client';
 
+import React from 'react';
+import { Turnstile } from '@marsidev/react-turnstile';
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
-import { Turnstile } from '@marsidev/react-turnstile';
-import React from 'react';
 
 /**
  * 使用全局 logger（开发环境输出，生产环境静默）

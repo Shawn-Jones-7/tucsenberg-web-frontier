@@ -12,9 +12,9 @@
  * - JSX内容
  */
 
-import { Badge } from '@/components/ui/badge';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
+import { Badge } from '@/components/ui/badge';
 
 describe('Badge Content - Basic Tests', () => {
   describe('基本内容渲染', () => {
@@ -188,7 +188,7 @@ describe('Badge Content - Basic Tests', () => {
 
   describe('空内容处理', () => {
     it('renders empty content gracefully', () => {
-      render(<Badge data-testid="empty-badge"></Badge>);
+      render(<Badge data-testid='empty-badge'></Badge>);
 
       const badge = screen.getByTestId('empty-badge');
       expect(badge).toBeInTheDocument();
@@ -196,21 +196,21 @@ describe('Badge Content - Basic Tests', () => {
     });
 
     it('renders null content gracefully', () => {
-      render(<Badge data-testid="null-badge">{null}</Badge>);
+      render(<Badge data-testid='null-badge'>{null}</Badge>);
 
       const badge = screen.getByTestId('null-badge');
       expect(badge).toBeInTheDocument();
     });
 
     it('renders undefined content gracefully', () => {
-      render(<Badge data-testid="undefined-badge">{undefined}</Badge>);
+      render(<Badge data-testid='undefined-badge'>{undefined}</Badge>);
 
       const badge = screen.getByTestId('undefined-badge');
       expect(badge).toBeInTheDocument();
     });
 
     it('renders false content gracefully', () => {
-      render(<Badge data-testid="false-badge">{false}</Badge>);
+      render(<Badge data-testid='false-badge'>{false}</Badge>);
 
       const badge = screen.getByTestId('false-badge');
       expect(badge).toBeInTheDocument();

@@ -7,11 +7,12 @@
 import type { ContentType, ContentValidationResult } from '@/types/content';
 import { SECONDS_PER_MINUTE, ZERO } from '@/constants';
 import { COUNT_160 } from '@/constants/count';
-import { TEST_CONTENT_LIMITS, TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
+import {
+  TEST_CONTENT_LIMITS,
+  TEST_COUNT_CONSTANTS,
+} from '@/constants/test-constants';
 
-// SEO validation constants
-const MAX_SEO_TITLE_LENGTH = SECONDS_PER_MINUTE;
-const MAX_SEO_DESCRIPTION_LENGTH = COUNT_160;
+// SEO validation constants (values used directly in validation functions)
 
 /**
  * Validate required fields in content metadata
@@ -20,9 +21,11 @@ function validateRequiredFields(metadata: Record<string, unknown>): string[] {
   const errors: string[] = [];
 
   // Check title - must exist, be a string, and not be empty/whitespace
-  if (!metadata['title'] ||
-      typeof metadata['title'] !== 'string' ||
-      (metadata['title'] as string).trim() === '') {
+  if (
+    !metadata['title'] ||
+    typeof metadata['title'] !== 'string' ||
+    (metadata['title'] as string).trim() === ''
+  ) {
     errors.push('Title is required');
   }
 
@@ -74,51 +77,78 @@ function validateDates(metadata: Record<string, unknown>): string[] {
 }
 
 /**
- * Validate data types in content metadata
+ * Validate title field
  */
-function validateDataTypes(metadata: Record<string, unknown>): string[] {
+function validateTitle(metadata: Record<string, unknown>): string[] {
   const errors: string[] = [];
 
-  // Title must be a string (already checked in validateRequiredFields for existence)
   if (metadata['title'] && typeof metadata['title'] !== 'string') {
     errors.push('Title must be a string');
   }
 
-  // Title length validation
   if (metadata['title'] && typeof metadata['title'] === 'string') {
     const title = metadata['title'] as string;
     if (title.length > TEST_CONTENT_LIMITS.TITLE_MAX) {
-      errors.push(`Title must be less than ${TEST_CONTENT_LIMITS.TITLE_MAX} characters`);
-    }
-  }
-
-  // Tags must be an array if present
-  if (metadata['tags'] && !Array.isArray(metadata['tags'])) {
-    errors.push('Tags must be an array');
-  }
-
-  // All tag elements must be strings
-  if (metadata['tags'] && Array.isArray(metadata['tags'])) {
-    const tags = metadata['tags'] as unknown[];
-    if (tags.some(tag => typeof tag !== 'string')) {
-      errors.push('All tags must be strings');
-    }
-  }
-
-  // Excerpt must be a string if present
-  if (metadata['excerpt'] && typeof metadata['excerpt'] !== 'string') {
-    errors.push('Excerpt must be a string');
-  }
-
-  // Excerpt length validation
-  if (metadata['excerpt'] && typeof metadata['excerpt'] === 'string') {
-    const excerpt = metadata['excerpt'] as string;
-    if (excerpt.length > TEST_CONTENT_LIMITS.DESCRIPTION_MAX) {
-      errors.push(`Excerpt must be less than ${TEST_CONTENT_LIMITS.DESCRIPTION_MAX} characters`);
+      errors.push(
+        `Title must be less than ${TEST_CONTENT_LIMITS.TITLE_MAX} characters`,
+      );
     }
   }
 
   return errors;
+}
+
+/**
+ * Validate tags field
+ */
+function validateTags(metadata: Record<string, unknown>): string[] {
+  const errors: string[] = [];
+
+  if (metadata['tags'] && !Array.isArray(metadata['tags'])) {
+    errors.push('Tags must be an array');
+  }
+
+  if (metadata['tags'] && Array.isArray(metadata['tags'])) {
+    const tags = metadata['tags'] as unknown[];
+    if (tags.some((tag) => typeof tag !== 'string')) {
+      errors.push('All tags must be strings');
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate excerpt field
+ */
+function validateExcerpt(metadata: Record<string, unknown>): string[] {
+  const errors: string[] = [];
+
+  if (metadata['excerpt'] && typeof metadata['excerpt'] !== 'string') {
+    errors.push('Excerpt must be a string');
+  }
+
+  if (metadata['excerpt'] && typeof metadata['excerpt'] === 'string') {
+    const excerpt = metadata['excerpt'] as string;
+    if (excerpt.length > TEST_CONTENT_LIMITS.DESCRIPTION_MAX) {
+      errors.push(
+        `Excerpt must be less than ${TEST_CONTENT_LIMITS.DESCRIPTION_MAX} characters`,
+      );
+    }
+  }
+
+  return errors;
+}
+
+/**
+ * Validate data types in content metadata
+ */
+function validateDataTypes(metadata: Record<string, unknown>): string[] {
+  return [
+    ...validateTitle(metadata),
+    ...validateTags(metadata),
+    ...validateExcerpt(metadata),
+  ];
 }
 
 /**
@@ -146,7 +176,9 @@ function validateTypeSpecific(
   if (metadata['tags'] && Array.isArray(metadata['tags'])) {
     const tags = metadata['tags'] as unknown[];
     if (tags.length > TEST_COUNT_CONSTANTS.LARGE) {
-      warnings.push(`Too many tags (${tags.length}). Maximum recommended: ${TEST_COUNT_CONSTANTS.LARGE}`);
+      warnings.push(
+        `Too many tags (${tags.length}). Maximum recommended: ${TEST_COUNT_CONSTANTS.LARGE}`,
+      );
     }
   }
 
@@ -160,53 +192,70 @@ function validateTypeSpecific(
 }
 
 /**
- * Validate SEO-related fields in content metadata
+ * Validate SEO title field
  */
-function validateSEO(metadata: Record<string, unknown>): string[] {
+function validateSEOTitle(seo: Record<string, unknown>): string[] {
   const warnings: string[] = [];
-  const errors: string[] = [];
 
   if (
-    metadata['seo'] &&
-    typeof metadata['seo'] === 'object' &&
-    metadata['seo'] !== null
+    !seo['title'] ||
+    (typeof seo['title'] === 'string' && seo['title'].trim() === '')
   ) {
-    const seo = metadata['seo'] as Record<string, unknown>;
-
-    // Check SEO title
-    if (!seo['title'] || (typeof seo['title'] === 'string' && seo['title'].trim() === '')) {
-      warnings.push('SEO title is recommended');
-    } else if (
-      seo['title'] &&
-      typeof seo['title'] === 'string' &&
-      seo['title'].length > SECONDS_PER_MINUTE
-    ) {
-      warnings.push('SEO title should be 60 characters or less');
-    }
-
-    // Check SEO description
-    if (!seo['description'] || (typeof seo['description'] === 'string' && seo['description'].trim() === '')) {
-      warnings.push('SEO description is recommended');
-    } else if (
-      seo['description'] &&
-      typeof seo['description'] === 'string' &&
-      seo['description'].length > COUNT_160
-    ) {
-      warnings.push('SEO description should be 160 characters or less');
-    }
-  } else {
-    // No SEO object at all
     warnings.push('SEO title is recommended');
-    warnings.push('SEO description is recommended');
+  } else if (
+    seo['title'] &&
+    typeof seo['title'] === 'string' &&
+    seo['title'].length > SECONDS_PER_MINUTE
+  ) {
+    warnings.push('SEO title should be 60 characters or less');
   }
 
   return warnings;
 }
 
 /**
+ * Validate SEO description field
+ */
+function validateSEODescription(seo: Record<string, unknown>): string[] {
+  const warnings: string[] = [];
+
+  if (
+    !seo['description'] ||
+    (typeof seo['description'] === 'string' && seo['description'].trim() === '')
+  ) {
+    warnings.push('SEO description is recommended');
+  } else if (
+    seo['description'] &&
+    typeof seo['description'] === 'string' &&
+    seo['description'].length > COUNT_160
+  ) {
+    warnings.push('SEO description should be 160 characters or less');
+  }
+
+  return warnings;
+}
+
+/**
+ * Validate SEO-related fields in content metadata
+ */
+function validateSEO(metadata: Record<string, unknown>): string[] {
+  if (
+    metadata['seo'] &&
+    typeof metadata['seo'] === 'object' &&
+    metadata['seo'] !== null
+  ) {
+    const seo = metadata['seo'] as Record<string, unknown>;
+    return [...validateSEOTitle(seo), ...validateSEODescription(seo)];
+  }
+
+  // No SEO object at all
+  return ['SEO title is recommended', 'SEO description is recommended'];
+}
+
+/**
  * Validate edge cases and performance considerations
  */
-function validateEdgeCases(metadata: Record<string, unknown>): string[] {
+function validateEdgeCases(_metadata: Record<string, unknown>): string[] {
   const warnings: string[] = [];
 
   // This function is for general edge cases that apply to all content types

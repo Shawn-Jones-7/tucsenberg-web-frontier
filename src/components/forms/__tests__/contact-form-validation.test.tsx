@@ -5,9 +5,9 @@
  * 注意：基础测试请参考 contact-form-container-core.test.tsx
  */
 
-import { ContactFormContainer } from '@/components/forms/contact-form-container';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 // 确保使用真实的Zod库和validations模块
 vi.unmock('zod');
@@ -323,9 +323,15 @@ describe('ContactFormContainer - 验证逻辑', () => {
       });
 
       // 验证表单正确地显示了验证错误
-      expect(screen.getByText(/first name can only contain letters and spaces/i)).toBeInTheDocument();
-      expect(screen.getByText(/last name can only contain letters and spaces/i)).toBeInTheDocument();
-      expect(screen.getByText(/company name contains invalid characters/i)).toBeInTheDocument();
+      expect(
+        screen.getByText(/first name can only contain letters and spaces/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/last name can only contain letters and spaces/i),
+      ).toBeInTheDocument();
+      expect(
+        screen.getByText(/company name contains invalid characters/i),
+      ).toBeInTheDocument();
 
       // 验证fetch没有被调用，因为表单验证失败
       expect(fetch).not.toHaveBeenCalled();

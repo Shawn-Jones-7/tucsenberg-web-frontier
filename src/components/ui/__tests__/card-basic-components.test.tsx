@@ -2,17 +2,17 @@
  * @vitest-environment jsdom
  */
 
-import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-    Card,
-    CardAction,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
 } from '../card';
 
 describe('Card - Basic Components', () => {
@@ -317,7 +317,13 @@ describe('Card - Basic Components', () => {
       render(<CardAction>Action Content</CardAction>);
 
       const action = screen.getByText('Action Content');
-      expect(action).toHaveClass('col-start-2', 'row-span-2', 'row-start-1', 'self-start', 'justify-self-end');
+      expect(action).toHaveClass(
+        'col-start-2',
+        'row-span-2',
+        'row-start-1',
+        'self-start',
+        'justify-self-end',
+      );
     });
 
     it('renders as div element by default', () => {
@@ -467,7 +473,12 @@ describe('Card - Basic Components', () => {
       render(<CardFooter>Footer Content</CardFooter>);
 
       const footer = screen.getByText('Footer Content');
-      expect(footer).toHaveClass('flex', 'items-center', 'px-6', '[.border-t]:pt-6');
+      expect(footer).toHaveClass(
+        'flex',
+        'items-center',
+        'px-6',
+        '[.border-t]:pt-6',
+      );
     });
 
     it('renders as div element by default', () => {

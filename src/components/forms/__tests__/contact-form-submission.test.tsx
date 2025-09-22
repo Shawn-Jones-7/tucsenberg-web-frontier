@@ -5,9 +5,9 @@
  * 注意：基础测试请参考 contact-form-container-core.test.tsx
  */
 
-import { ContactFormContainer } from '@/components/forms/contact-form-container';
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 // 确保使用真实的Zod库和validations模块
 vi.unmock('zod');

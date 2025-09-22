@@ -12,11 +12,11 @@
  * - 样式应用
  */
 
-import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Moon, Sun } from 'lucide-react';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 
 // Mock the DropdownMenuItem component
 vi.mock('@/components/ui/dropdown-menu', () => ({
@@ -220,7 +220,10 @@ describe('Theme Menu Item - Rendering Tests', () => {
       render(<ThemeMenuItem {...defaultProps} />);
 
       const menuItem = screen.getByRole('menuitem');
-      expect(menuItem).toHaveClass('focus:bg-accent', 'focus:text-accent-foreground');
+      expect(menuItem).toHaveClass(
+        'focus:bg-accent',
+        'focus:text-accent-foreground',
+      );
     });
 
     it('handles different theme styling correctly', () => {

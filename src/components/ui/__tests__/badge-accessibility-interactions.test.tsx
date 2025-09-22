@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import { Badge } from '@/components/ui/badge';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { Badge } from '@/components/ui/badge';
 
 describe('Badge - Accessibility & Interactions', () => {
   describe('Accessibility', () => {
@@ -416,7 +416,7 @@ describe('Badge - Accessibility & Interactions', () => {
 
   describe('Edge Cases', () => {
     it('renders empty badge', () => {
-      render(<Badge data-testid="empty-badge" />);
+      render(<Badge data-testid='empty-badge' />);
 
       const badge = screen.getByTestId('empty-badge');
       expect(badge).toBeInTheDocument();
@@ -424,28 +424,28 @@ describe('Badge - Accessibility & Interactions', () => {
     });
 
     it('handles null children', () => {
-      render(<Badge data-testid="null-badge">{null}</Badge>);
+      render(<Badge data-testid='null-badge'>{null}</Badge>);
 
       const badge = screen.getByTestId('null-badge');
       expect(badge).toBeInTheDocument();
     });
 
     it('handles undefined children', () => {
-      render(<Badge data-testid="undefined-badge">{undefined}</Badge>);
+      render(<Badge data-testid='undefined-badge'>{undefined}</Badge>);
 
       const badge = screen.getByTestId('undefined-badge');
       expect(badge).toBeInTheDocument();
     });
 
     it('handles false children', () => {
-      render(<Badge data-testid="false-badge">{false}</Badge>);
+      render(<Badge data-testid='false-badge'>{false}</Badge>);
 
       const badge = screen.getByTestId('false-badge');
       expect(badge).toBeInTheDocument();
     });
 
     it('handles empty string children', () => {
-      render(<Badge data-testid="empty-string-badge">{''}</Badge>);
+      render(<Badge data-testid='empty-string-badge'>{''}</Badge>);
 
       const badge = screen.getByTestId('empty-string-badge');
       expect(badge).toBeInTheDocument();

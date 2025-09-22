@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { logger } from '@/lib/logger';
 import { env } from '@/lib/env';
+import { logger } from '@/lib/logger';
 import type { CSPReport } from '@/config/security';
 
 /**
@@ -51,10 +51,64 @@ const isSuspiciousReport = (csp: CSPReport['csp-report']) => {
   return patterns.some((p) => blocked.includes(p) || sample.includes(p));
 };
 
+async function parseCSPReport(
+  request: NextRequest,
+): Promise<CSPReport | NextResponse> {
+  const body = await request.text();
+  if (!body.trim()) {
+    return NextResponse.json(
+      { error: 'Invalid CSP report format' },
+      { status: 500 },
+    );
+  }
+
+  try {
+    return JSON.parse(body);
+  } catch {
+    return NextResponse.json({ error: 'Invalid JSON format' }, { status: 500 });
+  }
+}
+
+function validateCSPReport(report: CSPReport): NextResponse | null {
+  const cspReport = report['csp-report'];
+  if (!cspReport) {
+    return NextResponse.json(
+      { error: 'Invalid CSP report format' },
+      { status: 400 },
+    );
+  }
+
+  if (Object.keys(cspReport).length === 0) {
+    return NextResponse.json(
+      { error: 'Invalid CSP report format' },
+      { status: 200 },
+    );
+  }
+
+  return null;
+}
+
+function logCSPViolation(
+  request: NextRequest,
+  cspReport: CSPReport['csp-report'],
+): void {
+  const violationData = buildViolationData(request, cspReport);
+  logger.warn('CSP Violation Report:', JSON.stringify(violationData, null, 2));
+
+  if (env.NODE_ENV === 'production') {
+    logger.error('Production CSP Violation:', violationData);
+  }
+
+  if (isSuspiciousReport(cspReport)) {
+    logger.error('SUSPICIOUS CSP VIOLATION DETECTED:', violationData);
+  }
+}
+
 async function handleCspRequest(request: NextRequest) {
   try {
-    if (isDevIgnored())
+    if (isDevIgnored()) {
       return NextResponse.json({ status: 'ignored' }, { status: 200 });
+    }
 
     const contentType = request.headers.get('content-type');
     if (!isContentTypeValid(contentType)) {
@@ -64,52 +118,20 @@ async function handleCspRequest(request: NextRequest) {
       );
     }
 
-    let report: CSPReport;
-    try {
-      const body = await request.text();
-      if (!body.trim()) {
-        return NextResponse.json(
-          { error: 'Invalid CSP report format' },
-          { status: 500 },
-        );
-      }
-      report = JSON.parse(body);
-    } catch (jsonError) {
-      return NextResponse.json(
-        { error: 'Invalid JSON format' },
-        { status: 500 },
-      );
+    const report = await parseCSPReport(request);
+    if (report instanceof NextResponse) {
+      return report;
+    }
+
+    const validationError = validateCSPReport(report);
+    if (validationError) {
+      return validationError;
     }
 
     const cspReport = report['csp-report'];
-    if (!cspReport)
-      return NextResponse.json(
-        { error: 'Invalid CSP report format' },
-        { status: 400 },
-      );
-
-    // 检查空的csp-report对象
-    if (Object.keys(cspReport).length === 0) {
-      return NextResponse.json(
-        { error: 'Invalid CSP report format' },
-        { status: 200 },
-      );
-    }
+    logCSPViolation(request, cspReport);
 
     const violationData = buildViolationData(request, cspReport);
-    logger.warn(
-      'CSP Violation Report:',
-      JSON.stringify(violationData, null, 2),
-    );
-
-    if (env.NODE_ENV === 'production') {
-      logger.error('Production CSP Violation:', violationData);
-    }
-
-    if (isSuspiciousReport(cspReport)) {
-      logger.error('SUSPICIOUS CSP VIOLATION DETECTED:', violationData);
-    }
-
     return NextResponse.json(
       { status: 'received', timestamp: violationData.timestamp },
       { status: 200 },

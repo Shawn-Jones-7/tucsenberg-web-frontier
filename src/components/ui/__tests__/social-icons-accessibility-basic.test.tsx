@@ -12,10 +12,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
 import {
-    ExternalLinkIcon,
-    LinkedInIcon,
-    SocialIconLink,
-    TwitterIcon,
+  ExternalLinkIcon,
+  LinkedInIcon,
+  SocialIconLink,
+  TwitterIcon,
 } from '../social-icons';
 
 describe('Social Icons Accessibility - Basic Tests', () => {
@@ -45,11 +45,7 @@ describe('Social Icons Accessibility - Basic Tests', () => {
     });
 
     it('icons have consistent aria-hidden behavior', () => {
-      render(
-        <TwitterIcon
-          data-testid='twitter'
-        />,
-      );
+      render(<TwitterIcon data-testid='twitter' />);
 
       const icon = screen.getByTestId('twitter');
       // Icons are consistently hidden from screen readers by default
@@ -57,11 +53,7 @@ describe('Social Icons Accessibility - Basic Tests', () => {
     });
 
     it('icons are properly hidden for accessibility', () => {
-      render(
-        <TwitterIcon
-          data-testid='twitter'
-        />,
-      );
+      render(<TwitterIcon data-testid='twitter' />);
 
       const icon = screen.getByTestId('twitter');
       // Icons don't need aria-label as they're decorative and hidden from screen readers
@@ -138,7 +130,10 @@ describe('Social Icons Accessibility - Basic Tests', () => {
       );
 
       // Component provides context through aria-label instead of aria-describedby
-      expect(link).toHaveAttribute('aria-label', 'Follow our Twitter account for updates');
+      expect(link).toHaveAttribute(
+        'aria-label',
+        'Follow our Twitter account for updates',
+      );
       expect(description).toBeInTheDocument();
     });
 

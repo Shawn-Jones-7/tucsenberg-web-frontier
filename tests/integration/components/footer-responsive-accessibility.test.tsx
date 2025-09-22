@@ -8,10 +8,10 @@
  * - Error recovery and graceful degradation
  */
 
-import { Footer } from '@/components/layout/footer';
-import { render, screen } from '@testing-library/react';
 import React from 'react';
+import { render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Footer } from '@/components/layout/footer';
 
 // Mock next-intl hooks
 const mockUseTranslations = vi.fn();

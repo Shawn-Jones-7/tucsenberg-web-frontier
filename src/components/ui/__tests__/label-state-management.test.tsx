@@ -14,11 +14,11 @@
  * - label-state-management-core.test.tsx - 核心状态管理测试
  */
 
-import { Label } from '@/components/ui/label';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label State Management - Main Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;

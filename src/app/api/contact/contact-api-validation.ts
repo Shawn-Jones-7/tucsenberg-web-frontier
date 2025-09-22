@@ -12,7 +12,6 @@ import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
 import {
   ANIMATION_DURATION_VERY_SLOW,
   COUNT_TEN,
-  DAYS_PER_WEEK,
   ONE,
   SECONDS_PER_MINUTE,
   ZERO,
@@ -235,7 +234,9 @@ export async function getContactFormStats() {
       recentContacts: ZERO,
     };
 
-    const normalizedStats = stats ? { ...defaultStats, ...stats } : defaultStats;
+    const normalizedStats = stats
+      ? { ...defaultStats, ...stats }
+      : defaultStats;
 
     return {
       success: true,

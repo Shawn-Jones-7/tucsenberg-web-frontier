@@ -12,11 +12,11 @@
  * - 焦点事件
  */
 
-import { Label } from '@/components/ui/label';
+import React from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Label } from '@/components/ui/label';
 
 describe('Label Event Handling - Basic Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
