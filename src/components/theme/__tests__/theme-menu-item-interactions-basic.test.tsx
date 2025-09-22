@@ -12,10 +12,24 @@
  * 基础功能测试请参考 theme-menu-item-interactions-basic-core.test.tsx
  */
 
+import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
 import { render, screen } from '@testing-library/react';
 import { Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ThemeMenuItem } from '@/components/theme/theme-menu-item';
+
+// Mock the DropdownMenuItem component
+vi.mock('@/components/ui/dropdown-menu', () => ({
+  DropdownMenuItem: ({ children, onKeyDown, ...props }: React.ComponentProps<'div'> & { onKeyDown?: (e: React.KeyboardEvent) => void }) => (
+    <div
+      role='menuitem'
+      onKeyDown={onKeyDown}
+      tabIndex={0}
+      {...props}
+    >
+      {children}
+    </div>
+  ),
+}));
 
 // Mock lucide-react icons
 vi.mock('lucide-react', () => ({

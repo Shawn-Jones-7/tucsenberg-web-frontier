@@ -9,6 +9,10 @@ import { ContactFormContainer } from '@/components/forms/contact-form-container'
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// 确保使用真实的Zod库和validations模块
+vi.unmock('zod');
+vi.unmock('@/lib/validations');
+
 // Mock fetch
 global.fetch = vi.fn();
 
@@ -259,12 +263,7 @@ describe('ContactFormContainer - 验证逻辑', () => {
     });
 
     it('应该正确处理特殊字符', async () => {
-      // Mock 成功响应
-      vi.mocked(fetch).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({ success: true }),
-      } as Response);
-
+      // 这个测试验证表单正确地验证和拒绝包含特殊字符的输入
       render(<ContactFormContainer />);
 
       const specialCharsData = {
@@ -311,6 +310,9 @@ describe('ContactFormContainer - 验证逻辑', () => {
 
       const submitButton = screen.getByRole('button', { name: /submit/i });
 
+      // 确保提交按钮没有被禁用
+      expect(submitButton).not.toBeDisabled();
+
       await act(async () => {
         fireEvent.click(submitButton);
       });
@@ -320,17 +322,13 @@ describe('ContactFormContainer - 验证逻辑', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // 验证fetch被调用且数据正确传递
-      expect(fetch).toHaveBeenCalledWith(
-        '/api/contact',
-        expect.objectContaining({
-          method: 'POST',
-          headers: expect.objectContaining({
-            'Content-Type': 'application/json',
-          }),
-          body: expect.stringContaining(specialCharsData.firstName),
-        }),
-      );
+      // 验证表单正确地显示了验证错误
+      expect(screen.getByText(/first name can only contain letters and spaces/i)).toBeInTheDocument();
+      expect(screen.getByText(/last name can only contain letters and spaces/i)).toBeInTheDocument();
+      expect(screen.getByText(/company name contains invalid characters/i)).toBeInTheDocument();
+
+      // 验证fetch没有被调用，因为表单验证失败
+      expect(fetch).not.toHaveBeenCalled();
     });
   });
 });

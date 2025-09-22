@@ -14,11 +14,11 @@
  * - label-edge-cases-basic.test.tsx - 基本边缘情况测试
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Edge Cases - Main Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -125,21 +125,21 @@ describe('Label Edge Cases - Main Tests', () => {
       render(<Label data-testid='empty-string'>{''} </Label>);
 
       const label = screen.getByTestId('empty-string');
-      expect(label).toHaveTextContent('  ');
+      expect(label).toHaveTextContent('');
     });
 
     it('handles whitespace-only content', () => {
       render(<Label data-testid='whitespace'> </Label>);
 
       const label = screen.getByTestId('whitespace');
-      expect(label).toHaveTextContent('   ');
+      expect(label).toHaveTextContent('');
     });
 
     it('handles newlines and tabs in content', () => {
       render(<Label data-testid='newlines'>{'Line 1\nLine 2\tTabbed'}</Label>);
 
       const label = screen.getByTestId('newlines');
-      expect(label).toHaveTextContent('Line 1\nLine 2\tTabbed');
+      expect(label).toHaveTextContent('Line 1 Line 2 Tabbed');
     });
 
     it('handles HTML entities in content', () => {

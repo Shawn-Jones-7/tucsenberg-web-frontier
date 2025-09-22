@@ -6,6 +6,14 @@ import { GET, POST } from '@/app/api/verify-turnstile/__tests__/route';
 const mockFetch = vi.fn();
 global.fetch = mockFetch;
 
+// Mock environment variables
+vi.mock('@/lib/env', () => ({
+  env: {
+    TURNSTILE_SECRET_KEY: 'test-secret-key',
+    TURNSTILE_SITE_KEY: 'test-site-key',
+  },
+}));
+
 describe('Verify Turnstile API Route', () => {
   const validRequestBody = {
     token: 'valid-turnstile-token',
@@ -225,7 +233,8 @@ describe('Verify Turnstile API Route', () => {
       // 验证fetch调用中包含了正确的IP地址（完整的x-forwarded-for值）
       const fetchCall = mockFetch.mock.calls[0];
       const formData = fetchCall?.[1]?.body;
-      expect(formData).toContain('remoteip=192.168.1.1%2C%2010.0.0.1'); // URL encoded "192.168.1.1, 10.0.0.1"
+      const formDataString = formData?.toString();
+      expect(formDataString).toContain('remoteip=192.168.1.1%2C+10.0.0.1'); // URL encoded "192.168.1.1, 10.0.0.1"
     });
 
     it('应该使用提供的remoteip参数', async () => {
@@ -256,7 +265,8 @@ describe('Verify Turnstile API Route', () => {
       // 验证使用了提供的remoteip而不是从headers提取的IP
       const fetchCall = mockFetch.mock.calls[0];
       const formData = fetchCall?.[1]?.body;
-      expect(formData).toContain('remoteip=192.168.1.1'); // 使用提供的remoteip参数
+      const formDataString = formData?.toString();
+      expect(formDataString).toContain('remoteip=203.0.113.1'); // 使用提供的remoteip参数
     });
   });
 
@@ -276,8 +286,16 @@ describe('Verify Turnstile API Route', () => {
 
   describe('配置验证', () => {
     it('应该处理未配置Turnstile的情况', async () => {
-      // Mock missing secret key
-      vi.stubEnv('TURNSTILE_SECRET_KEY', '');
+      // 直接mock env模块的TURNSTILE_SECRET_KEY为空字符串
+      const envModule = await import('@/lib/env');
+      const originalSecretKey = envModule.env.TURNSTILE_SECRET_KEY;
+
+      // 临时修改env对象
+      Object.defineProperty(envModule.env, 'TURNSTILE_SECRET_KEY', {
+        value: '',
+        writable: true,
+        configurable: true,
+      });
 
       const request = new NextRequest(
         'http://localhost:3000/api/verify-turnstile',
@@ -296,6 +314,13 @@ describe('Verify Turnstile API Route', () => {
       expect(response.status).toBe(500);
       expect(data.success).toBe(false);
       expect(data.error).toBe('Turnstile not configured');
+
+      // 恢复原始值
+      Object.defineProperty(envModule.env, 'TURNSTILE_SECRET_KEY', {
+        value: originalSecretKey,
+        writable: true,
+        configurable: true,
+      });
     });
   });
 

@@ -1,0 +1,11 @@
+
+> tucsenberg-web-frontier@0.1.0 test /Users/Data/Warehouse/Focus/tucsenberg-web-frontier
+> vitest run --run --reporter=json
+
+ Vitest  "deps.inline" is deprecated. If you rely on vite-node directly, use "server.deps.inline" instead. Otherwise, consider using "deps.optimizer.web.include"
+ DEPRECATED  "cache.dir" is deprecated, use Vite's "cacheDir" instead if you want to change the cache director. Note caches will be written to "cacheDir/vitest"
+(node:47264) TimeoutOverflowWarning: 9007199254740991 does not fit into a 32-bit signed integer.
+Timeout duration was set to 1.
+(Use `node --trace-warnings ...` to show where the warning was created)
+JSON report written to /Users/Data/Warehouse/Focus/tucsenberg-web-frontier/reports/test-results.json
+ ELIFECYCLE  Test failed. See above for more details.

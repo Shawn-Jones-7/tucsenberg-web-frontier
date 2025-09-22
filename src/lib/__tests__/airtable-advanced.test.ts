@@ -64,7 +64,12 @@ describe('Airtable Advanced Tests', () => {
     mockSelect.mockReset();
     mockUpdate.mockReset();
     mockDestroy.mockReset();
-    mockTable.mockClear();
+    mockTable.mockClear().mockReturnValue({
+      create: mockCreate,
+      select: mockSelect,
+      update: mockUpdate,
+      destroy: mockDestroy,
+    });
     mockBase.mockClear();
     mockConfigure.mockClear();
 
@@ -122,7 +127,7 @@ describe('Airtable Advanced Tests', () => {
       const specialCharFormData = {
         firstName: 'José',
         lastName: 'García-López',
-        email: 'josé.garcía@example.com',
+        email: 'jose.garcia@example.com', // Use ASCII-compatible email
         company: 'Tëst Çömpäny',
         message: 'Special chars: àáâãäåæçèéêë',
         acceptPrivacy: true,
@@ -146,7 +151,7 @@ describe('Airtable Advanced Tests', () => {
           fields: expect.objectContaining({
             'First Name': 'José',
             'Last Name': 'García-López',
-            'Email': 'josé.garcía@example.com',
+            'Email': 'jose.garcia@example.com',
           }),
         }),
       ]);

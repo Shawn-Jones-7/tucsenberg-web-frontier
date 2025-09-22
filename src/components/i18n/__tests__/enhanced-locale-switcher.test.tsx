@@ -355,7 +355,7 @@ describe('EnhancedLocaleSwitcher', () => {
     it('shows user preference indicator when override exists', () => {
       mockUseLocaleStorage.mockReturnValue({
         ...defaultMocks.localeStorage,
-        getStats: vi.fn(() => ({ hasOverride: true })),
+        getStats: vi.fn(() => ({ data: { hasOverride: true } })),
       });
 
       render(<EnhancedLocaleSwitcher showDetectionInfo />);

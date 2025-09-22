@@ -635,7 +635,11 @@
       "planning": "规划中",
       "development": "开发中",
       "testing": "测试中",
-      "launch": "即将发布"
+      "launch": "即将发布",
+      "ariaLabel": "项目开发进度指示器",
+      "completed": "已完成",
+      "current": "当前步骤",
+      "upcoming": "即将开始"
     },
     "animation": {
       "loading": "加载动画",

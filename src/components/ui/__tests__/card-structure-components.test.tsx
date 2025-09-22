@@ -12,17 +12,16 @@
  * - Card layout variations
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '../card';
 
 describe('Card Structure and Components Tests', () => {
@@ -216,7 +215,7 @@ describe('Card Structure and Components Tests', () => {
 
     it('handles empty components gracefully', () => {
       render(
-        <Card>
+        <Card data-testid='empty-card'>
           <CardHeader>
             <CardTitle></CardTitle>
             <CardDescription></CardDescription>
@@ -227,7 +226,7 @@ describe('Card Structure and Components Tests', () => {
       );
 
       // Should render without errors even with empty content
-      const card = screen.getByRole('generic');
+      const card = screen.getByTestId('empty-card');
       expect(card).toBeInTheDocument();
     });
 

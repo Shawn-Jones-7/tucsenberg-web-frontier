@@ -9,8 +9,8 @@ global.fetch = mockFetch;
 // Mock environment variables
 vi.mock('@/lib/env', () => ({
   env: {
-    CLOUDFLARE_TURNSTILE_SECRET_KEY: 'test-secret-key',
-    CLOUDFLARE_TURNSTILE_ENABLED: 'true',
+    TURNSTILE_SECRET_KEY: 'test-secret-key',
+    TURNSTILE_SITE_KEY: 'test-site-key',
   },
 }));
 

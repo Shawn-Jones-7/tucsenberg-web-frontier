@@ -1,12 +1,12 @@
+import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { TEST_COUNT_CONSTANTS } from '@/constants/test-constants';
 import {
-  ExternalLinkIcon,
-  LinkedInIcon,
-  SocialIconLink,
-  SocialIconMapper,
-  TwitterIcon,
+    ExternalLinkIcon,
+    LinkedInIcon,
+    SocialIconLink,
+    SocialIconMapper,
+    TwitterIcon,
 } from '../social-icons';
 
 describe('Social Icons Components', () => {
@@ -190,10 +190,14 @@ describe('Social Icons Components', () => {
       expect(linkedinContainer.querySelector('svg')).toBeInTheDocument();
     });
 
-    it('returns null for unknown icon', () => {
+    it('returns ExternalLinkIcon for unknown platform', () => {
       const { container } = render(<SocialIconMapper platform='unknown' />);
 
-      expect(container.firstChild).toBeNull();
+      const svg = container.querySelector('svg');
+      expect(svg).toBeInTheDocument();
+      // ExternalLinkIcon has stroke-based styling and specific viewBox
+      expect(svg).toHaveAttribute('stroke', 'currentColor');
+      expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
     });
 
     it('passes through className prop', () => {

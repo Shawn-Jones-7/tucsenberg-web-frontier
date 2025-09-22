@@ -2,17 +2,17 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
 } from '../navigation-menu';
 
 // Mock Lucide React icons
@@ -91,7 +91,7 @@ describe('NavigationMenu - Interactions', () => {
       expect(trigger).toHaveClass(
         'group',
         'inline-flex',
-        'h-10',
+        'h-9',
         'w-max',
         'items-center',
         'justify-center',
@@ -248,11 +248,11 @@ describe('NavigationMenu - Interactions', () => {
 
       const link = screen.getByTestId('nav-link');
       expect(link).toHaveClass(
-        'block',
-        'select-none',
-        'space-y-1',
-        'rounded-md',
-        'p-3',
+        'flex',
+        'flex-col',
+        'gap-1',
+        'rounded-sm',
+        'p-2',
       );
     });
 

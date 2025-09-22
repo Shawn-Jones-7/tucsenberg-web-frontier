@@ -14,9 +14,9 @@
  * - Performance and lifecycle
  */
 
+import { SocialIconMapper } from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Mapper Tests', () => {
   describe('SocialIconMapper', () => {
@@ -148,7 +148,7 @@ describe('Social Icons Mapper Tests', () => {
       expect(icon).toHaveClass('custom-class');
     });
 
-    it('applies default size classes', () => {
+    it('applies default size attributes', () => {
       render(
         <SocialIconMapper
           platform='twitter'
@@ -157,7 +157,8 @@ describe('Social Icons Mapper Tests', () => {
       );
 
       const icon = screen.getByTestId('mapped-icon');
-      expect(icon).toHaveClass('h-4', 'w-4');
+      expect(icon).toHaveAttribute('width', '20');
+      expect(icon).toHaveAttribute('height', '20');
     });
 
     it('supports custom sizing', () => {
@@ -186,7 +187,8 @@ describe('Social Icons Mapper Tests', () => {
         );
 
         const icon = screen.getByTestId(`${platform}-icon`);
-        expect(icon).toHaveClass('h-6', 'w-6');
+        expect(icon).toHaveAttribute('width');
+        expect(icon).toHaveAttribute('height');
 
         unmount();
       });

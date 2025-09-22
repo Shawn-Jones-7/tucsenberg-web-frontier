@@ -13,11 +13,11 @@
  * - Dynamic content handling
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Component Composition Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -298,7 +298,7 @@ describe('Label Component Composition Tests', () => {
       expect(label2).toHaveClass('form-label');
 
       await user.click(label1);
-      expect(screen.getByDisplayValue('')).toHaveFocus();
+      expect(screen.getByLabelText('Custom Field 1')).toHaveFocus();
     });
 
     it('handles component composition with styling', () => {

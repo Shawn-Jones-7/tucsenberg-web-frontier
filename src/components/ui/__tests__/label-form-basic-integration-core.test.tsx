@@ -12,10 +12,10 @@
  * - 多表单页面
  */
 
-import { render, screen } from '@testing-library/react';
+import { Label } from '@/components/ui/label';
+import { render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Form Basic Integration - Advanced Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -211,8 +211,8 @@ describe('Label Form Basic Integration - Advanced Tests', () => {
       expect(signupForm).toBeInTheDocument();
 
       // Fill login form
-      const loginEmail = screen.getByLabelText('Email');
-      const loginPassword = screen.getByLabelText('Password');
+      const loginEmail = within(loginForm).getByLabelText('Email');
+      const loginPassword = within(loginForm).getByLabelText('Password');
 
       await user.type(loginEmail, 'user@example.com');
       await user.type(loginPassword, 'password123');

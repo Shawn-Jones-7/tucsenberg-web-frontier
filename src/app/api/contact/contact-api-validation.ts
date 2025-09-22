@@ -227,9 +227,19 @@ export async function getContactFormStats() {
 
     const stats = await airtableService.getStatistics();
 
+    // 确保返回完整的统计数据，为缺失字段提供默认值
+    const defaultStats = {
+      totalContacts: ZERO,
+      newContacts: ZERO,
+      completedContacts: ZERO,
+      recentContacts: ZERO,
+    };
+
+    const normalizedStats = stats ? { ...defaultStats, ...stats } : defaultStats;
+
     return {
       success: true,
-      data: stats,
+      data: normalizedStats,
     };
   } catch (error) {
     logger.error('Failed to get contact form stats', { error });
@@ -253,7 +263,7 @@ export function validateAdminAccess(authHeader: string | null): boolean {
     return false;
   }
 
-  const token = authHeader.substring(DAYS_PER_WEEK); // Remove 'Bearer ' prefix
+  const token = authHeader.substring(7); // Remove 'Bearer ' prefix
   return token === adminToken;
 }
 

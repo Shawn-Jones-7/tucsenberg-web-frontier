@@ -37,11 +37,11 @@ const {
   mockUseThemeToggle,
 } = mocks;
 export {
-  mockResolvedTheme,
-  mockSetTheme,
-  mockSystemTheme,
-  mockTheme,
-  mockUseThemeToggle,
+    mockResolvedTheme,
+    mockSetTheme,
+    mockSystemTheme,
+    mockTheme,
+    mockUseThemeToggle
 };
 
 vi.mock('next-themes', () => ({
@@ -102,15 +102,29 @@ vi.mock('@/components/ui/dropdown-menu', () => ({
   DropdownMenuTrigger: ({
     children,
     asChild,
+    ...props
   }: {
     children?: React.ReactNode;
     asChild?: boolean;
+    [key: string]: any;
   }) => {
-    if (asChild) {
-      // When asChild is true, render children directly
-      return children;
+    if (asChild && React.isValidElement(children)) {
+      // When asChild is true, clone children and add data-slot attribute
+      return React.cloneElement(children, {
+        'data-slot': 'dropdown-menu-trigger',
+        ...props,
+        ...(children.props || {}),
+      });
     }
-    return <div data-testid='dropdown-trigger'>{children}</div>;
+    return (
+      <div
+        data-testid='dropdown-trigger'
+        data-slot='dropdown-menu-trigger'
+        {...props}
+      >
+        {children}
+      </div>
+    );
   },
   DropdownMenuItem: ({
     children,
@@ -155,12 +169,21 @@ vi.mock('@/components/ui/button', () => ({
     className?: string;
     [key: string]: any;
   }) => {
-    if (asChild) {
-      return children;
+    if (asChild && React.isValidElement(children)) {
+      // When asChild is true, clone children and add button props
+      return React.cloneElement(children, {
+        'data-slot': 'button',
+        'data-variant': variant,
+        'data-size': size,
+        className: className,
+        ...props,
+        ...(children.props || {}),
+      });
     }
     return (
       <button
         data-testid='theme-button'
+        data-slot='button'
         data-variant={variant}
         data-size={size}
         className={className}
@@ -248,13 +271,27 @@ vi.mock('@/components/theme/theme-toggle-button', () => {
           data-testid='theme-toggle-button'
           data-variant='outline'
           data-size='icon'
+          className='inline-flex items-center justify-center'
           onKeyDown={onKeyDown}
           onClick={onClick}
           {...ariaAttributes}
           {...props}
         >
-          <span data-testid='sun-icon'>☀️</span>
-          <span data-testid='moon-icon'>🌙</span>
+          <span
+            data-testid='sun-icon'
+            className='lucide-sun'
+            aria-hidden='true'
+          >
+            ☀️
+          </span>
+          <span
+            data-testid='moon-icon'
+            className='lucide-moon'
+            aria-hidden='true'
+          >
+            🌙
+          </span>
+          <span className='sr-only'>主题切换按钮</span>
         </button>
       );
     },
@@ -376,10 +413,12 @@ export function setupThemeToggleTest() {
     handleThemeChange: vi.fn(),
     handleKeyDown: vi.fn(),
     ariaAttributes: {
-      'aria-label': '主题切换',
+      'aria-label': '主题切换按钮，当前主题：light',
       'aria-expanded': 'false',
       'aria-haspopup': 'menu',
-      'aria-current': 'light',
+      'role': 'button',
+      'type': 'button',
+      'data-state': 'closed',
     },
   });
 }

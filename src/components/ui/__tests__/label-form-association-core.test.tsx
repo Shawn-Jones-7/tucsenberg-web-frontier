@@ -2,11 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label - Core Form Association Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -371,8 +370,8 @@ describe('Label - Core Form Association Tests', () => {
 
       const label1 = screen.getByText('Input 1');
       const label2 = screen.getByText('Input 2');
-      const input1 = screen.getByDisplayValue('');
-      const input2 = screen.getAllByDisplayValue('')[1];
+      const input1 = screen.getByLabelText('Input 1');
+      const input2 = screen.getByLabelText('Input 2');
 
       await user.click(label1);
       expect(input1).toHaveFocus();

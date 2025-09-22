@@ -2,10 +2,10 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  AdditionalFields,
-  CheckboxFields,
-  ContactFields,
-  NameFields,
+    AdditionalFields,
+    CheckboxFields,
+    ContactFields,
+    NameFields,
 } from '../contact-form-fields';
 
 // Mock react-hook-form
@@ -81,11 +81,11 @@ describe('Contact Form Fields - Core Tests', () => {
   });
 
   describe('ContactFields Component', () => {
-    it('should render email and phone fields', () => {
+    it('should render email and company fields', () => {
       render(<ContactFields {...defaultProps} />);
 
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/company/i)).toBeInTheDocument();
     });
 
     it('should show email as required', () => {
@@ -113,25 +113,26 @@ describe('Contact Form Fields - Core Tests', () => {
     it('should render privacy policy checkbox', () => {
       render(<CheckboxFields {...defaultProps} />);
 
-      expect(screen.getByRole('checkbox')).toBeInTheDocument();
-      expect(screen.getByText(/privacyPolicy/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/acceptPrivacy/i)).toBeInTheDocument();
+      expect(screen.getByText(/acceptPrivacy/i)).toBeInTheDocument();
     });
 
     it('should handle checkbox interactions', async () => {
       const user = userEvent.setup();
       render(<CheckboxFields {...defaultProps} />);
 
-      const checkbox = screen.getByRole('checkbox');
+      const checkbox = screen.getByLabelText(/acceptPrivacy/i);
       await user.click(checkbox);
 
-      expect(checkbox).toBeChecked();
+      // Verify setValue was called with correct parameters
+      expect(mockSetValue).toHaveBeenCalledWith('acceptPrivacy', true);
     });
 
     it('should display privacy policy validation errors', () => {
       const propsWithErrors = {
         ...defaultProps,
         errors: {
-          privacyPolicy: { message: 'You must accept the privacy policy' },
+          acceptPrivacy: { message: 'You must accept the privacy policy' },
         } as any,
       };
 
@@ -186,18 +187,19 @@ describe('Contact Form Fields - Core Tests', () => {
       );
 
       // Verify register was called for all expected fields
-      expect(mockRegister).toHaveBeenCalledWith(
-        'firstName',
-        expect.any(Object),
-      );
-      expect(mockRegister).toHaveBeenCalledWith('lastName', expect.any(Object));
-      expect(mockRegister).toHaveBeenCalledWith('email', expect.any(Object));
-      expect(mockRegister).toHaveBeenCalledWith('phone', expect.any(Object));
-      expect(mockRegister).toHaveBeenCalledWith(
-        'privacyPolicy',
-        expect.any(Object),
-      );
-      expect(mockRegister).toHaveBeenCalledWith('message', expect.any(Object));
+      expect(mockRegister).toHaveBeenCalledTimes(7);
+
+      // Check individual field registrations
+      const calls = mockRegister.mock.calls;
+      const fieldNames = calls.map(call => call[0]);
+
+      expect(fieldNames).toContain('firstName');
+      expect(fieldNames).toContain('lastName');
+      expect(fieldNames).toContain('email');
+      expect(fieldNames).toContain('company');
+      expect(fieldNames).toContain('phone');
+      expect(fieldNames).toContain('subject');
+      expect(fieldNames).toContain('message');
     });
 
     it('should handle form submission state', () => {
@@ -221,7 +223,7 @@ describe('Contact Form Fields - Core Tests', () => {
         expect(input).toBeDisabled();
       });
 
-      const checkbox = screen.getByRole('checkbox');
+      const checkbox = screen.getByLabelText(/acceptPrivacy/i);
       expect(checkbox).toBeDisabled();
     });
   });
@@ -241,7 +243,9 @@ describe('Contact Form Fields - Core Tests', () => {
       expect(screen.getByLabelText(/firstName/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/lastName/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/company/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/subject/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
     });
 
@@ -264,9 +268,9 @@ describe('Contact Form Fields - Core Tests', () => {
       const firstNameField = screen.getByLabelText(/firstName/i);
       const emailField = screen.getByLabelText(/email/i);
 
-      // Fields should have aria-describedby pointing to error messages
-      expect(firstNameField).toHaveAttribute('aria-describedby');
-      expect(emailField).toHaveAttribute('aria-describedby');
+      // Fields should have aria-invalid set to true when there are errors
+      expect(firstNameField).toHaveAttribute('aria-invalid', 'true');
+      expect(emailField).toHaveAttribute('aria-invalid', 'true');
     });
   });
 
@@ -285,10 +289,12 @@ describe('Contact Form Fields - Core Tests', () => {
       expect(mockT).toHaveBeenCalledWith(expect.stringContaining('firstName'));
       expect(mockT).toHaveBeenCalledWith(expect.stringContaining('lastName'));
       expect(mockT).toHaveBeenCalledWith(expect.stringContaining('email'));
+      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('company'));
       expect(mockT).toHaveBeenCalledWith(expect.stringContaining('phone'));
+      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('subject'));
       expect(mockT).toHaveBeenCalledWith(expect.stringContaining('message'));
       expect(mockT).toHaveBeenCalledWith(
-        expect.stringContaining('privacyPolicy'),
+        expect.stringContaining('acceptPrivacy'),
       );
     });
   });

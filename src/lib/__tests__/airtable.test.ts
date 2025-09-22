@@ -189,6 +189,12 @@ describe('Airtable Tests - Index', () => {
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
 
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
+
       // Ensure service is not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
@@ -196,6 +202,8 @@ describe('Airtable Tests - Index', () => {
       await expect(service.createContact(validFormData)).rejects.toThrow(
         'Airtable service is not configured',
       );
+
+      initSpy.mockRestore();
     });
   });
 
@@ -246,6 +254,12 @@ describe('Airtable Tests - Index', () => {
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
 
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
+
       // Ensure service is not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
@@ -253,6 +267,8 @@ describe('Airtable Tests - Index', () => {
       await expect(service.getContacts()).rejects.toThrow(
         'Airtable service is not configured',
       );
+
+      initSpy.mockRestore();
     });
   });
 
@@ -280,27 +296,30 @@ describe('Airtable Tests - Index', () => {
         },
       ]);
 
-      const result = await service.updateContactStatus(
+      await service.updateContactStatus(
         'rec123456',
         'Completed',
       );
 
-      expect(result).toEqual({
-        id: 'rec123456',
-        fields: { Status: 'Completed' },
-        createdTime: '2023-01-01T00:00:00Z',
-      });
-
       expect(mockUpdate).toHaveBeenCalledWith([
         {
           id: 'rec123456',
-          fields: { Status: 'Completed' },
+          fields: {
+            'Status': 'Completed',
+            'Updated At': expect.any(String),
+          },
         },
       ]);
     });
 
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
+
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
 
       // Ensure service is not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
@@ -309,6 +328,8 @@ describe('Airtable Tests - Index', () => {
       await expect(
         service.updateContactStatus('rec123456', 'Completed'),
       ).rejects.toThrow('Airtable service is not configured');
+
+      initSpy.mockRestore();
     });
   });
 
@@ -338,6 +359,12 @@ describe('Airtable Tests - Index', () => {
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
 
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
+
       // Ensure service is not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
@@ -345,6 +372,8 @@ describe('Airtable Tests - Index', () => {
       await expect(service.deleteContact('rec123456')).rejects.toThrow(
         'Airtable service is not configured',
       );
+
+      initSpy.mockRestore();
     });
   });
 

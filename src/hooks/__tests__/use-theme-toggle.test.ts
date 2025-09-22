@@ -66,7 +66,7 @@ vi.mock('react', async () => {
 });
 
 describe('useThemeToggle', () => {
-  const mockSetThemeWithCircularTransition = vi.fn();
+  const mockSetCircularTheme = vi.fn();
   const mockAnnounceThemeChange = vi.fn();
   const mockAnnounceSwitching = vi.fn();
   const mockHandleKeyboardNavigation = vi.fn();
@@ -75,8 +75,8 @@ describe('useThemeToggle', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock setThemeWithCircularTransition to return proper View Transition object
-    mockSetThemeWithCircularTransition.mockImplementation((_theme, _event) => ({
+    // Mock setCircularTheme to return proper View Transition object
+    mockSetCircularTheme.mockImplementation((_theme, _event) => ({
       ready: Promise.resolve(),
       finished: Promise.resolve(),
       updateCallbackDone: Promise.resolve(),
@@ -87,7 +87,7 @@ describe('useThemeToggle', () => {
     // Mock useEnhancedTheme
     mockUseEnhancedTheme.mockReturnValue({
       theme: 'light', // 修复：与测试期望一致
-      setThemeWithCircularTransition: mockSetThemeWithCircularTransition,
+      setCircularTheme: mockSetCircularTheme,
       supportsViewTransitions: true, // 修复：与测试期望一致
       setTheme: vi.fn(),
       themes: ['light', 'dark', 'system'],
@@ -198,7 +198,7 @@ describe('useThemeToggle', () => {
 
       mockUseEnhancedTheme.mockReturnValue({
         theme: undefined,
-        setThemeWithCircularTransition: mockSetThemeWithCircularTransition,
+        setCircularTheme: mockSetCircularTheme,
         supportsViewTransitions: true,
         setTheme: vi.fn(),
         themes: ['light', 'dark', 'system'],
@@ -233,7 +233,7 @@ describe('useThemeToggle', () => {
       });
 
       expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetThemeWithCircularTransition).toHaveBeenCalledWith(
+      expect(mockSetCircularTheme).toHaveBeenCalledWith(
         'dark',
         undefined,
       );
@@ -251,7 +251,7 @@ describe('useThemeToggle', () => {
       });
 
       expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetThemeWithCircularTransition).toHaveBeenCalledWith(
+      expect(mockSetCircularTheme).toHaveBeenCalledWith(
         'dark',
         mockEvent,
       );
@@ -459,7 +459,7 @@ describe('useThemeToggle', () => {
 
       mockUseEnhancedTheme.mockReturnValue({
         theme: 'light',
-        setThemeWithCircularTransition: mockSetThemeWithCircularTransition,
+        setCircularTheme: mockSetCircularTheme,
         supportsViewTransitions: false,
         setTheme: vi.fn(),
         themes: ['light', 'dark', 'system'],
@@ -496,7 +496,7 @@ describe('useThemeToggle', () => {
       });
 
       const EXPECTED_THEME_CHANGES = 3;
-      expect(mockSetThemeWithCircularTransition).toHaveBeenCalledTimes(
+      expect(mockSetCircularTheme).toHaveBeenCalledTimes(
         EXPECTED_THEME_CHANGES, // Three theme changes
       );
       expect(mockAnnounceSwitching).toHaveBeenCalledTimes(

@@ -45,6 +45,9 @@ const setupResendTest = async (): Promise<ResendServiceConstructor> => {
   mockResendSend.mockReset();
   mockResend.mockClear();
 
+  // Ensure the mock returns the correct instance
+  mockResend.mockReturnValue(mockResendInstance);
+
   // Dynamic import to ensure mocks are applied
   const module = await import('../resend');
   const typedModule = module as DynamicImportModule;

@@ -1,7 +1,7 @@
+import * as React from 'react';
 import { COUNT_PAIR, ONE, ZERO } from '@/constants';
 import { COUNT_4, MAGIC_16 } from '@/constants/count';
 import { MAGIC_0_5 } from '@/constants/decimal';
-import * as React from 'react';
 
 /**
  * Animation constants to avoid magic numbers

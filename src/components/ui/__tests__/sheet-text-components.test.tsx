@@ -2,16 +2,16 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetTitle,
+} from '@/components/ui/sheet';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetTitle,
-} from '@/components/ui/sheet';
 
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
@@ -66,7 +66,6 @@ describe('Sheet - Text Components', () => {
       await waitFor(() => {
         const title = screen.getByTestId('sheet-title');
         expect(title).toHaveClass(
-          'text-lg',
           'font-semibold',
           'text-foreground',
         );

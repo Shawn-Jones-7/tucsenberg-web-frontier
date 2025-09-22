@@ -1,6 +1,5 @@
 'use client';
 
-
 import { useCallback, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
 import { I18nPerformanceMonitor } from '@/lib/i18n-performance';

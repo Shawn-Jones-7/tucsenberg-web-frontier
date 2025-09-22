@@ -13,10 +13,9 @@
  * - 货币符号
  */
 
-import React from 'react';
+import { Badge } from '@/components/ui/badge';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Badge } from '@/components/ui/badge';
 
 describe('Badge Content - Special Characters Tests', () => {
   describe('特殊字符渲染', () => {
@@ -70,9 +69,9 @@ describe('Badge Content - Special Characters Tests', () => {
     });
 
     it('renders brackets and parentheses', () => {
-      render(<Badge>Brackets: [] {} ()</Badge>);
+      render(<Badge data-testid="brackets-badge">Brackets: [] {'{}'} ()</Badge>);
 
-      const badge = screen.getByText('Brackets: [] {} ()');
+      const badge = screen.getByTestId('brackets-badge');
       expect(badge).toHaveTextContent('Brackets: [] {} ()');
     });
 
@@ -216,9 +215,9 @@ describe('Badge Content - Special Characters Tests', () => {
 
   describe('技术符号', () => {
     it('renders programming symbols', () => {
-      render(<Badge>Code: {} [] () &lt;&gt;</Badge>);
+      render(<Badge data-testid="programming-badge">Code: {'{}'} [] () &lt;&gt;</Badge>);
 
-      const badge = screen.getByText('Code: {} [] () <>');
+      const badge = screen.getByTestId('programming-badge');
       expect(badge).toHaveTextContent('Code: {} [] () <>');
     });
 
@@ -230,17 +229,17 @@ describe('Badge Content - Special Characters Tests', () => {
     });
 
     it('renders file path separators', () => {
-      render(<Badge>Path: / \\ | :</Badge>);
+      render(<Badge data-testid="path-badge">Path: / \\ | :</Badge>);
 
-      const badge = screen.getByText('Path: / \\ | :');
-      expect(badge).toHaveTextContent('Path: / \\ | :');
+      const badge = screen.getByTestId('path-badge');
+      expect(badge).toHaveTextContent('Path: / \\\\ | :');
     });
 
     it('renders escape sequences', () => {
-      render(<Badge>Escape: \\n \\t \\r \\&quot;</Badge>);
+      render(<Badge data-testid="escape-badge">Escape: \\n \\t \\r \\&quot;</Badge>);
 
-      const badge = screen.getByText('Escape: \\n \\t \\r \\"');
-      expect(badge).toHaveTextContent('Escape: \\n \\t \\r \\"');
+      const badge = screen.getByTestId('escape-badge');
+      expect(badge).toHaveTextContent('Escape: \\\\n \\\\t \\\\r \\\\"');
     });
 
     it('renders regex patterns', () => {

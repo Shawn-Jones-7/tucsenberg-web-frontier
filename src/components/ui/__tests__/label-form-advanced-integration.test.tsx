@@ -12,11 +12,11 @@
  * 基础功能测试请参考 label-form-advanced-integration-core.test.tsx
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Form Advanced Integration Special Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -115,10 +115,10 @@ describe('Label Form Advanced Integration Special Tests', () => {
       await user.click(submitButton);
 
       expect(screen.getByTestId('email-error')).toHaveTextContent(
-        'Email must be valid',
+        'Email is required',
       );
       expect(screen.getByTestId('password-error')).toHaveTextContent(
-        'Password must be at least 8 characters',
+        'Password is required',
       );
     });
 

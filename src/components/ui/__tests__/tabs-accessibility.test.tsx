@@ -2,11 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('Tabs Accessibility', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -295,18 +294,26 @@ describe('Tabs Accessibility', () => {
     tab1Trigger.focus();
     expect(tab1Trigger).toHaveFocus();
 
-    // Tab should move to content button
+    // Tab should move to content area (tabpanel gets focus first)
+    await user.tab();
+    // Then tab again to reach the button inside
     await user.tab();
     expect(tab1Button).toHaveFocus();
 
-    // Tab should move to next tab trigger
-    await user.tab();
+    // Use arrow keys to navigate between tab triggers (Radix UI behavior)
+    // First, focus back to tab triggers
+    tab1Trigger.focus();
+
+    // Use arrow key to move to next tab trigger
+    await user.keyboard('{ArrowRight}');
     expect(tab2Trigger).toHaveFocus();
 
-    // Activate tab2
-    await user.keyboard('{Enter}');
+    // Tab should move to tab2 content area first (tabpanel)
+    await user.tab();
+    const tab2Content = screen.getByRole('tabpanel', { name: /tab 2/i });
+    expect(tab2Content).toHaveFocus();
 
-    // Tab should move to tab2 content button
+    // Then tab again to reach the button inside
     await user.tab();
     const tab2Button = screen.getByTestId('tab2-button');
     expect(tab2Button).toHaveFocus();

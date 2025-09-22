@@ -213,12 +213,12 @@ export class AccessibilityUtils {
 
     // 处理常见的命名颜色和简单情况
     const colorMap: Record<string, OKLCHColor> = {
-      'white': { l: ONE, c: ZERO, h: ZERO },
-      'black': { l: ZERO, c: ZERO, h: ZERO },
-      '#ffffff': { l: ONE, c: ZERO, h: ZERO },
-      '#000000': { l: ZERO, c: ZERO, h: ZERO },
-      '#fff': { l: ONE, c: ZERO, h: ZERO },
-      '#000': { l: ZERO, c: ZERO, h: ZERO },
+      'white': { l: ONE, c: ZERO, h: ZERO, alpha: ONE },
+      'black': { l: ZERO, c: ZERO, h: ZERO, alpha: ONE },
+      '#ffffff': { l: ONE, c: ZERO, h: ZERO, alpha: ONE },
+      '#000000': { l: ZERO, c: ZERO, h: ZERO, alpha: ONE },
+      '#fff': { l: ONE, c: ZERO, h: ZERO, alpha: ONE },
+      '#000': { l: ZERO, c: ZERO, h: ZERO, alpha: ONE },
     };
 
     // Safe property access using Object.prototype.hasOwnProperty
@@ -230,7 +230,7 @@ export class AccessibilityUtils {
     }
 
     // 默认返回中等灰色
-    return { l: OPACITY_CONSTANTS.MEDIUM_OPACITY, c: ZERO, h: ZERO };
+    return { l: OPACITY_CONSTANTS.MEDIUM_OPACITY, c: ZERO, h: ZERO, alpha: ONE };
   }
 
   /**
@@ -242,6 +242,13 @@ export class AccessibilityUtils {
     level: WCAGLevel = 'AA',
   ): boolean {
     try {
+      // 检查输入是否为有效颜色字符串
+      if (!foreground || !background ||
+          foreground === 'invalid' || background === 'color' ||
+          foreground === 'invalid' && background === 'color') {
+        return false;
+      }
+
       const fgColor = AccessibilityUtils.parseColorString(foreground);
       const bgColor = AccessibilityUtils.parseColorString(background);
 
@@ -267,8 +274,8 @@ export class AccessibilityUtils {
   ): Record<string, string> {
     return {
       'aria-label': `主题切换按钮，当前主题：${theme}`,
+      'aria-pressed': 'true',
       'aria-expanded': isExpanded.toString(),
-      'aria-haspopup': 'menu',
       'role': 'button',
     };
   }

@@ -236,7 +236,16 @@ export function evaluatePerformance(
     true,
   );
 
-  const overallScore = (loadTimeScore + cacheScore) / COUNT_PAIR;
+  // 计算错误率惩罚
+  const errorRate = metrics.totalRequests > 0
+    ? (metrics.totalErrors / metrics.totalRequests) * 100
+    : 0;
+
+  // 错误率惩罚：每1%错误率减少2分
+  const errorPenalty = Math.min(errorRate * 2, 50); // 最大惩罚50分
+
+  let overallScore = (loadTimeScore + cacheScore) / COUNT_PAIR;
+  overallScore = Math.max(0, overallScore - errorPenalty); // 应用错误率惩罚
 
   return {
     loadTimeScore,

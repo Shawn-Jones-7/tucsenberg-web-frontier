@@ -42,7 +42,7 @@ describe('Types Index Module', () => {
       const path = require('path');
       const indexPath = path.join(__dirname, '../index.ts');
       const content = fs.readFileSync(indexPath, 'utf8');
-      expect(content).toContain("export * from './global'");
+      expect(content).toContain("} from '@/types/global'");
     });
 
     it('should export from test-types', () => {
@@ -50,7 +50,7 @@ describe('Types Index Module', () => {
       const path = require('path');
       const indexPath = path.join(__dirname, '../index.ts');
       const content = fs.readFileSync(indexPath, 'utf8');
-      expect(content).toContain("export * from './test-types'");
+      expect(content).toContain("} from '@/types/test-types'");
     });
   });
 

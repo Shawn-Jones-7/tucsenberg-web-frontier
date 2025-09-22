@@ -12,10 +12,10 @@
  * - Ref转发
  */
 
-import { createRef } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import { Badge } from '@/components/ui/badge';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { createRef } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('Badge Custom Props - Core Tests', () => {
   describe('Basic Custom Properties', () => {
@@ -48,10 +48,8 @@ describe('Badge Custom Props - Core Tests', () => {
       );
 
       const badge = screen.getByText('Styled Badge');
-      expect(badge).toHaveStyle({
-        backgroundColor: 'red',
-        color: 'white',
-      });
+      expect(badge).toHaveStyle('background-color: rgb(255, 0, 0)');
+      expect(badge).toHaveStyle('color: rgb(255, 255, 255)');
     });
 
     it('supports data attributes', () => {

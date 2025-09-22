@@ -14,12 +14,12 @@
  * - mobile-navigation-responsive-basic.test.tsx - 基本响应式功能测试
  */
 
-import { MobileNavigation } from '@/components/layout/mobile-navigation';
+import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { MobileNavigation } from '@/components/layout/mobile-navigation';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

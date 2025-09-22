@@ -9,11 +9,11 @@
  * - Responsive behavior
  */
 
-import { Footer } from '@/components/layout/footer';
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import React from 'react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { Footer } from '@/components/layout/footer';
 
 // Mock next-intl hooks
 const mockUseTranslations = vi.fn();

@@ -4,7 +4,7 @@
  */
 
 import { logger } from '@/lib/logger';
-import { env } from '@/../env.mjs';
+import { env } from '@/lib/env';
 import { ZERO } from '@/constants';
 
 /**

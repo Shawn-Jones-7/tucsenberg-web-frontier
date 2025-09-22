@@ -110,6 +110,7 @@ describe('AccessibilityManager Core Tests', () => {
         ENTER: 'Enter',
         SPACE: ' ',
         ESCAPE: 'Escape',
+        TAB: 'Tab',
         ARROW_UP: 'ArrowUp',
         ARROW_DOWN: 'ArrowDown',
         ARROW_LEFT: 'ArrowLeft',
@@ -165,6 +166,9 @@ describe('AccessibilityManager Core Tests', () => {
 
       manager.announceThemeChange('light');
 
+      // 推进延迟时间以触发消息设置
+      vi.advanceTimersByTime(100); // announceDelay
+
       expect(mockElement.textContent).toBe('已切换到明亮模式');
     });
 
@@ -172,6 +176,9 @@ describe('AccessibilityManager Core Tests', () => {
       const manager = new AccessibilityManager();
 
       manager.announceThemeChange('dark');
+
+      // 推进延迟时间以触发消息设置
+      vi.advanceTimersByTime(100); // announceDelay
       expect(mockElement.textContent).toBe('已切换到深色模式');
 
       vi.advanceTimersByTime(1000); // clearDelay

@@ -51,12 +51,12 @@ describe('Constants Index Module', () => {
       const indexPath = path.join(__dirname, '../index.ts');
       const content = fs.readFileSync(indexPath, 'utf8');
 
-      // 验证包含所有必要的导出
-      expect(content).toContain("export * from './i18n-constants'");
-      expect(content).toContain("export * from './app-constants'");
-      expect(content).toContain("export * from './test-constants'");
-      expect(content).toContain("export * from './security-constants'");
-      expect(content).toContain("export * from './seo-constants'");
+      // 验证包含所有必要的导出 (使用命名导出而不是通配符导出)
+      expect(content).toContain("} from './i18n-constants'");
+      expect(content).toContain("} from './app-constants'");
+      expect(content).toContain("} from './test-constants'");
+      expect(content).toContain("} from './security-constants'");
+      expect(content).toContain("} from './seo-constants'");
     });
 
     it('should have re-export statements', () => {

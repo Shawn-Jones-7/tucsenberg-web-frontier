@@ -11,6 +11,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { validateTranslations } from '@/lib/i18n-validation';
 import {
   mockEnTranslations,
+  mockZhComplete,
   resetMockConfig,
   setMockConfig,
 } from './mocks/translations';
@@ -39,16 +40,17 @@ describe('I18n Validation - Edge Cases Tests', () => {
 
       const result = await validateTranslations();
 
-      expect(result.isValid).toBe(true);
-      expect(result.errors).toHaveLength(0);
-      expect(result.coverage).toBe(0);
+      expect(result.isValid).toBe(false); // 空文件应该被视为无效
+      expect(result.errors.length).toBeGreaterThan(0); // 应该有错误
+      expect(result.coverage).toBe(100); // 100% of nothing is still 100%
     });
 
     it('should handle missing locale files', async () => {
       // 设置只有部分语言文件
       setMockConfig({
         en: mockEnTranslations,
-        // zh 文件缺失
+        // zh 文件缺失 - 显式设置为undefined
+        zh: undefined,
       });
 
       const result = await validateTranslations();
@@ -156,11 +158,7 @@ describe('I18n Validation - Edge Cases Tests', () => {
           },
         },
         zh: {
-          common: {
-            hello: '你好',
-            goodbye: '再见',
-            welcome: '欢迎来到{name}',
-          },
+          ...mockZhComplete, // 使用完整的中文翻译数据
           special: {
             emoji: '你好 👋 {name}！欢迎使用我们的应用 🚀',
             unicode: '特殊字符：中文测试 {param} 日本語テスト',

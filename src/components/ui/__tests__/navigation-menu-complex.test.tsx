@@ -2,17 +2,17 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuLink,
-  NavigationMenuList,
-  NavigationMenuTrigger,
+    NavigationMenu,
+    NavigationMenuContent,
+    NavigationMenuItem,
+    NavigationMenuLink,
+    NavigationMenuList,
+    NavigationMenuTrigger,
 } from '../navigation-menu';
 
 // Mock Lucide React icons
@@ -194,7 +194,8 @@ describe('NavigationMenu - Complex Structures', () => {
     expect(trigger).toHaveTextContent('Main Menu');
   });
 
-  it('handles dynamic content updates', () => {
+  it('handles dynamic content updates', async () => {
+    const user = userEvent.setup();
     const TestComponent = ({ items }: { items: string[] }) => (
       <NavigationMenu>
         <NavigationMenuList>
@@ -222,6 +223,10 @@ describe('NavigationMenu - Complex Structures', () => {
 
     const { rerender } = render(<TestComponent items={['Item 1', 'Item 2']} />);
 
+    // Open the menu first to access content
+    const trigger = screen.getByTestId('dynamic-trigger');
+    await user.click(trigger);
+
     // Initial items should be rendered
     expect(screen.getByTestId('item-0')).toHaveTextContent('Item 1');
     expect(screen.getByTestId('item-1')).toHaveTextContent('Item 2');
@@ -237,7 +242,8 @@ describe('NavigationMenu - Complex Structures', () => {
     expect(screen.getByTestId('item-2')).toHaveTextContent('New Item 3');
   });
 
-  it('handles large navigation menus efficiently', () => {
+  it('handles large navigation menus efficiently', async () => {
+    const user = userEvent.setup();
     const largeItemCount = 20;
 
     render(
@@ -264,6 +270,10 @@ describe('NavigationMenu - Complex Structures', () => {
         </NavigationMenuList>
       </NavigationMenu>,
     );
+
+    // Open the menu first to access content
+    const trigger = screen.getByTestId('large-menu-trigger');
+    await user.click(trigger);
 
     // Check that all items are rendered
     for (let i = 0; i < largeItemCount; i++) {

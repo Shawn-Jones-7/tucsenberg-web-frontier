@@ -1,7 +1,11 @@
-import { act } from '@testing-library/react';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { ContactFormContainer } from '@/components/forms/contact-form-container';
 import { fireEvent, render, screen } from '@/test/utils';
+import { act } from '@testing-library/react';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+
+// 确保使用真实的Zod库和validations模块
+vi.unmock('zod');
+vi.unmock('@/lib/validations');
 
 // Mock next-intl with comprehensive translations
 const mockT = vi.fn((key: string) => {
@@ -192,14 +196,14 @@ describe('ContactFormContainer - 剩余高级测试', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // 检查成功消息
+      // 检查成功消息 - 匹配mock中定义的消息
       expect(
-        screen.getByText(/message sent successfully/i),
+        screen.getByText(/form submitted successfully/i),
       ).toBeInTheDocument();
 
-      // 检查消息样式
+      // 检查消息样式 - 匹配实际的CSS类名
       const alertElement = screen.getByRole('alert');
-      expect(alertElement).toHaveClass('text-green-600');
+      expect(alertElement).toHaveClass('text-green-800');
     });
 
     it('应该显示错误状态消息样式', async () => {
@@ -224,12 +228,12 @@ describe('ContactFormContainer - 剩余高级测试', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // 检查错误消息
-      expect(screen.getByText(/server error/i)).toBeInTheDocument();
+      // 检查错误消息 - 应该显示通用错误消息而不是具体的服务器错误
+      expect(screen.getByText(/failed to submit form/i)).toBeInTheDocument();
 
-      // 检查错误消息样式
+      // 检查错误消息样式 - 匹配实际的CSS类名
       const alertElement = screen.getByRole('alert');
-      expect(alertElement).toHaveClass('text-red-600');
+      expect(alertElement).toHaveClass('text-red-800');
     });
   });
 });

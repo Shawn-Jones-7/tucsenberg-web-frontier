@@ -12,11 +12,11 @@
  * - 表单提交处理
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Form Advanced Integration Core Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -155,7 +155,7 @@ describe('Label Form Advanced Integration Core Tests', () => {
       const display = screen.getByTestId('display-value');
 
       expect(input).toHaveValue('');
-      expect(display).toHaveTextContent('Value: ');
+      expect(display).toHaveTextContent('Value:');
 
       await user.type(input, 'controlled');
       expect(input).toHaveValue('controlled');

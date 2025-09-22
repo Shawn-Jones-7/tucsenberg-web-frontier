@@ -3,15 +3,9 @@
  */
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  AccessibilityManager,
-  accessibilityManager,
-  announceSwitching,
-  announceThemeChange,
-  useAccessibility,
-} from '../accessibility';
 
-// Mock modules
+// 使用全局Mock配置，不需要局部覆盖
+
 vi.mock('@/lib/logger', () => ({
   logger: {
     warn: vi.fn(),
@@ -23,9 +17,31 @@ vi.mock('@/lib/logger', () => ({
 
 vi.mock('@/lib/colors', () => ({
   checkContrastCompliance: vi.fn().mockReturnValue(true),
-  PERCENTAGE_CONSTANTS: {
-    FULL: 100,
+}));
+
+import {
+  AccessibilityManager,
+  accessibilityManager,
+  announceSwitching,
+  announceThemeChange,
+  useAccessibility,
+} from '../accessibility';
+
+// Mock constants
+vi.mock('@/constants', () => ({
+  COUNT_TRIPLE: 3,
+  ONE: 1,
+  ZERO: 0,
+}));
+
+vi.mock('@/constants/app-constants', () => ({
+  OPACITY_CONSTANTS: {
+    MEDIUM_OPACITY: 0.5,
   },
+}));
+
+vi.mock('@/constants/count', () => ({
+  MAGIC_6: 6,
 }));
 
 const originalDocumentDescriptor = Object.getOwnPropertyDescriptor(
@@ -40,6 +56,9 @@ const originalWindowDescriptor = Object.getOwnPropertyDescriptor(
 describe('AccessibilityManager Global Exports', () => {
   // Mock DOM for tests
   beforeEach(() => {
+    vi.useFakeTimers();
+    vi.clearAllMocks();
+
     const mockElement = {
       textContent: '',
       setAttribute: vi.fn(),
@@ -72,6 +91,7 @@ describe('AccessibilityManager Global Exports', () => {
   });
 
   afterEach(() => {
+    vi.useRealTimers();
     if (originalDocumentDescriptor) {
       Object.defineProperty(globalThis, 'document', originalDocumentDescriptor);
     }
@@ -167,6 +187,7 @@ describe('AccessibilityManager Global Exports', () => {
 
       // Test that color contrast checker returns boolean
       const result = checkColorContrast('#000000', '#ffffff');
+      expect(result).toBeDefined();
       expect(typeof result).toBe('boolean');
     });
 
@@ -190,6 +211,9 @@ describe('AccessibilityManager Global Exports', () => {
       const spy = vi.spyOn(accessibilityManager, 'announceThemeChange');
 
       announceThemeChange('dark');
+
+      // 推进延迟时间以确保函数被调用
+      vi.advanceTimersByTime(100);
 
       expect(spy).toHaveBeenCalledWith('dark');
       spy.mockRestore();

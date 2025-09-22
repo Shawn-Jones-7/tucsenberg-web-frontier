@@ -13,7 +13,7 @@ import type {
 } from '@/lib/airtable/types';
 import { logger } from '@/lib/logger';
 import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
-import { env } from '@/../env.mjs';
+import { env } from '@/lib/env';
 import {
   ANIMATION_DURATION_VERY_SLOW,
   ONE,
@@ -207,7 +207,7 @@ export class AirtableService {
         error: error instanceof Error ? error.message : 'Unknown error',
         email: formData.email,
       });
-      throw new Error('Failed to save contact information');
+      throw new Error('Failed to create contact record');
     }
   }
 

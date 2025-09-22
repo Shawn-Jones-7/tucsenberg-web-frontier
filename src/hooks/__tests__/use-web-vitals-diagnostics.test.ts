@@ -19,20 +19,35 @@ vi.mock('@/lib/enhanced-web-vitals', () => ({
   },
 }));
 
+// Mock logger模块
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
 const renderDiagnosticsHook = (): RenderHookResult<
   UseWebVitalsDiagnosticsReturn,
   void
 > => renderHook(() => useWebVitalsDiagnostics());
 
 // 2. 使用vi.hoisted确保Mock函数在模块导入前设置
-const { mockLocalStorage, mockConsoleWarn } = vi.hoisted(() => ({
+const { mockLocalStorage, mockLogger } = vi.hoisted(() => ({
   mockLocalStorage: {
     getItem: vi.fn(),
     setItem: vi.fn(),
     removeItem: vi.fn(),
     clear: vi.fn(),
   },
-  mockConsoleWarn: vi.fn(),
+  mockLogger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  },
 }));
 
 const getCollectorMock = async () => {
@@ -40,6 +55,11 @@ const getCollectorMock = async () => {
     '@/lib/enhanced-web-vitals'
   );
   return vi.mocked(enhancedWebVitalsCollector);
+};
+
+const getLoggerMock = async () => {
+  const { logger } = await import('@/lib/logger');
+  return vi.mocked(logger);
 };
 
 type DiagnosticsHookRender = ReturnType<typeof renderDiagnosticsHook>;
@@ -53,10 +73,11 @@ Object.defineProperty(global, 'localStorage', {
   writable: true,
 });
 
-Object.defineProperty(global, 'console', {
+// Mock URL.createObjectURL for browser API tests
+Object.defineProperty(global, 'URL', {
   value: {
-    ...console,
-    warn: mockConsoleWarn,
+    createObjectURL: vi.fn(() => 'mock-url'),
+    revokeObjectURL: vi.fn(),
   },
   writable: true,
 });
@@ -187,7 +208,6 @@ describe('useWebVitalsDiagnostics', () => {
     mockLocalStorage.setItem.mockImplementation(() => {});
     mockLocalStorage.removeItem.mockImplementation(() => {});
     mockLocalStorage.clear.mockImplementation(() => {});
-    mockConsoleWarn.mockImplementation(() => {});
   });
 
   // 辅助函数：重置所有Mock到默认状态
@@ -207,7 +227,6 @@ describe('useWebVitalsDiagnostics', () => {
     mockLocalStorage.setItem.mockImplementation(() => {});
     mockLocalStorage.removeItem.mockImplementation(() => {});
     mockLocalStorage.clear.mockImplementation(() => {});
-    mockConsoleWarn.mockImplementation(() => {});
   };
 
   afterEach(() => {
@@ -227,7 +246,8 @@ describe('useWebVitalsDiagnostics', () => {
       // 验证Hook正确初始化
       expect(result.current).not.toBeNull();
       expect(result.current).toBeDefined();
-      expect(result.current.isLoading).toBe(true);
+      // Hook初始化时isLoading为false，只有在调用refreshDiagnostics时才为true
+      expect(result.current.isLoading).toBe(false);
       expect(result.current.currentReport).toBe(null);
       expect(result.current.historicalReports).toEqual([]);
       expect(result.current.error).toBe(null);
@@ -288,12 +308,12 @@ describe('useWebVitalsDiagnostics', () => {
         vi.runAllTimers();
       });
 
-      // 验证Mock被调用
+      // 验证Mock被调用 - refreshDiagnostics调用getDetailedMetrics而不是generateDiagnosticReport
       const { enhancedWebVitalsCollector } = await import(
         '@/lib/enhanced-web-vitals'
       );
       expect(
-        enhancedWebVitalsCollector.generateDiagnosticReport,
+        enhancedWebVitalsCollector.getDetailedMetrics,
       ).toHaveBeenCalled();
 
       // 验证结果
@@ -328,9 +348,9 @@ describe('useWebVitalsDiagnostics', () => {
     it('should handle errors during report generation', async () => {
       await resetMocksToDefault();
 
-      // 设置错误Mock
+      // 设置错误Mock - 修复为getDetailedMetrics
       const collector = await getCollectorMock();
-      collector.generateDiagnosticReport.mockImplementation(() => {
+      collector.getDetailedMetrics.mockImplementation(() => {
         throw new Error('Report generation failed');
       });
 
@@ -354,9 +374,9 @@ describe('useWebVitalsDiagnostics', () => {
     it('should handle unknown errors', async () => {
       await resetMocksToDefault();
 
-      // 设置错误Mock
+      // 设置错误Mock - 修复为getDetailedMetrics
       const collector = await getCollectorMock();
-      collector.generateDiagnosticReport.mockImplementation(() => {
+      collector.getDetailedMetrics.mockImplementation(() => {
         throw new Error('String error');
       });
 
@@ -378,7 +398,7 @@ describe('useWebVitalsDiagnostics', () => {
   });
 
   describe('localStorage operations', () => {
-    it('should handle localStorage read errors gracefully', () => {
+    it('should handle localStorage read errors gracefully', async () => {
       resetMocksToDefault();
       // 设置localStorage错误
       mockLocalStorage.getItem.mockImplementation(() => {
@@ -390,13 +410,18 @@ describe('useWebVitalsDiagnostics', () => {
       // Should not throw and should warn
       expect(() => result.current).not.toThrow();
       expect(result.current).not.toBeNull();
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        'Failed to load diagnostics data:',
-        expect.any(Error),
+
+      // 验证logger.error被调用而不是console.warn
+      const logger = await getLoggerMock();
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to load historical data',
+        expect.objectContaining({
+          error: expect.any(Error),
+        }),
       );
     });
 
-    it('should handle invalid JSON in localStorage', () => {
+    it('should handle invalid JSON in localStorage', async () => {
       resetMocksToDefault();
       // 设置无效JSON
       mockLocalStorage.getItem.mockReturnValue('invalid json');
@@ -405,9 +430,14 @@ describe('useWebVitalsDiagnostics', () => {
 
       expect(() => result.current).not.toThrow();
       expect(result.current).not.toBeNull();
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        'Failed to load diagnostics data:',
-        expect.any(Error),
+
+      // 验证logger.error被调用而不是console.warn
+      const logger = await getLoggerMock();
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to load historical data',
+        expect.objectContaining({
+          error: expect.any(Error),
+        }),
       );
     });
 
@@ -447,17 +477,21 @@ describe('useWebVitalsDiagnostics', () => {
         await promise;
       });
 
-      expect(mockConsoleWarn).toHaveBeenCalledWith(
-        'Failed to save diagnostics data:',
-        expect.any(Error),
+      // 验证logger.error被调用而不是console.warn
+      const logger = await getLoggerMock();
+      expect(logger.error).toHaveBeenCalledWith(
+        'Failed to save to storage',
+        expect.objectContaining({
+          error: expect.any(Error),
+        }),
       );
       // Should still update state even if save fails
       expect(result.current.currentReport).toBeTruthy();
     });
 
-    it('should limit stored reports to 50', async () => {
-      // Create 60 historical reports
-      const manyReports = Array.from({ length: 60 }, (_, i) => ({
+    it('should limit stored reports to 100', async () => {
+      // Create 120 historical reports (超过MAX_HISTORY_SIZE=100的限制)
+      const manyReports = Array.from({ length: 120 }, (_, i) => ({
         ...mockDiagnosticReport,
         timestamp: Date.now() - i * 1000,
       }));
@@ -475,11 +509,11 @@ describe('useWebVitalsDiagnostics', () => {
         vi.runAllTimers();
       });
 
-      // Check that setItem was called with limited data
+      // Check that setItem was called with limited data (MAX_HISTORY_SIZE=100)
       const setItemCalls = mockLocalStorage.setItem.mock.calls;
       expect(setItemCalls.length).toBeGreaterThan(0);
       const savedData = JSON.parse(setItemCalls[0]![1] as string);
-      expect(savedData.length).toBeLessThanOrEqual(50);
+      expect(savedData.length).toBeLessThanOrEqual(100);
     });
   });
 
@@ -543,13 +577,13 @@ describe('useWebVitalsDiagnostics', () => {
 
       // 设置Mock返回零值，确保新生成的报告也是零值
       const collector = await getCollectorMock();
-      collector.generateDiagnosticReport.mockReturnValue({
-        ...mockGenerateReportResult,
-        metrics: {
-          ...mockGenerateReportResult.metrics,
-          cls: 0,
-          fid: 0,
-        },
+      collector.getDetailedMetrics.mockReturnValue({
+        ...TEST_WEB_VITALS_DIAGNOSTICS,
+        cls: 0,
+        fid: 0,
+        lcp: 0,
+        fcp: 0,
+        ttfb: 0,
       });
 
       const historicalData = Array.from({ length: 25 }, (_, i) => ({

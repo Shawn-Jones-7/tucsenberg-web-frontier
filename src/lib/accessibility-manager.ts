@@ -39,11 +39,11 @@ export class AccessibilityManager {
     if (typeof document === 'undefined') return;
 
     // 创建或获取现有的live region
-    this.liveRegion = document.getElementById('theme-announcements');
+    this.liveRegion = document.getElementById('accessibility-live-region');
 
     if (!this.liveRegion) {
       this.liveRegion = document.createElement('div');
-      this.liveRegion.id = 'theme-announcements';
+      this.liveRegion.setAttribute('id', 'accessibility-live-region');
       this.liveRegion.setAttribute('aria-live', 'polite');
       this.liveRegion.setAttribute('aria-atomic', 'true');
       this.liveRegion.setAttribute('role', 'status');
@@ -120,6 +120,23 @@ export class AccessibilityManager {
         error: error instanceof Error ? error.message : String(error),
       });
     }
+
+    // 清除消息以便下次播报
+    const clearDelay = DELAY_CONSTANTS.STANDARD_TIMEOUT;
+    setTimeout(() => {
+      if (this.liveRegion) {
+        try {
+          this.liveRegion.textContent = '';
+        } catch (error) {
+          logger.warn(
+            'Failed to clear textContent for switching announcement',
+            {
+              error: error instanceof Error ? error.message : String(error),
+            },
+          );
+        }
+      }
+    }, clearDelay);
   }
 
   /**
@@ -176,8 +193,17 @@ export class AccessibilityManager {
    * 清理资源
    */
   cleanup(): void {
-    if (this.liveRegion && this.liveRegion.parentNode) {
-      this.liveRegion.parentNode.removeChild(this.liveRegion);
+    if (this.liveRegion) {
+      try {
+        if (this.liveRegion.parentNode) {
+          this.liveRegion.parentNode.removeChild(this.liveRegion);
+        } else if (typeof document !== 'undefined' && document.body) {
+          document.body.removeChild(this.liveRegion);
+        }
+      } catch (error) {
+        // 重新抛出错误以便测试可以捕获
+        throw error;
+      }
       this.liveRegion = null;
     }
   }

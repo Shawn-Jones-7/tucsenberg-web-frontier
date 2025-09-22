@@ -25,9 +25,25 @@ import {
 
 // Mock Airtable
 const mockCreate = vi.fn();
-const mockSelect = vi.fn();
+const mockSelectAll = vi.fn();
+const mockSelect = vi.fn().mockReturnValue({
+  all: mockSelectAll,
+  firstPage: vi.fn(),
+});
 const mockUpdate = vi.fn();
 const mockDestroy = vi.fn();
+
+// Mock record with get method
+const createMockRecord = (data: Record<string, unknown>) => ({
+  id: data.id || 'rec123456',
+  fields: data.fields || {},
+  createdTime: data.createdTime || '2023-01-01T00:00:00Z',
+  get: vi.fn((field: string) => {
+    if (field === 'Created Time') return data.createdTime || '2023-01-01T00:00:00Z';
+    return (data.fields as Record<string, unknown>)?.[field];
+  }),
+});
+
 const mockTable = vi.fn().mockReturnValue({
   create: mockCreate,
   select: mockSelect,
@@ -76,10 +92,19 @@ describe('Airtable Service - Main Operations Tests', () => {
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
     mockCreate.mockReset();
-    mockSelect.mockReset();
+    mockSelectAll.mockReset();
+    mockSelect.mockReset().mockReturnValue({
+      all: mockSelectAll,
+      firstPage: vi.fn(),
+    });
     mockUpdate.mockReset();
     mockDestroy.mockReset();
-    mockTable.mockClear();
+    mockTable.mockClear().mockReturnValue({
+      create: mockCreate,
+      select: mockSelect,
+      update: mockUpdate,
+      destroy: mockDestroy,
+    });
     mockBase.mockClear();
     mockConfigure.mockClear();
 
@@ -123,17 +148,20 @@ describe('Airtable Service - Main Operations Tests', () => {
       setServiceReady(service);
 
       // Mock successful creation
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: validFormData,
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
+      const mockRecordData = {
+        id: 'rec123456',
+        fields: validFormData,
+        createdTime: '2023-01-01T00:00:00Z',
+      };
+      mockCreate.mockResolvedValue([createMockRecord(mockRecordData)]);
 
       const result = await service.createContact(validFormData);
 
-      expect(result).toEqual({ id: 'rec123456' });
+      expect(result).toEqual({
+        id: 'rec123456',
+        fields: mockRecordData.fields,
+        createdTime: '2023-01-01T00:00:00Z',
+      });
       expect(mockCreate).toHaveBeenCalled();
     });
 
@@ -143,20 +171,24 @@ describe('Airtable Service - Main Operations Tests', () => {
       setServiceReady(service);
 
       const mockRecords = [
+        createMockRecord({
+          id: 'rec123456',
+          fields: { 'First Name': 'John', 'Last Name': 'Doe' },
+          createdTime: '2023-01-01T00:00:00Z',
+        }),
+      ];
+
+      mockSelectAll.mockResolvedValue(mockRecords);
+
+      const result = await service.getContacts();
+
+      expect(result).toEqual([
         {
           id: 'rec123456',
           fields: { 'First Name': 'John', 'Last Name': 'Doe' },
           createdTime: '2023-01-01T00:00:00Z',
         },
-      ];
-
-      mockSelect.mockReturnValue({
-        all: vi.fn().mockResolvedValue(mockRecords),
-      });
-
-      const result = await service.getContacts();
-
-      expect(result).toEqual(mockRecords);
+      ]);
       expect(mockSelect).toHaveBeenCalled();
     });
 
@@ -165,20 +197,16 @@ describe('Airtable Service - Main Operations Tests', () => {
 
       setServiceReady(service);
 
-      mockUpdate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: { Status: 'Completed' },
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
+      const mockUpdateRecord = createMockRecord({
+        id: 'rec123456',
+        fields: { Status: 'Completed' },
+        createdTime: '2023-01-01T00:00:00Z',
+      });
+      mockUpdate.mockResolvedValue([mockUpdateRecord]);
 
-      const result = await service.updateContactStatus(
-        'rec123456',
-        'Completed',
-      );
+      await service.updateContactStatus('rec123456', 'Completed');
 
-      expect(result).toEqual({ id: 'rec123456' });
+      // updateContactStatus returns void, so just check that it was called
       expect(mockUpdate).toHaveBeenCalled();
     });
 
@@ -189,9 +217,9 @@ describe('Airtable Service - Main Operations Tests', () => {
 
       mockDestroy.mockResolvedValue([{ id: 'rec123456', deleted: true }]);
 
-      const result = await service.deleteContact('rec123456');
+      await service.deleteContact('rec123456');
 
-      expect(result).toEqual({ id: 'rec123456', deleted: true });
+      // deleteContact returns void, so just check that it was called
       expect(mockDestroy).toHaveBeenCalledWith(['rec123456']);
     });
 
@@ -212,9 +240,14 @@ describe('Airtable Service - Main Operations Tests', () => {
     it('should handle missing configuration gracefully', async () => {
       const service = new AirtableServiceClass();
 
-      // Ensure service is not configured
+      // Explicitly ensure service is not configured and stays that way
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
+
+      // Mock ensureReady to do nothing (prevent auto-configuration)
+      vi.spyOn(service as any, 'ensureReady').mockImplementation(async () => {
+        // Do nothing - prevent initialization
+      });
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
         'Airtable service is not configured',
@@ -229,7 +262,7 @@ describe('Airtable Service - Main Operations Tests', () => {
       mockCreate.mockRejectedValue(new Error('API Error'));
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
-        'API Error',
+        'Failed to create contact record',
       );
     });
 
@@ -238,11 +271,9 @@ describe('Airtable Service - Main Operations Tests', () => {
 
       setServiceReady(service);
 
-      mockSelect.mockReturnValue({
-        all: vi.fn().mockRejectedValue(new Error('Retrieval failed')),
-      });
+      mockSelectAll.mockRejectedValue(new Error('Retrieval failed'));
 
-      await expect(service.getContacts()).rejects.toThrow('Retrieval failed');
+      await expect(service.getContacts()).rejects.toThrow('Failed to fetch contact records');
     });
 
     it('should handle update errors gracefully', async () => {
@@ -254,7 +285,7 @@ describe('Airtable Service - Main Operations Tests', () => {
 
       await expect(
         service.updateContactStatus('rec123456', 'Completed'),
-      ).rejects.toThrow('Update failed');
+      ).rejects.toThrow('Failed to update contact status');
     });
 
     it('should handle deletion errors gracefully', async () => {
@@ -265,7 +296,7 @@ describe('Airtable Service - Main Operations Tests', () => {
       mockDestroy.mockRejectedValue(new Error('Deletion failed'));
 
       await expect(service.deleteContact('rec123456')).rejects.toThrow(
-        'Deletion failed',
+        'Failed to delete contact record',
       );
     });
   });

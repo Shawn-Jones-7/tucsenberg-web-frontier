@@ -1,4 +1,10 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+// 确保使用真实的validations模块和Zod库，不受Mock影响
+vi.unmock('../validations');
+vi.unmock('@/lib/validations');
+vi.unmock('zod');
+
 import {
   airtableRecordSchema,
   apiResponseSchema,
@@ -10,6 +16,7 @@ import {
   type FormSubmissionStatus,
   type FormValidationError,
 } from '../validations';
+import { COUNT_PAIR, PERCENTAGE_HALF, COUNT_FIVE } from '@/constants';
 
 describe('validations - Schema Validation', () => {
   describe('contactFormSchema', () => {
@@ -23,10 +30,14 @@ describe('validations - Schema Validation', () => {
       website: '', // honeypot field
     };
 
+
+
     it('should validate correct form data', () => {
       const result = contactFormSchema.safeParse(validFormData);
       expect(result.success).toBe(true);
     });
+
+
 
     it('should reject form data with short first name', () => {
       const invalidData = { ...validFormData, firstName: 'J' };

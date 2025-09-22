@@ -1,7 +1,7 @@
-import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

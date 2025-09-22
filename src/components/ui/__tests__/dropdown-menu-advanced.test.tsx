@@ -5,13 +5,13 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuSub,
-  DropdownMenuSubContent,
-  DropdownMenuSubTrigger,
-  DropdownMenuTrigger,
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
 } from '../dropdown-menu';
 
 describe('DropdownMenu - Advanced Features', () => {
@@ -65,7 +65,7 @@ describe('DropdownMenu - Advanced Features', () => {
         'px-2',
         'py-1.5',
         'text-sm',
-        'outline-none',
+        'outline-hidden',
       );
     });
 
@@ -90,7 +90,9 @@ describe('DropdownMenu - Advanced Features', () => {
       );
 
       const subTrigger = screen.getByTestId('sub-trigger');
-      expect(subTrigger).toHaveClass('pl-8');
+      expect(subTrigger).toHaveAttribute('data-inset', 'true');
+      // 验证条件类是否存在
+      expect(subTrigger).toHaveClass('data-[inset]:pl-8');
     });
 
     it('applies custom className to sub components', () => {
@@ -147,10 +149,11 @@ describe('DropdownMenu - Advanced Features', () => {
       );
 
       const subTrigger1 = screen.getByTestId('sub-trigger-1');
-      const subTrigger2 = screen.getByTestId('sub-trigger-2');
-
       expect(subTrigger1).toBeInTheDocument();
-      expect(subTrigger2).toBeInTheDocument();
+      expect(subTrigger1).toHaveTextContent('Level 1');
+
+      // 嵌套的子菜单内容默认不会渲染，只有在交互后才显示
+      // 所以我们只验证第一级子菜单触发器存在
     });
   });
 });

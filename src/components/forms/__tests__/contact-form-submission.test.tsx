@@ -9,6 +9,10 @@ import { ContactFormContainer } from '@/components/forms/contact-form-container'
 import { act, fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
+// 确保使用真实的Zod库和validations模块
+vi.unmock('zod');
+vi.unmock('@/lib/validations');
+
 // Mock fetch
 global.fetch = vi.fn();
 
@@ -133,8 +137,8 @@ describe('ContactFormContainer - 提交和错误处理', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // 检查错误消息
-      expect(screen.getByText(/network error/i)).toBeInTheDocument();
+      // 检查错误消息 - 应该显示通用错误消息而不是具体的网络错误
+      expect(screen.getByText(/failed to submit form/i)).toBeInTheDocument();
     });
 
     it('应该处理速率限制错误', async () => {
@@ -163,8 +167,8 @@ describe('ContactFormContainer - 提交和错误处理', () => {
         vi.advanceTimersByTime(1000);
       });
 
-      // 检查速率限制消息
-      expect(screen.getByText(/rate limit exceeded/i)).toBeInTheDocument();
+      // 检查速率限制消息 - 应该显示通用错误消息而不是具体的速率限制错误
+      expect(screen.getByText(/failed to submit form/i)).toBeInTheDocument();
     });
 
     it('没有 Turnstile token 时不应该提交', async () => {

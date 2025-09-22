@@ -11,17 +11,16 @@
  * - 基本组件集成
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '../card';
 
 describe('Card Structure & Accessibility Tests - Core', () => {
@@ -218,7 +217,7 @@ describe('Card Structure & Accessibility Tests - Core', () => {
       );
 
       const cardElement = container.firstChild as HTMLElement;
-      expect(cardElement).toHaveClass('rounded-lg', 'border', 'bg-card');
+      expect(cardElement).toHaveClass('bg-card', 'text-card-foreground', 'flex', 'flex-col', 'gap-6', 'rounded-xl', 'border', 'py-6', 'shadow-sm');
     });
 
     it('applies correct CSS classes to header', () => {
@@ -232,12 +231,15 @@ describe('Card Structure & Accessibility Tests - Core', () => {
 
       const headerElement = screen
         .getByText('Header Test')
-        .closest('[class*="flex"]');
+        .closest('[data-slot="card-header"]');
       expect(headerElement).toHaveClass(
-        'flex',
-        'flex-col',
-        'space-y-1.5',
-        'p-6',
+        '@container/card-header',
+        'grid',
+        'auto-rows-min',
+        'grid-rows-[auto_auto]',
+        'items-start',
+        'gap-1.5',
+        'px-6',
       );
     });
 
@@ -252,8 +254,8 @@ describe('Card Structure & Accessibility Tests - Core', () => {
 
       const contentElement = screen
         .getByText('Content styling test')
-        .closest('[class*="p-6"]');
-      expect(contentElement).toHaveClass('p-6', 'pt-0');
+        .closest('[data-slot="card-content"]');
+      expect(contentElement).toHaveClass('px-6');
     });
 
     it('applies correct CSS classes to footer', () => {
@@ -267,8 +269,8 @@ describe('Card Structure & Accessibility Tests - Core', () => {
 
       const footerElement = screen
         .getByText('Footer styling test')
-        .closest('[class*="flex"]');
-      expect(footerElement).toHaveClass('flex', 'items-center', 'p-6', 'pt-0');
+        .closest('[data-slot="card-footer"]');
+      expect(footerElement).toHaveClass('flex', 'items-center', 'px-6', '[.border-t]:pt-6');
     });
   });
 

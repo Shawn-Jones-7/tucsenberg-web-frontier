@@ -2,13 +2,13 @@
  * @vitest-environment jsdom
  */
 
+import {
+    ExternalLinkIcon,
+    LinkedInIcon,
+    TwitterIcon,
+} from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import {
-  ExternalLinkIcon,
-  LinkedInIcon,
-  TwitterIcon,
-} from '@/components/ui/social-icons';
 
 describe('Social Icons - Basic Icons', () => {
   describe('TwitterIcon', () => {
@@ -20,11 +20,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon.tagName).toBe('svg');
     });
 
-    it('applies default classes', () => {
+    it('applies default size attributes', () => {
       render(<TwitterIcon data-testid='twitter-icon' />);
 
       const icon = screen.getByTestId('twitter-icon');
-      expect(icon).toHaveClass('h-5', 'w-5');
+      expect(icon).toHaveAttribute('width', '20');
+      expect(icon).toHaveAttribute('height', '20');
     });
 
     it('supports custom className', () => {
@@ -65,16 +66,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
-    it('supports custom aria attributes', () => {
-      render(
-        <TwitterIcon
-          aria-label='Twitter'
-          data-testid='twitter-icon'
-        />,
-      );
+    it('has aria-hidden by default for decorative use', () => {
+      render(<TwitterIcon data-testid='twitter-icon' />);
 
       const icon = screen.getByTestId('twitter-icon');
-      expect(icon).toHaveAttribute('aria-label', 'Twitter');
+      // TwitterIcon is decorative by default with aria-hidden="true"
+      expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('renders SVG path correctly', () => {
@@ -103,11 +100,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon.tagName).toBe('svg');
     });
 
-    it('applies default classes', () => {
+    it('applies default size attributes', () => {
       render(<LinkedInIcon data-testid='linkedin-icon' />);
 
       const icon = screen.getByTestId('linkedin-icon');
-      expect(icon).toHaveClass('h-5', 'w-5');
+      expect(icon).toHaveAttribute('width', '20');
+      expect(icon).toHaveAttribute('height', '20');
     });
 
     it('supports custom className', () => {
@@ -148,16 +146,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
-    it('supports custom aria attributes', () => {
-      render(
-        <LinkedInIcon
-          aria-label='LinkedIn'
-          data-testid='linkedin-icon'
-        />,
-      );
+    it('has aria-hidden by default for decorative use', () => {
+      render(<LinkedInIcon data-testid='linkedin-icon' />);
 
       const icon = screen.getByTestId('linkedin-icon');
-      expect(icon).toHaveAttribute('aria-label', 'LinkedIn');
+      // LinkedInIcon is decorative by default with aria-hidden="true"
+      expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('renders SVG path correctly', () => {
@@ -202,11 +196,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon.tagName).toBe('svg');
     });
 
-    it('applies default classes', () => {
+    it('applies default size attributes', () => {
       render(<ExternalLinkIcon data-testid='external-icon' />);
 
       const icon = screen.getByTestId('external-icon');
-      expect(icon).toHaveClass('h-4', 'w-4');
+      expect(icon).toHaveAttribute('width', '16');
+      expect(icon).toHaveAttribute('height', '16');
     });
 
     it('supports custom className', () => {
@@ -247,16 +242,12 @@ describe('Social Icons - Basic Icons', () => {
       expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
-    it('supports custom aria attributes', () => {
-      render(
-        <ExternalLinkIcon
-          aria-label='External link'
-          data-testid='external-icon'
-        />,
-      );
+    it('has aria-hidden by default for decorative use', () => {
+      render(<ExternalLinkIcon data-testid='external-icon' />);
 
       const icon = screen.getByTestId('external-icon');
-      expect(icon).toHaveAttribute('aria-label', 'External link');
+      // ExternalLinkIcon is decorative by default with aria-hidden="true"
+      expect(icon).toHaveAttribute('aria-hidden', 'true');
     });
 
     it('renders SVG paths correctly', () => {

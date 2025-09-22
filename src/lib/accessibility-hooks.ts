@@ -25,6 +25,8 @@ export function useAccessibility() {
     announceSwitching,
     prefersReducedMotion: AccessibilityUtils.prefersReducedMotion(),
     prefersHighContrast: AccessibilityUtils.prefersHighContrast(),
+    prefersDarkColorScheme: AccessibilityUtils.prefersDarkColorScheme(),
+    getColorSchemePreference: AccessibilityUtils.getColorSchemePreference,
     colorSchemePreference: AccessibilityUtils.getColorSchemePreference(),
     manageFocus: AccessibilityUtils.manageFocus,
     removeFocusIndicator: AccessibilityUtils.removeFocusIndicator,

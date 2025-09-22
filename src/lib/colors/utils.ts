@@ -13,10 +13,53 @@ import type {
  */
 export function oklchToCSS(color: OKLCHColor): string {
   const { l, c, h, alpha = 1 } = color;
-  if (alpha < 1) {
-    return `oklch(${l} ${c} ${h} / ${alpha})`;
+
+  // 安全地转换值，处理Symbol等特殊类型
+  const safeL = safeToString(l);
+  const safeC = safeToString(c);
+  const safeH = safeToString(h);
+  const safeAlpha = safeToString(alpha);
+
+  // 安全地检查alpha值，避免Symbol比较错误
+  const shouldIncludeAlpha = safeAlphaCheck(alpha);
+
+  if (shouldIncludeAlpha) {
+    return `oklch(${safeL} ${safeC} ${safeH} / ${safeAlpha})`;
   }
-  return `oklch(${l} ${c} ${h})`;
+  return `oklch(${safeL} ${safeC} ${safeH})`;
+}
+
+/**
+ * 安全地检查alpha值是否应该包含在CSS中
+ */
+function safeAlphaCheck(alpha: unknown): boolean {
+  try {
+    if (typeof alpha === 'symbol') {
+      return true; // Symbol值总是包含alpha部分
+    }
+    if (typeof alpha === 'number') {
+      return alpha < 1;
+    }
+    // 对于其他类型，尝试转换为数字
+    const numAlpha = Number(alpha);
+    return !isNaN(numAlpha) && numAlpha < 1;
+  } catch {
+    return true; // 出错时包含alpha部分
+  }
+}
+
+/**
+ * 安全地将值转换为字符串，处理Symbol等特殊类型
+ */
+function safeToString(value: unknown): string {
+  try {
+    if (typeof value === 'symbol') {
+      return 'NaN'; // Symbol值转换为NaN字符串
+    }
+    return String(value);
+  } catch {
+    return 'NaN'; // 任何转换错误都返回NaN
+  }
 }
 
 /**

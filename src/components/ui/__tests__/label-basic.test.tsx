@@ -2,10 +2,9 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label - Basic Rendering', () => {
   describe('Basic Rendering', () => {
@@ -22,11 +21,15 @@ describe('Label - Basic Rendering', () => {
 
       const label = screen.getByTestId('label');
       expect(label).toHaveClass(
+        'flex',
+        'items-center',
+        'gap-2',
         'text-sm',
-        'font-medium',
         'leading-none',
+        'font-medium',
+        'select-none',
         'peer-disabled:cursor-not-allowed',
-        'peer-disabled:opacity-70',
+        'peer-disabled:opacity-50',
       );
     });
 
@@ -110,7 +113,7 @@ describe('Label - Basic Rendering', () => {
       );
 
       const label = screen.getByTestId('styled-label');
-      expect(label).toHaveStyle('color: red');
+      expect(label).toHaveStyle('color: rgb(255, 0, 0)');
       expect(label).toHaveStyle('font-size: 16px');
     });
 

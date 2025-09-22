@@ -102,7 +102,11 @@ export async function GET(request: NextRequest) {
     const authHeader = request.headers.get('authorization');
 
     if (!validateAdminAccess(authHeader)) {
-      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+      logger.warn('Unauthorized access attempt to contact statistics');
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 },
+      );
     }
 
     // 获取统计信息
@@ -115,7 +119,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { error: 'Failed to get statistics' },
+      { success: false, error: 'Failed to fetch statistics' },
       { status: 500 },
     );
   }

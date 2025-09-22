@@ -271,17 +271,18 @@ describe('AccessibilityManager Static Methods', () => {
       expect(result).toBe(true);
       expect(mockCheckContrastCompliance).toHaveBeenCalledWith(
         expect.objectContaining({
-          lightness: expect.any(Number),
-          chroma: expect.any(Number),
-          hue: expect.any(Number),
+          l: expect.any(Number),
+          c: expect.any(Number),
+          h: expect.any(Number),
           alpha: expect.any(Number),
         }),
         expect.objectContaining({
-          lightness: expect.any(Number),
-          chroma: expect.any(Number),
-          hue: expect.any(Number),
+          l: expect.any(Number),
+          c: expect.any(Number),
+          h: expect.any(Number),
           alpha: expect.any(Number),
         }),
+        'AA',
       );
     });
 

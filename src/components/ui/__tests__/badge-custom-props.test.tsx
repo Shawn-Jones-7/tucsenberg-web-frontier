@@ -16,10 +16,10 @@
  * - Boolean attributes
  */
 
-import React, { createRef } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import { Badge } from '@/components/ui/badge';
+import { fireEvent, render, screen } from '@testing-library/react';
+import React, { createRef } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('Badge Custom Props - Advanced Tests', () => {
   describe('Advanced Custom Properties', () => {
@@ -214,12 +214,12 @@ describe('Badge Custom Props - Advanced Tests', () => {
       const { rerender } = render(<DynamicBadge color='red' />);
 
       let badge = screen.getByText('Dynamic Style');
-      expect(badge).toHaveStyle({ color: 'red' });
+      expect(badge).toHaveStyle('color: rgb(255, 0, 0)');
 
       rerender(<DynamicBadge color='blue' />);
 
       badge = screen.getByText('Dynamic Style');
-      expect(badge).toHaveStyle({ color: 'blue' });
+      expect(badge).toHaveStyle('color: rgb(0, 0, 255)');
     });
 
     it('supports complex style objects', () => {
@@ -252,7 +252,7 @@ describe('Badge Custom Props - Advanced Tests', () => {
       );
 
       const badge = screen.getByText('CSS Variables');
-      expect(badge).toHaveStyle({ '--custom-color': 'purple' });
+      expect(badge).toHaveStyle('--custom-color: purple');
     });
 
     it('handles event propagation correctly', () => {

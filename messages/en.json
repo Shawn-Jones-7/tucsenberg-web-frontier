@@ -635,7 +635,11 @@
       "planning": "Planning",
       "development": "Development",
       "testing": "Testing",
-      "launch": "Launch"
+      "launch": "Launch",
+      "ariaLabel": "Project development progress indicator",
+      "completed": "Completed",
+      "current": "Current step",
+      "upcoming": "Upcoming"
     },
     "animation": {
       "loading": "Loading animation",

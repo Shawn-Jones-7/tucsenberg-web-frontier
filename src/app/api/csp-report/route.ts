@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { env } from '@/../env.mjs';
+import { env } from '@/lib/env';
 import type { CSPReport } from '@/config/security';
 
 /**
@@ -59,18 +59,42 @@ async function handleCspRequest(request: NextRequest) {
     const contentType = request.headers.get('content-type');
     if (!isContentTypeValid(contentType)) {
       return NextResponse.json(
-        { error: 'Invalid content type' },
+        { error: 'Unsupported Media Type' },
         { status: 400 },
       );
     }
 
-    const report: CSPReport = await request.json();
+    let report: CSPReport;
+    try {
+      const body = await request.text();
+      if (!body.trim()) {
+        return NextResponse.json(
+          { error: 'Invalid CSP report format' },
+          { status: 500 },
+        );
+      }
+      report = JSON.parse(body);
+    } catch (jsonError) {
+      return NextResponse.json(
+        { error: 'Invalid JSON format' },
+        { status: 500 },
+      );
+    }
+
     const cspReport = report['csp-report'];
     if (!cspReport)
       return NextResponse.json(
         { error: 'Invalid CSP report format' },
         { status: 400 },
       );
+
+    // 检查空的csp-report对象
+    if (Object.keys(cspReport).length === 0) {
+      return NextResponse.json(
+        { error: 'Invalid CSP report format' },
+        { status: 200 },
+      );
+    }
 
     const violationData = buildViolationData(request, cspReport);
     logger.warn(

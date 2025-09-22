@@ -150,7 +150,7 @@ describe('Security Utils', () => {
       });
       const result = validateFileUpload(dangerousFile);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('type not allowed');
+      expect(result.error).toContain('is not allowed');
     });
 
     it('should reject dangerous file extensions', () => {
@@ -159,7 +159,7 @@ describe('Security Utils', () => {
       });
       const result = validateFileUpload(dangerousFile);
       expect(result.valid).toBe(false);
-      expect(result.error).toContain('extension not allowed');
+      expect(result.error).toContain('is not allowed');
     });
   });
 

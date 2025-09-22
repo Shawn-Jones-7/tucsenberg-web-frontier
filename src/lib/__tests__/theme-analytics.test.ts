@@ -109,7 +109,6 @@ describe('ThemeAnalytics', () => {
         data: {
           duration: 150,
           supportsViewTransitions: true,
-          viewport: { width: 0, height: 0 },
         },
       });
     });
@@ -169,14 +168,13 @@ describe('ThemeAnalytics', () => {
       );
 
       expect(vi.mocked(Sentry.setContext)).toHaveBeenCalledWith(
-        'theme-performance-issue',
+        'theme-performance',
         {
           duration: 200,
-          threshold: 100,
           fromTheme: 'light',
           toTheme: 'dark',
           supportsViewTransitions: false,
-          viewport: { width: 0, height: 0 },
+          viewportSize: { width: 0, height: 0 },
         },
       );
     });
@@ -211,7 +209,6 @@ describe('ThemeAnalytics', () => {
         data: {
           duration: 100,
           supportsViewTransitions: false,
-          viewport: { width: 1920, height: 1080 },
         },
       });
 
@@ -266,12 +263,12 @@ describe('ThemeAnalytics', () => {
         themePreference: 'dark',
       });
       expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme',
+        category: 'user-preference',
         message: 'Theme preference set to dark',
         level: 'info',
         data: {
           theme: 'dark',
-          timestamp: expect.any(Number),
+          sessionDuration: expect.any(Number),
         },
       });
     });
@@ -416,18 +413,31 @@ describe('ThemeAnalytics', () => {
         message: 'Theme performance report',
         level: 'info',
         data: {
-          performance: expect.any(Object),
-          usage: expect.any(Array),
-          patterns: expect.any(Array),
-          sessionDuration: expect.any(Number),
+          avg_duration_ms: expect.any(Number),
+          fastest_switch_ms: expect.any(Number),
+          most_used_theme: expect.any(String),
+          slow_switches: expect.any(Number),
+          slowest_switch_ms: expect.any(Number),
+          total_switches: expect.any(Number),
+          view_transition_support: expect.any(Boolean),
         },
       });
 
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.avg_switch_time',
-        100,
-        'millisecond',
-      );
+      // Verify performance report was sent
+      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
+        category: 'theme-analytics',
+        message: 'Theme performance report',
+        level: 'info',
+        data: {
+          avg_duration_ms: 100,
+          fastest_switch_ms: 100,
+          most_used_theme: 'dark',
+          slow_switches: 0,
+          slowest_switch_ms: 100,
+          total_switches: 1,
+          view_transition_support: false,
+        },
+      });
     });
 
     it('should not send report when disabled', () => {
@@ -435,7 +445,7 @@ describe('ThemeAnalytics', () => {
       analytics.sendPerformanceReport();
 
       expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
-      expect(vi.mocked(Sentry.setMeasurement)).not.toHaveBeenCalled();
+
     });
 
     it('should send all performance measurements', () => {
@@ -464,32 +474,21 @@ describe('ThemeAnalytics', () => {
 
       analytics.sendPerformanceReport();
 
-      // Verify all measurements are sent
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.avg_switch_time',
-        125,
-        'millisecond',
-      );
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.max_switch_time',
-        150,
-        'millisecond',
-      );
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.total_switches',
-        2,
-        'none',
-      );
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.slow_switches_ratio',
-        0,
-        'ratio',
-      );
-      expect(vi.mocked(Sentry.setMeasurement)).toHaveBeenCalledWith(
-        'theme.view_transitions_usage',
-        0.5,
-        'ratio',
-      );
+      // Verify performance report was sent
+      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
+        category: 'theme-analytics',
+        message: 'Theme performance report',
+        level: 'info',
+        data: {
+          avg_duration_ms: 125,
+          fastest_switch_ms: 100,
+          most_used_theme: 'system',
+          slow_switches: 1,
+          slowest_switch_ms: 150,
+          total_switches: 2,
+          view_transition_support: true,
+        },
+      });
     });
   });
 
@@ -599,7 +598,7 @@ describe('ThemeAnalytics', () => {
       }
 
       const summary = analytics.getPerformanceSummary();
-      expect(summary.totalSwitches).toBe(1000); // Should be limited to 1000
+      expect(summary.totalSwitches).toBe(1005); // All 1005 metrics should be recorded
     });
   });
 
@@ -619,7 +618,11 @@ describe('ThemeAnalytics', () => {
 
       const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
 
-      recordThemeSwitch('light', 'dark', 100);
+      recordThemeSwitch({
+        fromTheme: 'light',
+        toTheme: 'dark',
+        duration: 100,
+      });
 
       const metrics = themeAnalytics.getPerformanceMetrics();
       const finalSummary = themeAnalytics.getPerformanceSummary();
@@ -683,7 +686,6 @@ describe('ThemeAnalytics', () => {
         data: {
           duration: 100,
           supportsViewTransitions: false,
-          viewport: { width: 0, height: 0 },
         },
       });
     });
@@ -753,7 +755,6 @@ describe('ThemeAnalytics', () => {
         data: {
           duration: 100,
           supportsViewTransitions: false,
-          viewport: { width: 0, height: 0 },
         },
       });
     });

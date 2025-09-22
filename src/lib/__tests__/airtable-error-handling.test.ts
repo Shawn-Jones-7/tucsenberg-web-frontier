@@ -336,13 +336,21 @@ describe('Airtable Error Handling Tests', () => {
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
 
-      // Ensure service is not configured
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
+
+      // Directly set service as not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
 
       await expect(
         service.updateContactStatus('rec123456', 'Completed'),
       ).rejects.toThrow('Airtable service is not configured');
+
+      initSpy.mockRestore();
     });
   });
 
@@ -394,13 +402,21 @@ describe('Airtable Error Handling Tests', () => {
     it('should throw error when service is not configured for deletion', async () => {
       const service = new AirtableServiceClass();
 
-      // Ensure service is not configured
+      // Mock initializeAirtable to prevent re-initialization
+      const initSpy = vi.spyOn(service as unknown as AirtableServicePrivate, 'initializeAirtable');
+      initSpy.mockImplementation(async () => {
+        // Do nothing - keep service unconfigured
+      });
+
+      // Directly set service as not configured
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
 
       await expect(service.deleteContact('rec123456')).rejects.toThrow(
         'Airtable service is not configured',
       );
+
+      initSpy.mockRestore();
     });
   });
 });

@@ -37,7 +37,7 @@ export async function POST(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          _error: 'Invalid i18n analytics data format',
+          error: 'Invalid i18n analytics data format',
           message:
             'The provided data does not match the expected i18n analytics format',
         },
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        _error: 'Internal server _error',
+        error: 'Internal server error',
         message: 'Failed to process i18n analytics data',
       },
       { status: 500 },
@@ -157,7 +157,7 @@ export function GET(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        _error: 'Internal server _error',
+        error: 'Internal server error',
         message: 'Failed to retrieve i18n analytics statistics',
       },
       { status: 500 },
@@ -180,7 +180,7 @@ export function DELETE(request: NextRequest) {
       return NextResponse.json(
         {
           success: false,
-          _error: 'Confirmation required',
+          error: 'Confirmation required',
           message: 'Please add confirm=true parameter to confirm deletion',
         },
         { status: 400 },

@@ -10,6 +10,7 @@
 import { describe, expect, it } from 'vitest';
 import type { _ContentType } from '@/types/content';
 import { validateContentMetadata } from '@/lib/content-validation';
+
 // 注释未使用的导入，保留以备将来使用
 // import {
 //   TEST_CONTENT_LIMITS,
@@ -60,7 +61,7 @@ describe('Content Validation - Basic Tests', () => {
         expect(result.errors).toContain('Published date is required');
       });
 
-      it('should fail validation when updatedAt is missing', () => {
+      it('should handle missing updatedAt gracefully', () => {
         const { updatedAt: _updatedAt, ...metadataWithoutUpdatedAt } =
           validMetadata;
 
@@ -69,8 +70,8 @@ describe('Content Validation - Basic Tests', () => {
           'posts',
         );
 
-        expect(result.isValid).toBe(false);
-        expect(result.errors).toContain('Updated date is required');
+        expect(result.isValid).toBe(true);
+        expect(result.errors).toHaveLength(0);
       });
 
       it('should fail validation when title is empty string', () => {

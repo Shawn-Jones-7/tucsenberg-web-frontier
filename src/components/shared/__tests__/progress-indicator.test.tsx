@@ -8,25 +8,37 @@ vi.mock('next-intl', () => ({
   useTranslations: () => mockUseTranslations,
 }));
 
-// Mock cn utility
+// Mock cn utility - use real clsx logic for accurate CSS class handling
 vi.mock('@/lib/utils', () => ({
-  cn: (..._args: unknown[]) => {
-    const result: string[] = [];
+  cn: (...args: unknown[]) => {
+    // Simplified clsx logic that handles strings, objects, and arrays
+    const classes: string[] = [];
 
-    ['class1', 'class2'].forEach((cls: any) => {
-      if (typeof cls === 'string') {
-        result.push(cls);
-      } else if (typeof cls === 'object' && cls !== null) {
-        // Handle conditional classes object
-        Object.entries(cls).forEach(([key, value]) => {
-          if (value) {
-            result.push(key);
-          }
-        });
+    args.forEach((arg) => {
+      if (!arg) return;
+
+      if (typeof arg === 'string') {
+        classes.push(arg);
+      } else if (typeof arg === 'object' && arg !== null) {
+        if (Array.isArray(arg)) {
+          // Handle arrays recursively
+          arg.forEach((item) => {
+            if (item && typeof item === 'string') {
+              classes.push(item);
+            }
+          });
+        } else {
+          // Handle conditional classes object
+          Object.entries(arg).forEach(([key, value]) => {
+            if (value) {
+              classes.push(key);
+            }
+          });
+        }
       }
     });
 
-    return result.filter(Boolean).join(' ');
+    return classes.filter(Boolean).join(' ');
   },
 }));
 
@@ -67,8 +79,13 @@ describe('ProgressIndicator', () => {
     it('renders all four steps', () => {
       render(<ProgressIndicator />);
 
+      // Should have 3 step numbers (future steps) + 1 circle SVG (current step)
       const stepNumbers = screen.getAllByText(/[1-4]/);
-      expect(stepNumbers).toHaveLength(4);
+      expect(stepNumbers).toHaveLength(3);
+
+      // Should have one circle SVG for current step
+      const circleSvg = screen.getByTestId('circle-icon');
+      expect(circleSvg).toBeInTheDocument();
     });
   });
 
@@ -97,9 +114,9 @@ describe('ProgressIndicator', () => {
     it('shows development as current step when currentStep is 1', () => {
       render(<ProgressIndicator currentStep={1} />);
 
-      // Should have one completed step (SVG checkmark)
+      // Should have one completed step (SVG checkmark) + one current step (SVG circle)
       const svgs = document.querySelectorAll('svg');
-      expect(svgs.length).toBe(1);
+      expect(svgs.length).toBe(2);
 
       // Development should be current (has animate-pulse)
       const currentStepCircle = document.querySelector('.animate-pulse');
@@ -130,9 +147,9 @@ describe('ProgressIndicator', () => {
     it('shows testing as current step when currentStep is 2', () => {
       render(<ProgressIndicator currentStep={2} />);
 
-      // First two steps should be completed (2 SVG checkmarks)
+      // First two steps should be completed (2 SVG checkmarks) + one current step (1 SVG circle)
       const svgs = document.querySelectorAll('svg');
-      expect(svgs).toHaveLength(2);
+      expect(svgs).toHaveLength(3);
 
       // Testing should be current (has animate-pulse)
       const currentStepCircle = document.querySelector('.animate-pulse');
@@ -155,9 +172,9 @@ describe('ProgressIndicator', () => {
     it('shows launch as current step when currentStep is 3', () => {
       render(<ProgressIndicator currentStep={3} />);
 
-      // First three steps should be completed (3 SVG checkmarks)
+      // First three steps should be completed (3 SVG checkmarks) + one current step (1 SVG circle)
       const svgs = document.querySelectorAll('svg');
-      expect(svgs).toHaveLength(3);
+      expect(svgs).toHaveLength(4);
 
       // Launch should be current (has animate-pulse)
       const currentStepCircle = document.querySelector('.animate-pulse');

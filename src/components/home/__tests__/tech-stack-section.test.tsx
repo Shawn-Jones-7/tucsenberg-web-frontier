@@ -86,7 +86,7 @@ vi.mock('@/components/ui/badge', () => ({
 vi.mock('@/components/ui/button', () => ({
   Button: ({
     children,
-    asChild: _asChild,
+    asChild,
     variant: _variant,
     size: _size,
     className,

@@ -12,11 +12,11 @@
  * - Form library integration patterns
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import userEvent from '@testing-library/user-event';
-import { beforeEach, describe, expect, it } from 'vitest';
 import { Label } from '@/components/ui/label';
+import { render, screen, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import React from 'react';
+import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('Label Validation Scenarios Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -74,7 +74,7 @@ describe('Label Validation Scenarios Tests', () => {
       expect(screen.getByText('Email: john@test.com')).toBeInTheDocument();
     });
 
-    it('works with form libraries integration', () => {
+    it('works with form libraries integration', async () => {
       // Simulate integration with form libraries like react-hook-form
       const FormWithLibrary = () => {
         const [errors, setErrors] = React.useState<Record<string, string>>({});
@@ -121,7 +121,10 @@ describe('Label Validation Scenarios Tests', () => {
       nameInput.focus();
       nameInput.blur();
 
-      expect(screen.getByText(/This field is required/)).toBeInTheDocument();
+      // Wait for validation to trigger and error to appear
+      await waitFor(() => {
+        expect(screen.getByText(/This field is required/)).toBeInTheDocument();
+      });
     });
 
     it('handles complex validation scenarios', async () => {
@@ -323,8 +326,9 @@ describe('Label Validation Scenarios Tests', () => {
         const [companyName, setCompanyName] = React.useState('');
         const [error, _setError] = React.useState('');
 
-        const validateCompanyName = (value: string) => {
-          if (userType === 'business' && !value) {
+        const validateCompanyName = (value: string, currentUserType?: string) => {
+          const typeToCheck = currentUserType || userType;
+          if (typeToCheck === 'business' && !value) {
             _setError('Company name is required for business accounts');
           } else {
             _setError('');
@@ -339,8 +343,9 @@ describe('Label Validation Scenarios Tests', () => {
                 id='user-type'
                 value={userType}
                 onChange={(e) => {
-                  setUserType(e.target.value);
-                  validateCompanyName(companyName);
+                  const newUserType = e.target.value;
+                  setUserType(newUserType);
+                  validateCompanyName(companyName, newUserType);
                 }}
               >
                 <option value=''>Select type</option>
@@ -383,10 +388,12 @@ describe('Label Validation Scenarios Tests', () => {
       // Company name field should appear
       expect(screen.getByLabelText('Company Name *')).toBeInTheDocument();
 
-      // Should show validation error
-      expect(
-        screen.getByText('Company name is required for business accounts'),
-      ).toBeInTheDocument();
+      // Wait for validation error to appear
+      await waitFor(() => {
+        expect(
+          screen.getByText('Company name is required for business accounts'),
+        ).toBeInTheDocument();
+      });
 
       // Fill company name
       const companyInput = screen.getByLabelText('Company Name *');

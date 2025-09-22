@@ -12,10 +12,10 @@
  * - badge-content-rendering.test.tsx - Content rendering tests
  */
 
-import React, { createRef } from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
 import { Badge } from '@/components/ui/badge';
+import { fireEvent, render, screen } from '@testing-library/react';
+import { createRef } from 'react';
+import { describe, expect, it, vi } from 'vitest';
 
 describe('Badge Basic Rendering & Variants Tests - Index', () => {
   it('renders badge with default props', () => {
@@ -223,10 +223,8 @@ describe('Badge Basic Rendering & Variants Tests - Index', () => {
     );
 
     const badge = screen.getByText('Styled Badge');
-    expect(badge).toHaveStyle({
-      backgroundColor: 'red',
-      color: 'white',
-    });
+    expect(badge).toHaveStyle('background-color: rgb(255, 0, 0)');
+    expect(badge).toHaveStyle('color: rgb(255, 255, 255)');
   });
 
   it('supports onClick handler', () => {
@@ -377,10 +375,11 @@ describe('Badge Basic Rendering & Variants Tests - Index', () => {
   });
 
   it('renders boolean content', () => {
-    render(<Badge>{true}</Badge>);
+    render(<Badge data-testid="boolean-badge">{true}</Badge>);
 
-    const badge = screen.getByText('true');
-    expect(badge).toHaveTextContent('true');
+    const badge = screen.getByTestId('boolean-badge');
+    // React doesn't render boolean values, so the badge should be empty
+    expect(badge).toBeEmptyDOMElement();
   });
 
   it('renders JSX content', () => {
@@ -476,7 +475,8 @@ describe('Badge Basic Rendering & Variants Tests - Index', () => {
     render(<Badge> Whitespace Test </Badge>);
 
     const badge = screen.getByText('Whitespace Test');
-    expect(badge).toHaveTextContent('  Whitespace  Test  ');
+    // HTML normalizes whitespace, so multiple spaces become single spaces
+    expect(badge).toHaveTextContent('Whitespace Test');
   });
 
   it('renders conditional content', () => {

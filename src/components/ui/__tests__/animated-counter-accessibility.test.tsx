@@ -2,9 +2,9 @@
  * @vitest-environment jsdom
  */
 
+import { AnimatedCounter } from '@/components/ui/animated-counter';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { AnimatedCounter } from '@/components/ui/animated-counter';
 
 // Mock requestAnimationFrame and cancelAnimationFrame
 let animationFrameCallbacks: Array<() => void> = [];
@@ -33,6 +33,21 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
     global.requestAnimationFrame = mockRequestAnimationFrame;
     global.cancelAnimationFrame = mockCancelAnimationFrame;
     global.performance = { now: mockPerformanceNow } as any;
+
+    // Mock matchMedia to simulate prefers-reduced-motion: reduce
+    Object.defineProperty(window, 'matchMedia', {
+      writable: true,
+      value: vi.fn().mockImplementation(query => ({
+        matches: query === '(prefers-reduced-motion: reduce)',
+        media: query,
+        onchange: null,
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      })),
+    });
   });
 
   describe('Accessibility', () => {
@@ -158,6 +173,7 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
         <AnimatedCounter
           to={100}
           formatter={formatter}
+          autoStart
         />,
       );
 
@@ -184,6 +200,7 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
         <AnimatedCounter
           to={100}
           duration={0}
+          autoStart
         />,
       );
 
@@ -196,6 +213,7 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
         <AnimatedCounter
           to={100}
           duration={-1000}
+          autoStart
         />,
       );
 
@@ -320,12 +338,15 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
     });
 
     it('handles component re-mounting', () => {
-      const { unmount, rerender } = render(<AnimatedCounter to={100} />);
-
-      unmount();
+      const { unmount } = render(<AnimatedCounter to={100} />);
 
       expect(() => {
-        rerender(<AnimatedCounter to={200} />);
+        unmount();
+      }).not.toThrow();
+
+      // Test remounting with a new render
+      expect(() => {
+        render(<AnimatedCounter to={200} />);
       }).not.toThrow();
     });
 

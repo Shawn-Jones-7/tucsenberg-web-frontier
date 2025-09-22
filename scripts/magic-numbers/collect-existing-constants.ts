@@ -40,7 +40,7 @@ async function collectExistingConstants() {
   const valueToConstants = new Map<number, ConstantInfo[]>();
 
   for (const sourceFile of sourceFiles) {
-    const filePath = sourceFile.getFilePath().replace(`${process.cwd()  }/`, '');
+    const filePath = sourceFile.getFilePath().replace(`${process.cwd()}/`, '');
     const modulePath = filePath.replace(/^src\//, '@/').replace(/\.ts$/, '');
 
     console.log(`🔍 分析文件: ${filePath}`);

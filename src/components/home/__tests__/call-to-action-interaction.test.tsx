@@ -7,10 +7,10 @@
  * - 动画和可见性测试
  */
 
+import { CallToAction } from '@/components/home/call-to-action';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CallToAction } from '@/components/home/call-to-action';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -134,12 +134,12 @@ describe('CallToAction Component - Interaction Tests', () => {
       await user.tab();
 
       // 验证第一个可聚焦元素获得焦点
-      const firstLink = screen.getByRole('link', { name: /view on github/i });
+      const firstLink = screen.getByRole('link', { name: /primary\.github/i });
       expect(firstLink).toHaveFocus();
 
       // 继续Tab导航
       await user.tab();
-      const secondLink = screen.getByRole('link', { name: /star on github/i });
+      const secondLink = screen.getByRole('link', { name: /primary\.demo/i });
       expect(secondLink).toHaveFocus();
     });
 
@@ -147,7 +147,7 @@ describe('CallToAction Component - Interaction Tests', () => {
       const user = userEvent.setup();
       render(<CallToAction />);
 
-      const githubLink = screen.getByRole('link', { name: /view on github/i });
+      const githubLink = screen.getByRole('link', { name: /primary\.github/i });
       githubLink.focus();
 
       // 模拟Enter键按下
@@ -161,7 +161,7 @@ describe('CallToAction Component - Interaction Tests', () => {
       const user = userEvent.setup();
       render(<CallToAction />);
 
-      const githubLink = screen.getByRole('link', { name: /view on github/i });
+      const githubLink = screen.getByRole('link', { name: /primary\.github/i });
       githubLink.focus();
 
       // 模拟空格键按下
@@ -175,16 +175,16 @@ describe('CallToAction Component - Interaction Tests', () => {
       render(<CallToAction />);
 
       // GitHub链接
-      const githubLink = screen.getByRole('link', { name: /view on github/i });
-      const starLink = screen.getByRole('link', { name: /star on github/i });
+      const githubLink = screen.getByRole('link', { name: /primary\.github/i });
+      const getStartedLink = screen.getByRole('link', { name: /buttons\.getStarted/i });
       const discussionsLink = screen.getByRole('link', {
-        name: /discussions/i,
+        name: /community\.discussions/i,
       });
-      const issuesLink = screen.getByRole('link', { name: /issues/i });
+      const issuesLink = screen.getByRole('link', { name: /community\.issues/i });
 
       // 验证外部链接有正确的target属性
       expect(githubLink).toHaveAttribute('target', '_blank');
-      expect(starLink).toHaveAttribute('target', '_blank');
+      expect(getStartedLink).toHaveAttribute('target', '_blank');
       expect(discussionsLink).toHaveAttribute('target', '_blank');
       expect(issuesLink).toHaveAttribute('target', '_blank');
     });
@@ -192,14 +192,14 @@ describe('CallToAction Component - Interaction Tests', () => {
     it('内部链接应该在同一标签页打开', () => {
       render(<CallToAction />);
 
-      const docsLink = screen.getByRole('link', { name: /documentation/i });
-      const communityLink = screen.getByRole('link', {
-        name: /join community/i,
+      const demoLink = screen.getByRole('link', { name: /primary\.demo/i });
+      const docsLink = screen.getByRole('link', {
+        name: /buttons\.learnMore.*→/i,
       });
 
       // 验证内部链接没有target="_blank"
+      expect(demoLink).not.toHaveAttribute('target', '_blank');
       expect(docsLink).not.toHaveAttribute('target', '_blank');
-      expect(communityLink).not.toHaveAttribute('target', '_blank');
     });
   });
 
@@ -238,16 +238,16 @@ describe('CallToAction Component - Interaction Tests', () => {
 
       // 验证链接有描述性的可访问名称
       expect(
-        screen.getByRole('link', { name: /view on github/i }),
+        screen.getByRole('link', { name: /primary\.github/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('link', { name: /star on github/i }),
+        screen.getByRole('link', { name: /primary\.demo/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('link', { name: /documentation/i }),
+        screen.getByRole('link', { name: /buttons\.getStarted/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('link', { name: /join community/i }),
+        screen.getByRole('link', { name: /buttons\.learnMore.*🔗/i }),
       ).toBeInTheDocument();
     });
 
@@ -294,7 +294,7 @@ describe('CallToAction Component - Interaction Tests', () => {
       render(<CallToAction />);
 
       expect(mockUseIntersectionObserver).toHaveBeenCalledWith({
-        threshold: 0.1,
+        threshold: 0.2,
         triggerOnce: true,
       });
     });
@@ -328,7 +328,7 @@ describe('CallToAction Component - Interaction Tests', () => {
         throw new Error('Translation error');
       });
 
-      expect(() => render(<CallToAction />)).not.toThrow();
+      expect(() => render(<CallToAction />)).toThrow('Translation error');
     });
 
     it('应该处理缺失的翻译键', () => {

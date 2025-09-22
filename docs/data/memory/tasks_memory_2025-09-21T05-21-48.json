@@ -1,0 +1,35 @@
+{
+  "tasks": [
+    {
+      "id": "96a0bfb1-ace8-44f7-873d-2b2d6a41383c",
+      "name": "修复CSS类名逻辑错误",
+      "description": "修复ProgressIndicator组件中步骤标签的CSS类名应用逻辑，解决5个测试失败问题。当前逻辑'step.completed || step.current'导致当前步骤标签显示为text-muted-foreground而非期望的text-primary。需要调整条件判断优先级，确保当前步骤(current)和已完成步骤(completed)都正确显示主色调。",
+      "notes": "此修复影响5个失败测试：shows development as current step、shows testing as current step、shows launch as current step等。修复后确保当前步骤标签正确显示主色调，符合UI设计规范。",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-09-21T02:59:52.356Z",
+      "updatedAt": "2025-09-21T03:04:46.680Z",
+      "relatedFiles": [
+        {
+          "path": "src/components/shared/progress-indicator.tsx",
+          "type": "TO_MODIFY",
+          "description": "需要修改步骤标签的CSS类名应用逻辑",
+          "lineStart": 128,
+          "lineEnd": 140
+        },
+        {
+          "path": "src/components/shared/__tests__/progress-indicator.test.tsx",
+          "type": "REFERENCE",
+          "description": "相关测试文件，用于验证修复效果",
+          "lineStart": 115,
+          "lineEnd": 185
+        }
+      ],
+      "implementationGuide": "1. 定位src/components/shared/progress-indicator.tsx第132行的className条件\\n2. 修改逻辑：将'step.completed || step.current'调整为'step.current || step.completed'确保优先级正确\\n3. 验证条件：step.current为true时应用text-primary类名\\n4. 测试验证：运行progress-indicator.test.tsx中的Step States测试组\\n\\nPseudocode:\\n```typescript\\nclassName={cn('mt-2 text-center text-xs transition-colors duration-300', {\\n  'text-primary font-medium': step.current || step.completed,\\n  'text-muted-foreground': !step.current && !step.completed,\\n})}\\n```",
+      "verificationCriteria": "运行pnpm test src/components/shared/__tests__/progress-indicator.test.tsx，确保Step States相关的5个测试全部通过，CSS类名期望与实际渲染一致。",
+      "analysisResult": "ProgressIndicator组件测试修复任务完整分析：通过深度代码库分析，发现8个失败测试的根本原因包括CSS类名逻辑错误、翻译键条件判断错误、SVG Mock结构不匹配、边界条件处理不当、RTL语言支持缺失。项目已有完善的修复模式可直接重用，包括标准化的SVG Mock配置、翻译Mock模式、RTL检测逻辑。修复方案完全符合项目的Next.js 15 + React 19 + TypeScript严格模式架构，保持向后兼容，无性能开销，目标从61/69通过率提升到100%通过率。",
+      "summary": "任务1：修复CSS类名逻辑错误已成功完成。通过调整步骤状态计算逻辑（将0-based的currentStep正确转换为1-based的stepCurrentStep）和优化CSS类名条件判断（step.current || step.completed），成功解决了5个Step States相关测试失败问题。同时修复了SVG渲染逻辑，确保只有已完成步骤显示checkmark图标，当前步骤和未来步骤显示数字。测试通过率从22/29提升到28/29，CSS类名期望与实际渲染完全一致，符合UI设计规范。",
+      "completedAt": "2025-09-21T03:04:46.678Z"
+    }
+  ]
+}

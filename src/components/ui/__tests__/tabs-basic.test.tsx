@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('Tabs Basic Components', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -119,14 +119,15 @@ describe('Tabs Basic Components', () => {
 
       const tabsList = screen.getByTestId('tabs-list');
       expect(tabsList).toHaveClass(
+        'bg-muted',
+        'text-muted-foreground',
         'inline-flex',
         'h-9',
+        'w-fit',
         'items-center',
         'justify-center',
         'rounded-lg',
-        'bg-muted',
-        'p-1',
-        'text-muted-foreground',
+        'p-[3px]',
       );
     });
 

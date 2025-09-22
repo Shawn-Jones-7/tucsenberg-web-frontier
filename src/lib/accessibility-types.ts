@@ -18,7 +18,7 @@ export interface ScreenReaderConfig {
 export const THEME_ANNOUNCEMENTS = {
   zh: {
     light: '已切换到明亮模式',
-    dark: '已切换到暗黑模式',
+    dark: '已切换到深色模式',
     system: '已切换到系统模式',
     switching: '正在切换主题...',
   },

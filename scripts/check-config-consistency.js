@@ -1,7 +1,6 @@
 // Simple alias consistency checker for @/* across tsconfig, next.config, and ESLint resolver
 // Usage: node scripts/check-config-consistency.js
 
- 
 const fs = require('fs');
 
 function readJSON(p) {

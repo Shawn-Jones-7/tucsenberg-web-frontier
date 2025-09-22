@@ -7,7 +7,7 @@ import {
 } from '../use-intersection-observer';
 
 // Mock dependencies
-const mockAccessibilityManager = vi.hoisted(() => ({
+const mockAccessibilityUtils = vi.hoisted(() => ({
   prefersReducedMotion: vi.fn(() => false),
 }));
 
@@ -16,7 +16,7 @@ const mockLogger = vi.hoisted(() => ({
 }));
 
 vi.mock('@/lib/accessibility', () => ({
-  AccessibilityManager: mockAccessibilityManager,
+  AccessibilityUtils: mockAccessibilityUtils,
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -34,7 +34,7 @@ describe('useIntersectionObserver', () => {
     vi.clearAllMocks();
 
     // Reset accessibility mock to default
-    mockAccessibilityManager.prefersReducedMotion.mockReturnValue(false);
+    mockAccessibilityUtils.prefersReducedMotion.mockReturnValue(false);
 
     // Store callback for manual triggering
     let storedCallback:
@@ -355,7 +355,7 @@ describe('useIntersectionObserver', () => {
   describe('accessibility and fallbacks', () => {
     it('should set visible immediately when reduced motion is preferred', () => {
       // Set reduced motion preference
-      mockAccessibilityManager.prefersReducedMotion.mockReturnValue(true);
+      mockAccessibilityUtils.prefersReducedMotion.mockReturnValue(true);
 
       const { result } = renderHook(() => useIntersectionObserver());
 

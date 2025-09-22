@@ -2,16 +2,16 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  NavigationMenu,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-  navigationMenuTriggerStyle,
+    NavigationMenu,
+    NavigationMenuItem,
+    NavigationMenuList,
+    NavigationMenuTrigger,
+    navigationMenuTriggerStyle,
 } from '../navigation-menu';
 
 // Mock Lucide React icons
@@ -161,7 +161,7 @@ describe('NavigationMenu - Basic Components', () => {
         'list-none',
         'items-center',
         'justify-center',
-        'space-x-1',
+        'gap-1',
       );
     });
 
@@ -239,7 +239,7 @@ describe('NavigationMenu - Basic Components', () => {
       const styles = navigationMenuTriggerStyle();
       expect(styles).toContain('group');
       expect(styles).toContain('inline-flex');
-      expect(styles).toContain('h-10');
+      expect(styles).toContain('h-9');
       expect(styles).toContain('w-max');
       expect(styles).toContain('items-center');
       expect(styles).toContain('justify-center');

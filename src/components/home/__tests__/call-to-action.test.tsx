@@ -10,9 +10,9 @@
  * - call-to-action-interaction.test.tsx - 用户交互和可访问性测试
  */
 
+import { CallToAction } from '@/components/home/call-to-action';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { CallToAction } from '@/components/home/call-to-action';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -146,25 +146,25 @@ describe('CallToAction Component - Integration Tests', () => {
 
       // 验证主要GitHub按钮
       expect(
-        screen.getByRole('link', { name: /view on github/i }),
+        screen.getByRole('link', { name: /primary\.github/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('link', { name: /star on github/i }),
+        screen.getByRole('link', { name: /primary\.demo/i }),
       ).toBeInTheDocument();
 
-      // 验证文档和社区链接
+      // 验证行动卡片链接
       expect(
-        screen.getByRole('link', { name: /documentation/i }),
+        screen.getByRole('link', { name: /buttons\.getStarted/i }),
       ).toBeInTheDocument();
       expect(
-        screen.getByRole('link', { name: /join community/i }),
+        screen.getByRole('link', { name: /buttons\.learnMore.*🔗/i }),
       ).toBeInTheDocument();
     });
 
     it('应该正确配置外部链接', () => {
       render(<CallToAction />);
 
-      const githubLink = screen.getByRole('link', { name: /view on github/i });
+      const githubLink = screen.getByRole('link', { name: /primary\.github/i });
       expect(githubLink).toHaveAttribute('target', '_blank');
       expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
@@ -188,7 +188,7 @@ describe('CallToAction Component - Integration Tests', () => {
       render(<CallToAction />);
 
       expect(mockUseIntersectionObserver).toHaveBeenCalledWith({
-        threshold: 0.1,
+        threshold: 0.2,
         triggerOnce: true,
       });
     });
@@ -228,7 +228,7 @@ describe('CallToAction Component - Integration Tests', () => {
     it('应该支持基本的键盘导航', () => {
       render(<CallToAction />);
 
-      const firstLink = screen.getByRole('link', { name: /view on github/i });
+      const firstLink = screen.getByRole('link', { name: /primary\.github/i });
       firstLink.focus();
 
       expect(firstLink).toHaveFocus();
@@ -237,14 +237,14 @@ describe('CallToAction Component - Integration Tests', () => {
     it('应该有正确的链接地址', () => {
       render(<CallToAction />);
 
-      const githubLink = screen.getByRole('link', { name: /view on github/i });
+      const githubLink = screen.getByRole('link', { name: /primary\.github/i });
       expect(githubLink).toHaveAttribute(
         'href',
-        'https://github.com/tucsenberg/tucsenberg-web-frontier',
+        'https://github.com/tucsenberg/web-frontier',
       );
 
-      const docsLink = screen.getByRole('link', { name: /documentation/i });
-      expect(docsLink).toHaveAttribute('href', '/docs');
+      const demoLink = screen.getByRole('link', { name: /primary\.demo/i });
+      expect(demoLink).toHaveAttribute('href', '#demo');
     });
 
     it('应该正确处理组件生命周期', () => {

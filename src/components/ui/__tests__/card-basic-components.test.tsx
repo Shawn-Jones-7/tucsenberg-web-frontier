@@ -2,17 +2,17 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, expect, it } from 'vitest';
 import {
-  Card,
-  CardAction,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardAction,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '../card';
 
 describe('Card - Basic Components', () => {
@@ -43,10 +43,14 @@ describe('Card - Basic Components', () => {
 
       const card = screen.getByText('Card Content');
       expect(card).toHaveClass(
-        'rounded-lg',
-        'border',
         'bg-card',
         'text-card-foreground',
+        'flex',
+        'flex-col',
+        'gap-6',
+        'rounded-xl',
+        'border',
+        'py-6',
         'shadow-sm',
       );
     });
@@ -73,9 +77,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<Card />);
+      render(<Card data-testid='empty-card' />);
 
-      const card = screen.getByRole('generic');
+      const card = screen.getByTestId('empty-card');
       expect(card).toBeInTheDocument();
     });
 
@@ -118,7 +122,15 @@ describe('Card - Basic Components', () => {
       render(<CardHeader>Header Content</CardHeader>);
 
       const header = screen.getByText('Header Content');
-      expect(header).toHaveClass('flex', 'flex-col', 'space-y-1.5', 'p-6');
+      expect(header).toHaveClass(
+        '@container/card-header',
+        'grid',
+        'auto-rows-min',
+        'grid-rows-[auto_auto]',
+        'items-start',
+        'gap-1.5',
+        'px-6',
+      );
     });
 
     it('supports additional props', () => {
@@ -143,9 +155,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardHeader />);
+      render(<CardHeader data-testid='empty-header' />);
 
-      const header = screen.getByRole('generic');
+      const header = screen.getByTestId('empty-header');
       expect(header).toBeInTheDocument();
     });
   });
@@ -166,29 +178,24 @@ describe('Card - Basic Components', () => {
     });
 
     it('forwards ref correctly', () => {
-      const ref = React.createRef<HTMLParagraphElement>();
+      const ref = React.createRef<HTMLDivElement>();
       render(<CardTitle ref={ref}>Title Content</CardTitle>);
 
-      expect(ref.current).toBeInstanceOf(HTMLParagraphElement);
+      expect(ref.current).toBeInstanceOf(HTMLDivElement);
     });
 
     it('renders with correct default classes', () => {
       render(<CardTitle>Title Content</CardTitle>);
 
       const title = screen.getByText('Title Content');
-      expect(title).toHaveClass(
-        'text-2xl',
-        'font-semibold',
-        'leading-none',
-        'tracking-tight',
-      );
+      expect(title).toHaveClass('leading-none', 'font-semibold');
     });
 
-    it('renders as h3 element by default', () => {
+    it('renders as div element by default', () => {
       render(<CardTitle>Title Content</CardTitle>);
 
       const title = screen.getByText('Title Content');
-      expect(title.tagName).toBe('H3');
+      expect(title.tagName).toBe('DIV');
     });
 
     it('supports additional props', () => {
@@ -206,9 +213,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardTitle />);
+      render(<CardTitle data-testid='empty-title' />);
 
-      const title = screen.getByRole('heading');
+      const title = screen.getByTestId('empty-title');
       expect(title).toBeInTheDocument();
     });
   });
@@ -233,24 +240,24 @@ describe('Card - Basic Components', () => {
     });
 
     it('forwards ref correctly', () => {
-      const ref = React.createRef<HTMLParagraphElement>();
+      const ref = React.createRef<HTMLDivElement>();
       render(<CardDescription ref={ref}>Description Content</CardDescription>);
 
-      expect(ref.current).toBeInstanceOf(HTMLParagraphElement);
+      expect(ref.current).toBeInstanceOf(HTMLDivElement);
     });
 
     it('renders with correct default classes', () => {
       render(<CardDescription>Description Content</CardDescription>);
 
       const description = screen.getByText('Description Content');
-      expect(description).toHaveClass('text-sm', 'text-muted-foreground');
+      expect(description).toHaveClass('text-muted-foreground', 'text-sm');
     });
 
-    it('renders as p element by default', () => {
+    it('renders as div element by default', () => {
       render(<CardDescription>Description Content</CardDescription>);
 
       const description = screen.getByText('Description Content');
-      expect(description.tagName).toBe('P');
+      expect(description.tagName).toBe('DIV');
     });
 
     it('supports additional props', () => {
@@ -268,9 +275,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardDescription />);
+      render(<CardDescription data-testid='empty-description' />);
 
-      const description = screen.getByRole('generic');
+      const description = screen.getByTestId('empty-description');
       expect(description).toBeInTheDocument();
     });
 
@@ -310,7 +317,7 @@ describe('Card - Basic Components', () => {
       render(<CardAction>Action Content</CardAction>);
 
       const action = screen.getByText('Action Content');
-      expect(action).toHaveClass('flex', 'items-center', 'space-x-2');
+      expect(action).toHaveClass('col-start-2', 'row-span-2', 'row-start-1', 'self-start', 'justify-self-end');
     });
 
     it('renders as div element by default', () => {
@@ -335,9 +342,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardAction />);
+      render(<CardAction data-testid='empty-action' />);
 
-      const action = screen.getByRole('generic');
+      const action = screen.getByTestId('empty-action');
       expect(action).toBeInTheDocument();
     });
 
@@ -382,7 +389,7 @@ describe('Card - Basic Components', () => {
       render(<CardContent>Content Text</CardContent>);
 
       const content = screen.getByText('Content Text');
-      expect(content).toHaveClass('p-6', 'pt-0');
+      expect(content).toHaveClass('px-6');
     });
 
     it('renders as div element by default', () => {
@@ -407,9 +414,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardContent />);
+      render(<CardContent data-testid='empty-content' />);
 
-      const content = screen.getByRole('generic');
+      const content = screen.getByTestId('empty-content');
       expect(content).toBeInTheDocument();
     });
 
@@ -460,7 +467,7 @@ describe('Card - Basic Components', () => {
       render(<CardFooter>Footer Content</CardFooter>);
 
       const footer = screen.getByText('Footer Content');
-      expect(footer).toHaveClass('flex', 'items-center', 'p-6', 'pt-0');
+      expect(footer).toHaveClass('flex', 'items-center', 'px-6', '[.border-t]:pt-6');
     });
 
     it('renders as div element by default', () => {
@@ -485,9 +492,9 @@ describe('Card - Basic Components', () => {
     });
 
     it('handles empty content', () => {
-      render(<CardFooter />);
+      render(<CardFooter data-testid='empty-footer' />);
 
-      const footer = screen.getByRole('generic');
+      const footer = screen.getByTestId('empty-footer');
       expect(footer).toBeInTheDocument();
     });
 

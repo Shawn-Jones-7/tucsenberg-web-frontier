@@ -220,7 +220,7 @@ describe('Theme Menu Item - Rendering Tests', () => {
       render(<ThemeMenuItem {...defaultProps} />);
 
       const menuItem = screen.getByRole('menuitem');
-      expect(menuItem).toHaveClass('cursor-pointer');
+      expect(menuItem).toHaveClass('focus:bg-accent', 'focus:text-accent-foreground');
     });
 
     it('handles different theme styling correctly', () => {

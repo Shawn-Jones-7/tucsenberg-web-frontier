@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
-import { env } from '@/../env.mjs';
+import { env } from '@/lib/env';
 
 interface TurnstileVerificationRequest {
   token: string;
@@ -119,7 +119,7 @@ function handleVerificationResult(
   clientIP: string,
 ) {
   // Log verification attempt (for monitoring)
-  logger.warn('Turnstile verification', {
+  logger.warn('Turnstile verification:', {
     success: result.success,
     hostname: result.hostname,
     challenge_ts: result.challenge_ts,
@@ -129,7 +129,7 @@ function handleVerificationResult(
   });
 
   if (!result.success) {
-    logger.warn('Turnstile verification failed', {
+    logger.warn('Turnstile verification failed:', {
       errorCodes: result['error-codes'],
       clientIP,
       timestamp: new Date().toISOString(),

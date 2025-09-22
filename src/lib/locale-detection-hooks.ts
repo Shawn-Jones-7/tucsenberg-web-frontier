@@ -7,7 +7,8 @@ import {
 import type { LocaleDetectionResult } from '@/lib/locale-detection-types';
 import { LocaleStorageManager } from '@/lib/locale-storage';
 import { ONE } from '@/constants';
-import { MAGIC_0_5, MAGIC_0_7 } from '@/constants/decimal';
+import { MAGIC_0_7 } from '@/constants/decimal';
+import { CONFIDENCE_WEIGHTS } from '@/lib/locale-detector-constants';
 
 /**
  * 客户端语言检测 Hook
@@ -16,7 +17,7 @@ export function useClientLocaleDetection() {
   const detectClientLocale = (): LocaleDetectionResult => {
     // 客户端检测逻辑
     const userOverride = LocaleStorageManager.getUserOverride();
-    if (userOverride) {
+    if (userOverride && SUPPORTED_LOCALES.includes(userOverride)) {
       return {
         locale: userOverride,
         source: 'user',
@@ -27,9 +28,10 @@ export function useClientLocaleDetection() {
 
     // 浏览器语言检测
     if (typeof navigator !== 'undefined') {
-      const languages = navigator.languages || [navigator.language];
+      const languages = navigator.languages || (navigator.language ? [navigator.language] : []);
 
       for (const lang of languages) {
+        if (!lang || typeof lang !== 'string') continue;
         const normalizedLang = lang.toLowerCase();
         // 安全的对象属性访问，避免对象注入
         const detectedLocale = Object.prototype.hasOwnProperty.call(
@@ -51,7 +53,10 @@ export function useClientLocaleDetection() {
             locale: detectedLocale,
             source: 'browser',
             confidence: MAGIC_0_7,
-            details: { browserLanguages: [...languages] },
+            details: {
+              browserLocale: detectedLocale,
+              browserLanguages: [...languages]
+            },
           };
         }
       }
@@ -60,7 +65,7 @@ export function useClientLocaleDetection() {
     return {
       locale: DEFAULT_LOCALE,
       source: 'default',
-      confidence: MAGIC_0_5,
+      confidence: CONFIDENCE_WEIGHTS.DEFAULT_FALLBACK,
       details: { fallbackUsed: true },
     };
   };

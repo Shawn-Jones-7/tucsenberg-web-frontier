@@ -2,11 +2,11 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 describe('Tabs Integration and Edge Cases', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -72,8 +72,7 @@ describe('Tabs Integration and Edge Cases', () => {
       expect(screen.getByText('Overview Dashboard')).toBeInTheDocument();
 
       // Navigate to analytics
-      await user.click(screen.getByText('Analytics'));
-      expect(screen.getByText('Analytics')).toBeInTheDocument();
+      await user.click(screen.getByRole('tab', { name: 'Analytics' }));
       expect(screen.getByText('Traffic data')).toBeInTheDocument();
 
       // Test nested tabs
@@ -202,7 +201,7 @@ describe('Tabs Integration and Edge Cases', () => {
 
       const content = screen.getByRole('tabpanel');
       expect(content).toBeInTheDocument();
-      expect(content.textContent).toBe('   ');
+      expect(content.textContent?.trim()).toBe('');
     });
 
     it('handles rapid tab switching', async () => {

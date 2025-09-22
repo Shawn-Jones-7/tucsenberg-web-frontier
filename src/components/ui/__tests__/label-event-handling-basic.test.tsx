@@ -12,11 +12,11 @@
  * - 焦点事件
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Event Handling - Basic Tests', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -218,9 +218,9 @@ describe('Label Event Handling - Basic Tests', () => {
 
       const label = screen.getByTestId('touch-label');
 
-      // Simulate touch events
-      await user.pointer({ keys: '[TouchA>]', target: label });
-      await user.pointer({ keys: '[/TouchA]' });
+      // Simulate touch events using fireEvent
+      fireEvent.touchStart(label);
+      fireEvent.touchEnd(label);
 
       expect(handleTouchStart).toHaveBeenCalled();
       expect(handleTouchEnd).toHaveBeenCalled();

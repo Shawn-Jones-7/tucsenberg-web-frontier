@@ -22,9 +22,25 @@ import {
 
 // Mock Airtable
 const mockCreate = vi.fn();
-const mockSelect = vi.fn();
+const mockSelectAll = vi.fn();
+const mockSelect = vi.fn().mockReturnValue({
+  all: mockSelectAll,
+  firstPage: vi.fn(),
+});
 const mockUpdate = vi.fn();
 const mockDestroy = vi.fn();
+
+// Mock record with get method
+const createMockRecord = (data: Record<string, unknown>) => ({
+  id: data.id || 'rec123456',
+  fields: data.fields || {},
+  createdTime: data.createdTime || '2023-01-01T00:00:00Z',
+  get: vi.fn((field: string) => {
+    if (field === 'Created Time') return data.createdTime || '2023-01-01T00:00:00Z';
+    return (data.fields as Record<string, unknown>)?.[field];
+  }),
+});
+
 const mockTable = vi.fn().mockReturnValue({
   create: mockCreate,
   select: mockSelect,
@@ -72,10 +88,19 @@ describe('Airtable Service - Create Operations Tests', () => {
   beforeEach(async () => {
     // Clear mocks but preserve the mock functions
     mockCreate.mockReset();
-    mockSelect.mockReset();
+    mockSelectAll.mockReset();
+    mockSelect.mockReset().mockReturnValue({
+      all: mockSelectAll,
+      firstPage: vi.fn(),
+    });
     mockUpdate.mockReset();
     mockDestroy.mockReset();
-    mockTable.mockClear();
+    mockTable.mockClear().mockReturnValue({
+      create: mockCreate,
+      select: mockSelect,
+      update: mockUpdate,
+      destroy: mockDestroy,
+    });
     mockBase.mockClear();
     mockConfigure.mockClear();
 
@@ -106,35 +131,42 @@ describe('Airtable Service - Create Operations Tests', () => {
       setServiceReady(service);
 
       // Mock successful creation
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: {
-            'First Name': 'John',
-            'Last Name': 'Doe',
-            'Email': 'john.doe@example.com',
-            'Company': 'Test Company',
-            'Message': 'This is a test message',
-            'Accept Privacy': true,
-          },
-          createdTime: '2023-01-01T00:00:00Z',
+      const mockRecordData = {
+        id: 'rec123456',
+        fields: {
+          'First Name': 'John',
+          'Last Name': 'Doe',
+          'Email': 'john.doe@example.com',
+          'Company': 'Test Company',
+          'Message': 'This is a test message',
+          'Accept Privacy': true,
         },
-      ]);
+        createdTime: '2023-01-01T00:00:00Z',
+      };
+      mockCreate.mockResolvedValue([createMockRecord(mockRecordData)]);
 
       const result = await service.createContact(validFormData);
 
-      expect(result).toEqual({ id: 'rec123456' });
+      expect(result).toEqual({
+        id: 'rec123456',
+        fields: mockRecordData.fields,
+        createdTime: '2023-01-01T00:00:00Z',
+      });
       expect(mockCreate).toHaveBeenCalledWith([
         {
-          fields: {
+          fields: expect.objectContaining({
             'First Name': 'John',
             'Last Name': 'Doe',
             'Email': 'john.doe@example.com',
             'Company': 'Test Company',
             'Message': 'This is a test message',
-            'Accept Privacy': true,
-            'Website': '',
-          },
+            'Marketing Consent': false,
+            'Phone': '',
+            'Subject': '',
+            'Status': 'New',
+            'Source': 'Website Contact Form',
+            'Submitted At': expect.any(String),
+          }),
         },
       ]);
     });
@@ -151,28 +183,30 @@ describe('Airtable Service - Create Operations Tests', () => {
         website: 'https://example.com',
       };
 
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: formDataWithOptionals,
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
+      const mockRecordDataWithOptionals = {
+        id: 'rec123456',
+        fields: formDataWithOptionals,
+        createdTime: '2023-01-01T00:00:00Z',
+      };
+      mockCreate.mockResolvedValue([createMockRecord(mockRecordDataWithOptionals)]);
 
       await service.createContact(formDataWithOptionals);
 
       expect(mockCreate).toHaveBeenCalledWith([
         {
-          fields: {
+          fields: expect.objectContaining({
             'First Name': 'John',
             'Last Name': 'Doe',
             'Email': 'john.doe@example.com',
             'Company': 'Test Company',
             'Message': 'This is a test message',
-            'Accept Privacy': true,
+            'Marketing Consent': false,
             'Phone': '+1234567890',
-            'Website': 'https://example.com',
-          },
+            'Subject': '',
+            'Status': 'New',
+            'Source': 'Website Contact Form',
+            'Submitted At': expect.any(String),
+          }),
         },
       ]);
     });
@@ -180,9 +214,14 @@ describe('Airtable Service - Create Operations Tests', () => {
     it('should throw error when service is not configured', async () => {
       const service = new AirtableServiceClass();
 
-      // Ensure service is not configured
+      // Explicitly ensure service is not configured and stays that way
       (service as unknown as AirtableServicePrivate).isConfigured = false;
       (service as unknown as AirtableServicePrivate).base = null;
+
+      // Mock ensureReady to do nothing (prevent auto-configuration)
+      vi.spyOn(service as any, 'ensureReady').mockImplementation(async () => {
+        // Do nothing - prevent initialization
+      });
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
         'Airtable service is not configured',
@@ -197,7 +236,7 @@ describe('Airtable Service - Create Operations Tests', () => {
       mockCreate.mockRejectedValue(new Error('Creation failed'));
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
-        'Creation failed',
+        'Failed to create contact record',
       );
     });
 
@@ -216,17 +255,10 @@ describe('Airtable Service - Create Operations Tests', () => {
         website: '',
       };
 
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: emptyFormData,
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
-
-      const result = await service.createContact(emptyFormData);
-
-      expect(result).toEqual({ id: 'rec123456' });
+      // Empty email should cause validation error
+      await expect(service.createContact(emptyFormData)).rejects.toThrow(
+        'Failed to create contact record',
+      );
     });
 
     it('should handle special characters in form data', async () => {
@@ -237,35 +269,42 @@ describe('Airtable Service - Create Operations Tests', () => {
       const specialFormData = {
         firstName: 'José',
         lastName: 'García-López',
-        email: 'josé@example.com',
+        email: 'jose.garcia@example.com', // Use valid email format
         company: 'Test & Co.',
         message: 'Message with "quotes" and special chars: @#$%',
         acceptPrivacy: true,
         website: 'https://example.com/path?param=value&other=test',
       };
 
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: specialFormData,
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
+      const mockRecordDataSpecial = {
+        id: 'rec123456',
+        fields: specialFormData,
+        createdTime: '2023-01-01T00:00:00Z',
+      };
+      mockCreate.mockResolvedValue([createMockRecord(mockRecordDataSpecial)]);
 
       const result = await service.createContact(specialFormData);
 
-      expect(result).toEqual({ id: 'rec123456' });
+      expect(result).toEqual({
+        id: 'rec123456',
+        fields: mockRecordDataSpecial.fields,
+        createdTime: '2023-01-01T00:00:00Z',
+      });
       expect(mockCreate).toHaveBeenCalledWith([
         {
-          fields: {
+          fields: expect.objectContaining({
             'First Name': 'José',
             'Last Name': 'García-López',
-            'Email': 'josé@example.com',
+            'Email': 'jose.garcia@example.com',
             'Company': 'Test & Co.',
             'Message': 'Message with "quotes" and special chars: @#$%',
-            'Accept Privacy': true,
-            'Website': 'https://example.com/path?param=value&other=test',
-          },
+            'Marketing Consent': false,
+            'Phone': '',
+            'Subject': '',
+            'Status': 'New',
+            'Source': 'Website Contact Form',
+            'Submitted At': expect.any(String),
+          }),
         },
       ]);
     });
@@ -281,28 +320,35 @@ describe('Airtable Service - Create Operations Tests', () => {
         message: longMessage,
       };
 
-      mockCreate.mockResolvedValue([
-        {
-          id: 'rec123456',
-          fields: longFormData,
-          createdTime: '2023-01-01T00:00:00Z',
-        },
-      ]);
+      const mockRecordDataLong = {
+        id: 'rec123456',
+        fields: longFormData,
+        createdTime: '2023-01-01T00:00:00Z',
+      };
+      mockCreate.mockResolvedValue([createMockRecord(mockRecordDataLong)]);
 
       const result = await service.createContact(longFormData);
 
-      expect(result).toEqual({ id: 'rec123456' });
+      expect(result).toEqual({
+        id: 'rec123456',
+        fields: mockRecordDataLong.fields,
+        createdTime: '2023-01-01T00:00:00Z',
+      });
       expect(mockCreate).toHaveBeenCalledWith([
         {
-          fields: {
+          fields: expect.objectContaining({
             'First Name': 'John',
             'Last Name': 'Doe',
             'Email': 'john.doe@example.com',
             'Company': 'Test Company',
             'Message': longMessage,
-            'Accept Privacy': true,
-            'Website': '',
-          },
+            'Marketing Consent': false,
+            'Phone': '',
+            'Subject': '',
+            'Status': 'New',
+            'Source': 'Website Contact Form',
+            'Submitted At': expect.any(String),
+          }),
         },
       ]);
     });
@@ -317,7 +363,7 @@ describe('Airtable Service - Create Operations Tests', () => {
       mockCreate.mockRejectedValue(timeoutError);
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
-        'Request timeout',
+        'Failed to create contact record',
       );
     });
 
@@ -331,7 +377,7 @@ describe('Airtable Service - Create Operations Tests', () => {
       mockCreate.mockRejectedValue(rateLimitError);
 
       await expect(service.createContact(validFormData)).rejects.toThrow(
-        'Rate limit exceeded',
+        'Failed to create contact record',
       );
     });
   });

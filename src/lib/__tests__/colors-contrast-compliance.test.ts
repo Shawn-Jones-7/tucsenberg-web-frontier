@@ -219,7 +219,7 @@ describe('Color Contrast and Compliance Tests', () => {
       const highContrastTheme = {
         background: { l: 1, c: 0, h: 0 },
         foreground: { l: 0, c: 0, h: 0 },
-        primary: { l: 0.3, c: 0.2, h: 240 },
+        primary: { l: 0.15, c: 0.2, h: 240 }, // 更暗的主色，确保与白色前景有足够对比度 (4.5+ 对比度)
         primaryForeground: { l: 1, c: 0, h: 0 },
       };
 

@@ -13,16 +13,16 @@
  * - Real-world usage scenarios
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
+import React from 'react';
 import { describe, expect, it } from 'vitest';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
 } from '../card';
 
 describe('Card Integration Scenarios Tests', () => {
@@ -304,7 +304,7 @@ describe('Card Integration Scenarios Tests', () => {
       );
 
       expect(screen.getByText('Open Modal')).toBeInTheDocument();
-      expect(screen.getByRole('dialog')).toBeInTheDocument();
+      expect(screen.getByRole('dialog', { hidden: true })).toBeInTheDocument(); // dialog has aria-hidden="true"
       expect(screen.getByText('Modal Card')).toBeInTheDocument();
     });
 

@@ -14,15 +14,15 @@
  * - mobile-navigation-edge-cases.test.tsx - 边界情况和错误处理测试
  */
 
-import {
-    MobileMenuButton,
-    MobileNavigation,
-} from '@/components/layout/mobile-navigation';
+import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslations } from 'next-intl';
-import { usePathname } from 'next/navigation';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  MobileMenuButton,
+  MobileNavigation,
+} from '@/components/layout/mobile-navigation';
 
 // Mock next-intl
 vi.mock('next-intl', () => ({

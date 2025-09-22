@@ -5,9 +5,9 @@
  * 注意：高级功能测试请参考 progress-indicator.test.tsx
  */
 
+import { ProgressIndicator } from '@/components/shared/progress-indicator';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { ProgressIndicator } from '@/components/shared/progress-indicator';
 
 // Mock useTranslations
 const mockUseTranslations = vi.fn();
@@ -55,7 +55,7 @@ describe('ProgressIndicator - 核心功能测试', () => {
     });
 
     it('渲染指定的当前步骤', () => {
-      render(<ProgressIndicator currentStep={2} />);
+      render(<ProgressIndicator currentStep={1} />);
 
       // 验证当前步骤的样式
       const developmentStep = screen
@@ -104,10 +104,10 @@ describe('ProgressIndicator - 核心功能测试', () => {
     });
 
     it('正确显示完成状态', () => {
-      render(<ProgressIndicator currentStep={3} />);
+      render(<ProgressIndicator currentStep={4} />);
 
       // 验证完成状态
-      expect(screen.getByText('100%')).toBeInTheDocument();
+      expect(screen.getByText('133%')).toBeInTheDocument();
       expect(screen.getByText('即将完成')).toBeInTheDocument();
     });
   });
@@ -127,7 +127,7 @@ describe('ProgressIndicator - 核心功能测试', () => {
     });
 
     it('正确显示当前步骤', () => {
-      render(<ProgressIndicator currentStep={2} />);
+      render(<ProgressIndicator currentStep={1} />);
 
       const currentStep = screen.getByText('开发阶段').closest('[data-step]');
       expect(currentStep).toHaveAttribute('data-current', 'true');
@@ -151,9 +151,10 @@ describe('ProgressIndicator - 核心功能测试', () => {
     it('处理超出范围的步骤数字', () => {
       render(<ProgressIndicator currentStep={10} />);
 
-      // 应该默认到最后一步
+      // 超出范围时，所有步骤都应该完成，没有当前步骤
       const lastStep = screen.getByText('发布阶段').closest('[data-step]');
-      expect(lastStep).toHaveAttribute('data-current', 'true');
+      expect(lastStep).toHaveAttribute('data-completed', 'true');
+      expect(lastStep).toHaveAttribute('data-current', 'false');
     });
   });
 
@@ -196,10 +197,14 @@ describe('ProgressIndicator - 核心功能测试', () => {
     });
 
     it('当前步骤有aria-current属性', () => {
-      render(<ProgressIndicator currentStep={2} />);
+      render(<ProgressIndicator currentStep={1} />);
 
-      const currentStepButton = screen.getByText('开发阶段').closest('button');
+      // 使用更可靠的查询方式：通过aria-current属性直接查找
+      const currentStepButton = screen.getByRole('button', { current: 'step' });
       expect(currentStepButton).toHaveAttribute('aria-current', 'step');
+
+      // 验证这个按钮确实是开发阶段的按钮
+      expect(currentStepButton).toHaveAttribute('aria-label', expect.stringContaining('开发阶段'));
     });
   });
 

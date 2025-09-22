@@ -328,7 +328,7 @@ describe('PerformanceBaselineManager', () => {
       const oldBaseline = createBaselineFromMetrics(
         createDetailedMetrics({
           page: {
-            url: 'https://test.com/old-page',
+            url: 'https://test.com/en/test-page-old',
             referrer: '',
             title: 'Old Page',
             timestamp: Date.now() - WEB_VITALS_CONSTANTS.MILLISECONDS_PER_DAY,
@@ -339,7 +339,7 @@ describe('PerformanceBaselineManager', () => {
       const newBaseline = createBaselineFromMetrics(
         createDetailedMetrics({
           page: {
-            url: 'https://test.com/new-page',
+            url: 'https://test.com/en/test-page-new',
             referrer: '',
             title: 'New Page',
             timestamp: Date.now(),
@@ -838,7 +838,6 @@ describe('PerformanceAlertSystem', () => {
     it('should limit alert history size', async () => {
       // Send many alerts
       for (let i = 0; i < WEB_VITALS_CONSTANTS.TEST_ALERT_HISTORY_LIMIT; i++) {
-         
         await alertSystem.sendAlert({
           severity: 'warning',
           message: `Alert ${i}`,

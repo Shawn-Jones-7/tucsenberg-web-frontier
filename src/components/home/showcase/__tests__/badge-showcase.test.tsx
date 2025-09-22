@@ -1,6 +1,6 @@
-import { BadgeShowcase } from '@/components/home/showcase/badge-showcase';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { BadgeShowcase } from '@/components/home/showcase/badge-showcase';
 
 // Mock翻译函数
 const mockT = vi.fn((key: string) => {

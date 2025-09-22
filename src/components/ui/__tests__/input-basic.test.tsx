@@ -2,10 +2,10 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
-import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
 import { Input } from '@/components/ui/input';
+import { render, screen } from '@testing-library/react';
+import React from 'react';
+import { describe, expect, it } from 'vitest';
 
 describe('Input - Basic Rendering & Types', () => {
   describe('Basic Rendering', () => {
@@ -23,16 +23,17 @@ describe('Input - Basic Rendering & Types', () => {
       const input = screen.getByTestId('input');
       expect(input).toHaveClass(
         'flex',
-        'h-10',
+        'h-9',
         'w-full',
+        'min-w-0',
         'rounded-md',
         'border',
         'border-input',
-        'bg-background',
+        'bg-transparent',
         'px-3',
-        'py-2',
-        'text-sm',
-        'ring-offset-background',
+        'py-1',
+        'text-base',
+        'shadow-xs',
       );
     });
 
@@ -47,7 +48,8 @@ describe('Input - Basic Rendering & Types', () => {
       render(<Input data-testid='input' />);
 
       const input = screen.getByTestId('input');
-      expect(input).toHaveAttribute('type', 'text');
+      // HTML input elements don't have type="text" attribute when it's the default
+      expect(input.getAttribute('type')).toBe(null);
     });
 
     it('handles empty props gracefully', () => {
@@ -70,7 +72,8 @@ describe('Input - Basic Rendering & Types', () => {
       render(<Input data-testid='text-input' />);
 
       const input = screen.getByTestId('text-input');
-      expect(input).toHaveAttribute('type', 'text');
+      // HTML input elements don't have type="text" attribute when it's the default
+      expect(input.getAttribute('type')).toBe(null);
     });
 
     it('renders email input', () => {
@@ -325,7 +328,7 @@ describe('Input - Basic Rendering & Types', () => {
         );
 
         const input = screen.getByTestId(`${type}-input`);
-        expect(input).toHaveClass('flex', 'h-10', 'w-full', 'rounded-md');
+        expect(input).toHaveClass('flex', 'h-9', 'w-full', 'rounded-md');
 
         unmount();
       });

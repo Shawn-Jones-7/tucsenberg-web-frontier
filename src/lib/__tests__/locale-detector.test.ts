@@ -102,12 +102,14 @@ const setupLocaleDetectorTest = () => {
   });
 
   // 重置Intl.DateTimeFormat mock
-  vi.mocked(Intl.DateTimeFormat).mockImplementation(
-    () =>
-      ({
-        resolvedOptions: () => ({ timeZone: 'America/New_York' }),
-      }) as Intl.DateTimeFormat,
-  );
+  if (Intl && Intl.DateTimeFormat) {
+    vi.mocked(Intl.DateTimeFormat).mockImplementation(
+      () =>
+        ({
+          resolvedOptions: () => ({ timeZone: 'America/New_York' }),
+        }) as Intl.DateTimeFormat,
+    );
+  }
 
   // 重置geolocation mock
   Object.defineProperty(navigator, 'geolocation', {
@@ -547,8 +549,10 @@ describe('SmartLocaleDetector - Error Handling and Performance', () => {
       // Mock detectFromGeolocation to return quickly
       vi.spyOn(detector, 'detectFromGeolocation').mockResolvedValue('en');
 
-      // 应该抛出错误，因为没有适当的错误处理
-      await expect(detector.detectSmartLocale()).rejects.toThrow();
+      // 应该优雅地处理错误并返回默认值，而不是抛出异常
+      const result = await detector.detectSmartLocale();
+      expect(result.locale).toBe('en');
+      expect(result.source).toBe('default');
     }, 10000); // 增加超时时间
   });
 

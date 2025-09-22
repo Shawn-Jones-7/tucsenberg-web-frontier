@@ -2,18 +2,18 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetFooter,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetFooter,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
 } from '../sheet';
 
 // Mock Lucide React icons
@@ -254,9 +254,8 @@ describe('Sheet - Basic Components', () => {
         expect(header).toHaveClass(
           'flex',
           'flex-col',
-          'space-y-2',
-          'text-center',
-          'sm:text-left',
+          'gap-1.5',
+          'p-4',
         );
       });
     });
@@ -317,11 +316,11 @@ describe('Sheet - Basic Components', () => {
       await waitFor(() => {
         const footer = screen.getByTestId('sheet-footer');
         expect(footer).toHaveClass(
+          'mt-auto',
           'flex',
-          'flex-col-reverse',
-          'sm:flex-row',
-          'sm:justify-end',
-          'sm:space-x-2',
+          'flex-col',
+          'gap-2',
+          'p-4',
         );
       });
     });

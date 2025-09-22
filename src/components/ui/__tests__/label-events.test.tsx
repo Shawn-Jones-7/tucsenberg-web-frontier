@@ -13,11 +13,11 @@
  * - label-edge-cases.test.tsx - Edge cases tests
  */
 
-import React from 'react';
+import { Label } from '@/components/ui/label';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { Label } from '@/components/ui/label';
 
 describe('Label Events & States Tests - Index', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -187,7 +187,7 @@ describe('Label Events & States Tests - Index', () => {
       const label = screen.getByTestId('disabled-label');
       expect(label).toHaveClass(
         'peer-disabled:cursor-not-allowed',
-        'peer-disabled:opacity-70',
+        'peer-disabled:opacity-50',
       );
     });
 
@@ -203,6 +203,7 @@ describe('Label Events & States Tests - Index', () => {
           <input
             id='disabled-input'
             type='text'
+            disabled
           />
         </div>,
       );

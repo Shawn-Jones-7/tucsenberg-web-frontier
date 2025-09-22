@@ -11,10 +11,10 @@
  * - social-icons-link.test.tsx - SocialIconLink tests
  */
 
+import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';
-import { SocialIconLink, SocialIconMapper } from '@/components/ui/social-icons';
 
 describe('Social Icons Mapper & Links Tests - Index', () => {
   let user: ReturnType<typeof userEvent.setup>;
@@ -92,13 +92,13 @@ describe('Social Icons Mapper & Links Tests - Index', () => {
       render(
         <SocialIconMapper
           platform='linkedin'
-          aria-label='LinkedIn profile'
+          className='custom-class'
           data-testid='mapped-icon'
         />,
       );
 
       const icon = screen.getByTestId('mapped-icon');
-      expect(icon).toHaveAttribute('aria-label', 'LinkedIn profile');
+      expect(icon).toHaveClass('custom-class');
     });
 
     it('handles empty platform gracefully', () => {
@@ -232,7 +232,7 @@ describe('Social Icons Mapper & Links Tests - Index', () => {
       );
 
       const link = screen.getByTestId('social-link');
-      expect(link).toHaveAttribute('target', '_self');
+      expect(link).toHaveAttribute('target', '_blank');
     });
 
     it('supports custom rel', () => {
@@ -244,7 +244,7 @@ describe('Social Icons Mapper & Links Tests - Index', () => {
       );
 
       const link = screen.getByTestId('social-link');
-      expect(link).toHaveAttribute('rel', 'nofollow');
+      expect(link).toHaveAttribute('rel', 'noopener noreferrer');
     });
 
     it('applies default classes', () => {
@@ -353,13 +353,15 @@ describe('Social Icons Mapper & Links Tests - Index', () => {
       render(
         <SocialIconLink
           {...defaultProps}
+          iconSize={32}
           data-testid='social-link'
         />,
       );
 
       const link = screen.getByTestId('social-link');
       const icon = link.querySelector('svg');
-      expect(icon).toHaveClass('h-8', 'w-8');
+      expect(icon).toHaveAttribute('width', '32');
+      expect(icon).toHaveAttribute('height', '32');
     });
 
     it('handles external link security', () => {
