@@ -1,9 +1,9 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
 'use client';
 
 import React, { useCallback, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
+import { DEV_TOOLS_CONSTANTS } from '@/constants/dev-tools';
 import { REACT_SCAN_CONFIG } from '@/constants/react-scan';
 
 /**
@@ -81,9 +81,7 @@ function FrequentRenderComponent({ trigger }: { trigger: number }) {
       <p>Frequent Render: {trigger}</p>
       <p>
         Expensive Value:{' '}
-        {expensiveValue.toFixed(
-          DEV_TOOLS_CONSTANTS.REACT_SCAN.EXPORT_SPLIT_COUNT,
-        )}
+        {expensiveValue.toFixed(DEV_TOOLS_CONSTANTS.REACT_SCAN.CHART_PRECISION)}
       </p>
     </div>
   );
