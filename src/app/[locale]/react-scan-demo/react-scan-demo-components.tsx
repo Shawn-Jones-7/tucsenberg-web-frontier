@@ -1,20 +1,19 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
 'use client';
 
-import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
 import { REACT_SCAN_CONFIG } from '@/constants/react-scan';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 // React Scan 类型定义
-interface _ReactScanStats {
+interface ReactScanStats {
   enabled: boolean;
   totalRenders: number;
   componentsTracked: number;
@@ -28,6 +27,7 @@ interface ReactScanWindow extends Window {
       totalRenders?: number;
       componentsScanned?: number;
       lastScanTime?: number;
+      fiberRoots?: Record<string, unknown>;
     };
   };
 }
@@ -169,7 +169,9 @@ export function ReactScanStats() {
           lastUpdate: new Date().toLocaleTimeString(),
         });
       } catch (error) {
-        console.warn('无法获取 React Scan 状态:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('无法获取 React Scan 状态:', error);
+        }
         setStats({
           enabled: false,
           totalRenders: 0,

@@ -15,11 +15,17 @@ import { REACT_SCAN_CONFIG } from '@/constants/react-scan';
 
 // 未优化的组件 - 会导致不必要的渲染
 function UnoptimizedComponent({ count }: { count: number }) {
-  console.log('🔴 UnoptimizedComponent rendered');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('🔴 UnoptimizedComponent rendered');
+  }
 
   // 每次渲染都会创建新的对象和函数
   const style = { color: 'red', fontWeight: 'bold' };
-  const handleClick = () => console.log('Clicked');
+  const handleClick = () => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Clicked');
+    }
+  };
 
   return (
     <div style={style}>

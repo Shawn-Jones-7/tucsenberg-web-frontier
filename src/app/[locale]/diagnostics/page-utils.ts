@@ -59,7 +59,9 @@ export function loadHistoricalData(): SimpleWebVitals[] {
       return Array.isArray(data) ? data.slice(0, HISTORY_DISPLAY_LIMIT) : [];
     }
   } catch (error) {
-    console.warn('Failed to load historical data:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Failed to load historical data:', error);
+    }
   }
   return [];
 }
@@ -76,7 +78,9 @@ export function saveCurrentData(metrics: SimpleWebVitals): SimpleWebVitals[] {
     localStorage.setItem('webVitalsHistory', JSON.stringify(updated));
     return updated.slice(0, HISTORY_DISPLAY_LIMIT);
   } catch (error) {
-    console.warn('Failed to save data:', error);
+    if (process.env.NODE_ENV === 'development') {
+      console.warn('Failed to save data:', error);
+    }
     return [];
   }
 }

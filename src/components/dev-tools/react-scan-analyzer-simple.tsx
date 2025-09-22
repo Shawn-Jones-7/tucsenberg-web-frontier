@@ -1,17 +1,16 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { useCallback, useEffect, useState } from 'react';
 
 // 保留类型导入以备将来使用
 // import type { ReactScanGlobal } from '@/app/[locale]/react-scan-demo/react-scan-types';
@@ -55,7 +54,9 @@ export function ReactScanAnalyzer() {
 
       return components.sort((a, b) => b.renderTime - a.renderTime);
     } catch (error) {
-      console.warn('Failed to read React Scan data:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.warn('Failed to read React Scan data:', error);
+      }
       return [];
     }
   }, []);

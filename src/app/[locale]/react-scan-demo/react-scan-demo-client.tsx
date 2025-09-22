@@ -1,24 +1,23 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
 'use client';
 
-import { useCallback, useState } from 'react';
+import {
+    DemoComponentsContainer,
+    PerformanceTestComponent,
+} from '@/app/[locale]/react-scan-demo/react-scan-components';
+import {
+    ReactScanControlPanel,
+    ReactScanInstructions,
+} from '@/app/[locale]/react-scan-demo/react-scan-stats';
 import { ReactScanAnalyzer } from '@/components/dev-tools/react-scan-analyzer';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
-import {
-  DemoComponentsContainer,
-  PerformanceTestComponent,
-} from '@/app/[locale]/react-scan-demo/react-scan-components';
-import {
-  ReactScanControlPanel,
-  ReactScanInstructions,
-} from '@/app/[locale]/react-scan-demo/react-scan-stats';
+import { useCallback, useState } from 'react';
 
 /**
  * React Scan 演示客户端组件

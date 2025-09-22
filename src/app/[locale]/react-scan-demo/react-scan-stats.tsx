@@ -1,21 +1,20 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import type {
+    ReactScanStats,
+    ReactScanWindow,
+} from '@/app/[locale]/react-scan-demo/react-scan-types';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
+    Card,
+    CardContent,
+    CardDescription,
+    CardHeader,
+    CardTitle,
 } from '@/components/ui/card';
-import type {
-  ReactScanStats,
-  ReactScanWindow,
-} from '@/app/[locale]/react-scan-demo/react-scan-types';
 import { REACT_SCAN_CONFIG } from '@/constants/react-scan';
+import { useCallback, useEffect, useState } from 'react';
 
 /**
  * React Scan 性能数据显示组件
@@ -46,7 +45,9 @@ export function ReactScanStatsComponent() {
           });
         }
       } catch (error) {
-        console.warn('Failed to get React Scan stats:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to get React Scan stats:', error);
+        }
         setStats({
           enabled: false,
           totalRenders: 0,
@@ -75,7 +76,9 @@ export function ReactScanStatsComponent() {
           updateStats();
         }
       } catch (error) {
-        console.warn('Failed to toggle React Scan:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to toggle React Scan:', error);
+        }
       }
     }
   }, [updateStats]);
@@ -90,7 +93,9 @@ export function ReactScanStatsComponent() {
           updateStats();
         }
       } catch (error) {
-        console.warn('Failed to reset React Scan stats:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to reset React Scan stats:', error);
+        }
       }
     }
   }, [updateStats]);

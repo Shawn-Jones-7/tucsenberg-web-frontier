@@ -14,6 +14,12 @@ export const REACT_SCAN_CONFIG = {
   EXPENSIVE_CALCULATION_ITERATIONS: 100000, // 昂贵计算的迭代次数
   STATS_UPDATE_INTERVAL: 500, // 统计数据更新间隔 (ms)
   LARGE_ITEMS_WARNING_THRESHOLD: 50, // 大量项目性能警告阈值
+
+  // React Scan 功能配置
+  enabled: true, // 是否启用 React Scan
+  showOverlay: true, // 是否显示覆盖层
+  trackRenders: true, // 是否跟踪渲染
+  logToConsole: false, // 是否输出到控制台
 } as const;
 
 // 邮箱验证常量

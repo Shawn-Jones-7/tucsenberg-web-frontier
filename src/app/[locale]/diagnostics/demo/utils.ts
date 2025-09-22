@@ -1,4 +1,5 @@
-// @ts-nocheck - 开发工具豁免：仅开发环境使用，不影响生产代码质量
+import { DEV_TOOLS_CONSTANTS } from '@/constants/dev-tools';
+
 // 性能诊断常量定义
 export const PERFORMANCE_CONSTANTS = {
   SIMULATION_DELAY: 2000,

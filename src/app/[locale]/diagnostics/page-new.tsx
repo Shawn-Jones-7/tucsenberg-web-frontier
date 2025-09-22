@@ -36,7 +36,9 @@ export default function DiagnosticsPage() {
       const updatedHistory = saveCurrentData(metrics);
       _setHistoricalData(updatedHistory);
     } catch (error) {
-      console.error('Failed to refresh data:', error);
+      if (process.env.NODE_ENV === 'development') {
+        console.error('Failed to refresh data:', error);
+      }
     } finally {
       _setIsLoading(false);
     }

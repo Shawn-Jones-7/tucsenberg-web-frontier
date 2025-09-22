@@ -668,8 +668,8 @@ export default [
       // 明确禁用架构规则，确保测试文件可以使用相对路径导入
       'no-restricted-imports': 'off',
       'no-restricted-syntax': 'off',
-      // 安全规则在测试中降级为警告
-      'security/detect-object-injection': 'warn',
+      // 安全规则在测试中完全忽略 - 测试文件中的动态对象访问是正常模式
+      'security/detect-object-injection': 'off',
       // 允许在测试中动态构建正则（常见于匹配断言）；保持为warn以提示潜在风险
       'security/detect-non-literal-regexp': 'warn',
       '@typescript-eslint/no-unused-vars': [

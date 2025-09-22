@@ -32,9 +32,11 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
       process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN === 'true';
 
     if (explicitlyDisabled) {
-      console.log(
-        '🔍 React Scan disabled by NEXT_PUBLIC_DISABLE_REACT_SCAN=true',
-      );
+      if (process.env.NODE_ENV === 'development') {
+        console.log(
+          '🔍 React Scan disabled by NEXT_PUBLIC_DISABLE_REACT_SCAN=true',
+        );
+      }
       return;
     }
 
@@ -58,9 +60,11 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
           onRender: (fiber, renders) => {
             // 可以在这里集成到现有的性能监控系统
             if (renders.length > REACT_SCAN_CONFIG.RENDER_WARNING_THRESHOLD) {
-              console.warn(
-                `🐌 Component ${fiber.type?.name || 'Unknown'} rendered ${renders.length} times`,
-              );
+              if (process.env.NODE_ENV === 'development') {
+                console.warn(
+                  `🐌 Component ${fiber.type?.name || 'Unknown'} rendered ${renders.length} times`,
+                );
+              }
             }
           },
         });
@@ -87,7 +91,9 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
 
               // 提供用户反馈
               const status = isReactScanEnabled ? 'enabled' : 'disabled';
-              console.log(`🔍 React Scan ${status} via Ctrl+Shift+X`);
+              if (process.env.NODE_ENV === 'development') {
+                console.log(`🔍 React Scan ${status} via Ctrl+Shift+X`);
+              }
 
               // 可选：显示临时通知
               if (typeof window !== 'undefined') {
@@ -122,7 +128,9 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
                 }, REACT_SCAN_CONFIG.NOTIFICATION_DISPLAY_DURATION);
               }
             } catch (error) {
-              console.warn('Failed to toggle React Scan:', error);
+              if (process.env.NODE_ENV === 'development') {
+                console.warn('Failed to toggle React Scan:', error);
+              }
             }
           }
         };
@@ -130,10 +138,12 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
         // 注册全局键盘事件监听器
         document.addEventListener('keydown', handleKeyDown, { capture: true });
 
-        console.log(
-          '🔍 React Scan initialized - Performance monitoring active',
-        );
-        console.log('💡 Press Ctrl+Shift+X to toggle React Scan');
+        if (process.env.NODE_ENV === 'development') {
+          console.log(
+            '🔍 React Scan initialized - Performance monitoring active',
+          );
+          console.log('💡 Press Ctrl+Shift+X to toggle React Scan');
+        }
 
         // 返回清理函数
         return () => {
@@ -142,7 +152,9 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
           });
         };
       } catch (error) {
-        console.warn('Failed to initialize React Scan:', error);
+        if (process.env.NODE_ENV === 'development') {
+          console.warn('Failed to initialize React Scan:', error);
+        }
         // eslint-disable-next-line no-empty-function
         return () => {}; // 返回空清理函数，错误情况下无需清理
       }

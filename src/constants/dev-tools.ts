@@ -33,6 +33,12 @@ export const DEV_TOOLS_CONSTANTS = {
     GRID_GAP: 8,
     BORDER_RADIUS: 6,
     ANIMATION_DELAY: 2000,
+    DEFAULT_OFFSET: 50, // 默认偏移量
+  },
+
+  // 诊断工具
+  DIAGNOSTICS: {
+    DIAGNOSTIC_DELAY: 300, // 诊断延迟时间
   },
 
   // 性能阈值
