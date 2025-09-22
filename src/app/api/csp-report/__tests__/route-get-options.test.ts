@@ -10,7 +10,7 @@
 
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { GET, OPTIONS, POST } from '@/app/api/csp-report/__tests__/route';
+import { GET, OPTIONS, POST } from '@/app/api/csp-report/route';
 
 describe('CSP Report API Route - GET & OPTIONS Tests', () => {
   beforeEach(() => {

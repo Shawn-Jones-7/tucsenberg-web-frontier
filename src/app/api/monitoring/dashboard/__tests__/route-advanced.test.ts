@@ -7,19 +7,24 @@
 
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { POST } from '@/app/api/monitoring/dashboard/__tests__/route';
+import { POST } from '@/app/api/monitoring/dashboard/route';
 
 // Mock logger
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    info: vi.fn(),
+    warn: vi.fn(),
+    error: vi.fn(),
+    debug: vi.fn(),
+  },
+}));
+
 const mockLogger = {
   info: vi.fn(),
   warn: vi.fn(),
   error: vi.fn(),
   debug: vi.fn(),
 };
-
-vi.mock('@/lib/logger', () => ({
-  logger: mockLogger,
-}));
 
 describe('Monitoring Dashboard API Route - 高级功能测试', () => {
   beforeEach(() => {

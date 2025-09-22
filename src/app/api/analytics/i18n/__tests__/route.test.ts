@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DELETE, GET, POST } from '@/app/api/analytics/i18n/__tests__/route';
+import { DELETE, GET, POST } from '@/app/api/analytics/i18n/route';
 
 // Mock logger - 使用vi.hoisted确保正确的初始化顺序
 const mockLogger = vi.hoisted(() => ({

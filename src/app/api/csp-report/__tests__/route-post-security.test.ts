@@ -8,7 +8,7 @@
 
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { POST } from '@/app/api/csp-report/__tests__/route';
+import { POST } from '@/app/api/csp-report/route';
 
 describe('CSP Report API Route - 安全性测试', () => {
   beforeEach(() => {

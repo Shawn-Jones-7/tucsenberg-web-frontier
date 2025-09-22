@@ -1,6 +1,6 @@
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { POST } from '@/app/api/monitoring/dashboard/__tests__/route';
+import { POST } from '@/app/api/monitoring/dashboard/route';
 
 // Mock logger - 使用vi.hoisted确保正确的初始化顺序
 const mockLogger = vi.hoisted(() => ({
