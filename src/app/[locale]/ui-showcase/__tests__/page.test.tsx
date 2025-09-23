@@ -1,6 +1,6 @@
+import UIShowcasePage from '@/app/[locale]/ui-showcase/page';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import UIShowcasePage from '@/app/[locale]/ui-showcase/__tests__/page';
 
 // Mock UIShowcase组件
 vi.mock('@/components/examples/ui-showcase', () => ({

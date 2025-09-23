@@ -5,11 +5,11 @@
  * 注意：高级测试场景请参考 enhanced-locale-switcher-language-switching.test.tsx
  */
 
-import React from 'react';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
 
 // Mock next-intl
 const mockT = vi.fn();
@@ -35,6 +35,8 @@ vi.mock('next/navigation', () => ({
   useRouter,
   usePathname,
   useSearchParams,
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 // Mock Lucide React icons

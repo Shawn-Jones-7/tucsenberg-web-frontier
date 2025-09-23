@@ -2,13 +2,13 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
+import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
+import { usePathname } from '@/i18n/routing';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useLocale, useTranslations } from 'next-intl';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { EnhancedLocaleSwitcher } from '@/components/i18n/enhanced-locale-switcher';
-import { usePathname } from '@/i18n/routing';
 
 // Mock next-intl hooks
 vi.mock('next-intl', () => ({
@@ -24,6 +24,9 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
   })),
   useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => '/'),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 // Mock Lucide React icons

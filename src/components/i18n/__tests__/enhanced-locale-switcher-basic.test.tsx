@@ -15,15 +15,15 @@
  * - enhanced-locale-switcher-modes.test.tsx - 模式和生命周期测试
  */
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useLocale, useTranslations } from 'next-intl';
+import { usePathname } from 'next/navigation';
+import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
-  EnhancedLocaleSwitcher,
-  SimpleLocaleSwitcher,
+    EnhancedLocaleSwitcher,
+    SimpleLocaleSwitcher,
 } from '../enhanced-locale-switcher';
 
 // Mock next-intl hooks
@@ -40,6 +40,9 @@ vi.mock('next/navigation', () => ({
     replace: vi.fn(),
   })),
   useSearchParams: vi.fn(() => new URLSearchParams()),
+  usePathname: vi.fn(() => '/'),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 // Mock Lucide React icons
