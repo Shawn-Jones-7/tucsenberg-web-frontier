@@ -1,3 +1,8 @@
+/**
+ * Test helpers for Airtable service testing
+ * This file contains utility functions for testing Airtable services
+ */
+
 import type {
   AirtableBaseLike,
   AirtableServicePrivate,
@@ -17,3 +22,6 @@ export const configureServiceForTesting = <Fields = Record<string, unknown>>(
   target.isConfigured = true;
   target.base = base;
 };
+
+// This file contains only utility functions and no tests
+// It should not be picked up by the test runner

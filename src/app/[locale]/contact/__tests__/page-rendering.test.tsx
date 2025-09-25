@@ -17,18 +17,53 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ContactPage, {
-  generateMetadata,
-} from '@/app/[locale]/contact/__tests__/page';
+import ContactPage, { generateMetadata } from '@/app/[locale]/contact/page';
 
 // Mock next-intl
-const mockGetTranslations = vi.fn();
+const { mockGetTranslations } = vi.hoisted(() => {
+  const mockGetTranslations = vi.fn();
+  return { mockGetTranslations };
+});
+
 vi.mock('next-intl/server', () => ({
   getTranslations: mockGetTranslations,
 }));
 
+// Mock Zod
+vi.mock('zod', () => ({
+  z: {
+    object: vi.fn(() => ({
+      parse: vi.fn(),
+      safeParse: vi.fn(() => ({ success: true, data: {} })),
+    })),
+    string: vi.fn(() => ({
+      min: vi.fn(() => ({ email: vi.fn() })),
+      email: vi.fn(),
+    })),
+  },
+}));
+
+// Mock @hookform/resolvers/zod
+vi.mock('@hookform/resolvers/zod', () => ({
+  zodResolver: vi.fn(() => vi.fn()),
+}));
+
+// Mock react-hook-form
+vi.mock('react-hook-form', () => ({
+  useForm: vi.fn(() => ({
+    register: vi.fn(),
+    handleSubmit: vi.fn(),
+    formState: { errors: {} },
+    reset: vi.fn(),
+  })),
+}));
+
 // Mock ContactForm component
 vi.mock('@/components/forms/contact-form', () => ({
+  ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,
+}));
+
+vi.mock('@/components/contact/contact-form', () => ({
   ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,
 }));
 
@@ -213,10 +248,11 @@ describe('Contact Page - Main Rendering Tests', () => {
 
       render(ContactPageComponent);
 
-      // 验证联系信息布局
-      const contactTitle = screen.getByText('邮箱');
+      // 验证联系信息布局 - 找到包含联系信息的容器
+      const contactTitle = screen.getByText('联系方式');
       const contactContainer =
         contactTitle.parentElement?.querySelector('.space-y-4');
+      expect(contactContainer).toBeInTheDocument();
       expect(contactContainer).toHaveClass('space-y-4');
     });
 
@@ -266,8 +302,9 @@ describe('Contact Page - Main Rendering Tests', () => {
 
       render(ContactPageComponent);
 
-      // 验证fallback文本
-      expect(screen.getByText('fallback')).toBeInTheDocument();
+      // 验证fallback文本（有多个，使用getAllByText）
+      const fallbackElements = screen.getAllByText('fallback');
+      expect(fallbackElements.length).toBeGreaterThan(0);
     });
 
     it('应该处理参数错误', async () => {

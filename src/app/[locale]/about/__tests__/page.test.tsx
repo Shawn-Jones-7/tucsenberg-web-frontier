@@ -1,8 +1,6 @@
-import AboutPage, {
-    generateMetadata,
-} from '@/app/[locale]/about/page';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import AboutPage, { generateMetadata } from '@/app/[locale]/about/page';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockGetTranslations } = vi.hoisted(() => ({

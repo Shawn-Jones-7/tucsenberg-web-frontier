@@ -164,7 +164,7 @@ export function PerformanceTestComponent({
     optimized: number;
   } | null>(null);
 
-  const runPerformanceTest = useCallback(async () => {
+  const runPerformanceTest = useCallback(() => {
     setIsRunning(true);
     setResults(null);
 

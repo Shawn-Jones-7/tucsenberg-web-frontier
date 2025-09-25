@@ -21,6 +21,20 @@ interface MappingEntry {
   }>;
 }
 
+interface EnhancedMappingData {
+  _comment: string;
+  _description: string;
+  _optimization: string;
+  _updated: string;
+  _stats: {
+    originalCodexConstants: number;
+    existingConstants: number;
+    uniqueValues: number;
+    missingNumbersFound: number;
+  };
+  [key: string]: MappingEntry | string | object; // 数字键对应MappingEntry，元数据键对应string或object
+}
+
 /**
  * 生成增强版CODEX映射
  * 整合现有常量分析结果，生成支持模块导入的映射文件
@@ -89,7 +103,7 @@ async function generateEnhancedMapping() {
   ];
 
   // 生成增强映射
-  const enhancedMapping: Record<string, any> = {
+  const enhancedMapping: EnhancedMappingData = {
     _comment: 'CODEX分层治理：增强版魔法数字映射',
     _description: '整合现有常量定义，支持模块导入的映射文件',
     _optimization: '从301个减少到核心常量，复用现有语义化常量',
@@ -180,7 +194,7 @@ async function generateEnhancedMapping() {
 /**
  * 生成导入优化建议
  */
-function generateImportSuggestions(mapping: Record<string, any>) {
+function generateImportSuggestions(mapping: EnhancedMappingData) {
   const moduleUsage = new Map<string, string[]>();
 
   for (const [value, info] of Object.entries(mapping)) {

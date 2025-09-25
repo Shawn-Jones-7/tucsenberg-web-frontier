@@ -17,17 +17,36 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
  * React Scan 使用指南组件 - 简化版
  */
 export function ReactScanGuide() {
-  const [openSections, setOpenSections] = useState<Record<string, boolean>>({
-    quickStart: true,
+  // 使用Map替代对象，避免对象注入攻击
+  const [openSections, setOpenSections] = useState<Map<string, boolean>>(() => {
+    const initialMap = new Map();
+    initialMap.set('quickStart', true);
+    return initialMap;
   });
 
-  const toggleSection = (section: string) => {
-    setOpenSections((prev) => ({
-      ...prev,
+  // 定义允许的section白名单，防止对象注入攻击
+  const ALLOWED_SECTIONS = new Set([
+    'quickStart',
+    'installation',
+    'configuration',
+    'usage',
+    'troubleshooting',
+    'advanced',
+  ]);
 
-      [section]:
-        !Object.prototype.hasOwnProperty.call(prev, section) || !prev[section], // section 来自内部控制，安全
-    }));
+  const toggleSection = (section: string) => {
+    // 白名单验证，防止对象注入攻击
+    if (!ALLOWED_SECTIONS.has(section)) {
+      console.warn(`Invalid section: ${section}`);
+      return;
+    }
+
+    setOpenSections((prev) => {
+      const newMap = new Map(prev);
+      const currentValue = newMap.get(section) ?? false;
+      newMap.set(section, !currentValue);
+      return newMap;
+    });
   };
 
   const Section = ({
@@ -55,8 +74,9 @@ export function ReactScanGuide() {
         </CardTitle>
       </CardHeader>
       {}
-      {Object.prototype.hasOwnProperty.call(openSections, id) &&
-        openSections[id] && <CardContent>{children}</CardContent>}
+      {ALLOWED_SECTIONS.has(id) && openSections.get(id) && (
+        <CardContent>{children}</CardContent>
+      )}
     </Card>
   );
 

@@ -133,7 +133,7 @@ async function collectExistingConstants() {
   console.log(`\n📊 收集完成: 发现 ${constants.length} 个常量`);
 
   // 生成候选映射
-  const candidateMapping: Record<string, any> = {};
+  const candidateMapping: Record<string, ConstantInfo> = {};
   const conflicts: Record<string, ConstantInfo[]> = {};
 
   for (const [value, constantInfos] of valueToConstants) {

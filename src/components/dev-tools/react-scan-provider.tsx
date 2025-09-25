@@ -187,8 +187,12 @@ export function ReactScanProvider({ children }: { children: React.ReactNode }) {
  */
 export function ReactScanIndicator() {
   const { registerTool, unregisterTool, getClasses } = {
-    registerTool: (_toolId: string) => {},
-    unregisterTool: (_toolId: string) => {},
+    registerTool: (_toolId: string) => {
+      // 占位符：工具注册接口，实际实现由布局管理器提供
+    },
+    unregisterTool: (_toolId: string) => {
+      // 占位符：工具注销接口，实际实现由布局管理器提供
+    },
     getClasses: () => '',
   };
 
@@ -237,8 +241,12 @@ export function ReactScanIndicator() {
  */
 export function ReactScanControlPanel() {
   const { registerTool, unregisterTool, getClasses } = {
-    registerTool: (_toolId: string) => {},
-    unregisterTool: (_toolId: string) => {},
+    registerTool: (_toolId: string) => {
+      // 占位符：工具注册接口，实际实现由布局管理器提供
+    },
+    unregisterTool: (_toolId: string) => {
+      // 占位符：工具注销接口，实际实现由布局管理器提供
+    },
     getClasses: () => '',
   };
 

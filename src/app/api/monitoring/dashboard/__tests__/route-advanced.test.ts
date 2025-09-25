@@ -19,7 +19,7 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
-const mockLogger = {
+const _mockLogger = {
   info: vi.fn(),
   warn: vi.fn(),
   error: vi.fn(),
@@ -63,7 +63,10 @@ describe('Monitoring Dashboard API Route - 高级功能测试', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(data.data.metricsProcessed).toBe(6);
+      // API返回的是原始metrics对象，不是metricsProcessed计数
+      expect(Object.keys(data.data.metrics)).toHaveLength(6);
+      expect(data.data.processedAt).toBeDefined();
+      expect(data.data.status).toBe('processed');
     });
 
     it('应该处理嵌套的监控数据结构', async () => {

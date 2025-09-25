@@ -3,6 +3,8 @@
  * 配置全局测试环境、Mock和工具函数
  */
 
+/* eslint-disable max-lines-per-function, max-lines */
+
 import '@testing-library/jest-dom/vitest';
 import React from 'react';
 // 扩展 Vitest 的 expect 断言
@@ -1280,7 +1282,29 @@ vi.stubEnv('CSP_REPORT_URI', 'https://example.com/csp-report');
 vi.stubEnv('ADMIN_TOKEN', 'test-admin-token');
 
 // Mock @t3-oss/env-nextjs to prevent server-side environment variable access errors
-vi.mock('../../env.mjs', () => ({
+vi.mock('@t3-oss/env-nextjs', () => ({
+  createEnv: vi.fn(() => ({
+    NODE_ENV: 'test',
+    TURNSTILE_SECRET_KEY: 'test-secret-key',
+    RESEND_API_KEY: 'test-resend-key',
+    AIRTABLE_API_KEY: 'test-airtable-key',
+    AIRTABLE_BASE_ID: 'test-base-id',
+    AIRTABLE_TABLE_NAME: 'test-table',
+    EMAIL_FROM: 'test@example.com',
+    EMAIL_REPLY_TO: 'reply@example.com',
+    CSP_REPORT_URI: 'https://example.com/csp-report',
+    ADMIN_TOKEN: 'test-admin-token',
+    NEXT_PUBLIC_SITE_URL: 'https://tucsenberg.com',
+    NEXT_PUBLIC_VERCEL_URL: 'tucsenberg.vercel.app',
+    WHATSAPP_ACCESS_TOKEN: 'test-whatsapp-token',
+    WHATSAPP_PHONE_NUMBER_ID: 'test-phone-id',
+    WHATSAPP_BUSINESS_ACCOUNT_ID: 'test-business-id',
+    WHATSAPP_WEBHOOK_VERIFY_TOKEN: 'test-webhook-token',
+  })),
+}));
+
+// Mock the env module directly
+vi.mock('@/lib/env', () => ({
   env: {
     NODE_ENV: 'test',
     TURNSTILE_SECRET_KEY: 'test-secret-key',
@@ -1294,6 +1318,24 @@ vi.mock('../../env.mjs', () => ({
     ADMIN_TOKEN: 'test-admin-token',
     NEXT_PUBLIC_SITE_URL: 'https://tucsenberg.com',
     NEXT_PUBLIC_VERCEL_URL: 'tucsenberg.vercel.app',
+    NEXT_PUBLIC_TURNSTILE_SITE_KEY: 'test-site-key-12345',
+    NEXT_PUBLIC_TEST_MODE: false,
+    WHATSAPP_ACCESS_TOKEN: 'test-whatsapp-token',
+    WHATSAPP_PHONE_NUMBER_ID: 'test-phone-id',
+    WHATSAPP_BUSINESS_ACCOUNT_ID: 'test-business-id',
+    WHATSAPP_WEBHOOK_VERIFY_TOKEN: 'test-webhook-token',
+  },
+  envUtils: {
+    isDevelopment: () => false,
+    isProduction: () => false,
+    isTest: () => true,
+    getWhatsAppToken: () => 'test-whatsapp-token',
+    getWhatsAppPhoneId: () => 'test-phone-id',
+    getTurnstileSecret: () => 'test-secret-key',
+    getTurnstileSiteKey: () => 'test-site-key',
+    getResendApiKey: () => 'test-resend-key',
+    getAirtableToken: () => 'test-airtable-key',
+    getAirtableBaseId: () => 'test-base-id',
   },
 }));
 

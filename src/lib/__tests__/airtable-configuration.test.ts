@@ -14,11 +14,11 @@ import type {
   AirtableServicePrivate,
   DynamicImportModule,
 } from '@/types/test-types';
-import type { AirtableService as AirtableServiceType } from '../airtable/service';
 import {
   configureServiceForTesting,
   createMockBase,
-} from './airtable/test-helpers';
+} from '@/test/airtable-helpers';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
 
 // Mock Airtable
 const mockCreate = vi.fn();

@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -67,18 +67,40 @@ export function ReactScanAnalyzer() {
     _setComponentStats(newStats);
   }, [readReactScanData]);
 
-  // 定期更新数据
-  useEffect(() => {
-    if (!isRecording) return;
+  // 定时器引用
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
-    const interval = setInterval(updateData, 1000);
-    return () => clearInterval(interval);
-  }, [isRecording, updateData]);
+  // 启动定时器的函数
+  const startInterval = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
+    updateData(); // 立即执行一次
+    intervalRef.current = setInterval(updateData, 1000);
+  }, [updateData]);
+
+  // 停止定时器的函数
+  const stopInterval = useCallback(() => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+  }, []);
+
+  // 监听录制状态变化
+  useEffect(() => {
+    if (isRecording) {
+      startInterval();
+    } else {
+      stopInterval();
+    }
+
+    return stopInterval;
+  }, [isRecording, startInterval, stopInterval]);
 
   // 控制函数
   const startRecording = () => {
     setIsRecording(true);
-    updateData();
   };
 
   const stopRecording = () => {

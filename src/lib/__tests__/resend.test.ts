@@ -21,9 +21,9 @@ vi.mock('resend', () => ({
 vi.mock('@/../env.mjs', () => {
   return {
     env: {
-      RESEND_API_KEY: 'test-api-key',
-      EMAIL_FROM: 'test@tucsenberg.com',
-      EMAIL_REPLY_TO: 'contact@tucsenberg.com',
+      RESEND_API_KEY: 'test-resend-key',
+      EMAIL_FROM: 'test@example.com',
+      EMAIL_REPLY_TO: 'reply@example.com',
       NODE_ENV: 'test',
     },
   };
@@ -77,7 +77,7 @@ describe('resend - Service Initialization', () => {
     it('should initialize successfully with valid API key', async () => {
       const service = new ResendServiceClass();
       expect(service.isReady()).toBe(true);
-      expect(mockResend).toHaveBeenCalledWith('test-api-key');
+      expect(mockResend).toHaveBeenCalledWith('test-resend-key');
     });
 
     it('should handle missing API key gracefully', async () => {
@@ -95,7 +95,7 @@ describe('resend - Service Initialization', () => {
 
     it('should use default email configuration when env vars are missing', async () => {
       // Mock environment with minimal configuration
-      vi.stubEnv('RESEND_API_KEY', 'test-api-key');
+      vi.stubEnv('RESEND_API_KEY', 'test-resend-key');
       vi.stubEnv('EMAIL_FROM', '');
       vi.stubEnv('EMAIL_REPLY_TO', '');
       vi.resetModules();
@@ -145,8 +145,8 @@ describe('resend - Email Operations', () => {
       expect(result).toBe('test-message-id');
       expect(mockResendSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'test@tucsenberg.com',
-          to: ['contact@tucsenberg.com'],
+          from: 'test@example.com',
+          to: ['reply@example.com'],
           replyTo: 'john.doe@example.com',
           subject: expect.stringContaining('John Doe'),
           html: expect.any(String),
@@ -266,9 +266,9 @@ describe('resend - Confirmation and Validation', () => {
       expect(result).toBe('confirmation-message-id');
       expect(mockResendSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'test@tucsenberg.com',
+          from: 'test@example.com',
           to: ['john.doe@example.com'],
-          replyTo: 'contact@tucsenberg.com',
+          replyTo: 'reply@example.com',
           subject: 'Thank you for contacting us - Tucsenberg',
           html: expect.any(String),
           text: expect.any(String),
@@ -404,8 +404,8 @@ describe('resend - Confirmation and Validation', () => {
       expect(result).toBe('test-id');
       expect(mockResendSend).toHaveBeenCalledWith(
         expect.objectContaining({
-          from: 'test@tucsenberg.com',
-          to: ['contact@tucsenberg.com'],
+          from: 'test@example.com',
+          to: ['reply@example.com'],
           replyTo: 'john@example.com',
         }),
       );

@@ -41,7 +41,7 @@ async function collectConstants() {
   }
 
   // 生成映射
-  const candidateMapping: Record<string, any> = {};
+  const candidateMapping: Record<string, ConstantInfo> = {};
   const conflicts: Record<string, ConstantInfo[]> = {};
 
   for (const [value, constantInfos] of valueToConstants) {

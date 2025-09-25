@@ -19,6 +19,53 @@ const mockLocalStorage = {
   clear: vi.fn(),
 };
 
+// Mock messages for valid locales
+const mockEnMessages = {
+  common: {
+    hello: 'Hello',
+    goodbye: 'Goodbye',
+    loading: 'Loading...',
+    error: 'An error occurred',
+  },
+  navigation: {
+    home: 'Home',
+    about: 'About',
+  },
+};
+
+const mockZhMessages = {
+  common: {
+    hello: '你好',
+    goodbye: '再见',
+    loading: '加载中…',
+    error: '发生错误',
+  },
+  navigation: {
+    home: '首页',
+    about: '关于',
+  },
+};
+
+// Mock React cache function
+const { mockCache } = vi.hoisted(() => {
+  const mockCache = vi.fn();
+  return { mockCache };
+});
+
+vi.mock('react', () => ({
+  cache: mockCache,
+}));
+
+// Mock getCachedMessages function
+const { mockGetCachedMessages } = vi.hoisted(() => {
+  const mockGetCachedMessages = vi.fn();
+  return { mockGetCachedMessages };
+});
+
+vi.mock('@/lib/i18n-performance', () => ({
+  getCachedMessages: mockGetCachedMessages,
+}));
+
 // Mock constants
 vi.mock('@/constants/i18n-constants', () => ({
   CACHE_DURATIONS: {
@@ -62,13 +109,54 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
       writable: true,
     });
 
+    // Configure React cache mock
+    mockCache.mockImplementation((fn) => fn);
+
+    // Configure getCachedMessages mock to handle different locales and interact with cache
+    // We need to track all cache manager instances to properly simulate caching
+    const cacheInstances = new Set<I18nCacheManager>();
+
+    mockGetCachedMessages.mockImplementation(async (locale: string) => {
+      if (locale === 'en') {
+        // Simulate cache interaction for all known cache manager instances
+        cacheInstances.forEach((manager) => {
+          manager['cache'].set('en', mockEnMessages);
+        });
+        return mockEnMessages;
+      } else if (locale === 'zh') {
+        cacheInstances.forEach((manager) => {
+          manager['cache'].set('zh', mockZhMessages);
+        });
+        return mockZhMessages;
+      }
+      // For invalid locales, throw an error to simulate dynamic import failure
+      throw new Error(
+        `Unknown variable dynamic import: ../../messages/${locale}.json`,
+      );
+    });
+
+    // Store reference to track cache instances
+    (global as any).__cacheInstances = cacheInstances;
+
     // Create cache manager with persistence disabled for consistent testing
     cacheManager = new I18nCacheManager({ enablePersistence: false });
+
+    // Add to tracking set
+    const trackingSet = (global as any).__cacheInstances;
+    if (trackingSet) {
+      trackingSet.add(cacheManager);
+    }
   });
 
   afterEach(() => {
     vi.useRealTimers();
     vi.restoreAllMocks();
+
+    // Clear cache instances tracking
+    const trackingSet = (global as any).__cacheInstances;
+    if (trackingSet) {
+      trackingSet.clear();
+    }
   });
 
   describe('concurrent error handling', () => {
@@ -283,6 +371,13 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
     it('should isolate errors between different cache instances', async () => {
       const cacheManager1 = new I18nCacheManager({ enablePersistence: false });
       const cacheManager2 = new I18nCacheManager({ enablePersistence: false });
+
+      // Add new instances to tracking set
+      const trackingSet = (global as any).__cacheInstances;
+      if (trackingSet) {
+        trackingSet.add(cacheManager1);
+        trackingSet.add(cacheManager2);
+      }
 
       // Load valid data in first instance
       await cacheManager1.getMessages('en');

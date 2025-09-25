@@ -15,6 +15,12 @@ interface NumberCategory {
   priority: number; // 优先级，数字越小优先级越高
 }
 
+interface NumberAnalysisResult {
+  category: string;
+  constantName: string;
+  description: string;
+}
+
 // 定义语义分类规则
 const categories: NumberCategory[] = [
   // HTTP状态码
@@ -261,11 +267,7 @@ const categories: NumberCategory[] = [
 /**
  * 分析数字并分类
  */
-function analyzeNumber(numStr: string): {
-  category: string;
-  constantName: string;
-  description: string;
-} {
+function analyzeNumber(numStr: string): NumberAnalysisResult {
   const num = parseFloat(numStr);
 
   // 按优先级排序，找到第一个匹配的分类
@@ -375,7 +377,7 @@ async function main() {
   }
 
   // 分析每个数字
-  const analysis: Record<string, any> = {};
+  const analysis: Record<string, NumberAnalysisResult> = {};
   const categoryStats: Record<string, number> = {};
 
   for (const numStr of numbers) {

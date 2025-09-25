@@ -18,7 +18,7 @@ import type { AirtableService as AirtableServiceType } from '../airtable/service
 import {
   configureServiceForTesting,
   createMockBase,
-} from './airtable/test-helpers';
+} from './mocks/airtable-test-helpers';
 
 // Mock Airtable
 const mockCreate = vi.fn();

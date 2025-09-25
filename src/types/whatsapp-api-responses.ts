@@ -1,4 +1,4 @@
-import { ZERO } from '@/constants';
+// ZERO常量已被数字字面量0替代，移除未使用的导入
 
 /**
  * WhatsApp API 响应类型定义
@@ -444,7 +444,7 @@ export const ResponseUtils = {
    * Extract message ID
    */
   extractMessageId(response: SendMessageResponse): string | null {
-    return response.messages?.[ZERO]?.id || null;
+    return response.messages?.[0]?.id || null;
   },
 
   /**
@@ -454,7 +454,7 @@ export const ResponseUtils = {
   extractContactInfo(
     response: SendMessageResponse,
   ): { input: string; wa_id: string } | null {
-    return response.contacts?.[ZERO] || null;
+    return response.contacts?.[0] || null;
   },
 
   /**

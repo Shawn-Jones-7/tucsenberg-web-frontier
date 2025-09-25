@@ -15,10 +15,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ContactPage from '@/app/[locale]/contact/__tests__/page';
+import ContactPage from '@/app/[locale]/contact/page';
 
 // Mock next-intl
-const mockGetTranslations = vi.fn();
+const { mockGetTranslations } = vi.hoisted(() => {
+  const mockGetTranslations = vi.fn();
+  return { mockGetTranslations };
+});
+
 vi.mock('next-intl/server', () => ({
   getTranslations: mockGetTranslations,
 }));
@@ -48,10 +52,49 @@ vi.mock('lucide-react', () => ({
   MapPin: () => <svg data-testid='map-pin-icon' />,
 }));
 
+// Mock Zod
+vi.mock('zod', () => ({
+  z: {
+    object: vi.fn(() => ({
+      parse: vi.fn(),
+      safeParse: vi.fn(() => ({ success: true, data: {} })),
+    })),
+    string: vi.fn(() => ({
+      min: vi.fn(() => ({ email: vi.fn() })),
+      email: vi.fn(),
+    })),
+  },
+}));
+
+// Mock @hookform/resolvers/zod
+vi.mock('@hookform/resolvers/zod', () => ({
+  zodResolver: vi.fn(() => vi.fn()),
+}));
+
+// Mock react-hook-form
+vi.mock('react-hook-form', () => ({
+  useForm: vi.fn(() => ({
+    register: vi.fn(),
+    handleSubmit: vi.fn(),
+    formState: { errors: {} },
+    reset: vi.fn(),
+  })),
+}));
+
 // Mock components
 vi.mock('@/components/layout/header', () => ({
   Header: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='header'>{children}</div>
+  ),
+}));
+
+vi.mock('@/components/contact/contact-form', () => ({
+  ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,
+}));
+
+vi.mock('@/components/ui/card', () => ({
+  Card: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='card'>{children}</div>
   ),
 }));
 
@@ -111,10 +154,13 @@ describe('Contact Page Rendering - Advanced Tests', () => {
 
       render(ContactPageComponent);
 
-      // 验证图标容器样式
-      const emailContainer = screen.getByText('邮箱').parentElement;
-      const iconContainer = emailContainer?.querySelector('.flex');
+      // 找到图标容器（包含SVG的div）
+      const emailText = screen.getByText('邮箱');
+      const emailRow = emailText.closest('.flex.items-center.space-x-3');
+      const iconContainer = emailRow?.querySelector('.bg-primary\\/10');
+      expect(iconContainer).toBeInTheDocument();
       expect(iconContainer).toHaveClass(
+        'bg-primary/10',
         'flex',
         'h-10',
         'w-10',

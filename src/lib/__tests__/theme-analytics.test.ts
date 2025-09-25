@@ -634,6 +634,64 @@ describe('ThemeAnalytics', () => {
       expect(lastMetric!.switchDuration).toBe(100);
     });
 
+    it('should handle recordThemeSwitch without duration parameter', () => {
+      configureGlobalThemeAnalytics();
+
+      const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
+
+      recordThemeSwitch({
+        fromTheme: 'system',
+        toTheme: 'light',
+      });
+
+      const finalSummary = themeAnalytics.getPerformanceSummary();
+      expect(finalSummary.totalSwitches).toBe(initialCount + 1);
+    });
+
+    it('should handle recordThemeSwitch with supportsViewTransitions option', () => {
+      configureGlobalThemeAnalytics();
+
+      const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
+
+      recordThemeSwitch({
+        fromTheme: 'dark',
+        toTheme: 'system',
+        options: { supportsViewTransitions: true },
+      });
+
+      const finalSummary = themeAnalytics.getPerformanceSummary();
+      expect(finalSummary.totalSwitches).toBe(initialCount + 1);
+    });
+
+    it('should handle recordThemeSwitch without options parameter', () => {
+      configureGlobalThemeAnalytics();
+
+      const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
+
+      recordThemeSwitch({
+        fromTheme: 'light',
+        toTheme: 'dark',
+      });
+
+      const finalSummary = themeAnalytics.getPerformanceSummary();
+      expect(finalSummary.totalSwitches).toBe(initialCount + 1);
+    });
+
+    it('should handle recordThemeSwitch with undefined supportsViewTransitions', () => {
+      configureGlobalThemeAnalytics();
+
+      const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
+
+      recordThemeSwitch({
+        fromTheme: 'system',
+        toTheme: 'dark',
+        options: { supportsViewTransitions: undefined },
+      });
+
+      const finalSummary = themeAnalytics.getPerformanceSummary();
+      expect(finalSummary.totalSwitches).toBe(initialCount + 1);
+    });
+
     it('should call recordThemePreference on global instance', () => {
       configureGlobalThemeAnalytics();
       recordThemePreference('light');

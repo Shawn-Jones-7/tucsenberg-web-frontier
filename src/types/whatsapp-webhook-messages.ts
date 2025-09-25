@@ -459,21 +459,29 @@ export function getMessageText(
   }
 }
 
+// 媒体类型到属性的映射，避免动态属性访问
+const MEDIA_TYPE_MAP = {
+  image: (msg: IncomingWhatsAppMessage) =>
+    (msg as { image?: { id?: string } }).image?.id ?? null,
+  document: (msg: IncomingWhatsAppMessage) =>
+    (msg as { document?: { id?: string } }).document?.id ?? null,
+  audio: (msg: IncomingWhatsAppMessage) =>
+    (msg as { audio?: { id?: string } }).audio?.id ?? null,
+  video: (msg: IncomingWhatsAppMessage) =>
+    (msg as { video?: { id?: string } }).video?.id ?? null,
+  sticker: (msg: IncomingWhatsAppMessage) =>
+    (msg as { sticker?: { id?: string } }).sticker?.id ?? null,
+} as const;
+
 export function getMessageMediaId(
   message: IncomingWhatsAppMessage,
 ): string | null {
-  if (isMediaMessage(message)) {
-    type MediaKey = Extract<
-      IncomingMessageType,
-      'image' | 'document' | 'audio' | 'video' | 'sticker'
-    >;
-    const key = message.type as MediaKey;
-    const mediaData = (
-      message as Record<MediaKey, { id?: string } | undefined>
-    )[key];
-    return mediaData?.id ?? null;
+  if (!isMediaMessage(message)) {
+    return null;
   }
-  return null;
+
+  const extractor = MEDIA_TYPE_MAP[message.type as keyof typeof MEDIA_TYPE_MAP];
+  return extractor ? extractor(message) : null;
 }
 
 export function hasMessageContext(message: IncomingWhatsAppMessage): boolean {

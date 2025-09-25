@@ -144,8 +144,11 @@ function extractMissingConstants(): string[] {
 
     // 这不会执行到，因为预检会失败
     return [];
-  } catch (error: any) {
-    const output = error.stdout || error.message || '';
+  } catch (error: unknown) {
+    const output =
+      (error as { stdout?: string; message?: string }).stdout ||
+      (error as { message?: string }).message ||
+      '';
 
     // 从输出中提取数字
     const lines = output.split('\n');

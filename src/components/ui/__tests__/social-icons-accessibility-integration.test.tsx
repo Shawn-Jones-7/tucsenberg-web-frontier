@@ -129,7 +129,17 @@ describe('Social Icons Accessibility & Integration - Advanced Tests', () => {
 
       // Test each platform has correct attributes
       socialPlatforms.forEach(({ name, url }) => {
-        const link = screen.getByRole('link', { name: new RegExp(name, 'i') });
+        // 使用字符串包含匹配替代正则表达式，提高安全性
+        const links = screen.getAllByRole('link');
+        const link = links.find(
+          (link) =>
+            link
+              .getAttribute('aria-label')
+              ?.toLowerCase()
+              .includes(name.toLowerCase()) ||
+            link.textContent?.toLowerCase().includes(name.toLowerCase()),
+        );
+        expect(link).toBeDefined();
         expect(link).toHaveAttribute('href', url);
         expect(link).toHaveAttribute('target', '_blank');
       });

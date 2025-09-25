@@ -55,7 +55,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
   });
 
   return (
-    <div className='min-h-[80vh] px-4 py-16'>
+    <main className='min-h-[80vh] px-4 py-16'>
       <div className='mx-auto max-w-4xl'>
         <ContactPageHeader
           title={t('title')}
@@ -138,6 +138,6 @@ export default async function ContactPage({ params }: ContactPageProps) {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }

@@ -329,7 +329,7 @@ export class WebhookUtils {
         average_ms:
           processingTimes.reduce((a, b) => a + b, ZERO) /
             processingTimes.length || ZERO,
-        min_ms: processingTimes[ZERO] || ZERO,
+        min_ms: processingTimes[0] || ZERO,
         max_ms: processingTimes[processingTimes.length - ONE] || ZERO,
         p95_ms:
           processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] ||

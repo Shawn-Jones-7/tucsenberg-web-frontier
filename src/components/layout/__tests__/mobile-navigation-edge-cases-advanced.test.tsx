@@ -20,12 +20,15 @@ vi.mock('next-intl', () => ({
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
 }));
 
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
   Menu: () => <span data-testid='menu-icon'>☰</span>,
   X: () => <span data-testid='close-icon'>✕</span>,
+  XIcon: () => <span data-testid='x-icon'>✕</span>,
 }));
 
 describe('Mobile Navigation - 高级边界情况测试', () => {
@@ -117,16 +120,22 @@ describe('Mobile Navigation - 高级边界情况测试', () => {
 
   describe('浏览器兼容性边界情况', () => {
     it('处理缺失的现代JavaScript特性', () => {
-      // Mock缺失的Promise
-      const originalPromise = global.Promise;
-      global.Promise = undefined as unknown as PromiseConstructor;
+      // 注意：不能真正删除Promise，因为这会破坏测试运行时
+      // 相反，我们测试组件在Promise功能受限时的行为
+      const originalPromiseResolve = Promise.resolve;
+
+      // Mock Promise.resolve 返回同步值来模拟Promise功能受限
+      Promise.resolve = vi.fn((value) => ({
+        then: (callback: (value: unknown) => unknown) => callback(value),
+        catch: () => ({ then: () => ({}) }),
+      })) as unknown as typeof Promise.resolve;
 
       expect(() => {
         render(<MobileNavigation />);
       }).not.toThrow();
 
       // 恢复
-      global.Promise = originalPromise;
+      Promise.resolve = originalPromiseResolve;
     });
 
     it('处理缺失的事件监听器支持', () => {

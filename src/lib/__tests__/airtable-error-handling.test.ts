@@ -3,12 +3,12 @@ import type {
   AirtableBaseLike,
   AirtableServicePrivate,
 } from '@/types/test-types';
-import type { AirtableService as AirtableServiceType } from '../airtable/service';
-import type { ContactStatus } from '../airtable/types';
 import {
   configureServiceForTesting,
   createMockBase,
-} from './airtable/test-helpers';
+} from '@/test/airtable-helpers';
+import type { AirtableService as AirtableServiceType } from '../airtable/service';
+import type { ContactStatus } from '../airtable/types';
 
 // Mock Airtable
 const mockCreate = vi.fn();

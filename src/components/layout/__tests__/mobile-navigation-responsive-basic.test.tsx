@@ -13,7 +13,7 @@
  */
 
 import { usePathname } from 'next/navigation';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslations } from 'next-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -27,12 +27,35 @@ vi.mock('next-intl', () => ({
 // Mock next/navigation
 vi.mock('next/navigation', () => ({
   usePathname: vi.fn(),
+  redirect: vi.fn(),
+  permanentRedirect: vi.fn(),
+}));
+
+// Mock @/i18n/routing
+vi.mock('@/i18n/routing', () => ({
+  Link: ({ children, href, className, onClick, ...props }: any) => {
+    const handleClick = (e: React.MouseEvent) => {
+      e.preventDefault();
+      if (onClick) onClick(e);
+    };
+    return (
+      <a
+        href={href}
+        className={className}
+        onClick={handleClick}
+        {...props}
+      >
+        {children}
+      </a>
+    );
+  },
 }));
 
 // Mock Lucide React icons
 vi.mock('lucide-react', () => ({
   Menu: () => <span data-testid='menu-icon'>☰</span>,
   X: () => <span data-testid='close-icon'>✕</span>,
+  XIcon: () => <span data-testid='x-icon'>✕</span>,
 }));
 
 describe('Mobile Navigation Responsive - Basic Tests', () => {
@@ -50,8 +73,15 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
           'navigation.about': 'About',
           'navigation.services': 'Services',
           'navigation.contact': 'Contact',
+          'navigation.products': 'Products',
+          'navigation.blog': 'Blog',
+          'navigation.diagnostics': 'Diagnostics',
           'navigation.menu': 'Menu',
           'navigation.close': 'Close',
+          'accessibility.openMenu': 'Open menu',
+          'accessibility.closeMenu': 'Close menu',
+          'seo.siteName': 'Site Name',
+          'seo.description': 'Site Description',
         };
         return translations[key] || key; // key 来自测试数据，安全
       },
@@ -64,15 +94,17 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     it('is hidden on desktop screens', () => {
       render(<MobileNavigation />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('md:hidden');
+      // The md:hidden class is on the container div, not the button
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('md:hidden');
     });
 
     it('adapts to different screen sizes', () => {
       render(<MobileNavigation className='sm:block lg:hidden' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('sm:block', 'lg:hidden');
+      // Custom responsive classes are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('sm:block', 'lg:hidden');
     });
 
     it('handles viewport changes gracefully', () => {
@@ -92,8 +124,9 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     it('supports responsive padding and spacing', () => {
       render(<MobileNavigation className='p-2 md:p-4' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('p-2', 'md:p-4');
+      // Custom padding classes are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('p-2', 'md:p-4');
     });
 
     it('handles orientation changes', () => {
@@ -121,8 +154,9 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     it('supports responsive text sizing', () => {
       render(<MobileNavigation className='text-sm md:text-base' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('text-sm', 'md:text-base');
+      // Custom text sizing classes are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('text-sm', 'md:text-base');
     });
 
     it('handles responsive menu positioning', async () => {
@@ -144,25 +178,28 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
       const trigger = screen.getByRole('button');
 
       // Should transition between states without errors
-      await user.click(trigger);
+      // Use fireEvent to avoid pointer-events issues
+      fireEvent.click(trigger);
       expect(trigger).toHaveAttribute('aria-expanded', 'true');
 
-      await user.click(trigger);
+      fireEvent.click(trigger);
       expect(trigger).toHaveAttribute('aria-expanded', 'false');
     });
 
     it('supports custom transition classes', () => {
       render(<MobileNavigation className='transition-all duration-300' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('transition-all', 'duration-300');
+      // Custom transition classes are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('transition-all', 'duration-300');
     });
 
     it('handles reduced motion preferences', () => {
       render(<MobileNavigation className='motion-reduce:transition-none' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('motion-reduce:transition-none');
+      // Motion preferences are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('motion-reduce:transition-none');
     });
   });
 
@@ -240,9 +277,10 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
       const trigger = screen.getByRole('button');
 
       // Rapid clicks should not cause performance issues
+      // Use fireEvent to avoid pointer-events issues
       const _startTime = Date.now();
       for (let i = 0; i < 10; i++) {
-        await user.click(trigger);
+        fireEvent.click(trigger);
       }
       const endTime = Date.now();
 
@@ -275,8 +313,9 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     it('works without modern CSS features', () => {
       render(<MobileNavigation className='fallback-styles' />);
 
-      const trigger = screen.getByRole('button');
-      expect(trigger).toHaveClass('fallback-styles');
+      // Fallback styles are applied to the container div
+      const container = screen.getByRole('button').closest('div');
+      expect(container).toHaveClass('fallback-styles');
     });
 
     it('handles missing viewport meta tag', () => {

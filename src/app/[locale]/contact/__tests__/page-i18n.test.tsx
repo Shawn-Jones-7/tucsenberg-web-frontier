@@ -17,12 +17,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ContactPage, {
-  generateMetadata,
-} from '@/app/[locale]/contact/__tests__/page';
+import ContactPage, { generateMetadata } from '@/app/[locale]/contact/page';
 
 // Mock next-intl
-const mockGetTranslations = vi.fn();
+const { mockGetTranslations } = vi.hoisted(() => {
+  const mockGetTranslations = vi.fn();
+  return { mockGetTranslations };
+});
+
 vi.mock('next-intl/server', () => ({
   getTranslations: mockGetTranslations,
 }));
@@ -52,10 +54,49 @@ vi.mock('lucide-react', () => ({
   MapPin: () => <svg data-testid='map-pin-icon' />,
 }));
 
+// Mock Zod
+vi.mock('zod', () => ({
+  z: {
+    object: vi.fn(() => ({
+      parse: vi.fn(),
+      safeParse: vi.fn(() => ({ success: true, data: {} })),
+    })),
+    string: vi.fn(() => ({
+      min: vi.fn(() => ({ email: vi.fn() })),
+      email: vi.fn(),
+    })),
+  },
+}));
+
+// Mock @hookform/resolvers/zod
+vi.mock('@hookform/resolvers/zod', () => ({
+  zodResolver: vi.fn(() => vi.fn()),
+}));
+
+// Mock react-hook-form
+vi.mock('react-hook-form', () => ({
+  useForm: vi.fn(() => ({
+    register: vi.fn(),
+    handleSubmit: vi.fn(),
+    formState: { errors: {} },
+    reset: vi.fn(),
+  })),
+}));
+
 // Mock components
 vi.mock('@/components/layout/header', () => ({
   Header: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='header'>{children}</div>
+  ),
+}));
+
+vi.mock('@/components/contact/contact-form', () => ({
+  ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,
+}));
+
+vi.mock('@/components/ui/card', () => ({
+  Card: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='card'>{children}</div>
   ),
 }));
 
@@ -306,13 +347,11 @@ describe('Contact Page I18n - Main Tests', () => {
         throw new Error('Translation function error');
       });
 
-      const ContactPageComponent = await ContactPage({
-        params: Promise.resolve(mockParams),
-      });
-
-      expect(() => render(ContactPageComponent)).toThrow(
-        'Translation function error',
-      );
+      await expect(
+        ContactPage({
+          params: Promise.resolve(mockParams),
+        }),
+      ).rejects.toThrow('Translation function error');
     });
 
     it('应该处理异步翻译错误', async () => {

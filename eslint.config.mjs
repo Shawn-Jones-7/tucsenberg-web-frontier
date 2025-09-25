@@ -420,8 +420,8 @@ export default [
       // 🎯 渐进式标准：测试文件保持合理限制
       'max-lines-per-function': [
         'warn',
-        { max: 600, skipBlankLines: true, skipComments: true },
-      ], // 调整为600行并跳过空行与注释，适应大型测试describe块
+        { max: 700, skipBlankLines: true, skipComments: true },
+      ], // 调整为700行并跳过空行与注释，适应大型测试describe块
       'complexity': ['warn', 20], // 从25降到20，保持测试逻辑清晰
       'max-nested-callbacks': ['warn', 6], // 从8降到6，控制嵌套深度
       'max-lines': [
@@ -447,13 +447,13 @@ export default [
       // 🎯 行业标准：测试文件允许any类型（Mock对象复杂性）
       '@typescript-eslint/no-explicit-any': 'off', // 测试文件允许any类型 - 符合行业标准
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'error', // 保持严格标准，符合coding-standards.md要求
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ], // 严格清理未使用变量
+      ], // 强制清理未使用变量，保持代码质量
       'no-unused-vars': [
-        'error',
+        'error', // 保持严格标准，与TypeScript规则一致
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
-      ], // 保持代码整洁
+      ], // 强制清理未使用变量，保持代码整洁
       '@typescript-eslint/no-require-imports': 'off', // 测试中可能需要require导入
 
       // 安全规则统一为error级别
@@ -463,8 +463,11 @@ export default [
 
       // 保持严格的基本语法规则
       'no-undef': 'error', // 未定义变量必须修复
-      'no-shadow': 'warn', // 变量遮蔽警告
+      'no-shadow': 'off', // 测试文件中Mock变量重复声明是正常模式
       'no-console': ['warn', { allow: ['warn', 'error', 'info', 'log'] }], // 允许测试调试输出
+
+      // React Hooks规则保持启用 - 确保测试代码质量与生产环境一致
+      // 'react-hooks/rules-of-hooks': 'error', // 保持默认，遵循coding-standards.md规范
       '@next/next/no-img-element': 'off', // 测试中允许使用原生 img 元素
     },
   },
@@ -518,7 +521,7 @@ export default [
       '@typescript-eslint/no-explicit-any': 'warn', // 开发工具允许适度使用any（全局对象访问）
       '@typescript-eslint/ban-ts-comment': 'warn', // 开发工具允许@ts-nocheck（仅开发环境）
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'error', // 开发工具也保持严格标准
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
 
@@ -537,7 +540,7 @@ export default [
       'no-param-reassign': 'warn', // 开发工具参数修改
       'prefer-destructuring': 'warn', // 开发工具属性访问
       'require-await': 'warn',
-      'no-console': 'warn',
+      'no-console': 'off', // 开发工具中完全允许console输出
       'max-statements': ['warn', 40],
 
       // 保持严格的基本语法检查
@@ -673,7 +676,7 @@ export default [
       // 允许在测试中动态构建正则（常见于匹配断言）；保持为warn以提示潜在风险
       'security/detect-non-literal-regexp': 'warn',
       '@typescript-eslint/no-unused-vars': [
-        'error',
+        'error', // 测试文件也保持严格标准
         { argsIgnorePattern: '^_', varsIgnorePattern: '^_' },
       ],
       'max-depth': ['warn', 5],

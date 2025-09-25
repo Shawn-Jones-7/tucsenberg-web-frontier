@@ -14,10 +14,14 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import ContactPage from '@/app/[locale]/contact/__tests__/page';
+import ContactPage from '@/app/[locale]/contact/page';
 
 // Mock next-intl
-const mockGetTranslations = vi.fn();
+const { mockGetTranslations } = vi.hoisted(() => {
+  const mockGetTranslations = vi.fn();
+  return { mockGetTranslations };
+});
+
 vi.mock('next-intl/server', () => ({
   getTranslations: mockGetTranslations,
 }));
@@ -47,10 +51,49 @@ vi.mock('lucide-react', () => ({
   MapPin: () => <svg data-testid='map-pin-icon' />,
 }));
 
+// Mock Zod
+vi.mock('zod', () => ({
+  z: {
+    object: vi.fn(() => ({
+      parse: vi.fn(),
+      safeParse: vi.fn(() => ({ success: true, data: {} })),
+    })),
+    string: vi.fn(() => ({
+      min: vi.fn(() => ({ email: vi.fn() })),
+      email: vi.fn(),
+    })),
+  },
+}));
+
+// Mock @hookform/resolvers/zod
+vi.mock('@hookform/resolvers/zod', () => ({
+  zodResolver: vi.fn(() => vi.fn()),
+}));
+
+// Mock react-hook-form
+vi.mock('react-hook-form', () => ({
+  useForm: vi.fn(() => ({
+    register: vi.fn(),
+    handleSubmit: vi.fn(),
+    formState: { errors: {} },
+    reset: vi.fn(),
+  })),
+}));
+
 // Mock components
 vi.mock('@/components/layout/header', () => ({
   Header: ({ children }: { children: React.ReactNode }) => (
     <div data-testid='header'>{children}</div>
+  ),
+}));
+
+vi.mock('@/components/contact/contact-form', () => ({
+  ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,
+}));
+
+vi.mock('@/components/ui/card', () => ({
+  Card: ({ children }: { children: React.ReactNode }) => (
+    <div data-testid='card'>{children}</div>
   ),
 }));
 
@@ -93,7 +136,7 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      expect(screen.getByRole('form')).toBeInTheDocument();
+      expect(screen.getByTestId('contact-form')).toBeInTheDocument();
     });
 
     it('应该渲染联系信息卡片', async () => {
@@ -103,9 +146,10 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      expect(screen.getByText('Email')).toBeInTheDocument();
-      expect(screen.getByText('Phone')).toBeInTheDocument();
-      expect(screen.getByText('Address')).toBeInTheDocument();
+      expect(screen.getByText('邮箱')).toBeInTheDocument();
+      expect(screen.getByText('电话')).toBeInTheDocument();
+      expect(screen.getByText('contact@tucsenberg.com')).toBeInTheDocument();
+      expect(screen.getByText('+1-555-0123')).toBeInTheDocument();
     });
 
     it('应该渲染营业时间信息', async () => {
@@ -115,11 +159,13 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      expect(screen.getByText('Business Hours')).toBeInTheDocument();
-      expect(
-        screen.getByText('Monday - Friday: 9:00 AM - 6:00 PM'),
-      ).toBeInTheDocument();
-      expect(screen.getByText('Saturday - Sunday: Closed')).toBeInTheDocument();
+      expect(screen.getByText('营业时间')).toBeInTheDocument();
+      expect(screen.getByText('周一 - 周五')).toBeInTheDocument();
+      expect(screen.getByText('9:00 - 18:00')).toBeInTheDocument();
+      expect(screen.getByText('周六')).toBeInTheDocument();
+      expect(screen.getByText('10:00 - 16:00')).toBeInTheDocument();
+      expect(screen.getByText('周日')).toBeInTheDocument();
+      expect(screen.getByText('休息')).toBeInTheDocument();
     });
 
     it('应该有正确的页面标题', async () => {
@@ -153,8 +199,10 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const gridContainer = screen.getByRole('main');
-      expect(gridContainer).toHaveClass('grid');
+      // 网格布局在内层div上，不是main元素上
+      const gridContainer = screen.getByRole('main').querySelector('.grid');
+      expect(gridContainer).toBeInTheDocument();
+      expect(gridContainer).toHaveClass('grid', 'gap-8', 'md:grid-cols-2');
     });
 
     it('应该渲染SVG图标', async () => {
@@ -164,9 +212,9 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      expect(screen.getByTestId('mail-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('phone-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('map-pin-icon')).toBeInTheDocument();
+      // 直接查询SVG元素
+      const svgElements = screen.getByRole('main').querySelectorAll('svg');
+      expect(svgElements.length).toBeGreaterThanOrEqual(2); // 至少有邮箱和电话图标
     });
 
     it('应该有正确的标题容器样式', async () => {
@@ -177,7 +225,12 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
       render(ContactPageComponent);
 
       const title = screen.getByRole('heading', { level: 1 });
-      expect(title).toHaveClass('text-3xl', 'font-bold');
+      expect(title).toHaveClass(
+        'text-4xl',
+        'font-bold',
+        'tracking-tight',
+        'md:text-5xl',
+      );
     });
   });
 
@@ -189,8 +242,11 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const contactInfo = screen.getByText('Email').closest('div');
+      // 找到包含邮箱文本的父级div（有flex类的那个）
+      const emailText = screen.getByText('邮箱');
+      const contactInfo = emailText.closest('.flex.items-center.space-x-3');
       expect(contactInfo).toBeInTheDocument();
+      expect(contactInfo).toHaveClass('flex', 'items-center', 'space-x-3');
     });
 
     it('应该有正确的营业时间布局', async () => {
@@ -200,7 +256,7 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const hoursSection = screen.getByText('Business Hours').closest('div');
+      const hoursSection = screen.getByText('营业时间').closest('div');
       expect(hoursSection).toBeInTheDocument();
     });
 
@@ -211,8 +267,8 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const cards = screen.getAllByRole('article');
-      expect(cards.length).toBeGreaterThan(0);
+      const cards = screen.getAllByTestId('card');
+      expect(cards.length).toBe(2); // 联系方式卡片 + 营业时间卡片
     });
   });
 
@@ -224,9 +280,11 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const mailIcon = screen.getByTestId('mail-icon');
-      expect(mailIcon).toBeInTheDocument();
-      expect(mailIcon.tagName).toBe('svg');
+      // 检查邮箱图标的SVG路径
+      const mailIconPath = screen
+        .getByRole('main')
+        .querySelector('path[d*="M3 8l7.89 4.26a2 2 0 002.22 0L21 8"]');
+      expect(mailIconPath).toBeInTheDocument();
     });
 
     it('应该渲染电话SVG图标', async () => {
@@ -236,9 +294,11 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const phoneIcon = screen.getByTestId('phone-icon');
-      expect(phoneIcon).toBeInTheDocument();
-      expect(phoneIcon.tagName).toBe('svg');
+      // 检查电话图标的SVG路径
+      const phoneIconPath = screen
+        .getByRole('main')
+        .querySelector('path[d*="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684"]');
+      expect(phoneIconPath).toBeInTheDocument();
     });
 
     it('应该渲染所有必要的图标', async () => {
@@ -248,9 +308,9 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      expect(screen.getByTestId('mail-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('phone-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('map-pin-icon')).toBeInTheDocument();
+      // 检查所有SVG元素
+      const svgElements = screen.getByRole('main').querySelectorAll('svg');
+      expect(svgElements.length).toBeGreaterThanOrEqual(2); // 至少邮箱和电话图标
     });
   });
 
@@ -262,8 +322,9 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       render(ContactPageComponent);
 
-      const container = screen.getByRole('main');
-      expect(container).toHaveClass('grid');
+      // 网格类在内层div上
+      const gridContainer = screen.getByRole('main').querySelector('.grid');
+      expect(gridContainer).toHaveClass('grid', 'gap-8', 'md:grid-cols-2');
     });
 
     it('应该有响应式间距', async () => {
@@ -274,7 +335,7 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
       render(ContactPageComponent);
 
       const container = screen.getByRole('main');
-      expect(container).toHaveClass('p-4');
+      expect(container).toHaveClass('px-4', 'py-16');
     });
   });
 

@@ -1,19 +1,20 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 /**
  * 技术对比组件
  */
 export function TechnicalComparison() {
-  const [supportsViewTransitions, setSupportsViewTransitions] = useState(false);
-  const [mounted, setMounted] = useState(false);
-
-  // 检测浏览器支持
-  useEffect(() => {
-    setMounted(true);
-    setSupportsViewTransitions('startViewTransition' in document);
-  }, [setMounted, setSupportsViewTransitions]);
+  // 直接在useState中初始化状态，避免在useEffect中设置
+  const [supportsViewTransitions] = useState(
+    () => typeof document !== 'undefined' && 'startViewTransition' in document,
+  );
+  // 使用useState的惰性初始化来避免在useEffect中设置状态
+  const [mounted] = useState(() => {
+    // 在客户端渲染时立即设置为true，服务端渲染时为false
+    return typeof window !== 'undefined';
+  });
 
   return (
     <div className='bg-muted/50 space-y-4 rounded-lg p-6'>

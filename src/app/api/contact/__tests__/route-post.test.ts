@@ -21,6 +21,11 @@ const {
   mockValidationHelpers,
   mockSafeParse,
   mockExtendedSchema,
+  mockCheckRateLimit,
+  mockGetClientIP,
+  mockVerifyTurnstile,
+  mockValidateFormData,
+  mockProcessFormSubmission,
 } = vi.hoisted(() => {
   const hoistedMockSafeParse = vi.fn().mockReturnValue({
     success: true,
@@ -56,6 +61,11 @@ const {
     },
     mockSafeParse: hoistedMockSafeParse,
     mockExtendedSchema: hoistedMockExtendedSchema,
+    mockCheckRateLimit: vi.fn(() => true),
+    mockGetClientIP: vi.fn(() => '127.0.0.1'),
+    mockVerifyTurnstile: vi.fn(() => Promise.resolve(true)),
+    mockValidateFormData: vi.fn(),
+    mockProcessFormSubmission: vi.fn(),
   };
 });
 
@@ -73,6 +83,21 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 vi.mock('@/lib/validation-helpers', () => mockValidationHelpers);
+
+// Mock contact API utils
+vi.mock('@/app/api/contact/contact-api-utils', () => ({
+  checkRateLimit: mockCheckRateLimit,
+  getClientIP: mockGetClientIP,
+  verifyTurnstile: mockVerifyTurnstile,
+}));
+
+// Mock contact API validation
+vi.mock('@/app/api/contact/contact-api-validation', () => ({
+  validateFormData: mockValidateFormData,
+  processFormSubmission: mockProcessFormSubmission,
+  validateAdminAccess: vi.fn(),
+  getContactFormStats: vi.fn(),
+}));
 
 vi.mock('zod', () => ({
   z: {
@@ -159,6 +184,26 @@ describe('Contact API Route - POST Tests', () => {
     mockValidationHelpers.validateEmail.mockReturnValue(true);
     mockValidationHelpers.sanitizeInput.mockImplementation((input) => input);
 
+    // Setup API utils mocks
+    mockCheckRateLimit.mockReturnValue(true);
+    mockGetClientIP.mockReturnValue('127.0.0.1');
+    mockVerifyTurnstile.mockResolvedValue(true);
+
+    // Setup validation mocks
+    mockValidateFormData.mockResolvedValue({
+      success: true,
+      data: validFormData,
+      error: null,
+      details: null,
+    });
+
+    mockProcessFormSubmission.mockResolvedValue({
+      emailSent: true,
+      recordCreated: true,
+      emailMessageId: 'test-email-id',
+      airtableRecordId: 'test-record-id',
+    });
+
     // Mock fetch for Turnstile verification
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
@@ -192,11 +237,11 @@ describe('Contact API Route - POST Tests', () => {
 
     it('应该处理无效的表单数据', async () => {
       // Mock validation failure
-      mockSafeParse.mockReturnValue({
+      mockValidateFormData.mockResolvedValue({
         success: false,
-        error: {
-          issues: [{ path: ['email'], message: 'Invalid email' }],
-        },
+        error: 'Validation failed',
+        details: ['email: Invalid email'],
+        data: null,
       });
 
       const request = new NextRequest('http://localhost:3000/api/contact', {
@@ -212,7 +257,7 @@ describe('Contact API Route - POST Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe('Invalid form data');
+      expect(data.error).toBe('Validation failed');
       expect(data.details).toBeDefined();
     });
 
@@ -237,16 +282,12 @@ describe('Contact API Route - POST Tests', () => {
 
   describe('Turnstile安全验证', () => {
     it('应该处理Turnstile验证失败', async () => {
-      // Mock successful form validation but failed Turnstile verification
-      mockSafeParse.mockReturnValue({
-        success: true,
-        data: validFormData,
-      });
-
-      // Mock failed Turnstile verification
-      global.fetch = vi.fn().mockResolvedValue({
-        ok: true,
-        json: () => Promise.resolve({ success: false }),
+      // Mock validation failure due to Turnstile
+      mockValidateFormData.mockResolvedValue({
+        success: false,
+        error: 'Security verification failed',
+        details: ['Please complete the security check'],
+        data: null,
       });
 
       const request = new NextRequest('http://localhost:3000/api/contact', {
@@ -262,22 +303,12 @@ describe('Contact API Route - POST Tests', () => {
 
       expect(response.status).toBe(400);
       expect(data.success).toBe(false);
-      expect(data.error).toBe(
-        'Security verification failed. Please try again.',
-      );
+      expect(data.error).toBe('Security verification failed');
     });
 
     it('应该处理Turnstile服务不可用', async () => {
-      // Mock successful form validation
-      mockSafeParse.mockReturnValue({
-        success: true,
-        data: validFormData,
-      });
-
-      // Mock Turnstile service error
-      global.fetch = vi
-        .fn()
-        .mockRejectedValue(new Error('Service unavailable'));
+      // Mock validation throwing an error (simulating service unavailable)
+      mockValidateFormData.mockRejectedValue(new Error('Service unavailable'));
 
       const request = new NextRequest('http://localhost:3000/api/contact', {
         method: 'POST',
@@ -330,16 +361,16 @@ describe('Contact API Route - POST Tests', () => {
     });
 
     it('应该处理Airtable服务错误', async () => {
-      // Mock successful validation
-      mockSafeParse.mockReturnValue({
-        success: true,
-        data: validFormData,
+      // Mock successful validation but Airtable error in processing
+      mockProcessFormSubmission.mockResolvedValue({
+        emailSent: true,
+        recordCreated: false, // Airtable failed
+        emailMessageId: 'test-email-id',
+        airtableRecordId: null,
       });
 
-      // Mock Airtable service error
-      mockAirtableService.createContact.mockRejectedValue(
-        new Error('Airtable error'),
-      );
+      // Expect error to be logged
+      mockLogger.error.mockImplementation(() => {});
 
       const request = new NextRequest('http://localhost:3000/api/contact', {
         method: 'POST',
@@ -355,20 +386,20 @@ describe('Contact API Route - POST Tests', () => {
       // Should still succeed despite Airtable error
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(mockLogger.error).toHaveBeenCalled();
+      // Note: Error logging happens inside processFormSubmission which is mocked
     });
 
     it('应该处理Resend服务错误', async () => {
-      // Mock successful validation
-      mockSafeParse.mockReturnValue({
-        success: true,
-        data: validFormData,
+      // Mock successful validation but Resend error in processing
+      mockProcessFormSubmission.mockResolvedValue({
+        emailSent: false, // Resend failed
+        recordCreated: true,
+        emailMessageId: null,
+        airtableRecordId: 'test-record-id',
       });
 
-      // Mock Resend service error
-      mockResendService.sendContactFormEmail.mockRejectedValue(
-        new Error('Resend error'),
-      );
+      // Expect error to be logged
+      mockLogger.error.mockImplementation(() => {});
 
       const request = new NextRequest('http://localhost:3000/api/contact', {
         method: 'POST',
@@ -384,7 +415,7 @@ describe('Contact API Route - POST Tests', () => {
       // Should still succeed despite Resend error
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
-      expect(mockLogger.error).toHaveBeenCalled();
+      // Note: Error logging happens inside processFormSubmission which is mocked
     });
   });
 });

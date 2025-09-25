@@ -6,6 +6,7 @@
  * 🔄 配合env.mjs进行类型安全的环境变量验证
  */
 
+import { env } from '@/lib/env';
 import { COUNT_PAIR, ONE } from '@/constants';
 import { MAGIC_0_1 } from '@/constants/decimal';
 import { WEB_VITALS_THRESHOLDS } from '@/constants/performance-constants';
@@ -16,7 +17,6 @@ import {
   SECONDS_PER_MINUTE,
   THIRTY_SECONDS_MS,
 } from '@/constants/time';
-import { env } from '@/env.mjs';
 
 // ============================================================================
 // 网络和API配置

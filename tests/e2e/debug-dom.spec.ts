@@ -1,3 +1,4 @@
+/* eslint-disable max-statements, complexity */
 import { expect, test } from '@playwright/test';
 import type {
   MockNextHydrationStatus,
