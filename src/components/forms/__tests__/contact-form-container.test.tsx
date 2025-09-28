@@ -7,6 +7,19 @@ import { fireEvent, render, screen } from '@/test/utils';
 vi.unmock('zod');
 vi.unmock('@/lib/validations');
 
+// Mock fetch
+global.fetch = vi.fn();
+
+// Mock useActionState for React 19 testing
+const mockUseActionState = vi.hoisted(() => vi.fn());
+vi.mock('react', async () => {
+  const actual = await vi.importActual('react');
+  return {
+    ...actual,
+    useActionState: mockUseActionState,
+  };
+});
+
 // Mock next-intl with comprehensive translations
 const mockT = vi.fn((key: string) => {
   const translations: Record<string, string> = {
@@ -116,7 +129,7 @@ const validFormData = {
   message: 'Test message content that is long enough to pass validation',
 };
 
-const fillValidForm = async () => {
+const _fillValidForm = async () => {
   await act(async () => {
     fireEvent.change(screen.getByLabelText(/first name/i), {
       target: { value: validFormData.firstName },
@@ -153,6 +166,13 @@ describe('ContactFormContainer - 剩余高级测试', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     vi.useFakeTimers();
+
+    // Set default useActionState mock return value
+    mockUseActionState.mockReturnValue([
+      null, // state (idle)
+      vi.fn(), // formAction
+      false, // isPending
+    ]);
   });
 
   afterEach(() => {
@@ -173,32 +193,18 @@ describe('ContactFormContainer - 剩余高级测试', () => {
     });
 
     it('应该显示正确的状态消息样式', async () => {
-      // Mock 成功响应
-      vi.mocked(fetch).mockResolvedValueOnce({
-        ok: true,
-        json: async () => ({
-          success: true,
-          message: 'Message sent successfully',
-        }),
-      } as Response);
+      // Mock useActionState to return success state
+      mockUseActionState.mockReturnValue([
+        { success: true }, // state
+        vi.fn(), // formAction
+        false, // isPending
+      ]);
 
       render(<ContactFormContainer />);
-      await fillValidForm();
 
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
-
-      // 推进时间让提交完成
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      // 检查成功消息 - 匹配mock中定义的消息
+      // 检查成功消息 - 匹配mock翻译中定义的消息
       expect(
-        screen.getByText(/form submitted successfully/i),
+        screen.getByText('Form submitted successfully!'),
       ).toBeInTheDocument();
 
       // 检查消息样式 - 匹配实际的CSS类名
@@ -207,29 +213,19 @@ describe('ContactFormContainer - 剩余高级测试', () => {
     });
 
     it('应该显示错误状态消息样式', async () => {
-      // Mock 错误响应
-      vi.mocked(fetch).mockResolvedValueOnce({
-        ok: false,
-        status: 500,
-        json: async () => ({ success: false, error: 'Server error' }),
-      } as Response);
+      // Mock useActionState to return error state
+      mockUseActionState.mockReturnValue([
+        { success: false, error: 'Server error' }, // state
+        vi.fn(), // formAction
+        false, // isPending
+      ]);
 
       render(<ContactFormContainer />);
-      await fillValidForm();
 
-      const submitButton = screen.getByRole('button', { name: /submit/i });
-
-      await act(async () => {
-        fireEvent.click(submitButton);
-      });
-
-      // 推进时间让提交完成
-      await act(async () => {
-        vi.advanceTimersByTime(1000);
-      });
-
-      // 检查错误消息 - 应该显示通用错误消息而不是具体的服务器错误
-      expect(screen.getByText(/failed to submit form/i)).toBeInTheDocument();
+      // 检查错误消息 - 匹配mock翻译中定义的消息
+      expect(
+        screen.getByText('Failed to submit form. Please try again.'),
+      ).toBeInTheDocument();
 
       // 检查错误消息样式 - 匹配实际的CSS类名
       const alertElement = screen.getByRole('alert');

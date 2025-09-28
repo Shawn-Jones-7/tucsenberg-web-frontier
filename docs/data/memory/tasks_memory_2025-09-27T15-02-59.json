@@ -1,0 +1,42 @@
+{
+  "tasks": [
+    {
+      "id": "d6b2f825-7ba4-49f7-8890-d5ca7f9f14c7",
+      "name": "创建联系表单Server Action",
+      "description": "为联系表单创建专用的Server Action，替代现有的API调用模式。基于已有的Server Actions基础架构，集成现有的Zod验证schema和Turnstile验证，保持与现有API路由相同的错误处理和响应格式。",
+      "notes": "重用现有的contactFormSchema、验证常量和错误处理逻辑，确保与现有API路由功能完全一致",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-09-25T14:31:35.863Z",
+      "updatedAt": "2025-09-25T14:36:59.730Z",
+      "relatedFiles": [
+        {
+          "path": "src/app/actions.ts",
+          "type": "TO_MODIFY",
+          "description": "添加contactFormAction Server Action",
+          "lineStart": 240,
+          "lineEnd": 280
+        },
+        {
+          "path": "src/lib/validations.ts",
+          "type": "REFERENCE",
+          "description": "现有的contactFormSchema和验证逻辑",
+          "lineStart": 50,
+          "lineEnd": 150
+        },
+        {
+          "path": "src/app/api/contact/route.ts",
+          "type": "REFERENCE",
+          "description": "现有API路由实现，用于保持功能一致性",
+          "lineStart": 1,
+          "lineEnd": 100
+        }
+      ],
+      "implementationGuide": "1. 在src/app/actions.ts中添加contactFormAction函数\\n2. 使用withErrorHandling装饰器确保错误处理一致性\\n3. 集成现有的contactFormSchema验证逻辑\\n4. 保持Turnstile token验证和速率限制逻辑\\n5. 使用createSuccessResult和createErrorResult标准化响应\\n6. 添加适当的日志记录和性能监控\\n\\nPseudocode:\\n```typescript\\nexport const contactFormAction = withErrorHandling(async (previousState, formData) => {\\n  const validation = validateContactForm(formData);\\n  if (!validation.success) return createErrorResult(validation.errors);\\n  \\n  const result = await processContactSubmission(validation.data);\\n  return createSuccessResult(result);\\n});\\n```",
+      "verificationCriteria": "1. Server Action正确处理表单数据验证\\n2. Turnstile token验证正常工作\\n3. 错误处理与现有API路由一致\\n4. TypeScript类型检查通过\\n5. ESLint检查无错误\\n6. 日志记录格式正确",
+      "analysisResult": "React 19架构升级阶段2：现有组件迁移。基于完善的基础设施（Server Actions、类型定义、ESLint配置、测试模板），采用渐进式迁移策略，将现有表单组件和状态管理迁移到React 19新Hook，实现代码量减少30-40%，状态管理复杂度降低50%，用户体验显著提升。",
+      "summary": "联系表单Server Action创建成功完成。成功集成了现有的Zod验证schema、Turnstile验证和错误处理逻辑，保持与现有API路由功能完全一致。实现了类型安全的Server Action，包含完整的错误处理、日志记录和性能监控。TypeScript检查和ESLint检查全部通过，为后续React 19组件迁移奠定了坚实基础。",
+      "completedAt": "2025-09-25T14:36:59.728Z"
+    }
+  ]
+}

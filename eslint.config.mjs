@@ -59,6 +59,36 @@ export default [
     },
   },
 
+  // React 19 Hook Standards configuration
+  {
+    name: 'react-19-hook-standards-config',
+    files: ['**/*.{js,jsx,ts,tsx}'],
+    rules: {
+      // 🚀 React 19 Hook优化规则
+      // useActionState Hook最佳实践
+      'react-hooks/exhaustive-deps': 'error', // 确保useActionState依赖完整
+
+      // useFormStatus Hook最佳实践 - 确保在form子组件中使用
+      // 注意：这些规则需要自定义插件，暂时使用通用规则
+      'react-hooks/rules-of-hooks': 'error', // 确保Hook调用规则正确
+
+      // useOptimistic Hook最佳实践 - 确保与startTransition配合使用
+      // 通过现有规则确保正确的异步模式
+      'require-await': 'error', // 确保async函数包含await
+
+      // use Hook最佳实践 - 条件调用支持
+      // React 19的use Hook支持条件调用，但仍需在组件顶层
+
+      // Form Actions最佳实践
+      // 确保Server Actions正确定义和使用
+      'no-unused-vars': ['error', { argsIgnorePattern: '^_' }], // 确保action参数被使用
+
+      // React 19性能优化规则
+      'prefer-const': 'error', // 优化变量声明
+      'no-duplicate-imports': 'error', // 避免重复导入React 19 hooks
+    },
+  },
+
   // Security configuration
   {
     name: 'security-config',

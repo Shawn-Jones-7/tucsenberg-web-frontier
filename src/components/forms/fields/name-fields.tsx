@@ -1,25 +1,18 @@
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import type { ContactFormData } from '@/lib/validations';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 /**
- * Name fields component
+ * Name fields component - React 19 Native Form Version
+ * 使用原生HTML表单属性，配合Server Actions进行表单处理
  */
 interface NameFieldsProps {
-  register: ReturnType<typeof useForm<ContactFormData>>['register'];
-  errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors'];
-  isSubmitting: boolean;
+  /** 国际化翻译函数 */
   t: (_key: string) => string;
+  /** 表单提交状态（来自useActionState的isPending） */
+  isPending: boolean;
 }
 
-export function NameFields({
-  register,
-  errors,
-  isSubmitting,
-  t,
-}: NameFieldsProps) {
+export function NameFields({ t, isPending }: NameFieldsProps) {
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
       <div className='space-y-2'>
@@ -31,22 +24,13 @@ export function NameFields({
         </Label>
         <Input
           id='firstName'
+          name='firstName'
+          type='text'
           placeholder={t('firstNamePlaceholder')}
-          disabled={isSubmitting}
-          className={
-            errors.firstName ? 'border-red-500 focus:border-red-500' : ''
-          }
-          aria-invalid={Boolean(errors.firstName)}
-          {...register('firstName')}
+          disabled={isPending}
+          required
+          aria-describedby='firstName-error'
         />
-        {errors.firstName && (
-          <p
-            className='text-sm text-red-500'
-            role='alert'
-          >
-            {errors.firstName.message}
-          </p>
-        )}
       </div>
 
       <div className='space-y-2'>
@@ -58,22 +42,13 @@ export function NameFields({
         </Label>
         <Input
           id='lastName'
+          name='lastName'
+          type='text'
           placeholder={t('lastNamePlaceholder')}
-          disabled={isSubmitting}
-          className={
-            errors.lastName ? 'border-red-500 focus:border-red-500' : ''
-          }
-          aria-invalid={Boolean(errors.lastName)}
-          {...register('lastName')}
+          disabled={isPending}
+          required
+          aria-describedby='lastName-error'
         />
-        {errors.lastName && (
-          <p
-            className='text-sm text-red-500'
-            role='alert'
-          >
-            {errors.lastName.message}
-          </p>
-        )}
       </div>
     </div>
   );

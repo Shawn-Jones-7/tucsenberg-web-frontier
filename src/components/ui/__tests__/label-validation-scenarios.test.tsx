@@ -75,7 +75,7 @@ describe('Label Validation Scenarios Tests', () => {
     });
 
     it('works with form libraries integration', async () => {
-      // Simulate integration with form libraries like react-hook-form
+      // Simulate integration with form validation libraries
       const FormWithLibrary = () => {
         const [errors, setErrors] = React.useState<Record<string, string>>({});
 

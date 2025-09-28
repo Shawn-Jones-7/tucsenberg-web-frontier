@@ -79,6 +79,44 @@ Next.js 15.4.6 + React 19.1.1 + TypeScript 5.9.2 + Tailwind CSS 4.1.11
 - **必须导入**: `import { useTheme } from 'next-themes'`
 - **CSS变量**: 使用Tailwind CSS主题变量，禁止硬编码颜色
 
+### React 19表单开发标准
+
+- **必须使用**: useActionState Hook替代手动状态管理
+- **必须使用**: Server Actions处理表单提交，禁止客户端API调用
+- **必须使用**: useFormStatus Hook在表单子组件中获取状态
+- **推荐使用**: useOptimistic Hook提供乐观更新体验
+- **必须使用**: Zod进行表单数据验证和类型安全
+- **禁止使用**: react-hook-form、formik等第三方表单库
+- **示例**:
+
+  ```typescript
+  // ✅ 正确：React 19表单模式
+  import { useActionState } from 'react';
+  import { useFormStatus } from 'react-dom';
+  import { contactFormAction } from '@/app/actions';
+
+  function ContactForm() {
+    const [state, formAction, isPending] = useActionState(contactFormAction, null);
+
+    return (
+      <form action={formAction}>
+        <input name="email" type="email" required />
+        <SubmitButton />
+        {state?.error && <div className="error">{state.error}</div>}
+      </form>
+    );
+  }
+
+  function SubmitButton() {
+    const { pending } = useFormStatus();
+    return (
+      <button disabled={pending} type="submit">
+        {pending ? 'Submitting...' : 'Submit'}
+      </button>
+    );
+  }
+  ```
+
 ### 组件命名规范
 
 - **文件名**: kebab-case (例: theme-toggle.tsx)
@@ -732,6 +770,7 @@ import { debugLog } from './debug'; // Temporary debugging
 ### 输入验证和清理
 
 - **表单数据**: 必须使用Zod验证所有用户输入
+- **React 19表单**: 必须使用useActionState Hook和Server Actions，禁止使用react-hook-form
 - **URL参数**: 必须验证和清理
 - **用户输入**: 防止XSS攻击，禁止直接使用dangerouslySetInnerHTML
 - **对象注入**: 禁止将用户输入直接作为对象属性键，必须使用白名单验证

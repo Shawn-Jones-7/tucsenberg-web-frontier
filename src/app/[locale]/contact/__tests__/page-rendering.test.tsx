@@ -43,21 +43,6 @@ vi.mock('zod', () => ({
   },
 }));
 
-// Mock @hookform/resolvers/zod
-vi.mock('@hookform/resolvers/zod', () => ({
-  zodResolver: vi.fn(() => vi.fn()),
-}));
-
-// Mock react-hook-form
-vi.mock('react-hook-form', () => ({
-  useForm: vi.fn(() => ({
-    register: vi.fn(),
-    handleSubmit: vi.fn(),
-    formState: { errors: {} },
-    reset: vi.fn(),
-  })),
-}));
-
 // Mock ContactForm component
 vi.mock('@/components/forms/contact-form', () => ({
   ContactForm: () => <div data-testid='contact-form'>Contact Form</div>,

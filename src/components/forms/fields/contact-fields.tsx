@@ -1,25 +1,18 @@
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import type { ContactFormData } from '@/lib/validations';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
 /**
- * Contact fields component
+ * Contact fields component - React 19 Native Form Version
+ * 使用原生HTML表单属性，配合Server Actions进行表单处理
  */
 interface ContactFieldsProps {
-  register: ReturnType<typeof useForm<ContactFormData>>['register'];
-  errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors'];
-  isSubmitting: boolean;
+  /** 国际化翻译函数 */
   t: (_key: string) => string;
+  /** 表单提交状态（来自useActionState的isPending） */
+  isPending: boolean;
 }
 
-export function ContactFields({
-  register,
-  errors,
-  isSubmitting,
-  t,
-}: ContactFieldsProps) {
+export function ContactFields({ t, isPending }: ContactFieldsProps) {
   return (
     <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
       <div className='space-y-2'>
@@ -31,43 +24,31 @@ export function ContactFields({
         </Label>
         <Input
           id='email'
+          name='email'
           type='email'
           placeholder={t('emailPlaceholder')}
-          disabled={isSubmitting}
-          className={errors.email ? 'border-red-500 focus:border-red-500' : ''}
-          aria-invalid={Boolean(errors.email)}
-          {...register('email')}
+          disabled={isPending}
+          required
+          aria-describedby='email-error'
         />
-        {errors.email && (
-          <p
-            className='text-sm text-red-500'
-            role='alert'
-          >
-            {errors.email.message}
-          </p>
-        )}
       </div>
 
       <div className='space-y-2'>
-        <Label htmlFor='company'>{t('company')}</Label>
+        <Label
+          htmlFor='company'
+          className="after:ml-0.5 after:text-red-500 after:content-['*']"
+        >
+          {t('company')}
+        </Label>
         <Input
           id='company'
+          name='company'
+          type='text'
           placeholder={t('companyPlaceholder')}
-          disabled={isSubmitting}
-          className={
-            errors.company ? 'border-red-500 focus:border-red-500' : ''
-          }
-          aria-invalid={Boolean(errors.company)}
-          {...register('company')}
+          disabled={isPending}
+          required
+          aria-describedby='company-error'
         />
-        {errors.company && (
-          <p
-            className='text-sm text-red-500'
-            role='alert'
-          >
-            {errors.company.message}
-          </p>
-        )}
       </div>
     </div>
   );

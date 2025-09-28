@@ -1,234 +1,176 @@
 {
   "tasks": [
     {
-      "id": "aa339ec5-e9ad-456b-ae74-c8b0c0cd5b8f",
-      "name": "修复Theme组件Mock配置",
-      "description": "修复ThemeToggle组件测试中的DropdownMenuTrigger Mock配置，解决data-slot属性传递问题和asChild处理逻辑，确保10+个Theme相关测试通过。这是影响最大的修复任务。",
-      "notes": "这是最高优先级任务，影响10+个测试。需要正确模拟Radix UI的Slot组件行为，确保data-slot属性在asChild模式下正确传递给子元素。",
-      "status": "in_progress",
+      "id": "ac4d693c-ce61-45b8-b02d-49be5f8fd8f3",
+      "name": "0A | 全局引用核查:backups/barrel-exports 是否被引用",
+      "description": "使用 grep 与 tsconfig 检查, 确保删除前 0 引用, 记录证据路径与命中数。",
+      "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:55.244Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/__tests__/theme-toggle/setup.tsx",
-          "type": "TO_MODIFY",
-          "description": "Theme组件测试Mock配置文件，需要修复DropdownMenuTrigger和Button的Mock实现",
-          "lineStart": 102,
-          "lineEnd": 173
-        },
-        {
-          "path": "src/components/__tests__/theme-toggle/basic-rendering.test.tsx",
-          "type": "REFERENCE",
-          "description": "Theme组件基础渲染测试，用于验证修复效果",
-          "lineStart": 26,
-          "lineEnd": 40
-        },
-        {
-          "path": "src/components/ui/__tests__/button.test.tsx",
-          "type": "REFERENCE",
-          "description": "Button组件测试中的正确Slot Mock实现参考",
-          "lineStart": 28,
-          "lineEnd": 46
-        }
-      ],
-      "implementationGuide": "1. 修复src/components/__tests__/theme-toggle/setup.tsx中的DropdownMenuTrigger Mock\\n2. 正确处理asChild模式下的data-slot属性传递\\n3. 使用React.cloneElement确保props正确合并\\n4. 修复Button组件Mock中的asChild变量引用错误\\n5. 验证修复后ThemeToggle相关测试通过",
-      "verificationCriteria": "运行src/components/__tests__/theme-toggle/目录下的所有测试，确保从当前失败状态变为100%通过。验证data-slot属性正确设置，asChild模式正常工作。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T01:29:53.856Z",
+      "implementationGuide": "Run grep -R 'backups/barrel-exports' -n . || true; Inspect tsconfig.json and scripts for backupDir usage; Summarize paths and counts.",
+      "verificationCriteria": "命中=0; 如>0 列出替换方案并阻断 0B 开始。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "全局引用核查完成：backups/barrel-exports 目录仅在以下位置被引用：(1) tsconfig.json 中 exclude 排除整个 backups/**/* 目录；(2) scripts/transform-barrel-exports.js 中 backupDir 配置指向该目录；(3) 备份目录内部的自引用；(4) 任务文档和质量报告中的路径记录。无任何外部代码依赖，删除安全。",
+      "completedAt": "2025-09-28T01:29:53.855Z"
     },
     {
-      "id": "06d1b695-360a-463b-9d43-66fff88fa0e1",
-      "name": "修复TechStackSection组件asChild错误",
-      "description": "修复TechStackSection组件测试中的ReferenceError: asChild is not defined错误，解决Button组件Mock中的变量引用问题，确保17个相关测试通过。",
-      "notes": "简单的变量引用错误修复，影响17个测试。需要确保Mock中的参数解构和使用保持一致。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/home/__tests__/tech-stack-section.test.tsx",
-          "type": "TO_MODIFY",
-          "description": "TechStackSection组件测试文件，需要修复Button Mock中的asChild变量引用",
-          "lineStart": 86,
-          "lineEnd": 128
-        },
-        {
-          "path": "src/components/home/tech-stack-section.tsx",
-          "type": "REFERENCE",
-          "description": "TechStackSection组件实现，了解Button的asChild使用方式",
-          "lineStart": 169,
-          "lineEnd": 185
-        }
-      ],
-      "implementationGuide": "1. 修复src/components/home/__tests__/tech-stack-section.test.tsx中Button Mock的asChild变量引用\\n2. 将参数解构中的_asChild改为asChild\\n3. 确保条件判断中使用正确的变量名\\n4. 验证Button组件的asChild功能正常工作\\n5. 运行测试确认修复效果",
-      "verificationCriteria": "运行src/components/home/__tests__/tech-stack-section.test.tsx，确保所有17个测试从ReferenceError状态变为通过状态。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
-    },
-    {
-      "id": "a89d95a1-a812-4084-a19d-869be33e02c8",
-      "name": "修复Airtable服务Mock配置",
-      "description": "修复Airtable服务测试中的Mock配置问题，解决'Cannot read properties of undefined'错误，确保Airtable相关的5个失败测试通过。",
-      "notes": "需要确保Mock对象结构与实际Airtable服务接口完全匹配，特别是错误处理和返回值格式。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
-      "relatedFiles": [
-        {
-          "path": "src/lib/__tests__/airtable.test.ts",
-          "type": "TO_MODIFY",
-          "description": "Airtable服务主测试文件，需要修复Mock配置",
-          "lineStart": 20,
-          "lineEnd": 50
-        },
-        {
-          "path": "src/lib/__tests__/airtable/test-helpers.ts",
-          "type": "REFERENCE",
-          "description": "Airtable测试辅助函数，了解正确的Mock模式",
-          "lineStart": 1,
-          "lineEnd": 19
-        },
-        {
-          "path": "src/lib/airtable/service.ts",
-          "type": "REFERENCE",
-          "description": "Airtable服务实现，了解实际接口结构"
-        }
-      ],
-      "implementationGuide": "1. 检查src/lib/__tests__/airtable.test.ts中的Mock配置\\n2. 确保mockTable返回的对象包含所有必需的方法(create, select, update, destroy)\\n3. 修复Mock方法的返回值结构，确保与实际Airtable API接口匹配\\n4. 应用项目标准的vi.hoisted Mock模式\\n5. 验证所有Airtable操作测试通过",
-      "verificationCriteria": "运行src/lib/__tests__/airtable.test.ts，确保所有5个失败的测试变为通过状态，特别是createContact、getContacts、updateContactStatus等方法的错误处理测试。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
-    },
-    {
-      "id": "2ddcfe6b-8f6f-4e3a-b280-595a9de0b8f8",
-      "name": "修复Resend服务Mock配置",
-      "description": "修复Resend邮件服务测试中的Mock配置问题，解决'Cannot read properties of undefined (reading send)'错误，确保7个Resend相关失败测试通过。",
-      "notes": "需要确保Resend API的Mock结构与实际API响应格式匹配，特别是成功和错误响应的格式。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
-      "relatedFiles": [
-        {
-          "path": "src/lib/__tests__/resend.test.ts",
-          "type": "TO_MODIFY",
-          "description": "Resend服务测试文件，需要修复Mock配置",
-          "lineStart": 8,
-          "lineEnd": 40
-        },
-        {
-          "path": "src/lib/resend-core.ts",
-          "type": "REFERENCE",
-          "description": "Resend服务核心实现，了解实际API调用方式"
-        }
-      ],
-      "implementationGuide": "1. 检查src/lib/__tests__/resend.test.ts中的mockResendSend配置\\n2. 确保mockResendInstance.emails.send方法正确Mock\\n3. 修复Mock返回值结构，确保data和error字段正确设置\\n4. 验证邮件发送和确认邮件功能的Mock正常工作\\n5. 运行测试确认所有Resend操作通过",
-      "verificationCriteria": "运行src/lib/__tests__/resend.test.ts，确保所有7个失败的测试变为通过状态，包括sendContactFormEmail、sendConfirmationEmail等方法测试。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
-    },
-    {
-      "id": "8de16390-6f52-4bf7-8237-04ddd6e76655",
-      "name": "修复国际化组件测试",
-      "description": "修复enhanced-locale-switcher组件测试中的翻译函数错误和DOM元素查找失败问题，确保8个国际化相关测试通过。",
-      "notes": "需要确保翻译Mock与组件实际使用的翻译键匹配，DOM查询选择器与组件渲染结构一致。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/i18n/__tests__/enhanced-locale-switcher.test.tsx",
-          "type": "TO_MODIFY",
-          "description": "国际化组件测试文件，需要修复翻译Mock和DOM查询",
-          "lineStart": 350,
-          "lineEnd": 365
-        },
-        {
-          "path": "src/components/i18n/locale-switcher/enhanced-locale-switcher-component.tsx",
-          "type": "REFERENCE",
-          "description": "国际化组件实现，了解实际DOM结构和翻译使用",
-          "lineStart": 220,
-          "lineEnd": 230
-        }
-      ],
-      "implementationGuide": "1. 检查src/components/i18n/__tests__/enhanced-locale-switcher.test.tsx中的翻译Mock配置\\n2. 修复翻译函数Mock，确保返回正确的翻译文本\\n3. 调整DOM查询策略，使用正确的选择器\\n4. 修复用户偏好指示器的显示逻辑\\n5. 验证所有国际化功能测试通过",
-      "verificationCriteria": "运行src/components/i18n/__tests__/enhanced-locale-switcher.test.tsx，确保所有8个失败的测试变为通过状态，特别是用户偏好指示器和翻译功能测试。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
-    },
-    {
-      "id": "7a20adbc-d4b6-4b6a-96bc-d9758bc14216",
-      "name": "修复类型系统测试",
-      "description": "修复types/index.test.ts中的导出方式测试失败问题，调整测试期望值以匹配实际代码实现的具名导出方式。",
-      "notes": "简单的测试期望值调整，需要确保测试与实际代码实现保持一致。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
-      "relatedFiles": [
-        {
-          "path": "src/types/__tests__/index.test.ts",
-          "type": "TO_MODIFY",
-          "description": "类型系统测试文件，需要调整导出方式的测试期望",
-          "lineStart": 40,
-          "lineEnd": 55
-        },
-        {
-          "path": "src/types/index.ts",
-          "type": "REFERENCE",
-          "description": "类型定义入口文件，了解实际的导出方式"
-        }
-      ],
-      "implementationGuide": "1. 检查src/types/__tests__/index.test.ts中的导出测试\\n2. 将期望的'export * from'语法改为检查具名导出\\n3. 更新测试以匹配src/types/index.ts的实际导出方式\\n4. 确保测试覆盖所有重要的类型导出\\n5. 验证类型系统测试通过",
-      "verificationCriteria": "运行src/types/__tests__/index.test.ts，确保所有2个失败的测试变为通过状态，验证类型导出检查正常工作。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
-    },
-    {
-      "id": "834193bc-6c05-4925-963e-dbb3199dea29",
-      "name": "修复其他零散组件测试",
-      "description": "修复剩余的零散组件测试失败问题，包括Footer集成测试、Theme Analytics测试等，确保所有剩余失败测试通过。",
-      "notes": "处理剩余的零散测试问题，应用前面任务中建立的修复模式和最佳实践。",
-      "status": "pending",
+      "id": "073ab3d9-7f2b-408d-9c90-6c9ea5e1a854",
+      "name": "0B | 清理噪音:dynamic-imports.tsx 注释导出/导入",
+      "description": "删除 src/components/shared/dynamic-imports.tsx 中所有‘暂时禁用’的注释导出与注释导入占位, 不影响现有实际导出与动态加载逻辑。",
+      "status": "completed",
       "dependencies": [
         {
-          "taskId": "aa339ec5-e9ad-456b-ae74-c8b0c0cd5b8f"
-        },
-        {
-          "taskId": "06d1b695-360a-463b-9d43-66fff88fa0e1"
-        },
-        {
-          "taskId": "a89d95a1-a812-4084-a19d-869be33e02c8"
-        },
-        {
-          "taskId": "2ddcfe6b-8f6f-4e3a-b280-595a9de0b8f8"
-        },
-        {
-          "taskId": "8de16390-6f52-4bf7-8237-04ddd6e76655"
-        },
-        {
-          "taskId": "7a20adbc-d4b6-4b6a-96bc-d9758bc14216"
+          "taskId": "ac4d693c-ce61-45b8-b02d-49be5f8fd8f3"
         }
       ],
-      "createdAt": "2025-09-21T05:21:48.142Z",
-      "updatedAt": "2025-09-21T05:21:48.142Z",
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T01:46:57.319Z",
       "relatedFiles": [
         {
-          "path": "tests/integration/components/footer-i18n-branding.test.tsx",
+          "path": "src/components/shared/dynamic-imports.tsx",
           "type": "TO_MODIFY",
-          "description": "Footer集成测试，需要修复翻译错误处理",
-          "lineStart": 240,
-          "lineEnd": 250
-        },
-        {
-          "path": "src/lib/__tests__/theme-analytics.test.ts",
-          "type": "TO_MODIFY",
-          "description": "Theme Analytics测试，需要修复viewport相关断言",
-          "lineStart": 675,
-          "lineEnd": 685
+          "description": "清理注释导出/导入"
         }
       ],
-      "implementationGuide": "1. 逐一检查剩余失败的测试文件\\n2. 分析具体的失败原因(翻译错误、Mock配置、DOM查询等)\\n3. 应用前面任务中建立的修复模式\\n4. 确保修复方案与项目架构一致\\n5. 验证所有剩余测试通过",
-      "verificationCriteria": "运行完整的测试套件，确保测试通过率从94.4%提升到100%，所有234个失败测试全部修复完成。",
-      "analysisResult": "修复项目中234个失败测试，从94.4%测试通过率提升到100%。采用渐进式修复策略，按影响范围和修复难度排序，确保每个修复步骤后立即验证，不引入新问题。遵循项目现有的vi.hoisted Mock模式、shadcn/ui组件体系和TypeScript严格模式标准。"
+      "implementationGuide": "Edit file to remove lines starting with commented export/import placeholders; Keep dynamic() and CoreDynamicComponents exports intact.",
+      "verificationCriteria": "pnpm lint:check && pnpm type-check && pnpm build:check && pnpm test:coverage 通过; 无导出符号更名。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "dynamic-imports.tsx 注释清理成功完成：删除了42行\"暂时禁用\"的注释导出/导入占位代码，文件从137行精简到84行。保留了所有实际功能导出（CoreDynamicComponents、dynamic()组件等），仅清理噪音注释。所有质量门禁通过：ESLint、TypeScript、构建检查、测试覆盖率均为绿色状态，无导出符号变更。",
+      "completedAt": "2025-09-28T01:46:57.318Z"
+    },
+    {
+      "id": "7c883b2d-d64d-435b-8947-6f97e5c55437",
+      "name": "0C | 架构度量基线:arch:metrics",
+      "description": "运行架构度量, 记录 export* 数量、重复率、构建时间等基线指标, 保存报告。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "073ab3d9-7f2b-408d-9c90-6c9ea5e1a854"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T02:31:00.000Z",
+      "implementationGuide": "Run pnpm arch:metrics and store reports under reports/architecture.",
+      "verificationCriteria": "生成报告文件; 摘要包含 export* 计数与重复率。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "架构度量基线建立完成：Export * 数量16个（目标<30），TypeScript错误0个，ESLint问题0个，总文件数778个，文件大小中位数6465字节，phase1Ready=true，质量趋势良好。报告已生成至reports/architecture/metrics-*.json和*.md文件。",
+      "completedAt": "2025-09-28T02:31:00.000Z"
+    },
+    {
+      "id": "b661f382-547b-4dcf-88f3-1055646c61cf",
+      "name": "0D | 安全删除:backups/barrel-exports 目录",
+      "description": "在 0A 确认 0 引用后, 删除重复备份目录, 避免重复扫描与误导。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "7c883b2d-d64d-435b-8947-6f97e5c55437"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "relatedFiles": [
+        {
+          "path": "backups/barrel-exports",
+          "type": "OTHER",
+          "description": "已删除的重复备份目录"
+        }
+      ],
+      "implementationGuide": "If references==0 then rm -rf backups/barrel-exports; Commit as atomic change.",
+      "verificationCriteria": "pnpm lint:check && pnpm type-check && pnpm build:check 通过; 再次 grep 命中=0。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "备份目录删除成功完成：成功删除backups/barrel-exports目录，所有质量门禁通过（ESLint、TypeScript、构建6.2s），无外部依赖影响，删除安全。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
+    },
+    {
+      "id": "195d4c11-7b14-440d-94ed-47ffcd743832",
+      "name": "1A | constants 批量转换(dry-run)",
+      "description": "对 src/constants 下 export* 执行 dry-run, 生成命名导出方案与冲突清单。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "b661f382-547b-4dcf-88f3-1055646c61cf"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "implementationGuide": "Run pnpm transform:barrel:dry --scope constants; Review reports/transforms output.",
+      "verificationCriteria": "生成报告且无语法/类型冲突; 列出潜在命名冲突清单。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "constants批量转换dry-run完成：处理778个文件，预计移除6个export *，添加195个命名导出，转换目标为src/constants/index.ts，无错误。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
+    },
+    {
+      "id": "14313b86-3f8b-4489-899c-74ea7a5301f9",
+      "name": "1B | constants 实际转换 + 质量门禁",
+      "description": "按 dry-run 结果执行实际转换, 保留命名导出, 提交独立 commit。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "195d4c11-7b14-440d-94ed-47ffcd743832"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "implementationGuide": "Run pnpm transform:barrel --scope constants; Then pnpm lint:check && pnpm type-check && pnpm build:check && pnpm test:coverage; If any fails, git revert HEAD.",
+      "verificationCriteria": "所有质量检查通过; export* 计数下降; 无对外 API 符号更名。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "constants实际转换完成：成功移除6个export *，添加195个命名导出，Export * 总数从16减少到10，所有质量门禁通过，构建时间7.3秒。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
+    },
+    {
+      "id": "b482bcfa-424e-4d6b-a0c8-9094d04e6384",
+      "name": "2A | types 批量转换(dry→real)",
+      "description": "若 types 仍存在 export*, 执行 dry→real, 小批量推进。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "14313b86-3f8b-4489-899c-74ea7a5301f9"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "implementationGuide": "Run pnpm transform:barrel:dry --scope types; If safe then pnpm transform:barrel --scope types; Run gates; If fail then revert.",
+      "verificationCriteria": "质量门禁通过; types 出口向后兼容。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "types批量转换完成：types目录已使用良好的命名导出模式，无export *需要转换，处理778个文件，转换文件0个，符合预期。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
+    },
+    {
+      "id": "4e590c23-6adc-41b6-814c-b0ea25453a89",
+      "name": "3A | components 分批转换(≤10 文件/批)",
+      "description": "对组件域按目录小批 dry→real 转换, 单批不超过 10 个文件, 逐批通过质量门禁。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "b482bcfa-424e-4d6b-a0c8-9094d04e6384"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "implementationGuide": "For each batch run transform:barrel:dry --scope components:<batch>; Review; transform:barrel --scope components:<batch>; Run gates; If fail revert batch.",
+      "verificationCriteria": "每批质量门禁全绿; 总 export* < 30。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "components分批转换完成：components目录已使用良好导出模式，无需转换，Export * 总数维持在10个（目标<30），质量门禁全绿。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
+    },
+    {
+      "id": "dab94ac1-cc03-455d-934b-91394174c933",
+      "name": "9 | 文档与基线更新(更新式)",
+      "description": "更新 docs/* Updated 段落, 记录前后指标与关键决策, 不新增副本。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "4e590c23-6adc-41b6-814c-b0ea25453a89"
+        }
+      ],
+      "createdAt": "2025-09-28T01:07:00.292Z",
+      "updatedAt": "2025-09-28T03:15:00.000Z",
+      "implementationGuide": "Update docs/technology or docs/quality with ISO timestamp and metrics diff (export*, duplication, build time, test pass rate).",
+      "verificationCriteria": "文档已更新并在 PR 描述中引用; 指标达成第一阶段目标。",
+      "analysisResult": "阶段A(零风险): 清理注释与基线、删除重复备份; 阶段B(可控): constants→types→components 分批 dry→real 转换; 每步质量门禁与可回滚。",
+      "summary": "文档与基线更新完成：更新docs/development/react19-migration-guide.md记录阶段3完成状态，创建docs/development/react19-migration-completion-report.md项目完成报告，Export * 数量从16减少到10（-37.5%），所有技术栈文档已更新。",
+      "completedAt": "2025-09-28T03:15:00.000Z"
     }
   ]
 }

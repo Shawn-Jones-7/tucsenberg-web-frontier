@@ -1,39 +1,28 @@
-import * as React from 'react';
-import { useForm } from 'react-hook-form';
-import type { ContactFormData } from '@/lib/validations';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Label } from '@/components/ui/label';
 
 /**
- * Checkbox fields component
+ * Checkbox fields component - React 19 Native Form Version
+ * 使用原生HTML表单属性，配合Server Actions进行表单处理
  */
 interface CheckboxFieldsProps {
-  errors: ReturnType<typeof useForm<ContactFormData>>['formState']['errors'];
-  isSubmitting: boolean;
-  watchedValues: ContactFormData;
-  setValue: ReturnType<typeof useForm<ContactFormData>>['setValue'];
+  /** 国际化翻译函数 */
   t: (_key: string) => string;
+  /** 表单提交状态（来自useActionState的isPending） */
+  isPending: boolean;
 }
 
-export function CheckboxFields({
-  errors,
-  isSubmitting,
-  watchedValues,
-  setValue,
-  t,
-}: CheckboxFieldsProps) {
+export function CheckboxFields({ t, isPending }: CheckboxFieldsProps) {
   return (
     <div className='space-y-4'>
       <div className='space-y-2'>
         <div className='flex items-center space-x-2'>
-          <Checkbox
+          <input
             id='acceptPrivacy'
-            checked={watchedValues.acceptPrivacy}
-            onCheckedChange={(checked) =>
-              setValue('acceptPrivacy', Boolean(checked))
-            }
-            disabled={isSubmitting}
-            aria-invalid={Boolean(errors.acceptPrivacy)}
+            name='acceptPrivacy'
+            type='checkbox'
+            disabled={isPending}
+            required
+            className='border-input h-4 w-4 rounded border'
           />
           <Label
             htmlFor='acceptPrivacy'
@@ -42,25 +31,16 @@ export function CheckboxFields({
             {t('acceptPrivacy')}
           </Label>
         </div>
-        {errors.acceptPrivacy && (
-          <p
-            className='text-sm text-red-500'
-            role='alert'
-          >
-            {errors.acceptPrivacy.message}
-          </p>
-        )}
       </div>
 
       <div className='space-y-2'>
         <div className='flex items-center space-x-2'>
-          <Checkbox
+          <input
             id='marketingConsent'
-            checked={watchedValues.marketingConsent || false}
-            onCheckedChange={(checked) =>
-              setValue('marketingConsent', Boolean(checked))
-            }
-            disabled={isSubmitting}
+            name='marketingConsent'
+            type='checkbox'
+            disabled={isPending}
+            className='border-input h-4 w-4 rounded border'
           />
           <Label
             htmlFor='marketingConsent'

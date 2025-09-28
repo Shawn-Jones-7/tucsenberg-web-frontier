@@ -77,6 +77,39 @@ export type {
 // 导出颜色系统类型
 export type { ThemeColors } from '@/lib/colors/types';
 
+// 导出React 19 Hook类型
+export type {
+  ActionState,
+  ServerActionFunction,
+  UseActionStateReturn,
+  UseActionState,
+  UseFormStatusReturn,
+  UseFormStatus,
+  OptimisticUpdateFunction,
+  UseOptimisticReturn,
+  UseOptimistic,
+  UseResource,
+  Use,
+  FormAction,
+  FormProps,
+  ButtonProps,
+  ServerComponent,
+  AsyncServerComponent,
+  UseTransitionReturn,
+  ErrorInfo,
+  ErrorBoundaryProps,
+  SuspenseProps,
+  React19ComponentProps,
+  React19FormComponentProps,
+  Awaited,
+  FormFieldValue,
+  FormDataMap,
+  ServerActionResult,
+} from '@/types/react19';
+
+// 导出React 19类型守卫函数
+export { isPromise, isContext, isFormData } from '@/types/react19';
+
 // 未来可以添加更多类型模块的导出
 // export * from '@/types/api';
 // export * from '@/types/auth';

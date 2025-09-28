@@ -1,0 +1,22 @@
+{
+  "timestamp": "2025-09-28T02:07:31.083Z",
+  "options": {
+    "createBackup": true,
+    "dryRun": true,
+    "verbose": true,
+    "preserveComments": true
+  },
+  "stats": {
+    "filesProcessed": 778,
+    "filesTransformed": 0,
+    "exportStarRemoved": 0,
+    "namedExportsAdded": 0,
+    "errors": []
+  },
+  "summary": {
+    "success": true,
+    "filesProcessed": 778,
+    "filesTransformed": 0,
+    "transformationRate": "0.00%"
+  }
+}

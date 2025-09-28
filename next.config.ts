@@ -215,10 +215,10 @@ const nextConfig: NextConfig = {
           priority: 12,
           enforce: true,
         },
-        // 表单和验证库分离
-        forms: {
-          test: /[\\/]node_modules[\\/](react-hook-form|@hookform|zod)[\\/]/,
-          name: 'form-libs',
+        // 验证库分离
+        validation: {
+          test: /[\\/]node_modules[\\/](zod)[\\/]/,
+          name: 'validation-libs',
           chunks: 'all',
           priority: 12,
           enforce: true,
@@ -233,7 +233,7 @@ const nextConfig: NextConfig = {
         },
         // 其他第三方库
         vendor: {
-          test: /[\\/]node_modules[\\/](?!(react|react-dom|@radix-ui|lucide-react|@sentry|next-intl|@next[\\/]|next-themes|nextjs-toploader|@mdx-js|gray-matter|remark|rehype|react-hook-form|@hookform|zod|clsx|class-variance-authority|tailwind-merge|embla-carousel)[\\/])/,
+          test: /[\\/]node_modules[\\/](?!(react|react-dom|@radix-ui|lucide-react|@sentry|next-intl|@next[\\/]|next-themes|nextjs-toploader|@mdx-js|gray-matter|remark|rehype|zod|clsx|class-variance-authority|tailwind-merge|embla-carousel)[\\/])/,
           name: 'vendors',
           chunks: 'all',
           priority: 5,

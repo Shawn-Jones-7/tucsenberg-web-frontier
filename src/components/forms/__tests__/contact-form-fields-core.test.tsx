@@ -8,44 +8,18 @@ import {
   NameFields,
 } from '../contact-form-fields';
 
-// Mock react-hook-form
-const mockRegister = vi.fn();
-
-const mockSetValue = vi.fn();
-
 // Mock translation function
 const mockT = vi.fn((key: string) => key);
 
-// Default props for testing
+// React 19 Native Form Props for testing
 const defaultProps = {
-  register: mockRegister as any,
-  errors: {},
-  isSubmitting: false,
-  t: mockT as any,
-  watchedValues: {
-    firstName: '',
-    lastName: '',
-    email: '',
-    company: '',
-    message: '',
-    acceptPrivacy: false,
-    phone: '',
-    subject: '',
-    marketingConsent: false,
-    website: '',
-  },
-  setValue: mockSetValue,
+  t: mockT,
+  isPending: false,
 };
 
 describe('Contact Form Fields - Core Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    mockRegister.mockReturnValue({
-      name: 'test-field',
-      onChange: vi.fn(),
-      onBlur: vi.fn(),
-      ref: vi.fn(),
-    });
   });
 
   describe('NameFields Component', () => {
@@ -59,24 +33,36 @@ describe('Contact Form Fields - Core Tests', () => {
     it('should show required indicators', () => {
       render(<NameFields {...defaultProps} />);
 
-      // Check for required asterisks (*)
+      // Check for required asterisks (*) in labels
       const labels = screen.getAllByText(/firstName|lastName/);
       expect(labels.length).toBeGreaterThan(0);
     });
 
-    it('should display validation errors', () => {
-      const propsWithErrors = {
-        ...defaultProps,
-        errors: {
-          firstName: { message: 'First name is required' },
-          lastName: { message: 'Last name is required' },
-        } as any,
-      };
+    it('should have required attributes on inputs', () => {
+      render(<NameFields {...defaultProps} />);
 
-      render(<NameFields {...(propsWithErrors as any)} />);
+      const firstNameInput = screen.getByLabelText(/firstName/i);
+      const lastNameInput = screen.getByLabelText(/lastName/i);
 
-      expect(screen.getByText('First name is required')).toBeInTheDocument();
-      expect(screen.getByText('Last name is required')).toBeInTheDocument();
+      expect(firstNameInput).toHaveAttribute('required');
+      expect(lastNameInput).toHaveAttribute('required');
+      expect(firstNameInput).toHaveAttribute('name', 'firstName');
+      expect(lastNameInput).toHaveAttribute('name', 'lastName');
+    });
+
+    it('should disable inputs when isPending is true', () => {
+      render(
+        <NameFields
+          {...defaultProps}
+          isPending={true}
+        />,
+      );
+
+      const firstNameInput = screen.getByLabelText(/firstName/i);
+      const lastNameInput = screen.getByLabelText(/lastName/i);
+
+      expect(firstNameInput).toBeDisabled();
+      expect(lastNameInput).toBeDisabled();
     });
   });
 
@@ -91,21 +77,34 @@ describe('Contact Form Fields - Core Tests', () => {
     it('should show email as required', () => {
       render(<ContactFields {...defaultProps} />);
 
-      const emailLabel = screen.getByText(/email/i);
-      expect(emailLabel).toBeInTheDocument();
+      const emailInput = screen.getByLabelText(/email/i);
+      expect(emailInput).toHaveAttribute('required');
+      expect(emailInput).toHaveAttribute('type', 'email');
     });
 
-    it('should display email validation errors', () => {
-      const propsWithErrors = {
-        ...defaultProps,
-        errors: {
-          email: { message: 'Invalid email format' },
-        } as any,
-      };
+    it('should have correct input attributes', () => {
+      render(<ContactFields {...defaultProps} />);
 
-      render(<ContactFields {...(propsWithErrors as any)} />);
+      const emailInput = screen.getByLabelText(/email/i);
+      const companyInput = screen.getByLabelText(/company/i);
 
-      expect(screen.getByText('Invalid email format')).toBeInTheDocument();
+      expect(emailInput).toHaveAttribute('name', 'email');
+      expect(companyInput).toHaveAttribute('name', 'company');
+    });
+
+    it('should disable inputs when isPending is true', () => {
+      render(
+        <ContactFields
+          {...defaultProps}
+          isPending={true}
+        />,
+      );
+
+      const emailInput = screen.getByLabelText(/email/i);
+      const companyInput = screen.getByLabelText(/company/i);
+
+      expect(emailInput).toBeDisabled();
+      expect(companyInput).toBeDisabled();
     });
   });
 
@@ -117,66 +116,91 @@ describe('Contact Form Fields - Core Tests', () => {
       expect(screen.getByText(/acceptPrivacy/i)).toBeInTheDocument();
     });
 
+    it('should have required attribute on checkbox', () => {
+      render(<CheckboxFields {...defaultProps} />);
+
+      const checkbox = screen.getByLabelText(/acceptPrivacy/i);
+      expect(checkbox).toHaveAttribute('required');
+      expect(checkbox).toHaveAttribute('name', 'acceptPrivacy');
+      expect(checkbox).toHaveAttribute('type', 'checkbox');
+    });
+
     it('should handle checkbox interactions', async () => {
       const user = userEvent.setup();
       render(<CheckboxFields {...defaultProps} />);
 
       const checkbox = screen.getByLabelText(/acceptPrivacy/i);
-      await user.click(checkbox);
+      expect(checkbox).not.toBeChecked();
 
-      // Verify setValue was called with correct parameters
-      expect(mockSetValue).toHaveBeenCalledWith('acceptPrivacy', true);
+      await user.click(checkbox);
+      expect(checkbox).toBeChecked();
     });
 
-    it('should display privacy policy validation errors', () => {
-      const propsWithErrors = {
-        ...defaultProps,
-        errors: {
-          acceptPrivacy: { message: 'You must accept the privacy policy' },
-        } as any,
-      };
+    it('should disable checkbox when isPending is true', () => {
+      render(
+        <CheckboxFields
+          {...defaultProps}
+          isPending={true}
+        />,
+      );
 
-      render(<CheckboxFields {...propsWithErrors} />);
-
-      expect(
-        screen.getByText('You must accept the privacy policy'),
-      ).toBeInTheDocument();
+      const checkbox = screen.getByLabelText(/acceptPrivacy/i);
+      expect(checkbox).toBeDisabled();
     });
   });
 
   describe('AdditionalFields Component', () => {
-    it('should render message textarea', () => {
+    it('should render phone and subject fields', () => {
       render(<AdditionalFields {...defaultProps} />);
 
-      expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/subject/i)).toBeInTheDocument();
     });
 
-    it('should handle message input', async () => {
+    it('should have correct input attributes', () => {
+      render(<AdditionalFields {...defaultProps} />);
+
+      const phoneInput = screen.getByLabelText(/phone/i);
+      const subjectInput = screen.getByLabelText(/subject/i);
+
+      expect(phoneInput).toHaveAttribute('name', 'phone');
+      expect(phoneInput).toHaveAttribute('type', 'tel');
+      expect(subjectInput).toHaveAttribute('name', 'subject');
+      expect(subjectInput).toHaveAttribute('type', 'text');
+    });
+
+    it('should handle input interactions', async () => {
       const user = userEvent.setup();
       render(<AdditionalFields {...defaultProps} />);
 
-      const messageField = screen.getByLabelText(/message/i);
-      await user.type(messageField, 'Test message');
+      const phoneField = screen.getByLabelText(/phone/i);
+      const subjectField = screen.getByLabelText(/subject/i);
 
-      expect(messageField).toHaveValue('Test message');
+      await user.type(phoneField, '+1234567890');
+      await user.type(subjectField, 'Test subject');
+
+      expect(phoneField).toHaveValue('+1234567890');
+      expect(subjectField).toHaveValue('Test subject');
     });
 
-    it('should display message validation errors', () => {
-      const propsWithErrors = {
-        ...defaultProps,
-        errors: {
-          message: { message: 'Message is too long' },
-        } as any,
-      };
+    it('should disable inputs when isPending is true', () => {
+      render(
+        <AdditionalFields
+          {...defaultProps}
+          isPending={true}
+        />,
+      );
 
-      render(<AdditionalFields {...(propsWithErrors as any)} />);
+      const phoneInput = screen.getByLabelText(/phone/i);
+      const subjectInput = screen.getByLabelText(/subject/i);
 
-      expect(screen.getByText('Message is too long')).toBeInTheDocument();
+      expect(phoneInput).toBeDisabled();
+      expect(subjectInput).toBeDisabled();
     });
   });
 
-  describe('Form Integration', () => {
-    it('should register all fields with react-hook-form', () => {
+  describe('React 19 Native Form Integration', () => {
+    it('should render all form fields with correct names', () => {
       render(
         <div>
           <NameFields {...defaultProps} />
@@ -186,34 +210,47 @@ describe('Contact Form Fields - Core Tests', () => {
         </div>,
       );
 
-      // Verify register was called for all expected fields
-      expect(mockRegister).toHaveBeenCalledTimes(7);
-
-      // Check individual field registrations
-      const calls = mockRegister.mock.calls;
-      const fieldNames = calls.map((call) => call[0]);
-
-      expect(fieldNames).toContain('firstName');
-      expect(fieldNames).toContain('lastName');
-      expect(fieldNames).toContain('email');
-      expect(fieldNames).toContain('company');
-      expect(fieldNames).toContain('phone');
-      expect(fieldNames).toContain('subject');
-      expect(fieldNames).toContain('message');
+      // Verify all fields have correct name attributes for form submission
+      expect(screen.getByLabelText(/firstName/i)).toHaveAttribute(
+        'name',
+        'firstName',
+      );
+      expect(screen.getByLabelText(/lastName/i)).toHaveAttribute(
+        'name',
+        'lastName',
+      );
+      expect(screen.getByLabelText(/email/i)).toHaveAttribute('name', 'email');
+      expect(screen.getByLabelText(/company/i)).toHaveAttribute(
+        'name',
+        'company',
+      );
+      expect(screen.getByLabelText(/phone/i)).toHaveAttribute('name', 'phone');
+      expect(screen.getByLabelText(/subject/i)).toHaveAttribute(
+        'name',
+        'subject',
+      );
+      expect(screen.getByLabelText(/acceptPrivacy/i)).toHaveAttribute(
+        'name',
+        'acceptPrivacy',
+      );
+      expect(screen.getByLabelText(/marketingConsent/i)).toHaveAttribute(
+        'name',
+        'marketingConsent',
+      );
     });
 
-    it('should handle form submission state', () => {
-      const submittingProps = {
+    it('should handle form submission state with isPending', () => {
+      const pendingProps = {
         ...defaultProps,
-        isSubmitting: true,
+        isPending: true,
       };
 
       render(
         <div>
-          <NameFields {...submittingProps} />
-          <ContactFields {...submittingProps} />
-          <CheckboxFields {...submittingProps} />
-          <AdditionalFields {...submittingProps} />
+          <NameFields {...pendingProps} />
+          <ContactFields {...pendingProps} />
+          <CheckboxFields {...pendingProps} />
+          <AdditionalFields {...pendingProps} />
         </div>,
       );
 
@@ -246,31 +283,34 @@ describe('Contact Form Fields - Core Tests', () => {
       expect(screen.getByLabelText(/company/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/subject/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
+      expect(screen.getByLabelText(/acceptPrivacy/i)).toBeInTheDocument();
     });
 
-    it('should associate error messages with fields', () => {
-      const propsWithErrors = {
-        ...defaultProps,
-        errors: {
-          firstName: { message: 'First name error' },
-          email: { message: 'Email error' },
-        } as any,
-      };
-
+    it('should have aria-describedby attributes for error handling', () => {
       render(
         <div>
-          <NameFields {...(propsWithErrors as any)} />
-          <ContactFields {...(propsWithErrors as any)} />
+          <NameFields {...defaultProps} />
+          <ContactFields {...defaultProps} />
+          <AdditionalFields {...defaultProps} />
         </div>,
       );
 
       const firstNameField = screen.getByLabelText(/firstName/i);
+      const lastNameField = screen.getByLabelText(/lastName/i);
       const emailField = screen.getByLabelText(/email/i);
+      const phoneField = screen.getByLabelText(/phone/i);
 
-      // Fields should have aria-invalid set to true when there are errors
-      expect(firstNameField).toHaveAttribute('aria-invalid', 'true');
-      expect(emailField).toHaveAttribute('aria-invalid', 'true');
+      // Fields should have aria-describedby for error messages
+      expect(firstNameField).toHaveAttribute(
+        'aria-describedby',
+        'firstName-error',
+      );
+      expect(lastNameField).toHaveAttribute(
+        'aria-describedby',
+        'lastName-error',
+      );
+      expect(emailField).toHaveAttribute('aria-describedby', 'email-error');
+      expect(phoneField).toHaveAttribute('aria-describedby', 'phone-error');
     });
   });
 
@@ -286,16 +326,14 @@ describe('Contact Form Fields - Core Tests', () => {
       );
 
       // Verify translation function was called for field labels
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('firstName'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('lastName'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('email'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('company'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('phone'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('subject'));
-      expect(mockT).toHaveBeenCalledWith(expect.stringContaining('message'));
-      expect(mockT).toHaveBeenCalledWith(
-        expect.stringContaining('acceptPrivacy'),
-      );
+      expect(mockT).toHaveBeenCalledWith('firstName');
+      expect(mockT).toHaveBeenCalledWith('lastName');
+      expect(mockT).toHaveBeenCalledWith('email');
+      expect(mockT).toHaveBeenCalledWith('company');
+      expect(mockT).toHaveBeenCalledWith('phone');
+      expect(mockT).toHaveBeenCalledWith('subject');
+      expect(mockT).toHaveBeenCalledWith('acceptPrivacy');
+      expect(mockT).toHaveBeenCalledWith('marketingConsent');
     });
   });
 });
