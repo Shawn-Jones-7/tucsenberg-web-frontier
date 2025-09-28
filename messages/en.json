@@ -560,6 +560,19 @@
     "translationMissing": "Translation not available",
     "loadingFailed": "Failed to load content"
   },
+  "progress": {
+    "title": "Development Progress",
+    "status": "Development Progress",
+    "nearCompletion": "Nearly Complete",
+    "planning": "Planning",
+    "development": "Development",
+    "testing": "Testing",
+    "launch": "Launch",
+    "ariaLabel": "Project development progress indicator",
+    "completed": "Completed",
+    "current": "Current step",
+    "upcoming": "Upcoming"
+  },
   "accessibility": {
     "skipToContent": "Skip to main content",
     "openMenu": "Open navigation menu",
@@ -627,19 +640,6 @@
         "description": "Get in touch with our team for inquiries, support, or partnership opportunities.",
         "features": "Multiple ways to reach us and get the support you need"
       }
-    },
-    "progress": {
-      "title": "Development Progress",
-      "status": "Development Progress",
-      "nearCompletion": "Nearly Complete",
-      "planning": "Planning",
-      "development": "Development",
-      "testing": "Testing",
-      "launch": "Launch",
-      "ariaLabel": "Project development progress indicator",
-      "completed": "Completed",
-      "current": "Current step",
-      "upcoming": "Upcoming"
     },
     "animation": {
       "loading": "Loading animation",

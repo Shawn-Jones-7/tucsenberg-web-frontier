@@ -560,6 +560,19 @@
     "translationMissing": "翻译不可用",
     "loadingFailed": "内容加载失败"
   },
+  "progress": {
+    "title": "开发进度",
+    "status": "开发进度",
+    "nearCompletion": "即将完成",
+    "planning": "规划中",
+    "development": "开发中",
+    "testing": "测试中",
+    "launch": "即将发布",
+    "ariaLabel": "项目开发进度指示器",
+    "completed": "已完成",
+    "current": "当前步骤",
+    "upcoming": "即将开始"
+  },
   "accessibility": {
     "skipToContent": "跳转到主要内容",
     "openMenu": "打开导航菜单",
@@ -627,19 +640,6 @@
         "description": "联系我们的团队进行咨询、支持或合作机会。",
         "features": "多种联系方式，获得您需要的支持"
       }
-    },
-    "progress": {
-      "title": "开发进度",
-      "status": "开发进度",
-      "nearCompletion": "即将完成",
-      "planning": "规划中",
-      "development": "开发中",
-      "testing": "测试中",
-      "launch": "即将发布",
-      "ariaLabel": "项目开发进度指示器",
-      "completed": "已完成",
-      "current": "当前步骤",
-      "upcoming": "即将开始"
     },
     "animation": {
       "loading": "加载动画",
