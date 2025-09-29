@@ -9,6 +9,7 @@ import {
 } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { useTranslations } from 'next-intl';
+import { useFormStatus } from 'react-dom';
 import { logger } from '@/lib/logger';
 import { type ServerActionResult } from '@/lib/server-action-utils';
 import { type FormSubmissionStatus } from '@/lib/validations';
@@ -424,6 +425,33 @@ const FormFields = memo(({ t, isPending }: FieldProps) => {
 
 FormFields.displayName = 'FormFields';
 
+interface SubmitButtonProps {
+  disabled: boolean;
+  idleLabel: string;
+  pendingLabel: string;
+}
+
+function SubmitButton({
+  disabled,
+  idleLabel,
+  pendingLabel,
+}: SubmitButtonProps) {
+  const { pending } = useFormStatus();
+  const isDisabled = disabled || pending;
+
+  return (
+    <Button
+      type='submit'
+      className='w-full'
+      disabled={isDisabled}
+      aria-disabled={isDisabled}
+      aria-busy={pending}
+    >
+      {pending ? pendingLabel : idleLabel}
+    </Button>
+  );
+}
+
 /**
  * Main contact form container component
  */
@@ -439,6 +467,10 @@ export function ContactFormContainer() {
     isRateLimited,
     optimisticMessage,
   } = useContactForm();
+
+  const submitDisabledReason = Boolean(
+    isPending || !turnstileToken || isRateLimited,
+  );
 
   return (
     <Card className='mx-auto w-full max-w-2xl'>
@@ -474,13 +506,11 @@ export function ContactFormContainer() {
         </div>
 
         {/* Submit button */}
-        <Button
-          type='submit'
-          disabled={Boolean(isPending || !turnstileToken || isRateLimited)}
-          className='w-full'
-        >
-          {isPending ? t('submitting') : t('submit')}
-        </Button>
+        <SubmitButton
+          disabled={submitDisabledReason}
+          idleLabel={t('submit')}
+          pendingLabel={t('submitting')}
+        />
 
         {isRateLimited && (
           <p className='text-center text-sm text-amber-600'>

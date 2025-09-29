@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createCachedResponse } from '@/lib/api-cache-utils';
 import { logger } from '@/lib/logger';
 
 // Web Vitals 数据接口
@@ -149,20 +150,26 @@ export function GET(request: NextRequest) {
 
     // 如果指定了特定指标，只返回该指标的数据
     if (metric && mockStats.metrics[metric as keyof typeof mockStats.metrics]) {
-      return NextResponse.json({
-        success: true,
-        data: {
-          timeRange,
-          metric,
-          stats: mockStats.metrics[metric as keyof typeof mockStats.metrics],
+      return createCachedResponse(
+        {
+          success: true,
+          data: {
+            timeRange,
+            metric,
+            stats: mockStats.metrics[metric as keyof typeof mockStats.metrics],
+          },
         },
-      });
+        { maxAge: 120 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: mockStats,
-    });
+    return createCachedResponse(
+      {
+        success: true,
+        data: mockStats,
+      },
+      { maxAge: 120 },
+    );
   } catch (_error) {
     // 忽略错误变量
     logger.error('Failed to get Web Vitals statistics', {

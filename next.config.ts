@@ -4,92 +4,7 @@ import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
 import { withSentryConfig } from '@sentry/nextjs';
 import createNextIntlPlugin from 'next-intl/plugin';
-
-// Avoid importing TS/alias-based runtime modules into next.config to keep config load stable.
-function computeSecurityHeaders(nonce?: string) {
-  const isEnabled = process.env.SECURITY_HEADERS_ENABLED !== 'false';
-  if (!isEnabled) return [] as { key: string; value: string }[];
-
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  const isProduction = process.env.NODE_ENV === 'production';
-
-  const cspDirectives: Record<string, string[] | undefined> = {
-    'default-src': ["'self'"],
-    'script-src': [
-      "'self'",
-      ...(isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : []),
-      ...(nonce ? [`'nonce-${nonce}'`] : []),
-      'https://va.vercel-scripts.com',
-      'https://js.sentry-cdn.com',
-      'https://challenges.cloudflare.com',
-      'https://www.googletagmanager.com',
-      'https://www.google-analytics.com',
-    ],
-    'style-src': [
-      "'self'",
-      ...(isDevelopment ? ["'unsafe-inline'"] : []),
-      ...(nonce ? [`'nonce-${nonce}'`] : []),
-      'https://fonts.googleapis.com',
-    ],
-    'img-src': [
-      "'self'",
-      'data:',
-      'https:',
-      'https://va.vercel-scripts.com',
-      'https://images.unsplash.com',
-      'https://via.placeholder.com',
-    ],
-    'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
-    'connect-src': [
-      "'self'",
-      'https://vitals.vercel-insights.com',
-      'https://o4507902318592000.ingest.us.sentry.io',
-      ...(isDevelopment ? ['http://localhost:*', 'ws://localhost:*'] : []),
-      'https://api.resend.com',
-    ],
-    'frame-src': ["'none'", 'https://challenges.cloudflare.com'],
-    'object-src': ["'none'"],
-    'base-uri': ["'self'"],
-    'form-action': ["'self'"],
-    'frame-ancestors': ["'none'"],
-    'upgrade-insecure-requests': isProduction ? [] : undefined,
-  };
-
-  const csp = Object.entries(cspDirectives)
-    .filter(([, value]) => value !== undefined)
-    .map(([key, value]) => {
-      if (Array.isArray(value) && value.length > 0)
-        return `${key} ${value.join(' ')}`;
-      return key;
-    })
-    .join('; ');
-
-  return [
-    { key: 'X-Frame-Options', value: 'DENY' },
-    { key: 'X-Content-Type-Options', value: 'nosniff' },
-    { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
-    {
-      key: 'Strict-Transport-Security',
-      value: 'max-age=63072000; includeSubDomains; preload',
-    },
-    { key: 'X-XSS-Protection', value: '1; mode=block' },
-    { key: 'Content-Security-Policy', value: csp },
-    {
-      key: 'Permissions-Policy',
-      value: [
-        'camera=()',
-        'microphone=()',
-        'geolocation=()',
-        'interest-cohort=()',
-        'payment=()',
-        'usb=()',
-      ].join(', '),
-    },
-    { key: 'Cross-Origin-Embedder-Policy', value: 'unsafe-none' },
-    { key: 'Cross-Origin-Opener-Policy', value: 'same-origin' },
-    { key: 'Cross-Origin-Resource-Policy', value: 'cross-origin' },
-  ];
-}
+import { getSecurityHeaders } from './src/config/security';
 
 const withNextIntl = createNextIntlPlugin('./src/i18n/request.ts');
 
@@ -121,6 +36,19 @@ const nextConfig: NextConfig = {
   // Enable source maps for better error tracking
   productionBrowserSourceMaps: true,
 
+  images: {
+    remotePatterns: [
+      {
+        protocol: 'https',
+        hostname: 'images.unsplash.com',
+      },
+      {
+        protocol: 'https',
+        hostname: 'via.placeholder.com',
+      },
+    ],
+  },
+
   // Next.js Compiler 配置
   compiler: {
     // 生产环境移除 console 语句，但保留 error 和 warn 级别
@@ -138,6 +66,8 @@ const nextConfig: NextConfig = {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
     // 启用Next.js 15实验性testProxy用于Playwright测试环境
     testProxy: true,
+    // PPR 需要 Next.js canary 版本，暂时禁用
+    // ppr: 'incremental',
   },
 
   // 解决 Turbopack + OpenTelemetry 依赖问题
@@ -249,7 +179,7 @@ const nextConfig: NextConfig = {
     // even though we're returning static configuration
     await Promise.resolve(); // Satisfy require-await ESLint rule
 
-    const securityHeaders = computeSecurityHeaders();
+    const securityHeaders = getSecurityHeaders();
     // Prefer CSP from middleware (with nonce). Remove CSP here to avoid duplication/conflicts.
     const headersNoCSP = securityHeaders.filter(
       (h) => h.key !== 'Content-Security-Policy',

@@ -1,31 +1,28 @@
-import type { ReactNode } from 'react';
+import { getFontClassNames } from '@/app/[locale]/layout-fonts';
+import { generateLocaleMetadata } from '@/app/[locale]/layout-metadata';
+import { generatePageStructuredData } from '@/app/[locale]/layout-structured-data';
+import '@/app/globals.css';
+import { Suspense, type ReactNode } from 'react';
+import { headers } from 'next/headers';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
 import { getMessages } from 'next-intl/server';
 import NextTopLoader from 'nextjs-toploader';
 import { generateJSONLD } from '@/lib/structured-data';
+import { ErrorBoundary } from '@/components/error-boundary';
+import { TranslationPreloader } from '@/components/i18n/translation-preloader';
 import { Footer } from '@/components/layout/footer';
 import { Header } from '@/components/layout/header';
 import { EnterpriseAnalytics } from '@/components/monitoring/enterprise-analytics';
-// 临时禁用所有性能监控组件以排查 "Maximum update depth exceeded" 错误
-// import {
-//     DevelopmentPerformanceMonitor,
-//     DevelopmentWebVitalsIndicator,
-//     DynamicDevToolsController,
-//     DynamicDevToolsStatusIndicator,
-//     DynamicThemePerformanceMonitor,
-//     DynamicTranslationPreloader,
-// } from '@/components/shared/dynamic-imports';
-import { getFontClassNames } from '@/app/[locale]/layout-fonts';
-import { generateLocaleMetadata } from '@/app/[locale]/layout-metadata';
-import { generatePageStructuredData } from '@/app/[locale]/layout-structured-data';
+import { WebVitalsIndicator } from '@/components/performance/web-vitals-indicator';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ThemePerformanceMonitor } from '@/components/theme/theme-performance-monitor';
+import { Toaster } from '@/components/ui/toaster';
 import {
   ANIMATION_DURATION_NORMAL,
   COUNT_1600,
   COUNT_TRIPLE,
 } from '@/constants';
-import '@/app/globals.css';
-import { ThemeProvider } from '@/components/theme-provider';
 import { routing } from '@/i18n/routing';
 
 // 重新导出元数据生成函数
@@ -47,6 +44,11 @@ export default async function LocaleLayout({
     notFound();
   }
 
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  const headerList = await headers();
+  const nonce = headerList.get('x-csp-nonce') ?? undefined;
+
   // Providing all messages to the client
   // side is the easiest way to get started
   const messages = await getMessages();
@@ -63,12 +65,14 @@ export default async function LocaleLayout({
     >
       {/* JSON-LD 结构化数据 */}
       <script
+        nonce={nonce}
         type='application/ld+json'
         dangerouslySetInnerHTML={{
           __html: generateJSONLD(organizationData),
         }}
       />
       <script
+        nonce={nonce}
         type='application/ld+json'
         dangerouslySetInnerHTML={{
           __html: generateJSONLD(websiteData),
@@ -92,14 +96,21 @@ export default async function LocaleLayout({
               zIndex={COUNT_1600}
             />
 
-            {/* 临时禁用：I18n性能优化组件 - 动态导入 */}
-            {/* <DynamicTranslationPreloader /> */}
-
-            {/* 临时禁用：主题性能监控组件 - 动态导入 */}
-            {/* <DynamicThemePerformanceMonitor /> */}
-
-            {/* 临时禁用：Web Vitals 性能监控 - 动态导入 */}
-            {/* <DevelopmentWebVitalsIndicator /> */}
+            {isDevelopment && (
+              <Suspense fallback={null}>
+                <ErrorBoundary
+                  fallback={
+                    <div className='bg-destructive/80 fixed right-4 bottom-4 z-[1100] rounded-md px-3 py-2 text-xs text-white shadow-lg'>
+                      监控组件加载失败
+                    </div>
+                  }
+                >
+                  <TranslationPreloader strategy='idle' />
+                  <ThemePerformanceMonitor />
+                  <WebVitalsIndicator />
+                </ErrorBoundary>
+              </Suspense>
+            )}
 
             {/* 导航栏 */}
             <Header />
@@ -110,16 +121,10 @@ export default async function LocaleLayout({
             {/* 页脚 */}
             <Footer />
 
+            {/* Toast 消息容器 - 全局生效 */}
+            <Toaster />
+
             {/* 企业级监控组件已集成到AnalyticsProvider中 */}
-
-            {/* 临时禁用：开发环境性能指示器 - 动态导入 */}
-            {/* <DevelopmentPerformanceMonitor /> */}
-
-            {/* 临时禁用：开发工具控制器 - 统一管理所有开发工具 */}
-            {/* <DynamicDevToolsController /> */}
-
-            {/* 临时禁用：开发工具状态指示器 */}
-            {/* <DynamicDevToolsStatusIndicator /> */}
           </ThemeProvider>
         </EnterpriseAnalytics>
       </NextIntlClientProvider>

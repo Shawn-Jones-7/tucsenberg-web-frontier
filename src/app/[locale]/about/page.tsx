@@ -3,6 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { UnderConstruction } from '@/components/shared/under-construction';
 import { COUNT_PAIR } from '@/constants';
 
+export const revalidate = 86400;
+
 interface AboutPageProps {
   params: Promise<{
     locale: string;

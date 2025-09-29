@@ -5,10 +5,9 @@
  *
  * UI组件的动态导入定义
  */
-import dynamic from 'next/dynamic';
 import {
   ComponentLoadingFallback,
-  MinimalLoadingFallback,
+  createStandardDynamicComponent,
 } from '@/components/shared/dynamic-imports-base';
 
 // ==================== UI组件 ====================
@@ -18,13 +17,12 @@ import {
  * Animated Counter - Dynamic Import
  * 原因：动画组件，非关键，5.54KB
  */
-export const DynamicAnimatedCounter = dynamic(
+export const DynamicAnimatedCounter = createStandardDynamicComponent(
   () =>
     import('@/components/ui/animated-counter').then((mod) => ({
       default: mod.AnimatedCounter,
     })),
   {
-    loading: () => <MinimalLoadingFallback />,
     ssr: false, // 动画组件不需要SSR
   },
 );
@@ -34,15 +32,10 @@ export const DynamicAnimatedCounter = dynamic(
  * Dropdown Menu - Dynamic Import
  * 原因：交互组件，较大，8.27KB
  */
-export const DynamicDropdownMenu = dynamic(
-  () =>
-    import('@/components/ui/dropdown-menu').then((mod) => ({
-      default: mod.DropdownMenu,
-    })),
-  {
-    loading: () => <MinimalLoadingFallback />,
-    ssr: true, // 保持SSR以支持可访问性
-  },
+export const DynamicDropdownMenu = createStandardDynamicComponent(() =>
+  import('@/components/ui/dropdown-menu').then((mod) => ({
+    default: mod.DropdownMenu,
+  })),
 );
 
 /**
@@ -50,12 +43,10 @@ export const DynamicDropdownMenu = dynamic(
  * Tabs - Dynamic Import
  * 原因：布局组件，可能较大
  */
-export const DynamicTabs = dynamic(
-  () =>
-    import('@/components/ui/tabs').then((mod) => ({
-      default: mod.Tabs,
-    })),
-  { loading: () => <MinimalLoadingFallback />, ssr: true },
+export const DynamicTabs = createStandardDynamicComponent(() =>
+  import('@/components/ui/tabs').then((mod) => ({
+    default: mod.Tabs,
+  })),
 );
 
 /**
@@ -63,13 +54,12 @@ export const DynamicTabs = dynamic(
  * Carousel - Dynamic Import
  * 原因：复杂组件，较大体积
  */
-export const DynamicCarousel = dynamic(
+export const DynamicCarousel = createStandardDynamicComponent(
   () =>
     import('@/components/ui/carousel').then((mod) => ({
       default: mod.Carousel,
     })),
   {
-    loading: () => <ComponentLoadingFallback />,
-    ssr: true, // 轮播图可能需要SEO
+    loading: ComponentLoadingFallback,
   },
 );

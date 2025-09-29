@@ -27,10 +27,14 @@ export function generateOrganizationData(
       t('organization.description', {
         defaultValue: 'Modern B2B Enterprise Web Platform',
       }),
-    'url': data.url || process.env['SITE_URL'] || 'https://tucsenberg.com',
+    'url':
+      data.url ||
+      process.env['NEXT_PUBLIC_BASE_URL'] ||
+      process.env['NEXT_PUBLIC_SITE_URL'] ||
+      'https://tucsenberg.com',
     'logo':
       data.logo ||
-      `${process.env['SITE_URL'] || 'https://tucsenberg.com'}/logo.png`,
+      `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://tucsenberg.com'}/logo.png`,
     'contactPoint': {
       '@type': 'ContactPoint',
       'telephone':
@@ -71,12 +75,16 @@ export function generateWebSiteData(
       t('website.description', {
         defaultValue: 'Modern B2B Enterprise Web Platform with Next.js 15',
       }),
-    'url': data.url || process.env['SITE_URL'] || 'https://tucsenberg.com',
+    'url':
+      data.url ||
+      process.env['NEXT_PUBLIC_BASE_URL'] ||
+      process.env['NEXT_PUBLIC_SITE_URL'] ||
+      'https://tucsenberg.com',
     'potentialAction': {
       '@type': 'SearchAction',
       'target':
         data.searchUrl ||
-        `${process.env['SITE_URL'] || 'https://tucsenberg.com'}/search?q={search_term_string}`,
+        `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://tucsenberg.com'}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
     'inLanguage': routing.locales,
@@ -110,7 +118,7 @@ export function generateArticleData(
       }),
       'logo': {
         '@type': 'ImageObject',
-        'url': `${process.env['SITE_URL'] || 'https://tucsenberg.com'}/logo.png`,
+        'url': `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://tucsenberg.com'}/logo.png`,
       },
     },
     'datePublished': data.publishedTime,

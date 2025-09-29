@@ -89,8 +89,6 @@ export {
 export {
   getApiSecurityHeaders,
   getWebSecurityHeaders,
-  generateCSP,
-  generateStrictCSP,
   getCORSHeaders,
   verifyTurnstileToken,
   checkSecurityConfig,
@@ -99,6 +97,13 @@ export {
   generateSecurityReport,
   type SecurityMiddlewareConfig,
 } from '@/lib/security-headers';
+
+export {
+  generateCSP,
+  getSecurityHeaders,
+  SecurityUtils,
+  type SecurityHeader,
+} from '@/config/security';
 
 // 向后兼容性：保留一些常用的直接导出
 // Backward compatibility: keep some commonly used direct exports

@@ -43,7 +43,7 @@ interface FormState {
  * 模拟Server Action - 消息提交
  */
 async function submitMessageAction(
-  prevState: FormState | null,
+  _prevState: FormState | null,
   formData: FormData,
 ): Promise<FormState> {
   const text = formData.get('message') as string;

@@ -60,7 +60,7 @@ describe('Security Configuration', () => {
       vi.stubEnv('SECURITY_HEADERS_ENABLED', 'true');
 
       const headers = getSecurityHeaders(undefined, true);
-      expect(headers).toHaveLength(10);
+      expect(headers).toHaveLength(9);
 
       const headerKeys = headers.map((h) => h.key);
       expect(headerKeys).toContain('X-Frame-Options');

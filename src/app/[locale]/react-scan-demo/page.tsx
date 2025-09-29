@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { getTranslations } from 'next-intl/server';
 import { ReactScanDemoClient } from '@/app/[locale]/react-scan-demo/react-scan-demo-client';
 
+export const revalidate = 86400;
+
 export async function generateMetadata({
   params,
 }: {

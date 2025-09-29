@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createCachedResponse } from '@/lib/api-cache-utils';
 import { logger } from '@/lib/logger';
 
 /**
@@ -128,25 +129,31 @@ export function GET(request: NextRequest) {
 
     // 如果指定了特定语言，过滤数据
     if (locale && locale !== 'all') {
-      return NextResponse.json({
-        success: true,
-        data: {
-          ...mockStats,
-          locale,
-          localeDistribution: {
-            [locale]:
-              mockStats.localeDistribution[
-                locale as keyof typeof mockStats.localeDistribution
-              ] || 0,
+      return createCachedResponse(
+        {
+          success: true,
+          data: {
+            ...mockStats,
+            locale,
+            localeDistribution: {
+              [locale]:
+                mockStats.localeDistribution[
+                  locale as keyof typeof mockStats.localeDistribution
+                ] || 0,
+            },
           },
         },
-      });
+        { maxAge: 300 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: mockStats,
-    });
+    return createCachedResponse(
+      {
+        success: true,
+        data: mockStats,
+      },
+      { maxAge: 300 },
+    );
   } catch (_error) {
     // 忽略错误变量
     logger.error('Failed to get i18n analytics statistics', {

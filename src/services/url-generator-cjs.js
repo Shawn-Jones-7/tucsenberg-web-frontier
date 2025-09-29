@@ -19,7 +19,10 @@ const SEO_CONSTANTS = {
 
 // 硬编码配置，避免ES模块导入问题
 const SITE_CONFIG = {
-  baseUrl: process.env.SITE_URL || 'https://tucsenberg.com',
+  baseUrl:
+    process.env.NEXT_PUBLIC_BASE_URL ||
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    'https://tucsenberg.com',
 };
 
 const LOCALES_CONFIG = {

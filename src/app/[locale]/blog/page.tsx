@@ -3,6 +3,8 @@ import { getTranslations } from 'next-intl/server';
 import { UnderConstruction } from '@/components/shared/under-construction';
 import { ZERO } from '@/constants';
 
+export const revalidate = 86400;
+
 interface BlogPageProps {
   params: Promise<{
     locale: string;

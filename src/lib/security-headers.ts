@@ -5,87 +5,32 @@
 
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
+import { getSecurityHeaders, type SecurityHeader } from '@/config/security';
 import { ZERO } from '@/constants';
 
-/**
- * Security headers for API responses
- */
-export function getApiSecurityHeaders(): Record<string, string> {
-  return {
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'DENY',
-    'X-XSS-Protection': '1; mode=block',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Cache-Control': 'no-store, no-cache, must-revalidate, proxy-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0',
-  };
+const HEADER_KEYS = {
+  contentSecurityPolicy: 'Content-Security-Policy',
+  strictTransportSecurity: 'Strict-Transport-Security',
+  xssProtection: 'X-XSS-Protection',
+  frameOptions: 'X-Frame-Options',
+  contentTypeOptions: 'X-Content-Type-Options',
+  referrerPolicy: 'Referrer-Policy',
+  permissionsPolicy: 'Permissions-Policy',
+} as const;
+
+function toHeaderRecord(headers: SecurityHeader[]): Record<string, string> {
+  return Object.fromEntries(headers.map(({ key, value }) => [key, value]));
 }
 
 /**
- * Security headers for web pages
+ * Security headers for API responses (legacy helper)
  */
+export function getApiSecurityHeaders(nonce?: string): Record<string, string> {
+  return toHeaderRecord(getSecurityHeaders(nonce));
+}
+
 export function getWebSecurityHeaders(nonce?: string): Record<string, string> {
-  const headers: Record<string, string> = {
-    'X-Content-Type-Options': 'nosniff',
-    'X-Frame-Options': 'SAMEORIGIN',
-    'X-XSS-Protection': '1; mode=block',
-    'Referrer-Policy': 'strict-origin-when-cross-origin',
-    'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
-  };
-
-  // Add CSP header with nonce if provided
-  if (nonce) {
-    headers['Content-Security-Policy'] = generateCSP(nonce);
-  }
-
-  return headers;
-}
-
-/**
- * Generate Content Security Policy
- */
-export function generateCSP(nonce?: string): string {
-  const scriptPolicy = nonce
-    ? `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`
-    : "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://challenges.cloudflare.com";
-
-  const policies = [
-    "default-src 'self'",
-    scriptPolicy,
-    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https: blob:",
-    "connect-src 'self' https://api.resend.com https://api.airtable.com https://challenges.cloudflare.com",
-    "frame-src 'self' https://challenges.cloudflare.com",
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'self'",
-    'upgrade-insecure-requests',
-  ];
-
-  return policies.join('; ');
-}
-
-/**
- * Generate strict CSP for production
- */
-export function generateStrictCSP(nonce: string): string {
-  return [
-    "default-src 'none'",
-    `script-src 'self' 'nonce-${nonce}' https://challenges.cloudflare.com`,
-    "style-src 'self' https://fonts.googleapis.com",
-    "font-src 'self' https://fonts.gstatic.com",
-    "img-src 'self' data: https:",
-    "connect-src 'self' https://api.resend.com https://api.airtable.com https://challenges.cloudflare.com",
-    'frame-src https://challenges.cloudflare.com',
-    "object-src 'none'",
-    "base-uri 'self'",
-    "form-action 'self'",
-    "frame-ancestors 'none'",
-    'upgrade-insecure-requests',
-  ].join('; ');
+  return toHeaderRecord(getSecurityHeaders(nonce));
 }
 
 /**
@@ -197,6 +142,7 @@ export interface SecurityMiddlewareConfig {
   enableContentTypeOptions: boolean;
   enableReferrerPolicy: boolean;
   enablePermissionsPolicy: boolean;
+  frameOptionsValue?: 'DENY' | 'SAMEORIGIN';
 }
 
 /**
@@ -214,38 +160,40 @@ export function getSecurityMiddlewareHeaders(
     enableContentTypeOptions: true,
     enableReferrerPolicy: true,
     enablePermissionsPolicy: true,
+    frameOptionsValue: 'DENY',
   };
 
   const finalConfig = { ...defaultConfig, ...config };
-  const headers: Record<string, string> = {};
+  const headers = toHeaderRecord(getSecurityHeaders(nonce));
 
-  if (finalConfig.enableCSP) {
-    headers['Content-Security-Policy'] = generateCSP(nonce);
+  if (!finalConfig.enableCSP) {
+    delete headers[HEADER_KEYS.contentSecurityPolicy];
   }
 
-  if (finalConfig.enableHSTS) {
-    headers['Strict-Transport-Security'] =
-      'max-age=31536000; includeSubDomains; preload';
+  if (!finalConfig.enableHSTS) {
+    delete headers[HEADER_KEYS.strictTransportSecurity];
   }
 
-  if (finalConfig.enableXSSProtection) {
-    headers['X-XSS-Protection'] = '1; mode=block';
+  if (!finalConfig.enableXSSProtection) {
+    delete headers[HEADER_KEYS.xssProtection];
   }
 
-  if (finalConfig.enableFrameOptions) {
-    headers['X-Frame-Options'] = 'SAMEORIGIN';
+  if (!finalConfig.enableFrameOptions) {
+    delete headers[HEADER_KEYS.frameOptions];
+  } else if (finalConfig.frameOptionsValue) {
+    headers[HEADER_KEYS.frameOptions] = finalConfig.frameOptionsValue;
   }
 
-  if (finalConfig.enableContentTypeOptions) {
-    headers['X-Content-Type-Options'] = 'nosniff';
+  if (!finalConfig.enableContentTypeOptions) {
+    delete headers[HEADER_KEYS.contentTypeOptions];
   }
 
-  if (finalConfig.enableReferrerPolicy) {
-    headers['Referrer-Policy'] = 'strict-origin-when-cross-origin';
+  if (!finalConfig.enableReferrerPolicy) {
+    delete headers[HEADER_KEYS.referrerPolicy];
   }
 
-  if (finalConfig.enablePermissionsPolicy) {
-    headers['Permissions-Policy'] = 'camera=(), microphone=(), geolocation=()';
+  if (!finalConfig.enablePermissionsPolicy) {
+    delete headers[HEADER_KEYS.permissionsPolicy];
   }
 
   return headers;
@@ -260,16 +208,16 @@ export function validateSecurityHeaders(headers: Record<string, string>): {
   recommendations: string[];
 } {
   const requiredHeaders = [
-    'X-Content-Type-Options',
-    'X-Frame-Options',
-    'X-XSS-Protection',
-    'Referrer-Policy',
+    HEADER_KEYS.contentTypeOptions,
+    HEADER_KEYS.frameOptions,
+    HEADER_KEYS.xssProtection,
+    HEADER_KEYS.referrerPolicy,
   ];
 
   const recommendedHeaders = [
-    'Content-Security-Policy',
-    'Strict-Transport-Security',
-    'Permissions-Policy',
+    HEADER_KEYS.contentSecurityPolicy,
+    HEADER_KEYS.strictTransportSecurity,
+    HEADER_KEYS.permissionsPolicy,
   ];
 
   const headerKeys = new Set(Object.keys(headers));

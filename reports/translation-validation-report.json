@@ -1,8 +1,8 @@
 {
-  "timestamp": "2025-09-04T05:34:10.976Z",
+  "timestamp": "2025-09-28T13:52:44.255Z",
   "summary": {
-    "totalKeys": 391,
-    "validatedKeys": 391,
+    "totalKeys": 476,
+    "validatedKeys": 476,
     "issueCount": 2,
     "warningCount": 0,
     "errorCount": 0
@@ -10,13 +10,13 @@
   "statistics": {
     "coverage": {
       "en": {
-        "total": 391,
-        "translated": 391,
+        "total": 476,
+        "translated": 476,
         "percentage": "100.00"
       },
       "zh": {
-        "total": 391,
-        "translated": 391,
+        "total": 476,
+        "translated": 476,
         "percentage": "100.00"
       }
     },

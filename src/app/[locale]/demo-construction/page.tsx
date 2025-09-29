@@ -2,6 +2,8 @@ import type { Metadata } from 'next';
 import { UnderConstructionV2 } from '@/components/shared/under-construction-v2';
 import { COUNT_PAIR } from '@/constants';
 
+export const revalidate = 86400;
+
 export const metadata: Metadata = {
   title: '建设中页面演示 | Tucsenberg',
   description: '现代化建设中页面组件演示',

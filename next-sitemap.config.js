@@ -80,6 +80,6 @@ module.exports = {
         allow: '/',
       },
     ],
-    additionalSitemaps: ['https://tucsenberg.com/server-sitemap.xml'],
+    additionalSitemaps: [`${SITE_CONFIG.baseUrl}/server-sitemap.xml`],
   },
 };

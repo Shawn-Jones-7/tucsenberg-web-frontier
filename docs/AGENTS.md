@@ -1,3 +1,7 @@
+---
+type: "manual"
+---
+
 # AGENTS.md — 全局指南
 
 ## 0. 阅读须知

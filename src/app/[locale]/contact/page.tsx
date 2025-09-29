@@ -4,6 +4,8 @@ import { ContactForm } from '@/components/contact/contact-form';
 import { Card } from '@/components/ui/card';
 import { COUNT_PAIR } from '@/constants';
 
+export const dynamic = 'force-dynamic';
+
 interface ContactPageProps {
   params: Promise<{
     locale: string;

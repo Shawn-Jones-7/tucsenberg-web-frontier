@@ -141,7 +141,7 @@ async function processContactFormSubmission(
  * ```
  */
 export const contactFormAction: ServerAction<FormData, ContactFormResult> =
-  withErrorHandling(async (previousState, formData) => {
+  withErrorHandling(async (_previousState, formData) => {
     const startTime = performance.now();
 
     try {
@@ -236,7 +236,7 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
  * ```
  */
 export const exampleAction: ServerAction<FormData, { message: string }> =
-  withErrorHandling(async (previousState, formData) => {
+  withErrorHandling(async (_previousState, formData) => {
     // 验证表单数据
     const validation = validateFormData(formData, {
       message: {

@@ -90,6 +90,8 @@ vi.mock('lucide-react', () => ({
   ChevronLeft: MockIcon,
   ChevronRight: MockIcon,
   ChevronRightIcon: MockIcon,
+  ArrowLeft: MockIcon,
+  ArrowRight: MockIcon,
   Globe: MockIcon,
   Languages: MockIcon,
   Monitor: MockIcon,
@@ -1267,7 +1269,7 @@ globalThis.PerformanceObserver =
 
 // Mock environment variables - 使用vi.stubEnv而不是直接修改process.env
 vi.stubEnv('NODE_ENV', 'test');
-vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://tucsenberg.com');
+vi.stubEnv('NEXT_PUBLIC_BASE_URL', 'https://tucsenberg.com');
 vi.stubEnv('NEXT_PUBLIC_VERCEL_URL', 'tucsenberg.vercel.app');
 
 // Mock server-side environment variables for API testing
@@ -1294,7 +1296,7 @@ vi.mock('@t3-oss/env-nextjs', () => ({
     EMAIL_REPLY_TO: 'reply@example.com',
     CSP_REPORT_URI: 'https://example.com/csp-report',
     ADMIN_TOKEN: 'test-admin-token',
-    NEXT_PUBLIC_SITE_URL: 'https://tucsenberg.com',
+    NEXT_PUBLIC_BASE_URL: 'https://tucsenberg.com',
     NEXT_PUBLIC_VERCEL_URL: 'tucsenberg.vercel.app',
     WHATSAPP_ACCESS_TOKEN: 'test-whatsapp-token',
     WHATSAPP_PHONE_NUMBER_ID: 'test-phone-id',
@@ -1316,7 +1318,7 @@ vi.mock('@/lib/env', () => ({
     EMAIL_REPLY_TO: 'reply@example.com',
     CSP_REPORT_URI: 'https://example.com/csp-report',
     ADMIN_TOKEN: 'test-admin-token',
-    NEXT_PUBLIC_SITE_URL: 'https://tucsenberg.com',
+    NEXT_PUBLIC_BASE_URL: 'https://tucsenberg.com',
     NEXT_PUBLIC_VERCEL_URL: 'tucsenberg.vercel.app',
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: 'test-site-key-12345',
     NEXT_PUBLIC_TEST_MODE: false,

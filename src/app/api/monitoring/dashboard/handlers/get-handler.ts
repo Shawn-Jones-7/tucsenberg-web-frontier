@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { createCachedResponse } from '@/lib/api-cache-utils';
 import { logger } from '@/lib/logger';
 import {
   HOURS_2_IN_MS,
@@ -101,20 +102,26 @@ export function handleGetRequest(request: NextRequest) {
 
     // 如果指定了特定来源，过滤数据
     if (source && source !== 'all') {
-      return NextResponse.json({
-        success: true,
-        data: {
-          ...mockDashboardData,
-          source,
-          // 可以根据source过滤特定的监控数据
+      return createCachedResponse(
+        {
+          success: true,
+          data: {
+            ...mockDashboardData,
+            source,
+            // 可以根据source过滤特定的监控数据
+          },
         },
-      });
+        { maxAge: 60 },
+      );
     }
 
-    return NextResponse.json({
-      success: true,
-      data: mockDashboardData,
-    });
+    return createCachedResponse(
+      {
+        success: true,
+        data: mockDashboardData,
+      },
+      { maxAge: 60 },
+    );
   } catch (_error) {
     // 忽略错误变量
     logger.error('Failed to get monitoring dashboard data', {

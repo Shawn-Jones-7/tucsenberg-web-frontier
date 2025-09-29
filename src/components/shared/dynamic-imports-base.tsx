@@ -5,7 +5,8 @@
  *
  * 提供加载状态组件、高阶组件包装器等基础功能
  */
-import React, { Suspense } from 'react';
+import React, { Suspense, type ComponentType } from 'react';
+import dynamic from 'next/dynamic';
 import { logger } from '@/lib/logger';
 import { LoadingSpinner } from '@/components/loading-spinner';
 import { PERCENTAGE_FULL } from '@/constants';
@@ -207,6 +208,41 @@ export function withErrorBoundary<T extends object>(
       </DynamicComponentErrorBoundary>
     );
   };
+}
+
+interface StandardDynamicOptions {
+  ssr?: boolean;
+  loading?: () => React.ReactNode;
+}
+
+type DynamicLoader<TProps> = () => Promise<
+  ComponentType<TProps> | { default: ComponentType<TProps> }
+>;
+
+/**
+ * 标准化动态组件工厂
+ * Standard factory for dynamic imports with shared defaults
+ */
+export function createStandardDynamicComponent<TProps>(
+  loader: DynamicLoader<TProps>,
+  options: StandardDynamicOptions = {},
+) {
+  const { ssr = true, loading = MinimalLoadingFallback } = options;
+
+  return dynamic<TProps>(
+    async () => {
+      const resolved = await loader();
+      if ('default' in resolved) {
+        return resolved;
+      }
+
+      return { default: resolved };
+    },
+    {
+      ssr,
+      loading,
+    },
+  );
 }
 
 // ==================== 动态导入工具函数 ====================

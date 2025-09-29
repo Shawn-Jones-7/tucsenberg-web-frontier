@@ -1,6 +1,10 @@
-import { COUNT_PAIR, ZERO } from '@/constants';
-import { MAGIC_15 } from '@/constants/count';
-import { ALERT_SYSTEM_CONSTANTS } from '@/constants/performance-constants';
+import { COUNT_PAIR, MAGIC_15, ZERO } from '../constants';
+import { ALERT_SYSTEM_CONSTANTS } from '../constants/performance-constants';
+
+export type SecurityHeader = {
+  key: string;
+  value: string;
+};
 
 /**
  * Security configuration for the application
@@ -88,15 +92,33 @@ export function generateCSP(nonce?: string): string {
 /**
  * Security headers configuration
  */
-export function getSecurityHeaders(nonce?: string, testMode = false) {
+const SECURITY_HEADERS_DISABLED_FLAG = 'false';
+
+export function isSecurityHeadersEnabled(testMode = false): boolean {
+  if (testMode) {
+    return (
+      process.env.SECURITY_HEADERS_ENABLED !== SECURITY_HEADERS_DISABLED_FLAG
+    );
+  }
+
+  if (process.env.NODE_ENV === 'test') {
+    return (
+      process.env.SECURITY_HEADERS_ENABLED !== SECURITY_HEADERS_DISABLED_FLAG
+    );
+  }
+
+  return (
+    process.env.SECURITY_HEADERS_ENABLED !== SECURITY_HEADERS_DISABLED_FLAG
+  );
+}
+
+export function getSecurityHeaders(
+  nonce?: string,
+  testMode = false,
+): SecurityHeader[] {
   // Use process.env here to keep this module safe for Next config evaluation.
   // Runtime env validation lives in env.mjs, but importing it here would break next.config load.
-  const isSecurityEnabled =
-    testMode || process.env.NODE_ENV === 'test'
-      ? process.env.SECURITY_HEADERS_ENABLED !== 'false'
-      : process.env.SECURITY_HEADERS_ENABLED !== 'false';
-
-  if (!isSecurityEnabled) {
+  if (!isSecurityHeadersEnabled(testMode)) {
     return [];
   }
 
@@ -120,11 +142,6 @@ export function getSecurityHeaders(nonce?: string, testMode = false) {
     {
       key: 'Strict-Transport-Security',
       value: 'max-age=63072000; includeSubDomains; preload',
-    },
-    // XSS Protection (legacy, but still useful)
-    {
-      key: 'X-XSS-Protection',
-      value: '1; mode=block',
     },
     // Content Security Policy
     {

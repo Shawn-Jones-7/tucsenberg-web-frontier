@@ -30,8 +30,10 @@ describe('UIShowcasePage', () => {
     it('应该正确渲染UI Showcase页面', () => {
       render(<UIShowcasePage />);
 
-      // 验证UIShowcase组件被渲染
-      expect(screen.getByTestId('ui-showcase')).toBeInTheDocument();
+      // 验证页面标题被渲染
+      expect(
+        screen.getByText('UI Enhancement Components Showcase'),
+      ).toBeInTheDocument();
     });
 
     it('应该渲染正确的标题和描述', () => {
@@ -42,15 +44,18 @@ describe('UIShowcasePage', () => {
         screen.getByText('UI Enhancement Components Showcase'),
       ).toBeInTheDocument();
       expect(
-        screen.getByText('Demonstrating the newly implemented UI components'),
+        screen.getByText(
+          'Demonstrating the newly implemented UI components with PPR',
+        ),
       ).toBeInTheDocument();
     });
 
     it('应该渲染showcase内容', () => {
       render(<UIShowcasePage />);
 
-      // 验证showcase内容被渲染
-      expect(screen.getByTestId('showcase-content')).toBeInTheDocument();
+      // 验证组件概览卡片被渲染
+      expect(screen.getByText('Component Overview')).toBeInTheDocument();
+      expect(screen.getByText('✅ Available Components')).toBeInTheDocument();
     });
   });
 
@@ -61,7 +66,9 @@ describe('UIShowcasePage', () => {
       render(<UIShowcasePage />);
 
       // 验证页面正常渲染，说明元数据配置正确
-      expect(screen.getByTestId('ui-showcase')).toBeInTheDocument();
+      expect(
+        screen.getByText('UI Enhancement Components Showcase'),
+      ).toBeInTheDocument();
     });
   });
 
@@ -70,12 +77,11 @@ describe('UIShowcasePage', () => {
       render(<UIShowcasePage />);
 
       // 验证容器结构
-      const container = screen.getByTestId('ui-showcase');
+      const container = document.querySelector('.container');
       expect(container).toBeInTheDocument();
 
       // 验证内部结构
-      const innerContainer = container.querySelector('.container');
-      expect(innerContainer).toBeInTheDocument();
+      expect(container).toHaveClass('mx-auto', 'space-y-8', 'py-8');
     });
 
     it('应该有正确的标题层级', () => {
@@ -108,10 +114,10 @@ describe('UIShowcasePage', () => {
     it('应该渲染可访问的内容', () => {
       render(<UIShowcasePage />);
 
-      // 验证组件存在且可访问
-      const component = screen.getByTestId('ui-showcase');
-      expect(component).toBeInTheDocument();
-      expect(component).toBeVisible();
+      // 验证主要内容存在且可访问
+      const heading = screen.getByRole('heading', { level: 1 });
+      expect(heading).toBeInTheDocument();
+      expect(heading).toBeVisible();
     });
 
     it('应该有正确的语义结构', () => {
@@ -128,19 +134,21 @@ describe('UIShowcasePage', () => {
       render(<UIShowcasePage />);
 
       // 验证showcase内容存在
-      expect(screen.getByTestId('showcase-content')).toBeInTheDocument();
+      expect(screen.getByText('✅ Available Components')).toBeInTheDocument();
+      expect(screen.getByText('📊 Performance Impact')).toBeInTheDocument();
     });
 
     it('应该有正确的页面结构', () => {
       render(<UIShowcasePage />);
 
       // 验证页面有正确的容器结构
-      const showcase = screen.getByTestId('ui-showcase');
-      expect(showcase).toBeInTheDocument();
+      const container = document.querySelector('.container');
+      expect(container).toBeInTheDocument();
 
-      // 验证内容区域
-      const content = screen.getByTestId('showcase-content');
-      expect(content).toBeInTheDocument();
+      // 验证PPR信息卡片
+      expect(
+        screen.getByText('Partial Prerendering (PPR) Information'),
+      ).toBeInTheDocument();
     });
   });
 });

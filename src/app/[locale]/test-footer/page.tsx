@@ -1,10 +1,12 @@
+import type { FC } from 'react';
+
 /**
  * Footer Test Page
  *
  * Simple test page to verify footer component functionality.
  */
 
-import type { FC } from 'react';
+export const revalidate = 86400;
 
 const TestFooterPage: FC = () => {
   return (

@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import { createCachedResponse } from '@/lib/api-cache-utils';
 import { getAllPages, getAllPosts, getContentStats } from '@/lib/content';
 import { logger } from '@/lib/logger';
 
@@ -80,7 +81,7 @@ export function GET() {
       },
     };
 
-    return NextResponse.json(result);
+    return createCachedResponse(result, { maxAge: 300 });
   } catch (error) {
     logger.error('Content management system test failed', {
       error: error instanceof Error ? error.message : String(error),

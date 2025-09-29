@@ -4,7 +4,10 @@
 
 // 站点配置
 export const SITE_CONFIG = {
-  baseUrl: process.env['SITE_URL'] || 'https://tucsenberg.com',
+  baseUrl:
+    process.env['NEXT_PUBLIC_BASE_URL'] ||
+    process.env['NEXT_PUBLIC_SITE_URL'] ||
+    'https://tucsenberg.com',
   name: 'Tucsenberg Web Frontier',
   description: 'Modern B2B Enterprise Web Platform with Next.js 15',
 

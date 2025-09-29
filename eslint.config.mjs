@@ -684,6 +684,15 @@ export default [
     },
   },
 
+  // 🔧 Next.js配置文件特殊规则 - security.ts被next.config.ts使用，需要相对路径导入
+  {
+    name: 'nextjs-config-files',
+    files: ['src/config/security.ts'],
+    rules: {
+      'no-restricted-imports': 'off', // Next.js配置编译时路径别名不可用
+    },
+  },
+
   // 测试文件最终覆盖配置 - 确保测试文件规则优先级最高
   {
     name: 'test-files-final-override',
