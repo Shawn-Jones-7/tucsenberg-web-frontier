@@ -26,7 +26,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
@@ -65,7 +68,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
@@ -97,7 +103,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
@@ -136,7 +145,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
@@ -172,7 +184,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
@@ -198,7 +213,10 @@ jobs:
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 10.13.1
+
+      - name: 验证pnpm版本
+        run: pnpm --version
 
       - name: 设置Node.js
         uses: actions/setup-node@v4
