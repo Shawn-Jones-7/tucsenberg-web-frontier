@@ -15,6 +15,7 @@ describe('tech-stack-data', () => {
   describe('TechStackItem interface', () => {
     it('should have valid TechStackItem structure', () => {
       const item: TechStackItem = {
+        id: 'test-framework',
         name: 'Test Framework',
         version: '1.0.0',
         category: 'testing',

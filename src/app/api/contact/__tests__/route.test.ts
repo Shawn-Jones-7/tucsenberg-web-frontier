@@ -130,6 +130,8 @@ describe('Contact API Route', () => {
       );
       vi.mocked(validateFormData).mockResolvedValue({
         success: true,
+        error: null,
+        details: null,
         data: validFormData,
       });
 
@@ -295,6 +297,8 @@ describe('Contact API Route', () => {
       );
       vi.mocked(validateFormData).mockResolvedValue({
         success: true,
+        error: null,
+        details: null,
         data: validFormData,
       });
 

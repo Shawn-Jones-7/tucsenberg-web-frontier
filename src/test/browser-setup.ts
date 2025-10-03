@@ -226,7 +226,11 @@ export const browserTestUtils = {
         radiusY: 1,
         rotationAngle: 0,
         force: 1,
-      })) as Touch[],
+        pageX: touch.clientX,
+        pageY: touch.clientY,
+        screenX: touch.clientX,
+        screenY: touch.clientY,
+      })) as unknown as Touch[],
     });
   },
 };

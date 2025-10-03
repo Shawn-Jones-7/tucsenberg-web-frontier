@@ -337,10 +337,7 @@ describe('Airtable Error Handling Tests', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(
-        service as unknown as AirtableServicePrivate,
-        'initializeAirtable',
-      );
+      const initSpy = vi.spyOn(service as any, 'initializeAirtable');
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });
@@ -406,10 +403,7 @@ describe('Airtable Error Handling Tests', () => {
       const service = new AirtableServiceClass();
 
       // Mock initializeAirtable to prevent re-initialization
-      const initSpy = vi.spyOn(
-        service as unknown as AirtableServicePrivate,
-        'initializeAirtable',
-      );
+      const initSpy = vi.spyOn(service as any, 'initializeAirtable');
       initSpy.mockImplementation(async () => {
         // Do nothing - keep service unconfigured
       });

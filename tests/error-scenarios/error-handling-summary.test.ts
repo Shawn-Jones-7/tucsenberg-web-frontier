@@ -11,7 +11,7 @@ import {
   commonErrorScenarios,
   ErrorRecoveryTester,
   NetworkErrorSimulator,
-} from '@/tests/error-scenarios/setup';
+} from './setup';
 
 describe('Error Handling Framework Validation', () => {
   let networkSimulator: NetworkErrorSimulator;
@@ -45,14 +45,23 @@ describe('Error Handling Framework Validation', () => {
       expect(Array.isArray(commonErrorScenarios)).toBe(true);
       expect(commonErrorScenarios.length).toBeGreaterThan(0);
 
-      commonErrorScenarios.forEach((scenario) => {
-        expect(scenario).toHaveProperty('name');
-        expect(scenario).toHaveProperty('type');
-        expect(scenario).toHaveProperty('description');
-        expect(scenario).toHaveProperty('setup');
-        expect(scenario).toHaveProperty('cleanup');
-        expect(scenario).toHaveProperty('expectedBehavior');
-      });
+      commonErrorScenarios.forEach(
+        (scenario: {
+          name: string;
+          type: string;
+          description: string;
+          setup: () => void;
+          cleanup: () => void;
+          expectedBehavior: string;
+        }) => {
+          expect(scenario).toHaveProperty('name');
+          expect(scenario).toHaveProperty('type');
+          expect(scenario).toHaveProperty('description');
+          expect(scenario).toHaveProperty('setup');
+          expect(scenario).toHaveProperty('cleanup');
+          expect(scenario).toHaveProperty('expectedBehavior');
+        },
+      );
     });
   });
 
@@ -140,14 +149,18 @@ describe('Error Handling Framework Validation', () => {
 
   describe('Error Scenario Execution', () => {
     it('should execute common error scenarios', () => {
-      commonErrorScenarios.forEach((scenario) => {
-        expect(() => scenario.setup()).not.toThrow();
-        expect(() => scenario.cleanup()).not.toThrow();
-      });
+      commonErrorScenarios.forEach(
+        (scenario: { setup: () => void; cleanup: () => void }) => {
+          expect(() => scenario.setup()).not.toThrow();
+          expect(() => scenario.cleanup()).not.toThrow();
+        },
+      );
     });
 
     it('should handle scenario types correctly', () => {
-      const scenarioTypes = commonErrorScenarios.map((s) => s.type);
+      const scenarioTypes = commonErrorScenarios.map(
+        (s: { type: string }) => s.type,
+      );
       const expectedTypes = ['network', 'api'];
 
       expectedTypes.forEach((type) => {

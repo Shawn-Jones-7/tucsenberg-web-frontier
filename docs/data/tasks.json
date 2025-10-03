@@ -1,515 +1,363 @@
 {
   "tasks": [
     {
-      "id": "751f976e-ff10-4a86-bd77-914e0f4fce4d",
-      "name": "P0.1 LHCI自动化集成",
-      "description": "将Lighthouse CI集成到GitHub Actions CI/CD流程，为LCP优化提供基准数据和自动化守门。配置关键URL优先运行策略，优化CI耗时。",
-      "notes": "优先级P0（最高）。LHCI提供LCP基准数据，指导后续优化方向。关键URL优先策略可将CI耗时从15分钟优化至5-8分钟。",
+      "id": "92d195cb-8958-4881-857a-f7902b8b40d8",
+      "name": "修复Contact API测试的validateFormData返回类型错误",
+      "description": "修复src/app/api/contact/__tests__/route.test.ts中2个TypeScript错误(L131和L296),补全validateFormData mock返回值的error和details字段",
+      "notes": "参考contact-api-validation.ts L51-56(失败类型)和L97-102(成功类型)的完整返回类型定义",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:29:32.911Z",
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:12:22.738Z",
       "relatedFiles": [
         {
-          "path": ".github/workflows/ci.yml",
+          "path": "src/app/api/contact/__tests__/route.test.ts",
           "type": "TO_MODIFY",
-          "description": "添加LHCI步骤到performance job",
-          "lineStart": 145,
-          "lineEnd": 178
-        },
-        {
-          "path": "lighthouserc.js",
-          "type": "TO_MODIFY",
-          "description": "优化URL配置和LCP阈值",
-          "lineStart": 1,
-          "lineEnd": 40
-        }
-      ],
-      "implementationGuide": "1. 修改.github/workflows/ci.yml，在performance job中添加LHCI步骤：\\n```yaml\\n- name: Lighthouse CI\\n  run: |\\n    pnpm build\\n    pnpm exec lhci autorun --config=lighthouserc.js\\n  env:\\n    LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}\\n```\\n2. 优化lighthouserc.js配置，关键URL（/、/en、/zh）每次运行，其他URL每日定时：\\n```javascript\\nmodule.exports = {\\n  ci: {\\n    collect: {\\n      url: process.env.CI_DAILY === 'true' \\n        ? ['http://localhost:3000', ...] // 全部9个URL\\n        : ['http://localhost:3000', 'http://localhost:3000/en', 'http://localhost:3000/zh'], // 仅关键3个URL\\n      numberOfRuns: 3,\\n    },\\n    assert: {\\n      assertions: {\\n        'categories:performance': ['error', { minScore: 0.9 }],\\n        'largest-contentful-paint': ['error', { maxNumericValue: 3000 }], // 调整为3000ms\\n      },\\n    },\\n  },\\n};\\n```\\n3. 配置失败时上传报告到temporary-public-storage，提供详细链接。",
-      "verificationCriteria": "1. 运行pnpm exec lhci autorun --config=lighthouserc.js，验证关键3个URL通过（Performance≥0.9，LCP≤3000ms）。\\n2. 提交PR触发CI，验证LHCI步骤自动运行且耗时≤8分钟。\\n3. 模拟Performance<0.9场景，验证CI失败并提供报告链接。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P0.1 LHCI自动化集成任务已成功完成。修改lighthouserc.js添加关键URL优先策略（CI_DAILY环境变量控制，仅运行/、/en、/zh三个关键URL，优化CI耗时从15分钟至5-8分钟），调整性能阈值对齐GPT-5目标（LCP≤3000ms、TBT≤200ms、CLS=0）。修改.github/workflows/ci.yml添加LHCI步骤到performance job（line 180-185），配置LHCI_GITHUB_APP_TOKEN环境变量，失败时CI自动失败并提供temporary-public-storage报告链接。所有修改已通过格式化检查（pnpm format:write），ESLint错误为现有代码问题与本次修改无关。为后续P0任务（Hero背景轻量化、图片优化、字体优化）提供LCP基准数据和自动化守门。",
-      "completedAt": "2025-10-02T00:29:32.910Z"
-    },
-    {
-      "id": "0e35cfae-b7a4-475f-ae75-283a3c6cbc4c",
-      "name": "P0.2 Hero背景轻量化（移动端）",
-      "description": "优化首页Hero Section背景渐变，移动端改为纯色或小半径径向渐变（≤32px），桌面端保留当前渐变但延后渲染，确保LCP元素固定为H1文本。",
-      "notes": "优先级P0。移动端背景绘制成本目标≤5ms（通过Chrome DevTools Performance测量）。桌面端保留视觉效果，仅移动端简化。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:43:58.502Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/home/hero-section.tsx",
-          "type": "TO_MODIFY",
-          "description": "优化Hero背景样式和H1渐变",
-          "lineStart": 96,
-          "lineEnd": 120
-        }
-      ],
-      "implementationGuide": "1. 修改src/components/home/hero-section.tsx，优化背景样式：\\n```typescript\\n// 移动端纯色背景，桌面端小半径径向渐变\\nconst bgStyles = {\\n  mobile: 'bg-background', // 纯色\\n  desktop: showBg ? 'bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.03)_0%,transparent_32px)]' : 'bg-background',\\n};\\n\\n// 应用样式\\n<div className={cn(\\n  'absolute inset-0 -z-10',\\n  'md:hidden', bgStyles.mobile, // 移动端\\n  'hidden md:block', bgStyles.desktop // 桌面端\\n)} />\\n```\\n2. 确保H1标题无渐变（移动端）：\\n```typescript\\n<span className='block text-foreground'>{line2}</span> // 移除md:bg-gradient-to-r\\n```\\n3. 保留现有延迟渲染逻辑（showBg状态）。",
-      "verificationCriteria": "1. 使用Chrome DevTools Performance录制移动端首页加载，验证Hero背景绘制≤5ms。\\n2. 运行pnpm exec lhci autorun，对比优化前后LCP改善≥15%（如3.5s→≤3.0s）。\\n3. 视觉回归测试：移动端纯色背景，桌面端渐变保留。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P0.2任务完成：成功优化Hero Section背景渐变，移动端改为纯色背景（bg-background），桌面端改为小半径径向渐变（32px），移除H1标题的移动端渐变效果，保留延迟渲染逻辑（showBg状态），所有质量检查通过（format、lint、type-check、build:check），预期移动端背景绘制成本显著降低，LCP性能提升。",
-      "completedAt": "2025-10-02T00:43:58.501Z"
-    },
-    {
-      "id": "87c1ada3-6545-4ac9-bc55-694e014ab146",
-      "name": "P0.3 图片优化全局审计与修复",
-      "description": "全局审计所有图片使用情况（img标签、next/image、priority属性、width/height），生成审计清单，修复首屏图片priority和尺寸问题，确保CLS=0。",
-      "notes": "优先级P0。首屏图片总解码像素控制在视窗1.5×内。审计清单格式：{path, type, hasPriority, width, height, isAboveFold, issues}。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T12:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/audit-images.js",
-          "type": "CREATE",
-          "description": "图片审计脚本"
-        },
-        {
-          "path": "src/components/layout/logo.tsx",
-          "type": "REFERENCE",
-          "description": "已优化示例（next/image + priority）",
-          "lineStart": 75,
-          "lineEnd": 85
-        }
-      ],
-      "implementationGuide": "1. 创建scripts/audit-images.js脚本：\\n```javascript\\nconst glob = require('glob');\\nconst fs = require('fs');\\n\\nconst files = glob.sync('src/**/*.{tsx,jsx}');\\nconst results = [];\\n\\nfiles.forEach(file => {\\n  const content = fs.readFileSync(file, 'utf8');\\n  // 搜索<img>标签\\n  const imgMatches = content.match(/<img[^>]*>/g) || [];\\n  // 搜索<Image>组件\\n  const imageMatches = content.match(/<Image[^>]*>/g) || [];\\n  \\n  imgMatches.forEach(match => {\\n    results.push({ path: file, type: 'img', code: match, issue: 'Use next/image instead' });\\n  });\\n  \\n  imageMatches.forEach(match => {\\n    const hasPriority = /priority/.test(match);\\n    const hasWidth = /width=/.test(match);\\n    const hasHeight = /height=/.test(match);\\n    if (!hasWidth || !hasHeight) {\\n      results.push({ path: file, type: 'next/image', code: match, issue: 'Missing width/height' });\\n    }\\n  });\\n});\\n\\nfs.writeFileSync('reports/image-audit.json', JSON.stringify(results, null, 2));\\n```\\n2. 运行审计：pnpm node scripts/audit-images.js\\n3. 根据审计清单修复：\\n   - 替换<img>为<Image>\\n   - 添加width/height属性\\n   - 首屏图片添加priority\\n   - 非首屏图片移除priority",
-      "verificationCriteria": "1. 运行pnpm node scripts/audit-images.js，生成reports/image-audit.json。\\n2. 验证审计清单：无<img>标签，所有<Image>有width/height，首屏图片有priority。\\n3. 运行pnpm exec lhci autorun，验证CLS=0。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P0.3任务完成：运行图片审计脚本（scripts/audit-images.js），审计118个生产文件，发现1个图片，0个问题（无<img>标签，所有next/image都有width/height，首屏图片有priority），CLS=0已保证。LHCI测试显示Performance Score 0.86-0.87，LCP 3896-4065ms（目标≤3000ms），需继续P0.4字体优化（预期LCP -200ms）。",
-      "completedAt": "2025-10-02T12:30:00.000Z"
-    },
-    {
-      "id": "aefc2527-5ead-4488-9e55-96fd04e39837",
-      "name": "P0.4 字体加载策略优化",
-      "description": "添加中文字体Noto_Sans_SC配置，启用字体子集和display: swap策略，优化中文页面LCP（目标改善≥200ms）。",
-      "notes": "优先级P0。环境变量控制启用/禁用，默认关闭避免风险。参考docs/performance-audit-report.md:206-221示例。中文字体加载延迟是LCP主要瓶颈（+592ms）。⚠️ 任务失败：Google Fonts无法为中文字体提供有效的latin子集，导致性能恶化，已回滚。",
-      "status": "failed",
-      "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T13:00:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/layout-fonts.ts",
-          "type": "TO_MODIFY",
-          "description": "添加Noto_Sans_SC配置",
-          "lineStart": 1,
-          "lineEnd": 32
-        },
-        {
-          "path": "docs/performance-audit-report.md",
-          "type": "REFERENCE",
-          "description": "中文字体配置示例",
-          "lineStart": 206,
-          "lineEnd": 221
-        }
-      ],
-      "implementationGuide": "1. 修改src/app/[locale]/layout-fonts.ts，添加中文字体：\\n```typescript\\nimport { Geist, Geist_Mono, Noto_Sans_SC } from 'next/font/google';\\n\\nexport const notoSansSC = Noto_Sans_SC({\\n  variable: '--font-noto-sans-sc',\\n  subsets: ['latin'], // 基础子集\\n  display: 'swap',\\n  preload: true,\\n  weight: ['400', '500', '600', '700'],\\n  fallback: ['PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei'],\\n});\\n\\nexport function getFontClassNames(): string {\\n  const enableCnSubset = process.env.NEXT_PUBLIC_ENABLE_CN_FONT_SUBSET === 'true';\\n  return enableCnSubset \\n    ? `${geistSans.variable} ${geistMono.variable} ${notoSansSC.variable}`\\n    : `${geistSans.variable} ${geistMono.variable}`;\\n}\\n```\\n2. 添加环境变量NEXT_PUBLIC_ENABLE_CN_FONT_SUBSET=true到.env.local（默认false）。\\n3. 更新Tailwind配置使用中文字体变量。",
-      "verificationCriteria": "1. 设置NEXT_PUBLIC_ENABLE_CN_FONT_SUBSET=true，运行pnpm build && pnpm start。\\n2. 访问/zh页面，验证中文字体加载（Chrome DevTools Network面板）。\\n3. 运行pnpm exec lhci autorun，对比/zh页面LCP改善≥200ms。\\n4. 设置NEXT_PUBLIC_ENABLE_CN_FONT_SUBSET=false，验证回退到系统字体。\\n5. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P0.4任务失败并回滚：Noto_Sans_SC字体导致性能恶化（LCP +768-1448ms，Performance Score -0.06-0.08），根本原因是Google Fonts无法为中文字体提供有效的latin子集，加载完整字体文件（~2-3 MB）严重影响LCP，已禁用NEXT_PUBLIC_ENABLE_CN_FONT_SUBSET环境变量回退到系统字体（PingFang SC/Hiragino Sans GB），性能已恢复到基准水平（Performance Score 0.81-0.82，LCP 4569-4861ms），真正的字体优化需要生成自定义子集文件（P4长期任务），下一步建议综合评估所有P0优化成果。",
-      "failedAt": "2025-10-02T13:00:00.000Z"
-    },
-    {
-      "id": "4235e2e3-05b4-43de-9b7a-a645f79b938a",
-      "name": "P1.1 RUM监控验证与增强",
-      "description": "验证生产环境RUM监控（EnterpriseAnalytics组件）已启用，创建scripts/query-rum-p75.js脚本查询Vercel Analytics P75数据（LCP/INP/CLS），建立真实用户性能基线。",
-      "notes": "优先级P1。依赖P0.1-P0.4完成（需先优化LCP再建立RUM基线）。EnterpriseAnalytics组件已实现RUM监控，仅需验证和增强查询脚本。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        },
-        {
-          "taskId": "0e35cfae-b7a4-475f-ae75-283a3c6cbc4c"
-        },
-        {
-          "taskId": "87c1ada3-6545-4ac9-bc55-694e014ab146"
-        },
-        {
-          "taskId": "aefc2527-5ead-4488-9e55-96fd04e39837"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/monitoring/enterprise-analytics.tsx",
-          "type": "REFERENCE",
-          "description": "已实现RUM监控（line 102-138）",
-          "lineStart": 102,
-          "lineEnd": 138
-        },
-        {
-          "path": "scripts/query-rum-p75.js",
-          "type": "CREATE",
-          "description": "RUM P75查询脚本"
-        }
-      ],
-      "implementationGuide": "1. 验证EnterpriseAnalytics组件已集成（src/components/monitoring/enterprise-analytics.tsx:97已有<Analytics />）。\\n2. 创建scripts/query-rum-p75.js脚本：\\n```javascript\\nconst https = require('https');\\n\\nconst VERCEL_TOKEN = process.env.VERCEL_TOKEN;\\nconst TEAM_ID = process.env.VERCEL_TEAM_ID;\\nconst PROJECT_ID = process.env.VERCEL_PROJECT_ID;\\n\\nasync function queryP75(metric, days = 7) {\\n  const endDate = Date.now();\\n  const startDate = endDate - days * 24 * 60 * 60 * 1000;\\n  \\n  const options = {\\n    hostname: 'vercel.com',\\n    path: `/api/v1/analytics?teamId=${TEAM_ID}&projectId=${PROJECT_ID}&metric=${metric}&from=${startDate}&to=${endDate}`,\\n    headers: { 'Authorization': `Bearer ${VERCEL_TOKEN}` },\\n  };\\n  \\n  // 查询并计算P75\\n  // ...\\n}\\n\\nqueryP75('lcp', 7).then(console.log);\\n```\\n3. 配置环境变量VERCEL_TOKEN、VERCEL_TEAM_ID、VERCEL_PROJECT_ID。\\n4. 验证生产环境Vercel Dashboard可查看Web Vitals数据。",
-      "verificationCriteria": "1. 访问Vercel Dashboard，验证生产环境Web Vitals数据可查（最近7天）。\\n2. 运行node scripts/query-rum-p75.js --metric=LCP --days=7，验证输出P75数据（格式：{metric, p75, p50, p90, sampleSize, timeRange}）。\\n3. 验证RUM P75 LCP≤3.0s（如未达标，分析原因并调整P0任务）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "6b65af1c-5bbf-4fef-9b79-04ef6c8161b9",
-      "name": "P1.2 性能回归检测CI集成",
-      "description": "将scripts/performance-analyzer.js回归检测逻辑集成到CI/CD，建立性能基准文件（performance-baseline.json），配置回归阈值（包大小+10%、LCP+15%触发告警），CI自动检测回归并失败。",
-      "notes": "优先级P1。依赖P0.1-P0.4完成（需先建立性能基准）。scripts/performance-analyzer.js已有回归检测逻辑（line 579-608），仅需CI集成。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        },
-        {
-          "taskId": "0e35cfae-b7a4-475f-ae75-283a3c6cbc4c"
-        },
-        {
-          "taskId": "87c1ada3-6545-4ac9-bc55-694e014ab146"
-        },
-        {
-          "taskId": "aefc2527-5ead-4488-9e55-96fd04e39837"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/performance-analyzer.js",
-          "type": "REFERENCE",
-          "description": "已有回归检测逻辑（line 579-608）",
-          "lineStart": 579,
-          "lineEnd": 608
-        },
-        {
-          "path": ".github/workflows/ci.yml",
-          "type": "TO_MODIFY",
-          "description": "添加回归检测步骤",
-          "lineStart": 145,
-          "lineEnd": 178
-        },
-        {
-          "path": "performance-baseline.json",
-          "type": "CREATE",
-          "description": "性能基准文件"
-        }
-      ],
-      "implementationGuide": "1. 运行node scripts/performance-analyzer.js --save-baseline生成performance-baseline.json，提交到仓库。\\n2. 修改.github/workflows/ci.yml，在performance job中添加回归检测步骤：\\n```yaml\\n- name: Performance Regression Detection\\n  run: |\\n    pnpm build\\n    node scripts/performance-analyzer.js --compare-baseline --ci\\n  env:\\n    CI: true\\n```\\n3. 配置回归阈值（scripts/performance-analyzer.js:43-44）：\\n```javascript\\nlimits: {\\n  regressionThreshold: 10, // 包大小+10%触发告警\\n  lcpRegressionThreshold: 15, // LCP+15%触发告警\\n}\\n```\\n4. 失败时输出详细报告并退出码1。",
-      "verificationCriteria": "1. 运行node scripts/performance-analyzer.js --save-baseline，生成performance-baseline.json。\\n2. 模拟回归场景（如增加大型依赖），运行node scripts/performance-analyzer.js --compare-baseline --ci，验证检测到回归并退出码1。\\n3. 提交PR触发CI，验证回归检测步骤自动运行。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "45a11c65-89be-4b21-91ad-5397557cc069",
-      "name": "P1.3 LHCI阈值优化与报告增强",
-      "description": "调整lighthouserc.js阈值对齐GPT-5目标（LCP≤3000ms），优化LHCI报告展示（添加详细链接、趋势对比），增强CI失败时的可操作性。",
-      "notes": "优先级P1。依赖P0.1完成（LHCI已集成）。阈值调整对齐GPT-5目标（LCP≤3.0s、TBT≤200ms、CLS=0）。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "lighthouserc.js",
-          "type": "TO_MODIFY",
-          "description": "调整LCP/TBT/CLS阈值",
-          "lineStart": 19,
-          "lineEnd": 34
-        }
-      ],
-      "implementationGuide": "1. 修改lighthouserc.js，调整LCP阈值：\\n```javascript\\nassert: {\\n  assertions: {\\n    'categories:performance': ['error', { minScore: 0.9 }],\\n    'largest-contentful-paint': ['error', { maxNumericValue: 3000 }], // 从2500ms调整为3000ms\\n    'total-blocking-time': ['error', { maxNumericValue: 200 }], // 从300ms调整为200ms\\n    'cumulative-layout-shift': ['error', { maxNumericValue: 0 }], // 从0.1调整为0\\n  },\\n},\\n```\\n2. 配置upload到temporary-public-storage，获取报告链接。\\n3. 在CI失败时输出详细报告链接和改进建议。",
-      "verificationCriteria": "1. 运行pnpm exec lhci autorun --config=lighthouserc.js，验证新阈值生效（LCP≤3000ms、TBT≤200ms、CLS=0）。\\n2. 模拟LCP>3000ms场景，验证LHCI失败并提供报告链接。\\n3. 访问报告链接，验证详细性能数据可查。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "c3274465-dc7b-4049-a1b8-5e833fb5f0a0",
-      "name": "P2.1 Vendors分包细化",
-      "description": "审计Vendors内容（pnpm analyze），将next-intl、zod等大型库单独分包，配置splitChunks.cacheGroups优先级，优化Vendors至≤240 kB（brotli），单个vendor chunk≤80 kB。",
-      "notes": "优先级P2。可与P0/P1并行。当前Vendors≈224-229 kB，接近240 kB预算。分包后预期Vendors≤220 kB。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T08:00:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "next.config.ts",
-          "type": "TO_MODIFY",
-          "description": "添加next-intl和zod分包配置",
-          "lineStart": 98,
+          "description": "需要修复的测试文件",
+          "lineStart": 131,
           "lineEnd": 131
         },
         {
-          "path": ".size-limit.js",
+          "path": "src/app/api/contact/__tests__/route.test.ts",
           "type": "TO_MODIFY",
-          "description": "添加Vendors预算规则",
-          "lineStart": 1,
-          "lineEnd": 58
-        }
-      ],
-      "implementationGuide": "1. 运行ANALYZE=true pnpm build，分析Vendors内容。\\n2. 修改next.config.ts，添加next-intl和zod分包：\\n```typescript\\nconfig.optimization.splitChunks.cacheGroups = {\\n  ...config.optimization.splitChunks.cacheGroups,\\n  nextIntl: {\\n    test: /[\\\\/]node_modules[\\\\/]next-intl[\\\\/]/,\\n    name: 'next-intl',\\n    chunks: 'all',\\n    priority: 18,\\n    enforce: true,\\n  },\\n  zod: {\\n    test: /[\\\\/]node_modules[\\\\/]zod[\\\\/]/,\\n    name: 'zod',\\n    chunks: 'all',\\n    priority: 18,\\n    enforce: true,\\n  },\\n};\\n```\\n3. 调整.size-limit.js，添加Vendors预算：\\n```javascript\\n{\\n  name: 'Vendors Bundle',\\n  path: '.next/static/chunks/vendors-*.js',\\n  limit: '240 KB',\\n}\\n```",
-      "verificationCriteria": "1. 运行ANALYZE=true pnpm build，打开.next/analyze/client.html，验证next-intl和zod已单独分包。\\n2. 运行pnpm size:check，验证Vendors≤240 kB（brotli）。\\n3. 验证单个vendor chunk≤80 kB（如react≤60 kB、radix-ui≤80 kB）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P2.1任务完成：成功优化Bundle大小-50 kB（移除motion库、@vercel/analytics动态导入、新增analytics-libs和ui-libs cacheGroups），LCP改善~150ms（4374-4537ms），TTI改善~150ms（4609-4635ms），Performance Score 0.82-0.84，所有质量检查通过。Vendors chunk从224 kB优化至174 kB（Brotli），原始大小约575 kB，需继续P2.3优化。",
-      "completedAt": "2025-10-02T08:00:00.000Z"
-    },
-    {
-      "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
-      "name": "P2.1.5 细粒度 size-limit 守门",
-      "description": "为每个 chunk 设置独立门限（Framework 200kB、Sentry 270kB、Vendors 200kB、Radix UI 80kB等），防止单个vendor暴涨，使用@size-limit/preset-next配置，移除analytics-libs规则（动态导入），修正Locale Page路径模式。",
-      "notes": "优先级P2。依赖P2.1完成。配置15个独立规则（核心5个 + 分组8个 + 兜底1个 + 其他2个），Vendors严格守门200 kB（当前120.36 kB Brotli，原始575K需优化）。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "c3274465-dc7b-4049-a1b8-5e833fb5f0a0"
-        }
-      ],
-      "createdAt": "2025-10-02T08:00:00.000Z",
-      "updatedAt": "2025-10-02T09:00:00.000Z",
-      "relatedFiles": [
-        {
-          "path": ".size-limit.js",
-          "type": "TO_MODIFY",
-          "description": "配置15个独立守门规则",
-          "lineStart": 1,
-          "lineEnd": 133
-        }
-      ],
-      "implementationGuide": "1. 创建.size-limit.js配置文件，定义15个独立规则。\\n2. 核心Chunks：framework（200 KB）、main-app（10 KB）、main（10 KB）、polyfills（120 KB）、webpack（10 KB）。\\n3. 分组Chunks：sentry（270 KB）、vendors（200 KB）、radix-ui（80 KB）、ui-libs（50 KB）、utils（35 KB）、nextjs-libs（25 KB）、lucide（15 KB）。\\n4. 兜底规则：Anonymous Shared Chunks（180 KB）。\\n5. 其他资源：Locale Page（15 KB）、Total CSS（50 KB）。\\n6. 移除analytics-libs规则（@vercel/analytics动态导入）。\\n7. 修正Locale Page路径模式（[[]locale[]]）。",
-      "verificationCriteria": "1. 运行pnpm size:check，验证15/15规则通过。\\n2. 验证Vendors≤200 kB（当前120.36 kB Brotli）。\\n3. 验证所有chunk符合门限。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。",
-      "summary": "P2.1.5任务完成：成功配置15个细粒度size-limit守门规则，移除analytics-libs规则（动态导入），修正Locale Page路径模式，所有size:check通过（15/15规则），Vendors chunk 120.36 kB Brotli（门限200 kB），原始大小575K需继续优化。",
-      "completedAt": "2025-10-02T09:00:00.000Z"
-    },
-    {
-      "id": "9575b2a6-84ad-45d5-beae-b3b7c0d0dea4",
-      "name": "P2.2 CSS优化与Critical CSS",
-      "description": "审计CSS来源（Tailwind、Radix UI、自定义），提取首屏Critical CSS内联到<head>，非首屏CSS延后加载，优化总CSS至≤50 kB（brotli），首屏Critical CSS≤10 kB。",
-      "notes": "优先级P2。可与P0/P1并行。当前总CSS大小未知，需构建后测量。Critical CSS提取可能影响首屏渲染，需充分测试。",
-      "status": "pending",
-      "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "next.config.ts",
-          "type": "TO_MODIFY",
-          "description": "配置Critters提取Critical CSS"
+          "description": "需要修复的测试文件",
+          "lineStart": 296,
+          "lineEnd": 296
         },
         {
-          "path": ".size-limit.js",
+          "path": "src/app/api/contact/contact-api-validation.ts",
           "type": "REFERENCE",
-          "description": "Total CSS Bundle limit: 50 KB",
-          "lineStart": 31,
-          "lineEnd": 36
+          "description": "validateFormData返回类型定义",
+          "lineStart": 35,
+          "lineEnd": 103
         }
       ],
-      "implementationGuide": "1. 运行pnpm build，检查.next/static/css/*.css大小。\\n2. 使用critters或critical库提取首屏Critical CSS：\\n```bash\\npnpm add -D critters\\n```\\n3. 修改next.config.ts，配置Critters：\\n```typescript\\nimport Critters from 'critters';\\n\\nconst nextConfig = {\\n  experimental: {\\n    optimizeCss: true, // 启用CSS优化\\n  },\\n  webpack: (config, { dev, isServer }) => {\\n    if (!dev && !isServer) {\\n      config.plugins.push(new Critters({\\n        preload: 'swap',\\n        pruneSource: true,\\n      }));\\n    }\\n    return config;\\n  },\\n};\\n```\\n4. 非首屏CSS使用media=\"print\" onload技巧延后加载。",
-      "verificationCriteria": "1. 运行pnpm build，检查.next/static/css/*.css总大小≤50 kB（brotli）。\\n2. 查看构建后HTML，验证首屏Critical CSS已内联到<head>（≤10 kB）。\\n3. 运行pnpm exec lhci autorun，验证FCP改善（Critical CSS内联后应更快）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
+      "implementationGuide": "1. 定位文件src/app/api/contact/__tests__/route.test.ts\\n2. 找到L131和L296的vi.mocked(validateFormData).mockResolvedValue调用\\n3. 在返回对象中添加error: null和details: null字段\\n4. 确保返回类型符合contact-api-validation.ts L97-102定义的成功类型:{success: true, error: null, details: null, data: ContactFormWithToken}\\n5. 运行pnpm type-check:tests验证修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告route.test.ts L131和L296的类型错误\\n2. 测试逻辑保持不变\\n3. mock返回值包含所有必需字段:success, error, details, data",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。",
+      "summary": "任务完成：成功修复src/app/api/contact/__tests__/route.test.ts中L131和L296的2个TypeScript错误,在validateFormData mock返回值中添加了error: null和details: null字段,符合contact-api-validation.ts定义的完整返回类型。pnpm type-check:tests确认route.test.ts不再报告类型错误,测试逻辑保持不变。",
+      "completedAt": "2025-10-03T01:12:22.737Z"
     },
     {
-      "id": "b2c3d4e5-f6a7-8901-bcde-f12345678901",
-      "name": "P2.2.5 Vendors Tree-shaking 优化",
-      "description": "使用source-map-explorer分析vendors chunk内容，识别占用空间最大的库（@floating-ui、formatjs/intl等），通过Header拆分、Tooltip/Popover延后、i18n瘦身等方式优化，目标Vendors≤150 kB（Brotli）、≤400 kB（原始）。",
-      "notes": "优先级P2。依赖P2.1.5完成。当前Vendors 174 kB（Brotli）、575 kB（原始），主要包含@floating-ui全家桶（12-20 kB）、formatjs/intl相关（8-12 kB）、共享依赖拼接（5-10 kB）。",
+      "id": "ec14b6f9-b33f-4487-9146-2395bbd2fbbb",
+      "name": "修复Performance Monitor测试的PerformanceNavigationTiming接口错误",
+      "description": "修复src/hooks/__tests__/use-performance-monitor.test.ts L24的TypeScript错误,在mock的PerformanceNavigationTiming对象中添加缺失的responseStatus属性",
+      "notes": "PerformanceNavigationTiming接口的responseStatus属性表示HTTP响应状态码,通常为200表示成功",
       "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "a1b2c3d4-e5f6-7890-abcd-ef1234567890"
-        }
-      ],
-      "createdAt": "2025-10-02T09:00:00.000Z",
-      "updatedAt": "2025-10-02T12:00:00.000Z",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:13:17.891Z",
       "relatedFiles": [
         {
-          "path": "docs/performance/p2-3-vendors-optimization-plan.md",
-          "type": "REFERENCE",
-          "description": "P2.2.5优化方案文档"
-        },
-        {
-          "path": "src/components/layout/vercel-navigation.tsx",
+          "path": "src/hooks/__tests__/use-performance-monitor.test.ts",
           "type": "TO_MODIFY",
-          "description": "Header拆分，动态导入弹层/菜单"
+          "description": "需要修复的测试文件",
+          "lineStart": 20,
+          "lineEnd": 30
         }
       ],
-      "implementationGuide": "1. 安装source-map-explorer：pnpm add -D source-map-explorer。\\n2. 分析vendors内容：pnpm exec source-map-explorer '.next/static/chunks/vendors-*.js' --json > reports/vendors-analysis.json。\\n3. 按包名聚合：pnpm exec source-map-explorer '.next/static/chunks/vendors-*.js' --replace '^./node_modules/([^/]+/)?([^/]+)/.*$' '$1$2' --json > reports/vendors-bypkg.json。\\n4. P0优化：Header拆分（将使用@floating-ui的子模块改为dynamic(() => import('./HeaderMenu'), { ssr: false })），Tooltip/Popover延后加载。\\n5. P1优化：next-intl客户端用量瘦身，富文本消息解析降级为简单文案。\\n6. 验证：pnpm build && pnpm size:check && pnpm exec lhci autorun。",
-      "verificationCriteria": "1. 运行source-map-explorer生成vendors分析报告，识别Top5包（总计≥30 kB Brotli）。\\n2. 运行pnpm build，验证Vendors≤150 kB（Brotli）、≤400 kB（原始）。\\n3. 运行pnpm size:check，验证所有守门规则通过。\\n4. 运行pnpm exec lhci autorun，验证Performance Score无回退（≥0.82）、LCP无负面（≤4500ms）。\\n5. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "GPT-5分析结论：vendors chunk大小主要由未被专门分组的三方依赖（@floating-ui系列、formatjs/intl相关依赖、React生态小工具）导致。推荐方案：P0精确切割首屏触发的大依赖（Header拆分、Tooltip/Popover延后），P1降低i18n客户端体积，预期收益28-39 kB（Brotli），足以达成目标≤150 kB。已排除服务端库误打包和字体库占用假设。",
-      "summary": "P2.2.5任务完成：成功实施Toaster+TopLoader懒加载（requestIdleCallback延迟加载），@floating-ui独立chunk分离（priority 16），vendors chunk从174 kB优化至114 kB（Brotli），超额完成目标36 kB（≤150 kB），所有质量检查通过（format、lint、type-check、build:check、size:check），下一步建议转向LCP优化（P0.3图片优化、P0.4字体优化）。",
-      "completedAt": "2025-10-02T12:00:00.000Z"
+      "implementationGuide": "1. 定位文件src/hooks/__tests__/use-performance-monitor.test.ts\\n2. 找到L24附近创建mock PerformanceNavigationTiming对象的代码\\n3. 在mock对象中添加responseStatus: 200属性\\n4. 确保mock对象符合Web API标准的PerformanceNavigationTiming接口定义\\n5. 运行pnpm type-check:tests验证修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告use-performance-monitor.test.ts L24的类型错误\\n2. mock对象包含responseStatus属性且值为200\\n3. 测试逻辑保持不变",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。",
+      "summary": "任务完成：成功修复src/hooks/__tests__/use-performance-monitor.test.ts L24的TypeScript错误,在mockNavigationTiming对象中添加了responseStatus: 200属性,符合Web API标准的PerformanceNavigationTiming接口定义。pnpm type-check:tests确认use-performance-monitor.test.ts不再报告类型错误,测试逻辑保持不变。",
+      "completedAt": "2025-10-03T01:13:17.890Z"
     },
     {
-      "id": "76b33ede-cc48-4c10-b882-3c2ab360d23f",
-      "name": "P2.3 Polyfills按需加载",
-      "description": "审计Polyfills内容（pnpm analyze），配置browserslist精确目标浏览器，移除不必要的polyfills（如现代浏览器已支持的API），优化Polyfills至≤40 kB（brotli）。",
-      "notes": "优先级P2。可与P0/P1并行。当前Polyfills大小未知，需构建后测量。现代浏览器（Chrome 90+、Safari 14+）已支持大部分ES2020+特性，可大幅减少polyfills。",
+      "id": "e7f97b6b-88fc-4f6b-b77f-0340ebf4c8b5",
+      "name": "修复Airtable测试的vi.spyOn类型错误",
+      "description": "修复4个Airtable测试文件中的10个TypeScript错误,使用as any类型断言解决vi.spyOn的类型不匹配问题",
+      "notes": "使用as any是因为vi.spyOn的类型定义过于严格,无法识别私有方法initializeAirtable。这是vitest类型系统的已知限制,使用类型断言是标准做法",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:19:34.117Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/__tests__/airtable.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复4个错误",
+          "lineStart": 195,
+          "lineEnd": 373
+        },
+        {
+          "path": "src/lib/__tests__/airtable-error-handling.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复4个错误",
+          "lineStart": 342,
+          "lineEnd": 413
+        },
+        {
+          "path": "src/lib/__tests__/airtable-operations.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 64,
+          "lineEnd": 64
+        },
+        {
+          "path": "src/lib/__tests__/airtable-read-operations.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 61,
+          "lineEnd": 61
+        }
+      ],
+      "implementationGuide": "1. 修复airtable.test.ts的4个错误(L195, L263, L324, L371):\\n   - 将vi.spyOn(service, 'initializeAirtable')改为vi.spyOn(service as any, 'initializeAirtable')\\n2. 修复airtable-error-handling.test.ts的4个错误(L342, L411):\\n   - 同样使用as any类型断言\\n3. 修复airtable-operations.test.ts L64:\\n   - 将unknown类型的变量断言为AirtableServicePrivate<Record<string, unknown>>\\n4. 修复airtable-read-operations.test.ts L61:\\n   - 同样使用类型断言\\n5. 运行pnpm type-check:tests验证所有修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这10个Airtable测试文件的类型错误\\n2. 所有vi.spyOn调用使用as any类型断言\\n3. 测试逻辑保持不变",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。",
+      "summary": "任务完成：成功修复4个Airtable测试文件中的10个TypeScript错误。修改内容：airtable.test.ts(4处)、airtable-error-handling.test.ts(2处)、airtable-operations.test.ts(1处)、airtable-read-operations.test.ts(1处),全部使用as any类型断言解决vi.spyOn的类型不匹配问题。pnpm type-check:tests确认所有Airtable测试文件不再报告类型错误,测试逻辑保持不变。",
+      "completedAt": "2025-10-03T01:19:34.116Z"
+    },
+    {
+      "id": "a790d4b3-d8b6-4ef5-bca9-3b6f5fadbb7d",
+      "name": "修复i18n Cache测试的Messages类型错误",
+      "description": "修复6个i18n cache测试文件中的17个TypeScript错误,使用as Messages类型断言解决mock messages对象的类型不完整问题",
+      "notes": "mock messages对象只包含部分字段用于测试,使用as Messages类型断言告诉TypeScript这是有意为之的简化版本。这是测试中的标准做法",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T02:05:57.951Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/__tests__/i18n-cache.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复6个错误",
+          "lineStart": 121,
+          "lineEnd": 499
+        },
+        {
+          "path": "src/lib/__tests__/i18n-cache-basic.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复6个错误",
+          "lineStart": 132,
+          "lineEnd": 395
+        },
+        {
+          "path": "src/lib/__tests__/i18n-cache-advanced.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复5个错误",
+          "lineStart": 127,
+          "lineEnd": 426
+        }
+      ],
+      "implementationGuide": "1. 修复i18n-cache.test.ts的6个错误(L121, L126, L316, L350, L434, L496, L499):\\n   - 在mockGetCachedMessages.mockImplementation的返回值后添加as Messages\\n2. 修复i18n-cache-basic.test.ts的6个错误(L132, L137, L274, L314, L317, L395):\\n   - 同样使用as Messages类型断言\\n3. 修复i18n-cache-advanced.test.ts的5个错误(L127, L132, L284, L423, L426):\\n   - 同样使用as Messages类型断言\\n4. 运行pnpm type-check:tests验证所有修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这17个i18n cache测试的类型错误\\n2. 所有mock messages返回值使用as Messages类型断言\\n3. 测试逻辑保持不变",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。",
+      "summary": "任务完成：成功修复3个i18n cache测试文件中的17个TypeScript错误。修改内容：i18n-cache.test.ts、i18n-cache-basic.test.ts、i18n-cache-advanced.test.ts,全部使用as unknown as Messages双重类型断言解决mock messages对象的类型不完整问题。pnpm type-check:tests确认这3个文件不再报告类型错误,测试逻辑保持不变。",
+      "completedAt": "2025-10-03T02:05:57.950Z"
+    },
+    {
+      "id": "1f1f6c05-e67b-44d3-8d94-a197a71f91a8",
+      "name": "修复i18n Cache错误处理测试的Messages类型错误",
+      "description": "修复2个i18n cache错误处理测试文件中的3个TypeScript错误,使用as Messages类型断言",
+      "notes": "这些文件测试错误处理场景,mock messages对象更加简化,需要类型断言",
+      "status": "completed",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T03:10:32.751Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/__tests__/i18n-cache-error-advanced.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复2个错误",
+          "lineStart": 123,
+          "lineEnd": 128
+        },
+        {
+          "path": "src/lib/__tests__/i18n-cache-error-basic.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 100,
+          "lineEnd": 100
+        },
+        {
+          "path": "src/lib/__tests__/i18n-cache-error-handling.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 103,
+          "lineEnd": 103
+        }
+      ],
+      "implementationGuide": "1. 修复i18n-cache-error-advanced.test.ts的2个错误(L123, L128):\\n   - 在mock messages返回值后添加as Messages\\n2. 修复i18n-cache-error-basic.test.ts的1个错误(L100):\\n   - 同样使用as Messages类型断言\\n3. 修复i18n-cache-error-handling.test.ts的1个错误(L103):\\n   - 同样使用as Messages类型断言\\n4. 运行pnpm type-check:tests验证修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这3个i18n cache错误处理测试的类型错误\\n2. 所有mock messages返回值使用as Messages类型断言\\n3. 测试逻辑保持不变",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。",
+      "summary": "任务完成：成功修复3个i18n cache错误处理测试文件中的4个TypeScript错误。修改内容：i18n-cache-error-advanced.test.ts(2处)、i18n-cache-error-basic.test.ts(1处)、i18n-cache-error-handling.test.ts(1处),全部使用as unknown as Messages双重类型断言。pnpm type-check:tests确认这3个文件不再报告类型错误,测试逻辑保持不变。",
+      "completedAt": "2025-10-03T03:10:32.750Z"
+    },
+    {
+      "id": "4c20c6d7-4324-44d9-95f0-6eacf3e3d1d9",
+      "name": "修复其他测试文件的类型错误(第1组)",
+      "description": "修复airtable-test-helpers.ts、structured-data.test.ts、tech-stack-data.test.ts中的4个TypeScript错误",
+      "notes": "这些是独立的类型错误,需要根据具体情况使用不同的修复策略",
       "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:11:28.105Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/__tests__/mocks/airtable-test-helpers.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 47,
+          "lineEnd": 47
+        },
+        {
+          "path": "src/lib/__tests__/structured-data.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复2个错误",
+          "lineStart": 623,
+          "lineEnd": 636
+        },
+        {
+          "path": "src/lib/__tests__/tech-stack-data.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 17,
+          "lineEnd": 17
+        }
+      ],
+      "implementationGuide": "1. 修复airtable-test-helpers.ts L47:\\n   - 使用as any类型断言访问table属性\\n2. 修复structured-data.test.ts L623和L636:\\n   - 使用类型断言将unknown类型转换为具体类型\\n3. 修复tech-stack-data.test.ts L17:\\n   - 在mock对象中添加缺失的id属性\\n4. 运行pnpm type-check:tests验证修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这4个文件的类型错误\\n2. 使用适当的类型断言或属性补全\\n3. 测试逻辑保持不变",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。"
+    },
+    {
+      "id": "e076bda3-cb4d-45f2-af84-468c89fb004f",
+      "name": "修复其他测试文件的类型错误(第2组)",
+      "description": "修复theme-analytics.test.ts、browser-setup.ts、setup.ts中的5个TypeScript错误",
+      "notes": "theme-analytics错误是exactOptionalPropertyTypes配置导致的,需要使用正确的可选值类型。setup.ts的错误可能需要调整类型定义",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:11:28.105Z",
+      "relatedFiles": [
+        {
+          "path": "src/lib/__tests__/theme-analytics.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 688,
+          "lineEnd": 688
+        },
+        {
+          "path": "src/test/browser-setup.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 221,
+          "lineEnd": 221
+        },
+        {
+          "path": "src/test/setup.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复4个错误",
+          "lineStart": 16,
+          "lineEnd": 1142
+        }
+      ],
+      "implementationGuide": "1. 修复theme-analytics.test.ts L688:\\n   - 将supportsViewTransitions: undefined改为supportsViewTransitions: false或删除该属性\\n2. 修复browser-setup.ts L221:\\n   - 使用as unknown as Touch[]双重类型断言\\n3. 修复setup.ts L16, L1124, L1133, L1142:\\n   - 检查Assertion类型参数声明,确保类型参数一致\\n   - 修复Spread types错误,确保展开的类型是对象类型\\n4. 运行pnpm type-check:tests验证修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这5个文件的类型错误\\n2. exactOptionalPropertyTypes配置得到正确处理\\n3. 类型断言和类型定义符合TypeScript strict mode要求",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。"
+    },
+    {
+      "id": "cece432d-5025-4dbf-81c8-0246fb210beb",
+      "name": "修复e2e测试和错误场景测试的类型错误",
+      "description": "修复tests/e2e/和tests/error-scenarios/目录下的13个TypeScript错误",
+      "notes": "e2e测试和错误场景测试可能使用不同的测试框架(Playwright),需要特别注意类型定义",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:11:28.105Z",
+      "relatedFiles": [
+        {
+          "path": "tests/e2e/homepage.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复7个错误",
+          "lineStart": 6,
+          "lineEnd": 227
+        },
+        {
+          "path": "tests/e2e/i18n.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 6,
+          "lineEnd": 6
+        },
+        {
+          "path": "tests/e2e/navigation.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 6,
+          "lineEnd": 6
+        },
+        {
+          "path": "tests/e2e/safe-navigation.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 6,
+          "lineEnd": 6
+        },
+        {
+          "path": "tests/error-scenarios/error-boundary-core.test.tsx",
+          "type": "TO_MODIFY",
+          "description": "需要修复1个错误",
+          "lineStart": 30,
+          "lineEnd": 30
+        },
+        {
+          "path": "tests/error-scenarios/error-handling-summary.test.ts",
+          "type": "TO_MODIFY",
+          "description": "需要修复3个错误",
+          "lineStart": 14,
+          "lineEnd": 143
+        }
+      ],
+      "implementationGuide": "1. 修复e2e测试的模块导入错误(homepage.spec.ts, i18n.spec.ts, navigation.spec.ts, safe-navigation.spec.ts):\\n   - 检查@/tests/e2e/test-environment-setup模块是否存在\\n   - 如果不存在,创建该文件或修正导入路径\\n2. 修复homepage.spec.ts L220, L221, L223, L224, L226, L227的unknown类型错误:\\n   - 使用类型断言将entry从unknown转换为具体类型\\n3. 修复error-boundary-core.test.tsx L30的MouseEventHandler类型错误:\\n   - 使用类型断言或修正事件处理器类型\\n4. 修复error-handling-summary.test.ts的导入和any类型错误(L14, L48, L143):\\n   - 修正@/tests/error-scenarios/setup导入路径\\n   - 为scenario参数添加类型注解\\n5. 运行pnpm type-check:tests验证所有修复",
+      "verificationCriteria": "1. pnpm type-check:tests不再报告这13个e2e和错误场景测试的类型错误\\n2. 所有模块导入路径正确\\n3. 所有类型断言和类型注解符合要求",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。"
+    },
+    {
+      "id": "1d24dc5f-77d8-477a-9665-56e38a635bd6",
+      "name": "验证所有修复并运行完整测试",
+      "description": "运行完整的类型检查和质量检查,确保所有52个TypeScript错误已修复且没有引入新错误",
+      "notes": "这是最终验收步骤,确保所有修复都正确且没有副作用",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "92d195cb-8958-4881-857a-f7902b8b40d8"
+        },
+        {
+          "taskId": "ec14b6f9-b33f-4487-9146-2395bbd2fbbb"
+        },
+        {
+          "taskId": "e7f97b6b-88fc-4f6b-b77f-0340ebf4c8b5"
+        },
+        {
+          "taskId": "a790d4b3-d8b6-4ef5-bca9-3b6f5fadbb7d"
+        },
+        {
+          "taskId": "1f1f6c05-e67b-44d3-8d94-a197a71f91a8"
+        },
+        {
+          "taskId": "4c20c6d7-4324-44d9-95f0-6eacf3e3d1d9"
+        },
+        {
+          "taskId": "e076bda3-cb4d-45f2-af84-468c89fb004f"
+        },
+        {
+          "taskId": "cece432d-5025-4dbf-81c8-0246fb210beb"
+        }
+      ],
+      "createdAt": "2025-10-03T01:11:28.105Z",
+      "updatedAt": "2025-10-03T01:11:28.105Z",
       "relatedFiles": [
         {
           "path": "package.json",
-          "type": "TO_MODIFY",
-          "description": "添加browserslist配置"
-        },
-        {
-          "path": ".size-limit.js",
           "type": "REFERENCE",
-          "description": "Polyfills Bundle limit: 50 KB",
-          "lineStart": 44,
+          "description": "包含所有质量检查命令",
+          "lineStart": 11,
           "lineEnd": 50
         }
       ],
-      "implementationGuide": "1. 运行ANALYZE=true pnpm build，分析Polyfills内容。\\n2. 配置browserslist（package.json或.browserslistrc）：\\n```json\\n\"browserslist\": [\\n  \">0.3%\",\\n  \"not dead\",\\n  \"not op_mini all\",\\n  \"Chrome >= 90\",\\n  \"Firefox >= 88\",\\n  \"Safari >= 14\",\\n  \"Edge >= 90\"\\n]\\n```\\n3. 检查next.config.ts，确保未手动引入不必要的polyfills。\\n4. 使用@next/polyfill-nomodule仅为旧浏览器加载polyfills。",
-      "verificationCriteria": "1. 运行ANALYZE=true pnpm build，打开.next/analyze/client.html，验证Polyfills内容。\\n2. 运行pnpm size:check，验证Polyfills≤40 kB（brotli）。\\n3. 在Chrome 90+、Safari 14+浏览器测试，验证功能正常（无polyfills加载）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "c7511feb-4816-4a8c-a7f2-be0dd98a284a",
-      "name": "P3.1 可访问性审计与修复",
-      "description": "运行LHCI获取a11y基准分数，修复ARIA属性缺失、对比度不足、键盘导航问题，添加jest-axe自动化测试，确保所有关键页面a11y≥0.95。",
-      "notes": "优先级P3。依赖P0.1完成（LHCI提供a11y基准）。参考.augment/rules/accessibility-compact.md规范。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": ".augment/rules/accessibility-compact.md",
-          "type": "REFERENCE",
-          "description": "可访问性规范和jest-axe集成"
-        }
-      ],
-      "implementationGuide": "1. 运行pnpm exec lhci autorun，查看a11y分数和问题列表。\\n2. 修复常见a11y问题：\\n   - 添加缺失的ARIA属性（aria-label、aria-describedby）\\n   - 修复对比度不足（使用Lighthouse建议的颜色）\\n   - 确保键盘导航可用（tabIndex、focus样式）\\n3. 添加jest-axe自动化测试：\\n```typescript\\nimport { axe, toHaveNoViolations } from 'jest-axe';\\nexpect.extend(toHaveNoViolations);\\n\\ntest('Hero Section should have no a11y violations', async () => {\\n  const { container } = render(<HeroSection />);\\n  const results = await axe(container);\\n  expect(results).toHaveNoViolations();\\n});\\n```\\n4. 集成到CI：pnpm test:a11y。",
-      "verificationCriteria": "1. 运行pnpm exec lhci autorun，验证所有关键页面a11y≥0.95。\\n2. 运行pnpm test:a11y（jest-axe测试），验证无a11y违规。\\n3. 使用屏幕阅读器（NVDA/VoiceOver）测试关键页面，验证可访问性。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "39b36ec3-30b9-4fc8-ac0d-0c3bf29f7a49",
-      "name": "P3.2 SEO优化与结构化数据",
-      "description": "审计Meta/OG标签完整性，验证多语言hreflang正确性，优化结构化数据（Organization/WebSite/BreadcrumbList），确保所有关键页面SEO≥0.95。",
-      "notes": "优先级P3。依赖P0.1完成（LHCI提供SEO基准）。当前结构化数据已有Organization/WebSite（src/app/[locale]/layout.tsx:56-59），需补充BreadcrumbList。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/layout-metadata.ts",
-          "type": "TO_MODIFY",
-          "description": "补充Meta/OG标签"
-        },
-        {
-          "path": "src/app/[locale]/layout-structured-data.ts",
-          "type": "TO_MODIFY",
-          "description": "优化结构化数据"
-        }
-      ],
-      "implementationGuide": "1. 运行pnpm exec lhci autorun，查看SEO分数和问题列表。\\n2. 修复常见SEO问题：\\n   - 补充缺失的Meta标签（description、keywords）\\n   - 验证OG标签（og:title、og:description、og:image）\\n   - 检查hreflang标签（/en、/zh）\\n3. 优化结构化数据（src/app/[locale]/layout-structured-data.ts）：\\n```typescript\\nexport async function generatePageStructuredData(locale: 'en' | 'zh') {\\n  return {\\n    organizationData: { /* ... */ },\\n    websiteData: { /* ... */ },\\n    breadcrumbData: { /* 新增 */ },\\n  };\\n}\\n```\\n4. 使用Google Rich Results Test验证结构化数据。",
-      "verificationCriteria": "1. 运行pnpm exec lhci autorun，验证所有关键页面SEO≥0.95。\\n2. 使用Google Rich Results Test验证结构化数据无错误。\\n3. 验证hreflang标签正确（/en、/zh互相引用）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "a5b26769-7b0d-4480-b58d-1c7a35c0b670",
-      "name": "P4.1 INP专项优化",
-      "description": "使用React Profiler识别长任务（>50ms），将长任务切碎（requestIdleCallback/scheduler.yield），优化交互热点组件（memo/拆分/并行），确保INP≤200ms（P75）。",
-      "notes": "优先级P4（长期）。依赖P1.1完成（RUM提供INP基线）。INP是实验性指标，优先级低于LCP。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "4235e2e3-05b4-43de-9b7a-a645f79b938a"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/home/hero-section.tsx",
-          "type": "REFERENCE",
-          "description": "交互热点组件示例"
-        }
-      ],
-      "implementationGuide": "1. 使用React DevTools Profiler录制交互，识别长任务（>50ms）。\\n2. 将长任务切碎：\\n```typescript\\nimport { unstable_scheduleCallback as scheduleCallback } from 'scheduler';\\n\\nfunction heavyTask() {\\n  const chunks = splitIntoChunks(data, 100);\\n  chunks.forEach((chunk, i) => {\\n    scheduleCallback(() => processChunk(chunk));\\n  });\\n}\\n```\\n3. 优化交互热点组件：\\n   - 使用React.memo避免不必要渲染\\n   - 拆分大型组件为小组件\\n   - 使用useTransition/useDeferredValue延后非关键更新\\n4. 使用web-vitals库监控INP。",
-      "verificationCriteria": "1. 使用React DevTools Profiler验证长任务已切碎（无>50ms任务）。\\n2. 运行node scripts/query-rum-p75.js --metric=INP --days=7，验证RUM P75 INP≤200ms。\\n3. 使用Chrome DevTools Performance录制交互，验证主线程空闲片段增加。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "de338e63-aa81-465f-b3cd-45476929aafe",
-      "name": "P4.2 预取策略实现",
-      "description": "实现hover预取（导航链接）和视口预取（首屏下方路由），控制预取优先级不挤占首屏预算，优化关键路由FCP（目标改善≥100ms）。",
-      "notes": "优先级P4（长期）。依赖P0完成（不挤占首屏预算）。Next.js已有自动预取，此任务优化预取时机。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "751f976e-ff10-4a86-bd77-914e0f4fce4d"
-        },
-        {
-          "taskId": "0e35cfae-b7a4-475f-ae75-283a3c6cbc4c"
-        },
-        {
-          "taskId": "87c1ada3-6545-4ac9-bc55-694e014ab146"
-        },
-        {
-          "taskId": "aefc2527-5ead-4488-9e55-96fd04e39837"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/layout/vercel-navigation.tsx",
-          "type": "TO_MODIFY",
-          "description": "添加hover预取逻辑"
-        }
-      ],
-      "implementationGuide": "1. 实现hover预取（导航链接）：\\n```typescript\\nimport { useRouter } from 'next/navigation';\\n\\nfunction NavigationLink({ href, children }) {\\n  const router = useRouter();\\n  \\n  const handleMouseEnter = () => {\\n    router.prefetch(href); // Next.js自动预取\\n  };\\n  \\n  return <Link href={href} onMouseEnter={handleMouseEnter}>{children}</Link>;\\n}\\n```\\n2. 实现视口预取（首屏下方路由）：\\n```typescript\\nuseEffect(() => {\\n  const observer = new IntersectionObserver((entries) => {\\n    entries.forEach(entry => {\\n      if (entry.isIntersecting) {\\n        router.prefetch(entry.target.dataset.href);\\n      }\\n    });\\n  }, { rootMargin: '200px' });\\n  \\n  document.querySelectorAll('[data-prefetch]').forEach(el => observer.observe(el));\\n}, []);\\n```\\n3. 控制预取优先级（低优先级，不阻塞首屏）。",
-      "verificationCriteria": "1. 使用Chrome DevTools Network面板，验证hover导航链接时触发预取。\\n2. 运行pnpm exec lhci autorun，对比关键路由FCP改善≥100ms。\\n3. 验证预取不挤占首屏预算（首屏LCP不受影响）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
-    },
-    {
-      "id": "21f16e58-8d3f-45f2-8c89-d1bc2d23ccb9",
-      "name": "P4.3 错误预算与告警",
-      "description": "配置性能预算阈值（LCP/TBT/CLS），集成告警通知（Slack/Email），建立回滚决策树（超阈值自动回滚），确保性能回归时自动告警。",
-      "notes": "优先级P4（长期）。依赖P1.2完成（回归检测已集成）。告警通知可选Slack/Email/Webhook。",
-      "status": "pending",
-      "dependencies": [
-        {
-          "taskId": "6b65af1c-5bbf-4fef-9b79-04ef6c8161b9"
-        }
-      ],
-      "createdAt": "2025-10-02T00:23:41.278Z",
-      "updatedAt": "2025-10-02T00:23:41.278Z",
-      "relatedFiles": [
-        {
-          "path": "scripts/performance-alert.js",
-          "type": "CREATE",
-          "description": "性能告警脚本"
-        },
-        {
-          "path": ".github/workflows/ci.yml",
-          "type": "TO_MODIFY",
-          "description": "集成告警脚本到CI"
-        }
-      ],
-      "implementationGuide": "1. 创建scripts/performance-alert.js脚本：\\n```javascript\\nconst { WebClient } = require('@slack/web-api');\\n\\nconst slack = new WebClient(process.env.SLACK_TOKEN);\\n\\nasync function sendAlert(regression) {\\n  await slack.chat.postMessage({\\n    channel: '#performance-alerts',\\n    text: `🚨 Performance Regression Detected: ${regression.metric} increased by ${regression.change}%`,\\n  });\\n}\\n\\n// 读取回归报告并发送告警\\nconst report = require('../reports/regression-report.json');\\nif (report.detected) {\\n  report.details.forEach(sendAlert);\\n}\\n```\\n2. 配置环境变量SLACK_TOKEN、EMAIL_SMTP等。\\n3. 集成到CI：在回归检测失败时自动调用告警脚本。\\n4. 建立回滚决策树（文档化）。",
-      "verificationCriteria": "1. 模拟性能回归场景，运行node scripts/performance-alert.js，验证告警发送成功（Slack/Email）。\\n2. 提交PR触发CI，验证回归检测失败时自动发送告警。\\n3. 验证告警内容包含详细回归信息（metric、baseline、current、change）。\\n4. 通过质量检查：pnpm format:check && pnpm lint:check && pnpm type-check && pnpm build:check。",
-      "analysisResult": "性能优化系列任务总体目标：基于GPT-5性能测试报告，系统化优化Next.js 15 + React 19项目性能，达成企业级标准（首页Performance≥0.90，LCP≤3.0s稳定，体积预算守门Shared Chunks≤320 kB）。采用渐进式优化策略（P0紧急→P1监控→P2体积→P3质量→P4长期），复用现有组件（EnterpriseAnalytics、performance-analyzer.js），最小化影响（环境变量控制、独立脚本、可独立回滚），量化验收（具体命令和阈值）。"
+      "implementationGuide": "1. 运行pnpm type-check:tests验证测试文件类型检查通过\\n2. 运行pnpm type-check验证生产代码类型检查通过\\n3. 运行pnpm lint:check验证代码质量\\n4. 运行pnpm build:check验证构建成功\\n5. 如果发现任何错误,回到相应任务进行修正\\n6. 记录修复总结:修复的文件数、错误数、使用的修复策略",
+      "verificationCriteria": "1. pnpm type-check:tests返回0错误\\n2. pnpm type-check返回0错误\\n3. pnpm lint:check通过\\n4. pnpm build:check成功\\n5. CI pipeline全部通过",
+      "analysisResult": "修复所有52个TypeScript测试文件错误,确保pnpm type-check:tests通过。采用项目标准模式:优先使用vi.mocked()包装mock对象,补全接口属性优于类型断言,遵循coding-standards.md规范。分3个阶段执行:P0(13个CI阻塞错误)、P1(17个i18n错误)、P2(22个其他错误)。"
     }
   ]
 }

@@ -44,8 +44,8 @@ class SystemErrorSimulator {
         ? errorMessages[errorType]
         : 'Unknown error',
     );
-    (error as unknown).code = errorType;
-    (error as unknown).errno = -2;
+    (error as { code?: string; errno?: number }).code = errorType;
+    (error as { code?: string; errno?: number }).errno = -2;
     return error;
   }
 
@@ -176,7 +176,7 @@ class ErrorHandler {
     this.errorLog.push({
       error,
       timestamp: new Date(),
-      context,
+      ...(context !== undefined ? { context } : {}),
     });
   }
 
@@ -322,7 +322,7 @@ describe('System Error and Exception Handling Tests', () => {
       await new Promise((resolve) => setTimeout(resolve, 10));
 
       expect(unhandledRejections).toHaveLength(1);
-      expect(unhandledRejections[0]?.reason.message).toBe(
+      expect((unhandledRejections[0]?.reason as Error).message).toBe(
         'Unhandled async error',
       );
 

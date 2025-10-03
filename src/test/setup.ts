@@ -13,10 +13,10 @@ import { afterEach, beforeEach, vi } from 'vitest';
 
 declare module 'vitest' {
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-  interface Assertion<T = unknown> extends TestingLibraryMatchers<T, void> {}
+  interface Assertion<T = any> extends TestingLibraryMatchers<T, void> {}
   // eslint-disable-next-line @typescript-eslint/no-empty-object-type
   interface AsymmetricMatchersContaining
-    extends TestingLibraryMatchers<unknown, void> {}
+    extends TestingLibraryMatchers<any, void> {}
 }
 
 // Mock Next.js router
@@ -1119,7 +1119,7 @@ vi.mock('zod', () => ({
 
 // Mock app constants - 使用importOriginal保留所有原始常量
 vi.mock('@/constants/app-constants', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     // 只覆盖测试中需要特殊处理的常量（如果有的话）
@@ -1128,7 +1128,7 @@ vi.mock('@/constants/app-constants', async (importOriginal) => {
 
 // Mock unified constants entry point - 使用importOriginal保留所有原始常量
 vi.mock('@/constants', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     // 只覆盖测试中需要特殊处理的常量（如果有的话）
@@ -1137,7 +1137,7 @@ vi.mock('@/constants', async (importOriginal) => {
 
 // Mock i18n constants - 使用importOriginal保留所有原始常量
 vi.mock('@/constants/i18n-constants', async (importOriginal) => {
-  const actual = await importOriginal();
+  const actual = (await importOriginal()) as Record<string, unknown>;
   return {
     ...actual,
     // 只覆盖测试中需要特殊处理的常量（如果有的话）

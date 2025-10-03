@@ -54,6 +54,7 @@ const mockNavigationTiming: PerformanceNavigationTiming = {
   encodedBodySize: 512,
   decodedBodySize: 512,
   serverTiming: [],
+  responseStatus: 200,
   toJSON: () => ({}),
 };
 

@@ -10,7 +10,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // 使用全局Mock配置，不需要局部覆盖
 
-import type { Locale as _Locale } from '@/types/i18n';
+import type { Locale as _Locale, Messages } from '@/types/i18n';
 import { i18nCache, I18nCacheManager } from '@/lib/i18n-cache';
 import { WEB_VITALS_CONSTANTS as _WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
@@ -129,14 +129,20 @@ describe('I18nCacheManager - Basic Functionality', () => {
       if (locale === 'en') {
         // Simulate cache interaction by calling the cache manager's internal methods
         if (cacheManager) {
-          cacheManager['cache'].set('en', mockEnMessages);
+          cacheManager['cache'].set(
+            'en',
+            mockEnMessages as unknown as Messages,
+          );
         }
-        return mockEnMessages;
+        return mockEnMessages as unknown as Messages;
       } else if (locale === 'zh') {
         if (cacheManager) {
-          cacheManager['cache'].set('zh', mockZhMessages);
+          cacheManager['cache'].set(
+            'zh',
+            mockZhMessages as unknown as Messages,
+          );
         }
-        return mockZhMessages;
+        return mockZhMessages as unknown as Messages;
       }
       throw new Error(`Unsupported locale: ${locale}`);
     });
@@ -271,8 +277,11 @@ describe('I18nCacheManager - Basic Functionality', () => {
         .fn()
         .mockImplementation(async (locale: string) => {
           if (locale === 'en') {
-            shortTtlManager['cache'].set('en', mockEnMessages);
-            return mockEnMessages;
+            shortTtlManager['cache'].set(
+              'en',
+              mockEnMessages as unknown as Messages,
+            );
+            return mockEnMessages as unknown as Messages;
           }
           return {};
         });
@@ -311,11 +320,17 @@ describe('I18nCacheManager - Basic Functionality', () => {
         .fn()
         .mockImplementation(async (locale: string) => {
           if (locale === 'en') {
-            smallCacheManager['cache'].set('en', mockEnMessages);
-            return mockEnMessages;
+            smallCacheManager['cache'].set(
+              'en',
+              mockEnMessages as unknown as Messages,
+            );
+            return mockEnMessages as unknown as Messages;
           } else if (locale === 'zh') {
-            smallCacheManager['cache'].set('zh', mockZhMessages);
-            return mockZhMessages;
+            smallCacheManager['cache'].set(
+              'zh',
+              mockZhMessages as unknown as Messages,
+            );
+            return mockZhMessages as unknown as Messages;
           }
           return {};
         });
@@ -392,8 +407,8 @@ describe('I18nCacheManager - Basic Functionality', () => {
         .fn()
         .mockImplementation(async (locale: string) => {
           if (locale === 'en') {
-            i18nCache['cache'].set('en', mockEnMessages);
-            return mockEnMessages;
+            i18nCache['cache'].set('en', mockEnMessages as unknown as Messages);
+            return mockEnMessages as unknown as Messages;
           }
           return {};
         });

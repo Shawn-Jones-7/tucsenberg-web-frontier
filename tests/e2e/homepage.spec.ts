@@ -3,7 +3,7 @@ import { checkA11y, injectAxe } from 'axe-playwright';
 import {
   removeInterferingElements,
   waitForStablePage,
-} from '@/tests/e2e/test-environment-setup';
+} from './test-environment-setup';
 
 test.describe('Homepage Core Functionality', () => {
   test.beforeEach(async ({ page }) => {
@@ -216,15 +216,19 @@ test.describe('Homepage Core Functionality', () => {
             const entries = list.getEntries();
             const webVitals: { lcp?: number; fid?: number; cls?: number } = {};
 
-            entries.forEach((entry: unknown) => {
-              if (entry.name === 'LCP') {
-                webVitals.lcp = entry.value;
+            entries.forEach((entry) => {
+              const perfEntry = entry as unknown as {
+                name: string;
+                value: number;
+              };
+              if (perfEntry.name === 'LCP') {
+                webVitals.lcp = perfEntry.value;
               }
-              if (entry.name === 'FID') {
-                webVitals.fid = entry.value;
+              if (perfEntry.name === 'FID') {
+                webVitals.fid = perfEntry.value;
               }
-              if (entry.name === 'CLS') {
-                webVitals.cls = entry.value;
+              if (perfEntry.name === 'CLS') {
+                webVitals.cls = perfEntry.value;
               }
             });
 

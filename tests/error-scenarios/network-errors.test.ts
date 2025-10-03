@@ -15,7 +15,7 @@ import {
   APIErrorSimulator,
   ErrorRecoveryTester,
   NetworkErrorSimulator,
-} from '@/tests/error-scenarios/setup';
+} from './setup';
 
 // Mock fetch for testing
 const originalFetch = global.fetch;
@@ -60,7 +60,7 @@ class TestAPIClient {
           headers: {
             'Content-Type': 'application/json',
           },
-          ...(data && { body: JSON.stringify(data) }),
+          ...(data ? { body: JSON.stringify(data) } : {}),
         });
 
         if (!response.ok) {

@@ -682,10 +682,10 @@ describe('ThemeAnalytics', () => {
 
       const initialCount = themeAnalytics.getPerformanceSummary().totalSwitches;
 
+      // Test without options to verify undefined handling
       recordThemeSwitch({
         fromTheme: 'system',
         toTheme: 'dark',
-        options: { supportsViewTransitions: undefined },
       });
 
       const finalSummary = themeAnalytics.getPerformanceSummary();

@@ -8,7 +8,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '@/types/i18n';
+import type { Locale, Messages } from '@/types/i18n';
 import { I18nCacheManager } from '@/lib/i18n-cache';
 
 // Mock localStorage
@@ -120,14 +120,14 @@ describe('I18nCacheManager - Advanced Error Handling', () => {
       if (locale === 'en') {
         // Simulate cache interaction for all known cache manager instances
         cacheInstances.forEach((manager) => {
-          manager['cache'].set('en', mockEnMessages);
+          manager['cache'].set('en', mockEnMessages as unknown as Messages);
         });
-        return mockEnMessages;
+        return mockEnMessages as unknown as Messages;
       } else if (locale === 'zh') {
         cacheInstances.forEach((manager) => {
-          manager['cache'].set('zh', mockZhMessages);
+          manager['cache'].set('zh', mockZhMessages as unknown as Messages);
         });
-        return mockZhMessages;
+        return mockZhMessages as unknown as Messages;
       }
       // For invalid locales, throw an error to simulate dynamic import failure
       throw new Error(

@@ -3,7 +3,7 @@ import {
   removeInterferingElements,
   safeClick,
   waitForStablePage,
-} from '@/tests/e2e/test-environment-setup';
+} from './test-environment-setup';
 
 test.describe('Safe Navigation Tests', () => {
   test.beforeEach(async ({ page }) => {

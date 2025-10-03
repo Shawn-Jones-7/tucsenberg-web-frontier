@@ -11,7 +11,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '@/types/i18n';
+import type { Locale, Messages } from '@/types/i18n';
 import { I18nCacheManager } from '@/lib/i18n-cache';
 
 // Mock localStorage
@@ -100,9 +100,9 @@ describe('I18nCacheManager - Error Handling Index', () => {
       };
 
       if (cacheManager) {
-        cacheManager['cache'].set(locale, mockMessages);
+        cacheManager['cache'].set(locale, mockMessages as unknown as Messages);
       }
-      return mockMessages;
+      return mockMessages as unknown as Messages;
     });
 
     // Create cache manager with persistence disabled for consistent testing

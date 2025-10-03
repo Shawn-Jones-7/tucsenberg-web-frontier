@@ -44,7 +44,7 @@ export function configureServiceForTesting(
   service.isConfigured = true;
   // 设置Mock的base实例
   service.base = mockBase;
-  service.table = mockBase.table('test-table');
+  // Note: table is accessed via base.table() method, not stored directly
 }
 
 /**

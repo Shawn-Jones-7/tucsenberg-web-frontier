@@ -9,7 +9,7 @@
  */
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '@/types/i18n';
+import type { Locale, Messages } from '@/types/i18n';
 import { I18nCacheManager } from '@/lib/i18n-cache';
 import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
@@ -124,14 +124,20 @@ describe('I18nCacheManager - Advanced Functionality', () => {
       if (locale === 'en') {
         // Simulate cache interaction by calling the cache manager's internal methods
         if (cacheManager) {
-          cacheManager['cache'].set('en', mockEnMessages);
+          cacheManager['cache'].set(
+            'en',
+            mockEnMessages as unknown as Messages,
+          );
         }
-        return mockEnMessages;
+        return mockEnMessages as unknown as Messages;
       } else if (locale === 'zh') {
         if (cacheManager) {
-          cacheManager['cache'].set('zh', mockZhMessages);
+          cacheManager['cache'].set(
+            'zh',
+            mockZhMessages as unknown as Messages,
+          );
         }
-        return mockZhMessages;
+        return mockZhMessages as unknown as Messages;
       }
       throw new Error(`Unsupported locale: ${locale}`);
     });
@@ -242,7 +248,7 @@ describe('I18nCacheManager - Advanced Functionality', () => {
         if (locale === 'invalid') {
           throw new Error(`Unsupported locale: ${locale}`);
         }
-        return mockEnMessages;
+        return mockEnMessages as unknown as Messages;
       });
 
       try {
@@ -266,7 +272,7 @@ describe('I18nCacheManager - Advanced Functionality', () => {
         .fn()
         .mockImplementation(async (locale: string) => {
           if (locale === 'en') {
-            return mockEnMessages;
+            return mockEnMessages as unknown as Messages;
           }
           return {};
         });
@@ -281,7 +287,10 @@ describe('I18nCacheManager - Advanced Functionality', () => {
       });
 
       // Manually trigger cache set to simulate persistence
-      persistentManager['cache'].set('en', mockEnMessages);
+      persistentManager['cache'].set(
+        'en',
+        mockEnMessages as unknown as Messages,
+      );
 
       // Verify localStorage was called (the LRUCache should save to storage)
       expect(mockLocalStorage.setItem).toHaveBeenCalled();
@@ -420,11 +429,17 @@ describe('I18nCacheManager - Advanced Functionality', () => {
         .fn()
         .mockImplementation(async (locale: string) => {
           if (locale === 'en') {
-            smallCacheManager['cache'].set('en', mockEnMessages);
-            return mockEnMessages;
+            smallCacheManager['cache'].set(
+              'en',
+              mockEnMessages as unknown as Messages,
+            );
+            return mockEnMessages as unknown as Messages;
           } else if (locale === 'zh') {
-            smallCacheManager['cache'].set('zh', mockZhMessages);
-            return mockZhMessages;
+            smallCacheManager['cache'].set(
+              'zh',
+              mockZhMessages as unknown as Messages,
+            );
+            return mockZhMessages as unknown as Messages;
           }
           return {};
         });

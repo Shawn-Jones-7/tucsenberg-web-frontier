@@ -619,8 +619,7 @@ describe('Structured Data Generation', () => {
     });
 
     it('should not create memory leaks with repeated calls', async () => {
-      const initialMemory =
-        (performance as unknown).memory?.usedJSHeapSize || 0;
+      const initialMemory = performance.memory?.usedJSHeapSize || 0;
 
       // Perform many operations
       for (let i = 0; i < 1000; i++) {
@@ -633,7 +632,7 @@ describe('Structured Data Generation', () => {
         global.gc();
       }
 
-      const finalMemory = (performance as unknown).memory?.usedJSHeapSize || 0;
+      const finalMemory = performance.memory?.usedJSHeapSize || 0;
       const memoryIncrease = finalMemory - initialMemory;
 
       // Memory increase should be minimal (less than 5MB)

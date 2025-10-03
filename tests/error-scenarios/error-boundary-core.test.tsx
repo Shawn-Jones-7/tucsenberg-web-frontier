@@ -27,7 +27,7 @@ vi.mock('@/components/ui/button', () => ({
   }: MockButtonProps) => (
     <button
       data-testid='error-boundary-button'
-      onClick={onClick}
+      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
       data-variant={variant}
       className={className}
       {...props}
