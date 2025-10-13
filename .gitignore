@@ -28,6 +28,7 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+middleware-debug.log
 .pnpm-debug.log*
 
 # env files (can opt-in for committing if needed)
@@ -43,10 +44,55 @@ next-env.d.ts
 # Environment files
 .env.local
 
-# Auto-generated reports and task status
-reports/quick-quality-report.json
-reports/test-results.json
-reports/html.meta.json.gz
-
 # ESLint cache
 .eslintcache
+
+# CI 日志和测试结果 (临时文件,不应提交)
+reports/ci-logs/
+test-results/
+verbose/reports/
+
+# 调试文件
+debug-*.js
+debug-*.ts
+debug-*.png
+*.log
+*.bak
+
+# 临时分析文件
+temp-analysis/
+output/
+test-coverage-output.txt
+
+# 任务记忆备份
+docs/data/memory/tasks_memory_*.json
+
+# 临时实现文档
+docs/best-practices-from-*.md
+docs/bundle-optimization-analysis.md
+docs/implementation-progress.md
+docs/phase*.md
+
+# 临时脚本
+scripts/analyze-e2e-results.ts
+
+# 异常文件名（命令执行错误产生的）
+"=== "*
+echo
+"失败数量"*
+"总 MCP "*
+# Playwright artifacts and reports (ephemeral)
+test-results/
+playwright-report/
+reports/playwright-report/
+reports/playwright-results.json
+reports/playwright-results.xml
+reports/**/*.png
+reports/**/*.webm
+reports/**/*.zip
+
+# E2E summary/matrix (use CI artifacts instead of committing latest)
+reports/e2e-summary-latest.json
+reports/e2e-summary-latest.md
+reports/e2e-analysis.json
+reports/e2e-failure-matrix.*

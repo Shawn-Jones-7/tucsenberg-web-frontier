@@ -21,23 +21,21 @@ pre-commit:
       fail_text: '代码质量检查失败 - 发现新的质量问题，请修复后重新提交'
       stage_fixed: true
 
-    # 架构守卫 - 禁止新增export *和相对路径导入
+    # 架构守卫 - 仅检查已暂存的 JS/TS 变更
     architecture-guard:
       run: |
-        # 检查staged文件中是否有新增的export *
-        if git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | xargs -I {} sh -c 'git diff --cached {} | grep -q "^+.*export \* from" && echo "❌ 发现新增export *重新导出: {}" && exit 1 || true'; then
-          echo "🚫 架构重构期间禁止新增 export * 重新导出"
-          echo "请使用命名导出：export { specificExport } from './module'"
-          exit 1
-        fi
-
-        # 检查staged文件中是否有新增的相对路径导入
-        if git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' | xargs -I {} sh -c 'git diff --cached {} | grep -q "^+.*from ['\''\"]\\.\\./\\|^+.*from ['\''\"]\\./" && echo "❌ 发现新增相对路径导入: {}" && exit 1 || true'; then
-          echo "🚫 请使用 @/ 路径别名替代相对路径导入"
-          echo "例如：import { something } from '@/lib/module'"
-          exit 1
-        fi
-
+        FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' || true)
+        if [ -z "$FILES" ]; then echo "✅ 架构守卫检查通过 (无 JS/TS 变更)"; exit 0; fi
+        for f in $FILES; do
+          if git diff --cached -- "$f" | grep -qE '^\+.*export \* from'; then
+            echo "❌ 发现新增export *重新导出: $f"; echo "🚫 架构重构期间禁止新增 export * 重新导出";
+            echo "请使用命名导出：export { specificExport } from './module'"; exit 1; fi
+        done
+        for f in $FILES; do
+          if git diff --cached -- "$f" | grep -qE "^\+.*from ['\"']\./|^\+.*from ['\"']\.\./"; then
+            echo "❌ 发现新增相对路径导入: $f"; echo "🚫 请使用 @/ 路径别名替代相对路径导入";
+            echo "例如：import { something } from '@/lib/module'"; exit 1; fi
+        done
         echo "✅ 架构守卫检查通过"
       fail_text: '架构守卫检查失败 - 发现违反架构重构规则的代码变更'
       stage_fixed: false
@@ -50,7 +48,12 @@ pre-commit:
 
     # 多语言同步检查
     i18n-sync:
-      run: pnpm i18n:full
+      run: |
+        if git diff --cached --name-only | grep -E '^(messages/|content/|i18n\.(json|ts)$|src/.+i18n|translation\.config\.js)' >/dev/null; then
+          pnpm i18n:full
+        else
+          echo "跳过 i18n 同步检查（无相关变更）"; exit 0;
+        fi
       fail_text: '多语言同步检查失败 - 请同步 messages 与内容文件的中英版本'
       stage_fixed: false
 

@@ -50,8 +50,6 @@
     "perf:check": "pnpm run size:check",
     "config:check": "node scripts/check-config-consistency.js",
     "eslint:disable:check": "node scripts/check-eslint-disable-usage.js",
-    "tasks:continuous": "tsx scripts/tasks/continuous-runner.ts",
-    "tasks:once": "tsx scripts/tasks/continuous-runner.ts",
     "test:e2e:no-reuse": "CI=1 pnpm test:e2e",
     "test:e2e:ci-local": "CI=1 pnpm test:e2e"
   },
