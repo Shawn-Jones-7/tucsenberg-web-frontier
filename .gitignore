@@ -96,3 +96,9 @@ reports/e2e-summary-latest.json
 reports/e2e-summary-latest.md
 reports/e2e-analysis.json
 reports/e2e-failure-matrix.*
+
+# All reports directory files (catch-all for test reports)
+reports/*.json
+reports/*.json.gz
+reports/*.xml
+reports/*.html
