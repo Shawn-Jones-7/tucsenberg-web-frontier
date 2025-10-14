@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { checkA11y, injectAxe } from 'axe-playwright';
-import { getNav, getNavLinks } from './helpers/navigation';
+import { getNav } from './helpers/navigation';
 import {
   removeInterferingElements,
   waitForStablePage,

@@ -1,10 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { checkA11y, injectAxe } from 'axe-playwright';
-import {
-  clickNavLinkByName,
-  getNav,
-  waitForActive,
-} from './helpers/navigation';
+import { clickNavLinkByName, getNav } from './helpers/navigation';
 import {
   removeInterferingElements,
   waitForStablePage,
@@ -60,7 +56,10 @@ test.describe('Internationalization (i18n)', () => {
 
       // Verify dropdown is open
       const dropdownContent = page.getByTestId('language-dropdown-content');
-      await expect(page.getByTestId('language-toggle-button')).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByTestId('language-toggle-button')).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContent).toHaveAttribute('data-state', 'open');
 
       // Verify English is currently active
@@ -96,11 +95,20 @@ test.describe('Internationalization (i18n)', () => {
           });
           await expect(mobileMenuButton).toBeVisible();
           // Open mobile menu to inspect links
-          try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+          try {
+            await mobileMenuButton.tap();
+          } catch {
+            // Fallback to click if tap fails
+            await mobileMenuButton.click();
+          }
           const mobileNavSheet = page.getByRole('dialog');
           await expect(mobileNavSheet).toBeVisible();
-          await expect(mobileNavSheet.getByRole('link', { name: '首页' })).toBeVisible();
-          await expect(mobileNavSheet.getByRole('link', { name: '关于' })).toBeVisible();
+          await expect(
+            mobileNavSheet.getByRole('link', { name: '首页' }),
+          ).toBeVisible();
+          await expect(
+            mobileNavSheet.getByRole('link', { name: '关于' }),
+          ).toBeVisible();
         } else {
           const nav = getNav(page);
           await expect(nav.getByRole('link', { name: '首页' })).toBeVisible();
@@ -119,7 +127,10 @@ test.describe('Internationalization (i18n)', () => {
       await languageToggleButton.click();
       // Ensure dropdown is fully open before interacting
       const dropdownContentA = page.getByTestId('language-dropdown-content');
-      await expect(languageToggleButton).toHaveAttribute('aria-expanded', 'true');
+      await expect(languageToggleButton).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContentA).toHaveAttribute('data-state', 'open');
 
       const chineseLink = page.getByTestId('language-link-zh');
@@ -131,8 +142,13 @@ test.describe('Internationalization (i18n)', () => {
       const languageToggleButton2 = page.getByTestId('language-toggle-button');
       await expect(languageToggleButton2).toBeVisible();
       await languageToggleButton2.click();
-      const dropdownContentReopen = page.getByTestId('language-dropdown-content');
-      await expect(languageToggleButton2).toHaveAttribute('aria-expanded', 'true');
+      const dropdownContentReopen = page.getByTestId(
+        'language-dropdown-content',
+      );
+      await expect(languageToggleButton2).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContentReopen).toHaveAttribute('data-state', 'open');
 
       const englishLink = page.getByTestId('language-link-en');
@@ -145,6 +161,7 @@ test.describe('Internationalization (i18n)', () => {
       try {
         await expect(page.locator('html')).toHaveAttribute('lang', 'en');
       } catch {
+        // Fallback: verify English UI is present
         const nav = getNav(page);
         await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
       }
@@ -153,11 +170,19 @@ test.describe('Internationalization (i18n)', () => {
         const viewport = page.viewportSize();
         const isMobile = viewport ? viewport.width < 768 : false;
         if (isMobile) {
-          const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+          const mobileMenuButton = page.getByRole('button', {
+            name: 'Toggle mobile menu',
+          });
           await expect(mobileMenuButton).toBeVisible();
-          try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+          try {
+            await mobileMenuButton.tap();
+          } catch {
+            await mobileMenuButton.click();
+          }
           const mobileNavSheet = page.getByRole('dialog');
-          await expect(mobileNavSheet.getByRole('link', { name: 'Home' })).toBeVisible();
+          await expect(
+            mobileNavSheet.getByRole('link', { name: 'Home' }),
+          ).toBeVisible();
         } else {
           const nav = getNav(page);
           await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
@@ -171,7 +196,10 @@ test.describe('Internationalization (i18n)', () => {
       const languageToggleButton = page.getByTestId('language-toggle-button');
       await languageToggleButton.click();
       const dropdownContentB = page.getByTestId('language-dropdown-content');
-      await expect(languageToggleButton).toHaveAttribute('aria-expanded', 'true');
+      await expect(languageToggleButton).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContentB).toHaveAttribute('data-state', 'open');
 
       // Click Chinese link and immediately check for loading state
@@ -213,12 +241,21 @@ test.describe('Internationalization (i18n)', () => {
         const viewport = page.viewportSize();
         const isMobile = viewport ? viewport.width < 768 : false;
         if (isMobile) {
-          const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+          const mobileMenuButton = page.getByRole('button', {
+            name: 'Toggle mobile menu',
+          });
           await expect(mobileMenuButton).toBeVisible();
-          try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+          try {
+            await mobileMenuButton.tap();
+          } catch {
+            await mobileMenuButton.click();
+          }
           const mobileNavSheet = page.getByRole('dialog');
           await expect(mobileNavSheet).toBeVisible();
-          await mobileNavSheet.getByRole('link', { name: 'About' }).first().click();
+          await mobileNavSheet
+            .getByRole('link', { name: 'About' })
+            .first()
+            .click();
         } else {
           await clickNavLinkByName(page, 'About');
         }
@@ -229,7 +266,10 @@ test.describe('Internationalization (i18n)', () => {
       const languageToggleButton = page.getByTestId('language-toggle-button');
       await languageToggleButton.click();
       const dropdownContentC = page.getByTestId('language-dropdown-content');
-      await expect(languageToggleButton).toHaveAttribute('aria-expanded', 'true');
+      await expect(languageToggleButton).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContentC).toHaveAttribute('data-state', 'open');
 
       const chineseLink = page.getByTestId('language-link-zh');
@@ -242,7 +282,9 @@ test.describe('Internationalization (i18n)', () => {
       // Verify we're on the Chinese About page with fallback
       try {
         await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
-      } catch {}
+      } catch {
+        // Lang attribute check failed, continue with URL verification
+      }
       expect(page.url()).toMatch(/\/zh\/about\/?$/);
     });
   });
@@ -348,9 +390,15 @@ test.describe('Internationalization (i18n)', () => {
       const nav = getNav(page);
       let container = nav as any;
       if (isMobile) {
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
-        try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+        try {
+          await mobileMenuButton.tap();
+        } catch {
+          await mobileMenuButton.click();
+        }
         container = page.getByRole('dialog');
         await expect(container).toBeVisible();
       }
@@ -366,15 +414,33 @@ test.describe('Internationalization (i18n)', () => {
       // Switch to Chinese
       // Close mobile sheet first to avoid overlay intercepting pointer events
       if (isMobile && container) {
-        const closeBtn = (container as any).getByRole?.('button', { name: /close/i });
-        try { if (closeBtn) await closeBtn.click({ trial: true }); } catch {}
-        try { if (closeBtn) await closeBtn.click(); else await page.keyboard.press('Escape'); } catch {}
-        await expect(page.getByRole('dialog')).not.toBeVisible({ timeout: 2000 }).catch(() => {});
+        const closeBtn = (container as any).getByRole?.('button', {
+          name: /close/i,
+        });
+        try {
+          if (closeBtn) await closeBtn.click({ trial: true });
+        } catch {
+          // Trial click failed, continue
+        }
+        try {
+          if (closeBtn) await closeBtn.click();
+          else await page.keyboard.press('Escape');
+        } catch {
+          // Close action failed, continue
+        }
+        await expect(page.getByRole('dialog'))
+          .not.toBeVisible({ timeout: 2000 })
+          .catch(() => {
+            // Dialog still visible, continue
+          });
       }
       const languageToggleButton = page.getByTestId('language-toggle-button');
       await languageToggleButton.click();
       const dropdownContentD = page.getByTestId('language-dropdown-content');
-      await expect(languageToggleButton).toHaveAttribute('aria-expanded', 'true');
+      await expect(languageToggleButton).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContentD).toHaveAttribute('data-state', 'open');
 
       const chineseLink = page.getByTestId('language-link-zh');
@@ -390,9 +456,15 @@ test.describe('Internationalization (i18n)', () => {
         const viewport2 = page.viewportSize();
         const isMobile2 = viewport2 ? viewport2.width < 768 : false;
         if (isMobile2) {
-          const mobileMenuButton2 = page.getByRole('button', { name: 'Toggle mobile menu' });
+          const mobileMenuButton2 = page.getByRole('button', {
+            name: 'Toggle mobile menu',
+          });
           await expect(mobileMenuButton2).toBeVisible();
-          try { await mobileMenuButton2.tap(); } catch { await mobileMenuButton2.click(); }
+          try {
+            await mobileMenuButton2.tap();
+          } catch {
+            await mobileMenuButton2.click();
+          }
           container = page.getByRole('dialog');
           await expect(container).toBeVisible();
         } else {
@@ -460,7 +532,10 @@ test.describe('Internationalization (i18n)', () => {
       }
 
       const dropdownContent = page.getByTestId('language-dropdown-content');
-      await expect(page.getByTestId('language-toggle-button')).toHaveAttribute('aria-expanded', 'true');
+      await expect(page.getByTestId('language-toggle-button')).toHaveAttribute(
+        'aria-expanded',
+        'true',
+      );
       await expect(dropdownContent).toHaveAttribute('data-state', 'open');
 
       // Switch to Chinese with touch
@@ -593,12 +668,21 @@ test.describe('Internationalization (i18n)', () => {
         const viewport = page.viewportSize();
         const isMobile = viewport ? viewport.width < 768 : false;
         if (isMobile) {
-          const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+          const mobileMenuButton = page.getByRole('button', {
+            name: 'Toggle mobile menu',
+          });
           await expect(mobileMenuButton).toBeVisible();
-          try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+          try {
+            await mobileMenuButton.tap();
+          } catch {
+            await mobileMenuButton.click();
+          }
           const mobileNavSheet = page.getByRole('dialog');
           await expect(mobileNavSheet).toBeVisible();
-          await mobileNavSheet.getByRole('link', { name: 'About' }).first().click();
+          await mobileNavSheet
+            .getByRole('link', { name: 'About' })
+            .first()
+            .click();
         } else {
           await clickNavLinkByName(page, 'About');
         }

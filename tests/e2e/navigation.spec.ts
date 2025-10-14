@@ -15,12 +15,19 @@ test.describe('Navigation System', () => {
     await waitForStablePage(page);
   });
 
-  test('should redirect root path to default locale', async ({ page, request, browserName }) => {
+  test('should redirect root path to default locale', async ({
+    page,
+    request,
+    browserName,
+  }) => {
     // On Firefox, validate redirect via API to avoid page navigation flakiness
     if (browserName === 'firefox') {
-      const resp = await request.get('http://localhost:3000/', { maxRedirects: 0 });
+      const resp = await request.get('http://localhost:3000/', {
+        maxRedirects: 0,
+      });
       expect([301, 302, 307, 308]).toContain(resp.status());
-      const location = resp.headers()['location'] || resp.headers()['Location'] || '';
+      const location =
+        resp.headers()['location'] || resp.headers()['Location'] || '';
       expect(location).toMatch(/\/en(\/|$)/);
       await page.goto('http://localhost:3000/en');
       await page.waitForLoadState('networkidle');
@@ -298,11 +305,16 @@ test.describe('Navigation System', () => {
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
       if (isMobile) {
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
         await mobileMenuButton.click();
         const mobileNavSheet = page.getByRole('dialog');
-        await mobileNavSheet.getByRole('link', { name: 'About' }).first().click();
+        await mobileNavSheet
+          .getByRole('link', { name: 'About' })
+          .first()
+          .click();
       } else {
         const nav = getNav(page);
         const aboutLink = nav.getByRole('link', { name: 'About' });
@@ -321,11 +333,16 @@ test.describe('Navigation System', () => {
 
       // Navigate to About page
       if (isMobile) {
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
         await mobileMenuButton.click();
         const mobileNavSheet = page.getByRole('dialog');
-        await mobileNavSheet.getByRole('link', { name: 'About' }).first().click();
+        await mobileNavSheet
+          .getByRole('link', { name: 'About' })
+          .first()
+          .click();
       } else {
         const nav = getNav(page);
         const aboutLink = nav.getByRole('link', { name: 'About' });
@@ -373,9 +390,14 @@ test.describe('Navigation System', () => {
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
       if (isMobile) {
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
-        await expect(mobileMenuButton).toHaveAttribute('aria-label', 'Toggle mobile menu');
+        await expect(mobileMenuButton).toHaveAttribute(
+          'aria-label',
+          'Toggle mobile menu',
+        );
         await mobileMenuButton.click();
         const mobileNavSheet = page.getByRole('dialog');
         await expect(mobileNavSheet.getByRole('link').first()).toBeVisible();
@@ -383,7 +405,9 @@ test.describe('Navigation System', () => {
         const nav = getNav(page);
         await expect(nav).toHaveAttribute('aria-label', 'Main navigation');
         await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
-        await expect(nav.getByRole('button', { name: 'Products' })).toBeVisible();
+        await expect(
+          nav.getByRole('button', { name: 'Products' }),
+        ).toBeVisible();
         await expect(nav.getByRole('link', { name: 'About' })).toBeVisible();
       }
     });
@@ -394,7 +418,9 @@ test.describe('Navigation System', () => {
 
       if (isMobile) {
         // On mobile, verify menu toggle exists and we can reach landmark content
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
         const mainHeading = page.getByRole('heading', { level: 1 });
         await expect(mainHeading).toBeVisible();
@@ -427,11 +453,19 @@ test.describe('Navigation System', () => {
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
       if (isMobile) {
-        const mobileMenuButton = page.getByRole('button', { name: 'Toggle mobile menu' });
+        const mobileMenuButton = page.getByRole('button', {
+          name: 'Toggle mobile menu',
+        });
         await expect(mobileMenuButton).toBeVisible();
-        try { await mobileMenuButton.tap(); } catch { await mobileMenuButton.click(); }
+        try {
+          await mobileMenuButton.tap();
+        } catch {
+          await mobileMenuButton.click();
+        }
         const mobileNavSheet = page.getByRole('dialog');
-        await expect(mobileNavSheet.getByRole('link', { name: 'Home' }).first()).toBeVisible();
+        await expect(
+          mobileNavSheet.getByRole('link', { name: 'Home' }).first(),
+        ).toBeVisible();
       } else {
         const nav = getNav(page);
         await expect(nav).toBeVisible();

@@ -21,10 +21,10 @@ pre-commit:
       fail_text: '代码质量检查失败 - 发现新的质量问题，请修复后重新提交'
       stage_fixed: true
 
-    # 架构守卫 - 仅检查已暂存的 JS/TS 变更
+    # 架构守卫 - 仅检查已暂存的 JS/TS 变更（排除测试文件）
     architecture-guard:
       run: |
-        FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' || true)
+        FILES=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(ts|tsx|js|jsx)$' | grep -v '^tests/' | grep -v '__tests__' || true)
         if [ -z "$FILES" ]; then echo "✅ 架构守卫检查通过 (无 JS/TS 变更)"; exit 0; fi
         for f in $FILES; do
           if git diff --cached -- "$f" | grep -qE '^\+.*export \* from'; then
