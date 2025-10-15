@@ -45,6 +45,7 @@ const CONFIG = {
       'GitHub',
       'LinkedIn',
       'Twitter',
+      'Vercel',
       'API',
       'URL',
       'SEO',
