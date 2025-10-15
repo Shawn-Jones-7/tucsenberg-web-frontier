@@ -72,10 +72,25 @@ pre-push:
       run: pnpm build:check
       fail_text: '构建验证失败 - 请修复构建错误后再推送'
 
-    # 集成测试
+    # 集成测试（覆盖率模式）
     integration-test:
-      run: pnpm test
+      run: pnpm test:coverage
       fail_text: '集成测试失败 - 请确保所有测试通过后再推送'
+
+    # 翻译验证
+    translation-check:
+      run: pnpm validate:translations
+      fail_text: '翻译验证失败 - 请确保所有翻译文件同步'
+
+    # 质量门禁
+    quality-gate:
+      run: pnpm quality:gate
+      fail_text: '质量门禁失败 - 请修复质量问题后再推送'
+
+    # 架构检查
+    arch-check:
+      run: pnpm arch:check && pnpm circular:check
+      fail_text: '架构检查失败 - 发现循环依赖或架构违规'
 
     # 性能测试
     performance-test:

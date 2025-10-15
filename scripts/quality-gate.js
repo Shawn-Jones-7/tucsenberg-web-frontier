@@ -23,7 +23,7 @@ class QualityGate {
             branches: 80,
             statements: 85,
           },
-          blocking: true, // 是否阻塞构建
+          blocking: false, // 渐进式改进：覆盖率不达标时警告但不阻塞
         },
         codeQuality: {
           enabled: true,

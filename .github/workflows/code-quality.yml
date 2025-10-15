@@ -2,9 +2,9 @@ name: 企业级代码质量检查
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
 
 jobs:
   code-quality:
@@ -12,131 +12,131 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
 
-    - name: 设置Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'pnpm'
+      - name: 设置Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
 
-    - name: 安装pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 8
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
 
-    - name: 安装依赖
-      run: pnpm install --frozen-lockfile
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
 
-    - name: TypeScript类型检查
-      run: pnpm run type-check
+      - name: TypeScript类型检查
+        run: pnpm run type-check
 
-    - name: 测试文件类型检查
-      run: pnpm run type-check:tests
+      - name: 测试文件类型检查
+        run: pnpm run type-check:tests
 
-    - name: ESLint代码检查
-      run: pnpm run lint:check
+      - name: ESLint代码检查
+        run: pnpm run lint:check
 
-    - name: 企业级质量门禁
-      run: pnpm run quality:gate
+      - name: 企业级质量门禁
+        run: pnpm run quality:gate
 
-    - name: 上传质量报告
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: quality-reports
-        path: reports/quality/
-        retention-days: 30
+      - name: 上传质量报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: quality-reports
+          path: reports/quality/
+          retention-days: 30
 
-    - name: 质量趋势分析
-      if: github.event_name == 'push'
-      run: |
-        echo "📊 质量趋势分析"
-        if [ -f "reports/quality/latest-quality-summary.json" ]; then
-          echo "当前质量分数: $(cat reports/quality/latest-quality-summary.json | jq '.qualityScore')"
-          echo "错误数量: $(cat reports/quality/latest-quality-summary.json | jq '.totalErrors')"
-          echo "警告数量: $(cat reports/quality/latest-quality-summary.json | jq '.totalWarnings')"
-        fi
+      - name: 质量趋势分析
+        if: github.event_name == 'push'
+        run: |
+          echo "📊 质量趋势分析"
+          if [ -f "reports/quality/latest-quality-summary.json" ]; then
+            echo "当前质量分数: $(cat reports/quality/latest-quality-summary.json | jq '.qualityScore')"
+            echo "错误数量: $(cat reports/quality/latest-quality-summary.json | jq '.totalErrors')"
+            echo "警告数量: $(cat reports/quality/latest-quality-summary.json | jq '.totalWarnings')"
+          fi
 
-    - name: 质量门禁失败通知
-      if: failure()
-      run: |
-        echo "❌ 代码质量门禁未通过"
-        echo "请检查以下问题："
-        echo "1. 确保没有TypeScript类型错误"
-        echo "2. 修复所有ESLint错误"
-        echo "3. 将警告数量控制在500个以下"
-        echo "4. 严格禁止使用any类型"
-        exit 1
+      - name: 质量门禁失败通知
+        if: failure()
+        run: |
+          echo "❌ 代码质量门禁未通过"
+          echo "请检查以下问题："
+          echo "1. 确保没有TypeScript类型错误"
+          echo "2. 修复所有ESLint错误"
+          echo "3. 将警告数量控制在500个以下"
+          echo "4. 严格禁止使用any类型"
+          exit 1
 
   security-audit:
     name: 安全审计
     runs-on: ubuntu-latest
 
     steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
 
-    - name: 设置Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'pnpm'
+      - name: 设置Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
 
-    - name: 安装pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 8
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
 
-    - name: 安装依赖
-      run: pnpm install --frozen-lockfile
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
 
-    - name: 依赖安全审计
-      run: pnpm run security:audit
+      - name: 依赖安全审计
+        run: pnpm run security:audit
 
-    - name: 架构依赖检查
-      run: pnpm run arch:check
+      - name: 架构依赖检查
+        run: pnpm run arch:check
 
-    - name: 循环依赖检查
-      run: pnpm run circular:check
+      - name: 循环依赖检查
+        run: pnpm run circular:check
 
   test-quality:
     name: 测试质量检查
     runs-on: ubuntu-latest
 
     steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
 
-    - name: 设置Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: '20'
-        cache: 'pnpm'
+      - name: 设置Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "pnpm"
 
-    - name: 安装pnpm
-      uses: pnpm/action-setup@v4
-      with:
-        version: 8
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
 
-    - name: 安装依赖
-      run: pnpm install --frozen-lockfile
+      - name: 安装依赖
+        run: pnpm install --frozen-lockfile
 
-    - name: 运行测试
-      run: pnpm run test
+      - name: 运行测试
+        run: pnpm run test
 
-    - name: 测试覆盖率检查
-      run: pnpm run test:coverage
-      continue-on-error: true
+      - name: 测试覆盖率检查
+        run: pnpm run test:coverage
+        continue-on-error: true
 
-    - name: 上传覆盖率报告
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-reports
-        path: coverage/
-        retention-days: 30
+      - name: 上传覆盖率报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-reports
+          path: coverage/
+          retention-days: 30
 
   quality-summary:
     name: 质量总结
@@ -145,45 +145,45 @@ jobs:
     if: always()
 
     steps:
-    - name: 检出代码
-      uses: actions/checkout@v4
+      - name: 检出代码
+        uses: actions/checkout@v4
 
-    - name: 下载质量报告
-      uses: actions/download-artifact@v4
-      with:
-        name: quality-reports
-        path: reports/quality/
+      - name: 下载质量报告
+        uses: actions/download-artifact@v4
+        with:
+          name: quality-reports
+          path: reports/quality/
 
-    - name: 生成质量总结
-      run: |
-        echo "## 🎯 企业级代码质量检查总结" >> $GITHUB_STEP_SUMMARY
-        echo "" >> $GITHUB_STEP_SUMMARY
-
-        if [ -f "reports/quality/latest-quality-summary.json" ]; then
-          QUALITY_SCORE=$(cat reports/quality/latest-quality-summary.json | jq '.qualityScore')
-          TOTAL_ERRORS=$(cat reports/quality/latest-quality-summary.json | jq '.totalErrors')
-          TOTAL_WARNINGS=$(cat reports/quality/latest-quality-summary.json | jq '.totalWarnings')
-
-          echo "### 📊 质量指标" >> $GITHUB_STEP_SUMMARY
-          echo "- **质量分数**: ${QUALITY_SCORE}/100" >> $GITHUB_STEP_SUMMARY
-          echo "- **错误数量**: ${TOTAL_ERRORS}" >> $GITHUB_STEP_SUMMARY
-          echo "- **警告数量**: ${TOTAL_WARNINGS}" >> $GITHUB_STEP_SUMMARY
+      - name: 生成质量总结
+        run: |
+          echo "## 🎯 企业级代码质量检查总结" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "$TOTAL_ERRORS" -eq 0 ] && [ "$TOTAL_WARNINGS" -le 500 ]; then
-            echo "✅ **质量门禁**: 通过" >> $GITHUB_STEP_SUMMARY
-          else
-            echo "❌ **质量门禁**: 未通过" >> $GITHUB_STEP_SUMMARY
-          fi
-        else
-          echo "⚠️ 质量报告文件未找到" >> $GITHUB_STEP_SUMMARY
-        fi
+          if [ -f "reports/quality/latest-quality-summary.json" ]; then
+            QUALITY_SCORE=$(cat reports/quality/latest-quality-summary.json | jq '.qualityScore')
+            TOTAL_ERRORS=$(cat reports/quality/latest-quality-summary.json | jq '.totalErrors')
+            TOTAL_WARNINGS=$(cat reports/quality/latest-quality-summary.json | jq '.totalWarnings')
 
-        echo "" >> $GITHUB_STEP_SUMMARY
-        echo "### 🔍 检查项目" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] TypeScript类型检查" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] ESLint代码规范检查" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] 安全漏洞扫描" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] 架构依赖分析" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] 循环依赖检测" >> $GITHUB_STEP_SUMMARY
-        echo "- [x] 单元测试执行" >> $GITHUB_STEP_SUMMARY
+            echo "### 📊 质量指标" >> $GITHUB_STEP_SUMMARY
+            echo "- **质量分数**: ${QUALITY_SCORE}/100" >> $GITHUB_STEP_SUMMARY
+            echo "- **错误数量**: ${TOTAL_ERRORS}" >> $GITHUB_STEP_SUMMARY
+            echo "- **警告数量**: ${TOTAL_WARNINGS}" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+
+            if [ "$TOTAL_ERRORS" -eq 0 ] && [ "$TOTAL_WARNINGS" -le 500 ]; then
+              echo "✅ **质量门禁**: 通过" >> $GITHUB_STEP_SUMMARY
+            else
+              echo "❌ **质量门禁**: 未通过" >> $GITHUB_STEP_SUMMARY
+            fi
+          else
+            echo "⚠️ 质量报告文件未找到" >> $GITHUB_STEP_SUMMARY
+          fi
+
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔍 检查项目" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] TypeScript类型检查" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] ESLint代码规范检查" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] 安全漏洞扫描" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] 架构依赖分析" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] 循环依赖检测" >> $GITHUB_STEP_SUMMARY
+          echo "- [x] 单元测试执行" >> $GITHUB_STEP_SUMMARY
