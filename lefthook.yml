@@ -92,9 +92,14 @@ pre-push:
       run: pnpm arch:check && pnpm circular:check
       fail_text: '架构检查失败 - 发现循环依赖或架构违规'
 
-    # 性能测试
+    # 性能测试 (仅 CI 环境运行,避免本地 headless Chrome 卡住)
     performance-test:
-      run: pnpm perf:check
+      run: |
+        if [ -n "$CI" ]; then
+          pnpm perf:check
+        else
+          echo "⏭️  跳过性能测试 (仅 CI 环境运行,本地已通过 build-check 验证)"
+        fi
       fail_text: '性能测试失败 - 包大小或性能指标超出限制'
 
     # 安全检查
