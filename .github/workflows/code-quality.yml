@@ -80,16 +80,16 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
       - name: 设置Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
-
-      - name: 安装pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
@@ -112,16 +112,16 @@ jobs:
       - name: 检出代码
         uses: actions/checkout@v4
 
+      - name: 安装pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.13.1
+
       - name: 设置Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
           cache: "pnpm"
-
-      - name: 安装pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
 
       - name: 安装依赖
         run: pnpm install --frozen-lockfile
