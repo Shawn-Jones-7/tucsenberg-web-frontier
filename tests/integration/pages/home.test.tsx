@@ -244,7 +244,13 @@ describe('Home Page Integration Tests', () => {
     it('should present content in logical order for user journey', async () => {
       render(<Home />);
 
+      // Wait for all sections to load (including dynamic imports)
       const hero = await screen.findByTestId('hero-section');
+      await screen.findByTestId('tech-stack-section');
+      await screen.findByTestId('component-showcase');
+      await screen.findByTestId('project-overview');
+      await screen.findByTestId('call-to-action');
+
       const container = hero.parentElement;
       const sections = Array.from(container?.children || []);
 
