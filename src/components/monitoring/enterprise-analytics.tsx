@@ -12,6 +12,12 @@ const Analytics = dynamic(
   { ssr: false },
 );
 
+// 动态导入 Vercel Speed Insights（延迟加载,减少首屏Bundle）
+const SpeedInsights = dynamic(
+  () => import('@vercel/speed-insights/next').then((mod) => mod.SpeedInsights),
+  { ssr: false },
+);
+
 /**
  * 使用全局 logger（开发环境输出，生产环境静默）
  */
@@ -102,6 +108,8 @@ export function EnterpriseAnalytics({
       {children}
       {/* Vercel Analytics - 实时用户行为和性能监控 */}
       <Analytics />
+      {/* Vercel Speed Insights - 实时性能指标监控 */}
+      <SpeedInsights />
     </>
   );
 }
