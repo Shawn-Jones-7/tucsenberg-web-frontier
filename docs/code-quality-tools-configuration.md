@@ -126,7 +126,7 @@ export default antfu({
   rules: {
     // 🔴 Enabled as error - 检测不必要的useEffect模式 (9个规则)
     'react-you-might-not-need-an-effect/no-empty-effect': 'error',
-    'react-you-might-not-need-an-effect/no-reset-all-state-when-a-prop-changes': 'error',
+    'react-you-might-not-need-an-effect/no-reset-all-state-on-prop-change': 'error',
     'react-you-might-not-need-an-effect/no-event-handler': 'error',
     'react-you-might-not-need-an-effect/no-pass-live-state-to-parent': 'error',
     'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'error',
@@ -138,10 +138,42 @@ export default antfu({
 }
 ```
 
+#### SSR 兼容性 Hooks 豁免配置
+
+以下 hooks 使用 SSR 兼容性模式，需要豁免特定规则：
+
+```javascript
+{
+  name: 'ssr-hooks-exception',
+  files: [
+    '**/use-breakpoint.ts',
+    '**/use-reduced-motion.ts',
+    '**/use-web-vitals-diagnostics.ts',
+  ],
+  rules: {
+    // SSR 兼容性模式：使用 lazy initializer 或 useEffect 安全访问浏览器 API
+    'react-you-might-not-need-an-effect/no-initialize-state': 'off',
+    // Web Vitals 诊断需要在 useEffect 中初始化历史数据
+    'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'off',
+  },
+}
+```
+
+**豁免文件说明**:
+
+- **use-breakpoint.ts**: 使用 lazy initializer 安全访问 `window.innerWidth`
+- **use-reduced-motion.ts**: 使用 lazy initializer 安全访问 `matchMedia` API
+- **use-web-vitals-diagnostics.ts**: 在 useEffect 中初始化历史数据
+
+**豁免规则**:
+
+- `no-initialize-state`: SSR 环境下必须延迟初始化浏览器 API
+- `no-pass-data-to-parent`: Web Vitals 数据收集模式需要
+
 **检测场景 (9个反模式)**:
 
 - **no-empty-effect**: 空的useEffect
-- **no-reset-all-state-when-a-prop-changes**: 当prop变化时重置所有状态
+- **no-reset-all-state-on-prop-change**: 当prop变化时重置所有状态
 - **no-event-handler**: 在useEffect中处理事件
 - **no-pass-live-state-to-parent**: 向父组件传递实时状态
 - **no-pass-data-to-parent**: 向父组件传递数据

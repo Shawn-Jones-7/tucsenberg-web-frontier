@@ -1,306 +1,195 @@
 {
   "tasks": [
     {
-      "id": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01",
-      "name": "T0: 失败基线重建与分组",
-      "description": "解析 reports/playwright-results.json 与 test-results 附件，按项目(Chromium/Firefox/WebKit/移动)与 spec 聚类失败；标注 flake 嫌疑（Portal/动画/移动视图导致的瞬时不可见）与真正断言/兼容性问题。产出新的失败矩阵作为后续任务输入。",
+      "id": "566957e1-e20f-4ac2-977b-585a8ebc696e",
+      "name": "升级 eslint-plugin-react-you-might-not-need-an-effect 到 0.6.1",
+      "description": "使用 pnpm 包管理器升级插件版本从 0.5.0 到 0.6.1",
+      "notes": "遵循 shrimp-rules.md 第499行：必须使用包管理器命令而非手动编辑 package.json",
       "status": "completed",
       "dependencies": [],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:01:30.696Z",
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:46:01.588Z",
       "relatedFiles": [
-        {
-          "path": "reports/playwright-results.json",
-          "type": "REFERENCE",
-          "description": "失败明细来源"
-        },
-        {
-          "path": "test-results/",
-          "type": "REFERENCE",
-          "description": "截图/视频/错误上下文"
-        },
-        {
-          "path": "reports/e2e-failure-matrix.md",
-          "type": "OUTPUT",
-          "description": "失败聚合矩阵"
-        },
-        {
-          "path": "reports/e2e-failure-matrix.json",
-          "type": "OUTPUT",
-          "description": "失败矩阵（JSON）"
-        }
-      ],
-      "implementationGuide": "使用 Node 脚本或一次性命令聚合各项目失败条目与首行报错，输出CSV/Markdown矩阵；按‘可见性/等待/路径/兼容性/a11y/脚本错误’分类标注。",
-      "verificationCriteria": "生成的失败矩阵覆盖全部失败条目且分类明确；后续任务能直接引用定位到具体文件与断言。",
-      "analysisResult": "当前主要簇：下拉显隐(Portal/动画)、html[lang] 等待、a11y 二次注入、移动导航断言、路径末尾斜杠、已知浏览器兼容限制。"
-    },
-    {
-      "id": "7b3f2a9c-0f4a-4e4e-8f5c-2c7b3b9e1102",
-      "name": "T1: 稳定下拉显隐断言（Radix/Portal）",
-      "description": "将语言下拉与导航下拉的可见性断言从‘立即 toBeVisible’改为基于触发器 aria-expanded 或内容 data-state=open，并在必要时先验证 toBeAttached 与元素尺寸>0，减少动画/Portal 导致的抖动。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:01:30.698Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "语言切换下拉断言策略"
-        },
-        {
-          "path": "tests/e2e/navigation.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "导航下拉/抽屉显隐断言"
-        },
-        {
-          "path": "tests/e2e/debug-dropdown.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "调试下拉用例稳定化"
-        }
-      ],
-      "implementationGuide": "触发后先断言 trigger[aria-expanded=true] 或 content[data-state=\"open\"]；必要时用 expect(locator).toBeAttached() + boundingBox()!=null；减少硬等待。",
-      "verificationCriteria": "相关用例在 Desktop/Mobile/Firefox/WebKit 全部稳定通过，重跑无 flake。",
-      "analysisResult": "根因是 Portal + 动画与移动指针事件差异造成短期不可见，改断言语义即可稳定。"
-    },
-    {
-      "id": "2d8a6e74-6f3a-4d7e-8d56-0b9a7e4c3103",
-      "name": "T2: 替换 html[lang] 等待方式",
-      "description": "将 waitForFunction(document.documentElement.lang===…) 替换为 expect(page.locator('html')).toHaveAttribute('lang', 目标值) 或直接 waitForSelector('html[lang=…]')，并在移动端场景提供中文导航可见性兜底。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:01:30.700Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "html[lang] 断言更换为内置智能等待"
-        }
-      ],
-      "implementationGuide": "统一改用 toHaveAttribute('lang', 'zh'|'en')；对 path 保持用例并行校验 URL 与中文关键元素。",
-      "verificationCriteria": "所有与语言切换相关超时用例消除；Chromium/Firefox/WebKit/移动全绿。",
-      "analysisResult": "Playwright 内置期望具备智能等待，较自定义 waitForFunction 更稳。"
-    },
-    {
-      "id": "b1a0f7c5-0eab-4d0d-8a21-7c3dfd1a4104",
-      "name": "T3: 统一 axe 规则与二次注入",
-      "description": "在导航后再次 injectAxe；默认仅关注 critical/serious 级别并临时关闭易受主题/对比度影响的 color-contrast 规则（可通过环境开关切换为严格模式）。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.315Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "切换后再注入 axe 并限制impact"
-        },
-        {
-          "path": "tests/e2e/navigation.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "如有二次检查，同步策略"
-        }
-      ],
-      "implementationGuide": "切换语言 + waitForStable 后执行 injectAxe，再执行 checkA11y；通过 env 变量控制是否启用 color-contrast。",
-      "verificationCriteria": "a11y 相关失败归零（除非明确记录为兼容性限制），报告聚焦可行动问题。",
-      "analysisResult": "导航刷新更换上下文导致 window.axe 失效，需再次注入；对比度规则在主题/平台上波动大。"
-    },
-    {
-      "id": "9f4b3d86-1c2d-4f10-9a40-4a0a1d8e5105",
-      "name": "T4: 移动端导航断言与交互修正",
-      "description": "移动场景统一先点击‘Toggle mobile menu’打开 Sheet，再在 Sheet 内断言导航链接；Firefox 仅用 viewport + hasTouch（不使用 isMobile）。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.316Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/navigation.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "移动端断言走 Sheet 视图"
-        },
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "移动用例交互使用 tap/点击兜底"
-        }
-      ],
-      "implementationGuide": "在 mobile 场景先打开对话框，随后断言其中链接与可见性；避免直接断言桌面导航元素。",
-      "verificationCriteria": "Mobile Chrome / Mobile Safari 下导航类用例 100% 通过且无波动。",
-      "analysisResult": "桌面与移动渲染结构不同；直接断桌面选择器在移动下不成立。"
-    },
-    {
-      "id": "d672e0a4-3b7e-4c98-8a82-0a7e61d05106",
-      "name": "T5: 规范路径断言与末尾斜杠",
-      "description": "统一 URL 断言为包含或正则尾斜杠可选（…\\/?$），覆盖 WebKit/Safari 在路径处理上的细小差异。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.318Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/i18n-redirect-validation.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "路径正则尾斜杠放宽"
-        },
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "局部URL断言对齐"
-        }
-      ],
-      "implementationGuide": "将 toMatch(/…$/) 改为 /…\\/?$/ 或使用 toContain('/zh/about')；保持与共享本地化路径一致。",
-      "verificationCriteria": "WebKit/Safari 上的路径匹配不再失败。",
-      "analysisResult": "不同引擎和重定向链可能产生末尾斜杠差异。"
-    },
-    {
-      "id": "4a2c1b7d-8d10-49af-9a78-1c2d3e7f7107",
-      "name": "T6: 标注并隔离已知兼容性限制",
-      "description": "记录并在用例层面隔离已知引擎限制：Firefox 不支持 isMobile；如遇 WebKit 特有指针/焦点问题，提供条件分支或合理跳过（附注释与问题编号）。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f0c6f2b0-2a6f-4c5a-bd2e-6a5a5c4f0a01"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.318Z",
-      "relatedFiles": [
-        {
-          "path": "tests/e2e/i18n.spec.ts",
-          "type": "TO_MODIFY",
-          "description": "去除 isMobile；按需条件 skip"
-        },
-        {
-          "path": "tests/e2e/navigation.spec.ts",
-          "type": "REFERENCE",
-          "description": "如需条件跳过，保持注释与理由"
-        }
-      ],
-      "implementationGuide": "使用 test.skip(({browserName})=>…,'原因') 或条件分支；所有跳过需在文档与矩阵中登记。",
-      "verificationCriteria": "除已登记兼容性BUG外，整体通过率达100%。",
-      "analysisResult": "保证目标‘100%通过率（除已知BUG）’的同时，透明化兼容性边界。"
-    },
-    {
-      "id": "f5a1c9d0-6e9a-4db0-8a3f-5b1c0a8e8108",
-      "name": "T7: 处理测试结束挂起问题",
-      "description": "本地执行时强制 CI=1 禁用 webServer 复用或在需要时将 reuseExistingServer 设为 false；排查可能未清理的 route/事件监听。提供运行手册与脚本示例。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.320Z",
-      "relatedFiles": [
-        {
-          "path": "playwright.config.ts",
-          "type": "REFERENCE",
-          "description": "webServer.reuseExistingServer 策略说明"
-        },
-        {
-          "path": "README.md",
-          "type": "TO_MODIFY",
-          "description": "补充本地执行说明（可选）"
-        },
         {
           "path": "package.json",
           "type": "TO_MODIFY",
-          "description": "新增 test:e2e:no-reuse 与 test:e2e:ci-local"
+          "description": "第132行版本号将从 0.5.0 更新为 0.6.1",
+          "lineStart": 132,
+          "lineEnd": 132
+        },
+        {
+          "path": "pnpm-lock.yaml",
+          "type": "TO_MODIFY",
+          "description": "依赖锁文件将自动更新"
         }
       ],
-      "implementationGuide": "建议使用 `CI=1 pnpm test:e2e` 本地复现；如仍挂起，临时关闭复用；确保自定义 page.route/事件在测试结束自动释放。",
-      "verificationCriteria": "本地/CI 执行结束均无残留进程；Playwright 进程正常退出。",
-      "analysisResult": "复用已存在服务器可能导致进程表现为‘卡住’，规范运行方式可避免。"
+      "implementationGuide": "执行命令：\npnpm add -D eslint-plugin-react-you-might-not-need-an-effect@0.6.1\n\n验证步骤：\n1. 检查 package.json 第132行版本号是否更新为 0.6.1\n2. 检查 pnpm-lock.yaml 是否包含新版本的依赖信息\n3. 运行 pnpm install 确保依赖安装完成",
+      "verificationCriteria": "1. package.json 第132行显示版本 0.6.1\n2. pnpm-lock.yaml 包含新版本依赖\n3. node_modules 中安装了正确版本",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "eslint-plugin-react-you-might-not-need-an-effect 成功从 0.5.0 升级到 0.6.1。pnpm 命令执行成功，package.json 第132行版本号已更新，pnpm-lock.yaml 已自动更新，依赖安装完成。升级耗时 8.5 秒，无错误。",
+      "completedAt": "2025-10-25T06:46:01.587Z"
     },
     {
-      "id": "a4b2e1c0-5d3f-4a7a-9b2e-6c1d2e3f9109",
-      "name": "T8: 全量重跑并输出报告",
-      "description": "在安装完整浏览器运行时后全量重跑 `pnpm test:e2e`，汇总通过率、失败清单、慢测TOP5，并将报告产出到 reports/ 下供审阅。",
-      "status": "in_progress",
-      "dependencies": [
-        {
-          "taskId": "7b3f2a9c-0f4a-4e4e-8f5c-2c7b3b9e1102"
-        },
-        {
-          "taskId": "2d8a6e74-6f3a-4d7e-8d56-0b9a7e4c3103"
-        },
-        {
-          "taskId": "b1a0f7c5-0eab-4d0d-8a21-7c3dfd1a4104"
-        },
-        {
-          "taskId": "9f4b3d86-1c2d-4f10-9a40-4a0a1d8e5105"
-        },
-        {
-          "taskId": "d672e0a4-3b7e-4c98-8a82-0a7e61d05106"
-        },
-        {
-          "taskId": "4a2c1b7d-8d10-49af-9a78-1c2d3e7f7107"
-        }
-      ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-13T00:06:17.492Z",
-      "relatedFiles": [
-        {
-          "path": "reports/",
-          "type": "CREATE",
-          "description": "输出最新 Playwright 报告与聚合摘要"
-        },
-        {
-          "path": "reports/e2e-summary-latest.json",
-          "type": "OUTPUT",
-          "description": "E2E 汇总（JSON）"
-        },
-        {
-          "path": "reports/e2e-summary-latest.md",
-          "type": "OUTPUT",
-          "description": "E2E 汇总（Markdown）"
-        }
-      ],
-      "implementationGuide": "使用 JSON 报告生成器汇总各项目（chromium/firefox/webkit/移动）的 total/failed/passed；标注仍失败的任务与归属任务编号。",
-      "verificationCriteria": "通过率达预期（除已登记兼容性BUG外 100%），并产生结构化摘要。",
-      "analysisResult": "作为阶段性验收，确保前述稳定化修改真正落地。"
-    },
-    {
-      "id": "c7d9e2f1-8a0b-4c6d-9e1f-2b3c4d5e1110",
-      "name": "T9: 持续去抖与回归验证",
-      "description": "对历史易抖用例增加更稳健的语义断言或轻量等待策略；在 CI 中开启无重试(retries=0)抽样跑，确保零 flake；必要时对关键用例开启 trace-on-first-retry 并周期性回归。",
+      "id": "00d37e89-23f4-4840-9f72-807ca63609d1",
+      "name": "添加 SSR hooks 豁免配置到 eslint.config.mjs",
+      "description": "在 eslint.config.mjs 中添加针对 SSR 兼容性 hooks 的豁免配置，遵循现有 theme-switcher-ssr-exception 模式",
+      "notes": "参考现有配置：eslint.config.mjs 第62-70行的 theme-switcher-ssr-exception 模式。豁免配置仅针对特定文件生效，不影响其他文件的 ESLint 检查。",
       "status": "completed",
       "dependencies": [
         {
-          "taskId": "a4b2e1c0-5d3f-4a7a-9b2e-6c1d2e3f9109"
+          "taskId": "566957e1-e20f-4ac2-977b-585a8ebc696e"
         }
       ],
-      "createdAt": "2025-10-12T13:45:00.000Z",
-      "updatedAt": "2025-10-12T15:14:29.328Z",
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:47:19.486Z",
       "relatedFiles": [
         {
-          "path": "playwright.config.ts",
+          "path": "eslint.config.mjs",
+          "type": "TO_MODIFY",
+          "description": "在第70行后添加 SSR hooks 豁免配置块",
+          "lineStart": 70,
+          "lineEnd": 70
+        },
+        {
+          "path": "eslint.config.mjs",
           "type": "REFERENCE",
-          "description": "按需调整 retries/trace 策略（仅在CI）"
+          "description": "参考第62-70行的 theme-switcher-ssr-exception 配置模式",
+          "lineStart": 62,
+          "lineEnd": 70
+        },
+        {
+          "path": "src/hooks/use-breakpoint.ts",
+          "type": "REFERENCE",
+          "description": "豁免目标文件1：SSR 兼容的 breakpoint hook"
+        },
+        {
+          "path": "src/hooks/use-reduced-motion.ts",
+          "type": "REFERENCE",
+          "description": "豁免目标文件2：SSR 兼容的 reduced motion hook"
+        },
+        {
+          "path": "src/hooks/use-web-vitals-diagnostics.ts",
+          "type": "REFERENCE",
+          "description": "豁免目标文件3：Web Vitals 诊断 hook"
         }
       ],
-      "implementationGuide": "对波动点增加‘状态断言优先于显隐’原则；定期生成 flake 报告对比；将经验沉淀到 docs/quality/ 指南。",
-      "verificationCriteria": "回归跑稳定，无新增波动；flake 指标下降并稳定在0。",
-      "analysisResult": "确保长期稳定与可维护性，不仅达成一次性绿灯。"
+      "implementationGuide": "在 eslint.config.mjs 第70行（theme-switcher-ssr-exception 配置块之后）添加新的配置块：\n\n```javascript\n// SSR-compatible hooks and components exception\n{\n  name: 'ssr-hooks-exception',\n  files: [\n    '**/use-breakpoint.ts',\n    '**/use-reduced-motion.ts',\n    '**/use-web-vitals-diagnostics.ts',\n  ],\n  rules: {\n    // SSR 兼容性模式：使用 lazy initializer 或 useEffect 安全访问浏览器 API\n    'react-you-might-not-need-an-effect/no-initialize-state': 'off',\n    // Web Vitals 诊断需要在 useEffect 中初始化历史数据\n    'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'off',\n  },\n},\n```\n\n注意事项：\n1. 使用 str-replace-editor 工具进行精确编辑\n2. 保持缩进一致（2个空格）\n3. 确保逗号和括号匹配\n4. 注释使用中文（与项目风格一致）",
+      "verificationCriteria": "1. eslint.config.mjs 包含新的 ssr-hooks-exception 配置块\n2. 配置块位于 theme-switcher-ssr-exception 之后\n3. files 数组包含3个文件路径\n4. rules 对象包含2条豁免规则\n5. 注释清晰说明豁免原因",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "成功在 eslint.config.mjs 第72-86行添加 ssr-hooks-exception 配置块。配置遵循现有 theme-switcher-ssr-exception 模式，包含3个文件路径（use-breakpoint.ts、use-reduced-motion.ts、use-web-vitals-diagnostics.ts）和2条豁免规则（no-initialize-state、no-pass-data-to-parent）。注释使用中文，缩进一致（2个空格），格式正确。",
+      "completedAt": "2025-10-25T06:47:19.486Z"
+    },
+    {
+      "id": "08e8708c-3764-45eb-b618-03474073a894",
+      "name": "运行 ESLint 检查验证违规清零",
+      "description": "运行 pnpm lint:check 验证所有 react-you-might-not-need-an-effect 错误已清零",
+      "notes": "此步骤是关键验证点，确保豁免配置生效且无遗漏。如发现新违规，需要逐一分析并决定处理方式（豁免或重构）。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "00d37e89-23f4-4840-9f72-807ca63609d1"
+        }
+      ],
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:48:09.138Z",
+      "relatedFiles": [
+        {
+          "path": "lint_output.txt",
+          "type": "REFERENCE",
+          "description": "升级前的 lint 输出，用于对比验证"
+        }
+      ],
+      "implementationGuide": "执行命令：\npnpm lint:check\n\n预期结果：\n1. 无 react-you-might-not-need-an-effect 相关错误\n2. use-breakpoint.ts、use-reduced-motion.ts、use-web-vitals-diagnostics.ts 不再报错\n3. use-intersection-observer.ts 和 responsive-layout.tsx 的 eslint-disable 注释仍然有效\n\n如果仍有错误：\n1. 检查豁免配置的文件路径是否正确\n2. 检查规则名称是否正确\n3. 检查是否有新的违规情况（0.6.0 改进的检测能力可能发现新问题）",
+      "verificationCriteria": "1. pnpm lint:check 命令执行成功\n2. 输出中无 react-you-might-not-need-an-effect 错误\n3. 无新增的 ESLint 错误或警告\n4. 所有 SSR hooks 文件通过检查",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "pnpm lint:check 执行成功，所有 react-you-might-not-need-an-effect 错误已清零。use-breakpoint.ts、use-reduced-motion.ts、use-web-vitals-diagnostics.ts 三个文件的违规已通过豁免配置解决。use-intersection-observer.ts 和 responsive-layout.tsx 的 eslint-disable 注释继续有效。无新增 ESLint 错误或警告，豁免配置生效且无遗漏。",
+      "completedAt": "2025-10-25T06:48:09.137Z"
+    },
+    {
+      "id": "481ae575-2558-46cf-9d92-a5471534b4c3",
+      "name": "更新 docs/code-quality-tools-configuration.md 文档",
+      "description": "同步更新文档，添加 SSR hooks 豁免配置说明，确保文档与代码一致",
+      "notes": "文档更新应与代码修改在同一次提交中完成，确保文档与代码同步。遵循 shrimp-rules.md 第947-951行的文档更新规则。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "08e8708c-3764-45eb-b618-03474073a894"
+        }
+      ],
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:49:28.910Z",
+      "relatedFiles": [
+        {
+          "path": "docs/code-quality-tools-configuration.md",
+          "type": "TO_MODIFY",
+          "description": "添加 SSR hooks 豁免配置说明"
+        },
+        {
+          "path": "eslint.config.mjs",
+          "type": "REFERENCE",
+          "description": "参考实际配置内容编写文档",
+          "lineStart": 62,
+          "lineEnd": 85
+        }
+      ],
+      "implementationGuide": "在 docs/code-quality-tools-configuration.md 中找到 react-you-might-not-need-an-effect 相关章节，添加以下内容：\n\n1. 在豁免配置章节添加 SSR hooks 说明：\n```markdown\n### SSR 兼容性 Hooks 豁免\n\n以下 hooks 使用 SSR 兼容性模式，需要豁免特定规则：\n\n- **use-breakpoint.ts**: 使用 lazy initializer 安全访问 window.innerWidth\n- **use-reduced-motion.ts**: 使用 lazy initializer 安全访问 matchMedia API\n- **use-web-vitals-diagnostics.ts**: 在 useEffect 中初始化历史数据\n\n豁免规则：\n- `no-initialize-state`: SSR 环境下必须延迟初始化浏览器 API\n- `no-pass-data-to-parent`: Web Vitals 数据收集模式需要\n```\n\n2. 更新版本信息（如有）：\n- 插件版本：0.6.1\n- 更新日期：当前日期\n\n3. 检查是否有使用旧规则名称的示例，如有则更新",
+      "verificationCriteria": "1. 文档包含 SSR hooks 豁免配置说明\n2. 版本信息已更新\n3. 无旧规则名称残留\n4. 文档格式正确（Markdown 语法）",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "成功更新 docs/code-quality-tools-configuration.md 文档。在第140-171行添加了 SSR 兼容性 Hooks 豁免配置章节，包含配置代码示例、豁免文件说明和豁免规则说明。更新了第129行和第176行的旧规则名称（no-reset-all-state-when-a-prop-changes → no-reset-all-state-on-prop-change）。文档格式正确，Markdown 语法无误，与代码配置保持一致。",
+      "completedAt": "2025-10-25T06:49:28.909Z"
+    },
+    {
+      "id": "a723024a-81a2-442c-8f0c-257c3b29a9ba",
+      "name": "运行完整质量检查验证",
+      "description": "运行所有质量检查命令，确保升级未引入任何问题",
+      "notes": "这是最终验收步骤，必须全部通过才能认为升级成功。遵循 shrimp-rules.md 第443-480行的修复验证流程。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "481ae575-2558-46cf-9d92-a5471534b4c3"
+        }
+      ],
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:52:15.000Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "REFERENCE",
+          "description": "质量检查脚本定义",
+          "lineStart": 10,
+          "lineEnd": 30
+        },
+        {
+          "path": "eslint.config.mjs",
+          "type": "TO_MODIFY",
+          "description": "格式化修复后的配置文件"
+        }
+      ],
+      "implementationGuide": "依次执行以下命令：\n\n1. pnpm format:check\n   - 验证代码格式符合 Prettier 规范\n   - 预期：所有文件通过格式检查\n\n2. pnpm lint:check\n   - 验证 ESLint 规则（包括 react-you-might-not-need-an-effect）\n   - 预期：无错误，无警告\n\n3. pnpm type-check\n   - 验证 TypeScript 类型安全\n   - 预期：无类型错误\n\n4. pnpm build:check\n   - 验证 Next.js 构建成功\n   - 预期：构建成功，无错误\n\n如果任何检查失败：\n1. 查看错误信息，定位问题\n2. 根据错误类型决定处理方式（修复或回滚）\n3. 重新运行检查直到全部通过",
+      "verificationCriteria": "1. pnpm format:check 通过（100%）\n2. pnpm lint:check 通过（0错误0警告）\n3. pnpm type-check 通过（0错误）\n4. pnpm build:check 通过（构建成功）\n5. 所有命令输出无异常",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "所有质量检查全部通过。pnpm format:check 初次失败（eslint.config.mjs 格式问题），运行 pnpm format:write 修复后重新检查通过。pnpm lint:check 通过（0错误0警告），pnpm type-check 通过（0类型错误），pnpm build:check 通过（构建成功，5.0秒编译，16个路由生成）。升级未引入任何问题，所有验收标准满足。",
+      "completedAt": "2025-10-25T06:52:15.000Z"
+    },
+    {
+      "id": "c33d4470-3ef1-4d4f-bc6b-3e929cf80071",
+      "name": "记录升级关键点到 remember",
+      "description": "使用 remember 工具记录升级过程中的关键决策和发现，便于后续维护",
+      "notes": "遵循 shrimp-rules.md 第9行的 Memory 规则：每个任务必须使用 remember 记录关键点，每阶段 ≥3 条。",
+      "status": "completed",
+      "dependencies": [
+        {
+          "taskId": "a723024a-81a2-442c-8f0c-257c3b29a9ba"
+        }
+      ],
+      "createdAt": "2025-10-25T06:45:25.536Z",
+      "updatedAt": "2025-10-25T06:53:00.000Z",
+      "relatedFiles": [],
+      "implementationGuide": "调用 remember 工具记录以下关键点：\n\n1. 版本升级信息：\n   - eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\n   - 主要收益：修复堆栈溢出 bug、减少假阴性\n\n2. 豁免配置决策：\n   - 添加 ssr-hooks-exception 配置块\n   - 豁免3个文件：use-breakpoint.ts、use-reduced-motion.ts、use-web-vitals-diagnostics.ts\n   - 豁免2条规则：no-initialize-state、no-pass-data-to-parent\n\n3. 违规处理结果：\n   - 6处违规均为合理的 SSR/浏览器兼容性模式\n   - 使用配置级豁免而非大量 eslint-disable 注释\n   - 保留 use-intersection-observer.ts 和 responsive-layout.tsx 的行级注释（特殊场景）",
+      "verificationCriteria": "1. 记录了版本升级信息\n2. 记录了豁免配置决策\n3. 记录了违规处理结果\n4. 每条记录包含 label、fact、impact、next 信息",
+      "analysisResult": "eslint-plugin-react-you-might-not-need-an-effect 从 0.5.0 升级到 0.6.1\\n\\n**升级目标**：\\n- 升级插件版本到 0.6.1（修复堆栈溢出 bug + 减少假阴性）\\n- 处理 6 处违规情况（均为合理的 SSR/浏览器兼容性模式）\\n- 添加精确的豁免配置（遵循现有 theme-switcher-ssr-exception 模式）\\n- 确保所有质量检查通过\\n- 同步更新文档\\n\\n**技术约束**：\\n- 遵循 shrimp-rules.md 规范\\n- 使用 ESLint flat config 架构\\n- 优先使用配置级豁免而非 eslint-disable 注释\\n- 保持与现有架构的一致性\\n\\n**验收标准**：\\n- pnpm format:check 通过\\n- pnpm lint:check 通过（无 react-you-might-not-need-an-effect 错误）\\n- pnpm type-check 通过\\n- pnpm build:check 通过",
+      "summary": "成功记录 3 条关键点到 remember 工具：1) 版本升级信息（0.5.0→0.6.1，修复堆栈溢出 bug + 减少假阴性）；2) 豁免配置决策（ssr-hooks-exception 配置块，豁免 3 个文件的 2 条规则）；3) 质量检查结果（所有检查通过，格式问题已修复）。满足每阶段 ≥3 条的要求。",
+      "completedAt": "2025-10-25T06:53:00.000Z"
     }
   ]
 }

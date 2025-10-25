@@ -69,6 +69,22 @@ export default [
     },
   },
 
+  // SSR-compatible hooks and components exception
+  {
+    name: 'ssr-hooks-exception',
+    files: [
+      '**/use-breakpoint.ts',
+      '**/use-reduced-motion.ts',
+      '**/use-web-vitals-diagnostics.ts',
+    ],
+    rules: {
+      // SSR 兼容性模式：使用 lazy initializer 或 useEffect 安全访问浏览器 API
+      'react-you-might-not-need-an-effect/no-initialize-state': 'off',
+      // Web Vitals 诊断需要在 useEffect 中初始化历史数据
+      'react-you-might-not-need-an-effect/no-pass-data-to-parent': 'off',
+    },
+  },
+
   // React 19 Hook Standards configuration
   {
     name: 'react-19-hook-standards-config',
