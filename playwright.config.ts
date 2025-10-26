@@ -7,6 +7,36 @@ config({ path: '.env.test' });
 /**
  * @see https://playwright.dev/docs/test-configuration
  */
+const isCI = Boolean(process.env.CI);
+const isDaily = process.env.CI_DAILY === 'true';
+
+// 基于是否为每日全量任务，动态裁剪浏览器矩阵，加速常规CI
+const baseProjects = [
+  {
+    name: 'chromium',
+    use: { ...devices['Desktop Chrome'] },
+  },
+];
+
+const extendedProjects = [
+  {
+    name: 'firefox',
+    use: { ...devices['Desktop Firefox'] },
+  },
+  {
+    name: 'webkit',
+    use: { ...devices['Desktop Safari'] },
+  },
+  {
+    name: 'Mobile Chrome',
+    use: { ...devices['Pixel 5'] },
+  },
+  {
+    name: 'Mobile Safari',
+    use: { ...devices['iPhone 12'] },
+  },
+];
+
 export default defineConfig({
   testDir: './tests/e2e',
   /* Run tests in files in parallel */
@@ -16,18 +46,27 @@ export default defineConfig({
   /* Retry on CI only */
   retries: process.env.CI ? (process.env.CI_FLAKE_SAMPLING === '1' ? 0 : 2) : 0,
   /* Opt out of parallel tests on CI. */
-  workers: process.env.CI ? 1 : 4,
+  // CI 上启用 2 个并发以降低整体时长；本地保持 4
+  workers: isCI ? 2 : 4,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
     ['html', { outputFolder: 'reports/playwright-report' }],
     ['json', { outputFile: 'reports/playwright-results.json' }],
     ['junit', { outputFile: 'reports/playwright-results.xml' }],
   ],
+  // 非每日任务时，排除调试/诊断类用例，进一步收敛耗时
+  ...(isCI && !isDaily
+    ? { grepInvert: /debug|diagnosis/i }
+    : {}),
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
     /* 修复：包含默认locale以确保动态路由[locale]能正确匹配 */
     baseURL: process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:3000/en',
+
+    // 控制动作/导航等待上限，避免无界等待导致整体卡时
+    actionTimeout: 5_000,
+    navigationTimeout: 20_000,
 
     /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
     trace: 'on-first-retry',
@@ -40,42 +79,7 @@ export default defineConfig({
   },
 
   /* Configure projects for major browsers */
-  projects: [
-    {
-      name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
-    },
-
-    {
-      name: 'firefox',
-      use: { ...devices['Desktop Firefox'] },
-    },
-
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
-
-    /* Test against mobile viewports. */
-    {
-      name: 'Mobile Chrome',
-      use: { ...devices['Pixel 5'] },
-    },
-    {
-      name: 'Mobile Safari',
-      use: { ...devices['iPhone 12'] },
-    },
-
-    /* Test against branded browsers. */
-    // {
-    //   name: 'Microsoft Edge',
-    //   use: { ...devices['Desktop Edge'], channel: 'msedge' },
-    // },
-    // {
-    //   name: 'Google Chrome',
-    //   use: { ...devices['Desktop Chrome'], channel: 'chrome' },
-    // },
-  ],
+  projects: isDaily ? [...baseProjects, ...extendedProjects] : baseProjects,
 
   /* Run your local dev server before starting the tests */
   webServer: {
