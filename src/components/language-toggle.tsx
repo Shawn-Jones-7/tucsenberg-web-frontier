@@ -99,10 +99,11 @@ export const LanguageToggle = memo(() => {
   const currentLanguageName = locale === 'en' ? 'English' : '简体中文';
 
   return (
-    <DropdownMenu
-      data-testid='language-dropdown-menu'
-      onOpenChange={setIsOpen}
-    >
+    <div data-testid='language-switcher'>
+      <DropdownMenu
+        data-testid='language-dropdown-menu'
+        onOpenChange={setIsOpen}
+      >
       <DropdownMenuTrigger
         asChild
         data-testid='language-dropdown-trigger'
@@ -248,6 +249,7 @@ export const LanguageToggle = memo(() => {
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
+    </div>
   );
 });
 
