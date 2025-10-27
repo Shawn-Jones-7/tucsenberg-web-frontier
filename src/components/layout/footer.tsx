@@ -168,7 +168,7 @@ export const Footer: FC = () => {
               {getCopyrightText(locale)}
             </p>
             {/* Theme Switcher */}
-            <ThemeSwitcher data-testid='footer-theme-toggle' />
+            <ThemeSwitcher data-testid='theme-toggle' />
           </div>
         </div>
       </div>

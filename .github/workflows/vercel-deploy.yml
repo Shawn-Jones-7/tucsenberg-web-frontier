@@ -1,6 +1,6 @@
 name: Vercel 部署增强
 
-# 此 workflow 作为 Vercel GitHub 集成的补充
+# 此 workflow 作为 Verc尔 GitHub 集成的补充
 # 主要用于部署前的额外质量检查和部署后的验证
 
 on:
@@ -63,42 +63,40 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
 
     outputs:
-      preview_url: ${{ steps.vercel_deploy.outputs.deployment-url }}
+      preview_url: ${{ steps.vercel_cli_deploy.outputs.deployment-url }}
 
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
 
-      - name: 设置 pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.13.1
+      - name: 安装 Vercel CLI
+        run: npm i -g vercel@latest
+        env:
+          CI: true
 
-      - name: 设置 Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-          cache: "pnpm"
+      - name: 拉取 Vercel 环境配置 (preview)
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: 安装依赖（用于预构建）
-        run: pnpm install --frozen-lockfile
+      - name: 使用 Vercel CLI 构建
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
-      - name: 预构建产物
-        run: pnpm build --no-lint
-
-      - name: 使用 token 触发 Vercel 部署
-        id: vercel_deploy
-        uses: vercel/actions/deploy@v1
-        with:
-          token: ${{ secrets.VERCEL_TOKEN }}
-          project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          team-id: ${{ secrets.VERCEL_ORG_ID }}
-          working-directory: .
-
-      - name: 输出部署 URL
+      - name: 通过 Token 部署预构建产物
+        id: vercel_cli_deploy
         run: |
-          echo "部署 URL: ${{ steps.vercel_deploy.outputs.deployment-url }}"
-          echo "VERCEL_DEPLOYMENT_URL=${{ steps.vercel_deploy.outputs.deployment-url }}" >> $GITHUB_ENV
+          set -euo pipefail
+          DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }})
+          echo "deployment-url=${DEPLOY_URL}" >> "$GITHUB_OUTPUT"
+          echo "VERCEL_DEPLOYMENT_URL=${DEPLOY_URL}" >> "$GITHUB_ENV"
+          echo "部署 URL: ${DEPLOY_URL}"
+        env:
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 
   # 部署后验证 (仅在有部署 URL 时运行)
   post-deployment-verification:
