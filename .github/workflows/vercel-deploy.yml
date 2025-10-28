@@ -178,10 +178,15 @@ jobs:
           echo "- **部署 URL**: ${{ needs.deploy-to-vercel.outputs.preview_url }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
-          if [ "${{ needs.pre-deployment-checks.result }}" == "success" ] && \
-             [ "${{ needs.deploy-to-vercel.result }}" == "success" ] && \
-             [ "${{ needs.post-deployment-verification.result }}" == "success" ]; then
+          if [ "${{ needs.pre-deployment-checks.conclusion }}" == "success" ] && \
+             [ "${{ needs.deploy-to-vercel.conclusion }}" == "success" ] && \
+             [ "${{ needs.post-deployment-verification.conclusion }}" == "success" ]; then
             echo "✅ **状态**: 部署成功并通过所有验证" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ **状态**: 部署失败或验证未通过" >> $GITHUB_STEP_SUMMARY
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "### 📋 任务状态" >> $GITHUB_STEP_SUMMARY
+            echo "- 部署前检查: ${{ needs.pre-deployment-checks.conclusion }}" >> $GITHUB_STEP_SUMMARY
+            echo "- Vercel 部署: ${{ needs.deploy-to-vercel.conclusion }}" >> $GITHUB_STEP_SUMMARY
+            echo "- 部署后验证: ${{ needs.post-deployment-verification.conclusion }}" >> $GITHUB_STEP_SUMMARY
           fi

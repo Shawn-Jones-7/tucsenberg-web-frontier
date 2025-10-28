@@ -157,6 +157,7 @@ jobs:
         with:
           name: quality-reports
           path: reports/quality/
+        continue-on-error: true
 
       - name: 生成质量总结
         run: |
