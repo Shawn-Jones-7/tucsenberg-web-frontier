@@ -305,3 +305,6 @@ SENTRY_PROJECT=...
 ## 📄 许可证
 
 MIT License - 查看 [LICENSE](LICENSE) 文件了解详情。
+
+<!-- auto-deploy test:  -->
+<!-- auto-deploy test: 2025-10-31T05:58:07Z -->
