@@ -1,11 +1,13 @@
-import { Suspense } from 'react';
-import nextDynamic from 'next/dynamic';
-import enMessages from '@messages/en.json';
-import zhMessages from '@messages/zh.json';
-import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
+// Auto-deploy verification test: 2025-10-31T00:00:00Z
+
 import { HeroSectionStatic } from '@/components/home/hero-section';
 import TranslationsBoundary from '@/components/i18n/translations-boundary';
 import { routing } from '@/i18n/routing';
+import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
+import enMessages from '@messages/en.json';
+import zhMessages from '@messages/zh.json';
+import nextDynamic from 'next/dynamic';
+import { Suspense } from 'react';
 
 export const revalidate = 3600;
 export const dynamic = 'force-static';
