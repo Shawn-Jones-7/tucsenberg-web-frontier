@@ -92,8 +92,18 @@ test.describe('Safe Navigation Tests', () => {
   test('should handle mobile menu safely', async ({ page }) => {
     // 设置移动端视口
     await page.setViewportSize({ width: 375, height: 667 });
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    // 等待页面进入稳定状态，优先等待 load，如遇到外部资源拖慢则降级为短暂延时
+    try {
+      await page.waitForLoadState('load', { timeout: 5_000 });
+    } catch (error) {
+      console.warn(
+        '⚠️ waitForLoadState("load") timed out, falling back to short delay',
+        error instanceof Error ? error.message : error,
+      );
+      await page.waitForTimeout(1_000);
+    }
 
     // 移除干扰元素
     await removeInterferingElements(page);
@@ -262,9 +272,19 @@ test.describe('Safe Navigation Tests', () => {
       consoleLogs.push(msg.text());
     });
 
-    // 触发一些页面活动
-    await page.reload();
-    await page.waitForLoadState('networkidle');
+    // 触发一些页面活动，让页面经过一次完整刷新
+    await page.reload({ waitUntil: 'domcontentloaded' });
+
+    // 尝试等待到 load 状态，如果外部资源阻塞则降级为短暂延迟
+    try {
+      await page.waitForLoadState('load', { timeout: 5_000 });
+    } catch (error) {
+      console.warn(
+        '⚠️  waitForLoadState(load) timed out, falling back to short delay.',
+        error instanceof Error ? error.message : error,
+      );
+      await page.waitForTimeout(1_000);
+    }
 
     // 检查是否有 React Scan 禁用消息
     const reactScanLogs = consoleLogs.filter(
