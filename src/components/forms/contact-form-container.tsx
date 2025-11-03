@@ -16,10 +16,17 @@ import { requestIdleCallback } from '@/lib/idle-callback';
 import { logger } from '@/lib/logger';
 import { type ServerActionResult } from '@/lib/server-action-utils';
 import { type FormSubmissionStatus } from '@/lib/validations';
+import {
+  AdditionalFields,
+  CheckboxFields,
+  ContactFields,
+  MessageField,
+  NameFields,
+} from '@/components/forms/contact-form-fields';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { contactFormAction, type ContactFormResult } from '@/app/actions';
-import { ANIMATION_DURATION_VERY_SLOW, COUNT_FIVE } from '@/constants';
+import { FIVE_MINUTES_MS } from '@/constants';
 
 /**
  * 乐观更新状态类型
@@ -96,6 +103,8 @@ function useContactForm() {
   const [lastSubmissionTime, setLastSubmissionTime] = useState<Date | null>(
     null,
   );
+  const rateLimitResetTimeoutRef = useRef<number | null>(null);
+  const lastRecordedSuccessRef = useRef(false);
   const [isPendingTransition, startTransition] = useTransition();
 
   // React 19原生useOptimistic Hook - 乐观更新状态管理
@@ -123,15 +132,57 @@ function useContactForm() {
             ? 'error'
             : 'idle';
 
-  // Rate limiting check (5 minutes = 300000ms)
-  const RATE_LIMIT_MINUTES = COUNT_FIVE;
-  const SECONDS_PER_MINUTE = 60;
-  const MS_PER_SECOND = ANIMATION_DURATION_VERY_SLOW;
+  // Rate limiting window (default 5 minutes, overrideable for tests via env)
+  const configuredCooldownMs =
+    typeof process !== 'undefined'
+      ? Number(process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS)
+      : Number.NaN;
   const RATE_LIMIT_WINDOW =
-    RATE_LIMIT_MINUTES * SECONDS_PER_MINUTE * MS_PER_SECOND;
-  const isRateLimited =
+    Number.isFinite(configuredCooldownMs) && configuredCooldownMs > 0
+      ? configuredCooldownMs
+      : FIVE_MINUTES_MS;
+  const isRateLimited = Boolean(
     lastSubmissionTime &&
-    Date.now() - lastSubmissionTime.getTime() < RATE_LIMIT_WINDOW;
+      Date.now() - lastSubmissionTime.getTime() < RATE_LIMIT_WINDOW,
+  );
+
+  useEffect(() => {
+    if (state?.success && !lastRecordedSuccessRef.current) {
+      setLastSubmissionTime(new Date());
+    }
+    lastRecordedSuccessRef.current = Boolean(state?.success);
+  }, [state?.success]);
+
+  useEffect(() => {
+    let timeoutId: number | null = null;
+
+    if (rateLimitResetTimeoutRef.current !== null) {
+      window.clearTimeout(rateLimitResetTimeoutRef.current);
+      rateLimitResetTimeoutRef.current = null;
+    }
+
+    if (lastSubmissionTime) {
+      const elapsed = Date.now() - lastSubmissionTime.getTime();
+      const remaining = RATE_LIMIT_WINDOW - elapsed;
+
+      if (remaining <= 0) {
+        setLastSubmissionTime(null);
+      } else {
+        timeoutId = window.setTimeout(() => {
+          setLastSubmissionTime(null);
+        }, remaining);
+
+        rateLimitResetTimeoutRef.current = timeoutId;
+      }
+    }
+
+    return () => {
+      if (timeoutId !== null) {
+        window.clearTimeout(timeoutId);
+        rateLimitResetTimeoutRef.current = null;
+      }
+    };
+  }, [lastSubmissionTime, RATE_LIMIT_WINDOW]);
 
   // 创建增强的formAction，使用React 19原生乐观更新
   const enhancedFormAction = (formData: FormData) => {
@@ -178,19 +229,30 @@ function useContactForm() {
  */
 function ErrorDisplay({
   state,
+  translate,
 }: {
   state: ServerActionResult<ContactFormResult> | null;
+  translate: (key: string) => string;
 }) {
   if (!state?.error) return null;
 
+  const translatedDetails = state.details?.map((detail) =>
+    detail.startsWith('errors.') ? translate(detail) : detail,
+  );
+  const uniqueDetails = translatedDetails
+    ? Array.from(new Set(translatedDetails))
+    : undefined;
+  const isValidationError = state.error === 'Validation failed';
+  const shouldShowRawMessage = state.error && !isValidationError;
+
   return (
     <div className='rounded-lg border border-red-200 bg-red-50 p-4 text-red-800'>
-      <p className='font-medium'>Error</p>
-      <p className='text-sm'>{state.error}</p>
-      {state.details && (
+      <p className='font-medium'>{translate('error')}</p>
+      {shouldShowRawMessage && <p className='text-sm'>{state.error}</p>}
+      {uniqueDetails && uniqueDetails.length > 0 && (
         <ul className='mt-2 list-inside list-disc text-sm'>
-          {state.details.map((detail: string, index: number) => (
-            <li key={index}>{detail}</li>
+          {uniqueDetails.map((detail) => (
+            <li key={detail}>{detail}</li>
           ))}
         </ul>
       )}
@@ -198,208 +260,15 @@ function ErrorDisplay({
   );
 }
 
-/**
- * 通用表单字段类型
- */
-interface FieldProps {
+interface FormFieldsProps {
   t: (key: string) => string;
   isPending: boolean;
 }
 
 /**
- * 姓名字段组件 - 使用memo优化性能
- */
-const NameFields = memo(({ t, isPending }: FieldProps) => {
-  return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-      <div className='space-y-2'>
-        <label
-          htmlFor='firstName'
-          className="after:ml-0.5 after:text-red-500 after:content-['*']"
-        >
-          {t('firstName')}
-        </label>
-        <input
-          id='firstName'
-          name='firstName'
-          type='text'
-          placeholder={t('firstNamePlaceholder')}
-          disabled={isPending}
-          required
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-      <div className='space-y-2'>
-        <label
-          htmlFor='lastName'
-          className="after:ml-0.5 after:text-red-500 after:content-['*']"
-        >
-          {t('lastName')}
-        </label>
-        <input
-          id='lastName'
-          name='lastName'
-          type='text'
-          placeholder={t('lastNamePlaceholder')}
-          disabled={isPending}
-          required
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-    </div>
-  );
-});
-
-NameFields.displayName = 'NameFields';
-
-/**
- * 联系信息字段组件 - 使用memo优化性能
- */
-const ContactFields = memo(({ t, isPending }: FieldProps) => {
-  return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-      <div className='space-y-2'>
-        <label
-          htmlFor='email'
-          className="after:ml-0.5 after:text-red-500 after:content-['*']"
-        >
-          {t('email')}
-        </label>
-        <input
-          id='email'
-          name='email'
-          type='email'
-          placeholder={t('emailPlaceholder')}
-          disabled={isPending}
-          required
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-      <div className='space-y-2'>
-        <label htmlFor='company'>{t('company')}</label>
-        <input
-          id='company'
-          name='company'
-          type='text'
-          placeholder={t('companyPlaceholder')}
-          disabled={isPending}
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-    </div>
-  );
-});
-
-ContactFields.displayName = 'ContactFields';
-
-/**
- * 附加信息字段组件 - 使用memo优化性能
- */
-const AdditionalFields = memo(({ t, isPending }: FieldProps) => {
-  return (
-    <div className='grid grid-cols-1 gap-4 md:grid-cols-2'>
-      <div className='space-y-2'>
-        <label htmlFor='phone'>{t('phone')}</label>
-        <input
-          id='phone'
-          name='phone'
-          type='tel'
-          placeholder={t('phonePlaceholder')}
-          disabled={isPending}
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-      <div className='space-y-2'>
-        <label htmlFor='subject'>{t('subject')}</label>
-        <input
-          id='subject'
-          name='subject'
-          type='text'
-          placeholder={t('subjectPlaceholder')}
-          disabled={isPending}
-          className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-        />
-      </div>
-    </div>
-  );
-});
-
-AdditionalFields.displayName = 'AdditionalFields';
-
-/**
- * 消息字段组件 - 使用memo优化性能
- */
-const MessageField = memo(({ t, isPending }: FieldProps) => {
-  return (
-    <div className='space-y-2'>
-      <label
-        htmlFor='message'
-        className="after:ml-0.5 after:text-red-500 after:content-['*']"
-      >
-        {t('message')}
-      </label>
-      <textarea
-        id='message'
-        name='message'
-        placeholder={t('messagePlaceholder')}
-        disabled={isPending}
-        required
-        rows={4}
-        className='border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50'
-      />
-    </div>
-  );
-});
-
-MessageField.displayName = 'MessageField';
-
-/**
- * 复选框字段组件 - 使用memo优化性能
- */
-const CheckboxFields = memo(({ t, isPending }: FieldProps) => {
-  return (
-    <div className='space-y-4'>
-      <div className='flex items-center space-x-2'>
-        <input
-          id='acceptPrivacy'
-          name='acceptPrivacy'
-          type='checkbox'
-          disabled={isPending}
-          required
-          className='border-input h-4 w-4 rounded border'
-        />
-        <label
-          htmlFor='acceptPrivacy'
-          className="text-sm after:ml-0.5 after:text-red-500 after:content-['*']"
-        >
-          {t('acceptPrivacy')}
-        </label>
-      </div>
-      <div className='flex items-center space-x-2'>
-        <input
-          id='marketingConsent'
-          name='marketingConsent'
-          type='checkbox'
-          disabled={isPending}
-          className='border-input h-4 w-4 rounded border'
-        />
-        <label
-          htmlFor='marketingConsent'
-          className='text-sm'
-        >
-          {t('marketingConsent')}
-        </label>
-      </div>
-    </div>
-  );
-});
-
-CheckboxFields.displayName = 'CheckboxFields';
-
-/**
  * 表单字段组件 - 组合所有字段，使用memo优化性能
  */
-const FormFields = memo(({ t, isPending }: FieldProps) => {
+const FormFields = memo(({ t, isPending }: FormFieldsProps) => {
   return (
     <>
       <NameFields
@@ -487,7 +356,10 @@ export function ContactFormContainer() {
           optimisticMessage={optimisticMessage}
         />
 
-        <ErrorDisplay state={state} />
+        <ErrorDisplay
+          state={state}
+          translate={t}
+        />
 
         <FormFields
           t={t}
@@ -499,6 +371,7 @@ export function ContactFormContainer() {
           onSuccess={setTurnstileToken}
           onError={() => setTurnstileToken('')}
           onExpire={() => setTurnstileToken('')}
+          onLoad={() => setTurnstileToken('')}
         />
 
         {/* Submit button */}
@@ -519,7 +392,8 @@ export function ContactFormContainer() {
 }
 // 懒加载 Turnstile 组件（进入视口或空闲时）
 const DynamicTurnstile = dynamic(
-  () => import('@marsidev/react-turnstile').then((m) => m.Turnstile),
+  () =>
+    import('@/components/security/turnstile').then((m) => m.TurnstileWidget),
   {
     ssr: false,
     loading: () => (
@@ -535,10 +409,12 @@ function LazyTurnstile({
   onSuccess,
   onError,
   onExpire,
+  onLoad,
 }: {
   onSuccess: (token: string) => void;
-  onError: () => void;
+  onError: (reason?: string) => void;
   onExpire: () => void;
+  onLoad: () => void;
 }) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const [shouldRender, setShouldRender] = useState(false);
@@ -580,11 +456,14 @@ function LazyTurnstile({
     >
       {shouldRender ? (
         <DynamicTurnstile
-          siteKey={process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || ''}
           onSuccess={onSuccess}
           onError={onError}
           onExpire={onExpire}
-          options={{ theme: 'auto', size: 'normal' }}
+          onLoad={onLoad}
+          className='w-full'
+          action='contact_form'
+          theme='auto'
+          size='normal'
         />
       ) : (
         <div

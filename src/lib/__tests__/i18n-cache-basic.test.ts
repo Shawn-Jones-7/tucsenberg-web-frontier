@@ -79,20 +79,30 @@ vi.mock('@/lib/i18n-performance', () => ({
 }));
 
 // Mock constants
-vi.mock('@/constants/i18n-constants', () => ({
-  CACHE_DURATIONS: {
-    PERFORMANCE_CACHE: 300000, // 5 minutes
-  },
-  CACHE_LIMITS: {
-    MAX_CACHE_ENTRIES: 100,
-  },
-  PERFORMANCE_THRESHOLDS: {
-    EXCELLENT: 6,
-    GOOD: 4,
-    FAIR: 2,
-    POOR: 1,
-  },
-}));
+vi.mock('@/constants/i18n-constants', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/constants/i18n-constants')
+  >('@/constants/i18n-constants');
+
+  return {
+    ...actual,
+    CACHE_DURATIONS: {
+      ...actual.CACHE_DURATIONS,
+      PERFORMANCE_CACHE: 300000, // 5 minutes
+    },
+    CACHE_LIMITS: {
+      ...actual.CACHE_LIMITS,
+      MAX_CACHE_ENTRIES: 100,
+    },
+    PERFORMANCE_THRESHOLDS: {
+      ...actual.PERFORMANCE_THRESHOLDS,
+      EXCELLENT: 6,
+      GOOD: 4,
+      FAIR: 2,
+      POOR: 1,
+    },
+  };
+});
 
 describe('I18nCacheManager - Basic Functionality', () => {
   let cacheManager: I18nCacheManager;

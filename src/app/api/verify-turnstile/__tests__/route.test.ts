@@ -11,6 +11,10 @@ vi.mock('@/lib/env', () => ({
   env: {
     TURNSTILE_SECRET_KEY: 'test-secret-key',
     TURNSTILE_SITE_KEY: 'test-site-key',
+    TURNSTILE_ALLOWED_HOSTS: 'localhost',
+    TURNSTILE_EXPECTED_ACTION: 'contact_form',
+    NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
+    NEXT_PUBLIC_TURNSTILE_ACTION: 'contact_form',
   },
 }));
 
@@ -35,7 +39,7 @@ describe('Verify Turnstile API Route', () => {
             success: true,
             challenge_ts: '2024-01-01T00:00:00.000Z',
             hostname: 'localhost',
-            action: 'submit',
+            action: 'contact_form',
           }),
       });
 
@@ -212,7 +216,12 @@ describe('Verify Turnstile API Route', () => {
     it('应该正确提取客户端IP地址', async () => {
       mockFetch.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ success: true }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            hostname: 'localhost',
+            action: 'contact_form',
+          }),
       });
 
       const request = new NextRequest(
@@ -240,7 +249,12 @@ describe('Verify Turnstile API Route', () => {
     it('应该使用提供的remoteip参数', async () => {
       mockFetch.mockResolvedValue({
         ok: true,
-        json: () => Promise.resolve({ success: true }),
+        json: () =>
+          Promise.resolve({
+            success: true,
+            hostname: 'localhost',
+            action: 'contact_form',
+          }),
       });
 
       const requestWithRemoteIp = {
@@ -326,7 +340,7 @@ describe('Verify Turnstile API Route', () => {
 
   describe('安全性测试', () => {
     it('应该记录验证尝试', async () => {
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const consoleSpy = vi.spyOn(console, 'info').mockImplementation(() => {});
 
       mockFetch.mockResolvedValue({
         ok: true,
@@ -335,6 +349,7 @@ describe('Verify Turnstile API Route', () => {
             success: true,
             hostname: 'localhost',
             challenge_ts: '2024-01-01T00:00:00.000Z',
+            action: 'contact_form',
           }),
       });
 
@@ -353,7 +368,7 @@ describe('Verify Turnstile API Route', () => {
       await POST(request);
 
       expect(consoleSpy).toHaveBeenCalledWith(
-        'Turnstile verification:',
+        'Turnstile verification attempt',
         expect.objectContaining({
           success: true,
           hostname: 'localhost',

@@ -6,8 +6,8 @@
  * UI组件的动态导入定义
  */
 import {
-  ComponentLoadingFallback,
   createStandardDynamicComponent,
+  MinimalLoadingFallback,
 } from '@/components/shared/dynamic-imports-base';
 
 // ==================== UI组件 ====================
@@ -32,10 +32,15 @@ export const DynamicAnimatedCounter = createStandardDynamicComponent(
  * Dropdown Menu - Dynamic Import
  * 原因：交互组件，较大，8.27KB
  */
-export const DynamicDropdownMenu = createStandardDynamicComponent(() =>
-  import('@/components/ui/dropdown-menu').then((mod) => ({
-    default: mod.DropdownMenu,
-  })),
+export const DynamicDropdownMenu = createStandardDynamicComponent(
+  () =>
+    import('@/components/ui/dropdown-menu').then((mod) => ({
+      default: mod.DropdownMenu,
+    })),
+  {
+    ssr: false,
+    loading: MinimalLoadingFallback,
+  },
 );
 
 /**
@@ -43,10 +48,15 @@ export const DynamicDropdownMenu = createStandardDynamicComponent(() =>
  * Tabs - Dynamic Import
  * 原因：布局组件，可能较大
  */
-export const DynamicTabs = createStandardDynamicComponent(() =>
-  import('@/components/ui/tabs').then((mod) => ({
-    default: mod.Tabs,
-  })),
+export const DynamicTabs = createStandardDynamicComponent(
+  () =>
+    import('@/components/ui/tabs').then((mod) => ({
+      default: mod.Tabs,
+    })),
+  {
+    ssr: false,
+    loading: MinimalLoadingFallback,
+  },
 );
 
 /**
@@ -60,6 +70,7 @@ export const DynamicCarousel = createStandardDynamicComponent(
       default: mod.Carousel,
     })),
   {
-    loading: ComponentLoadingFallback,
+    ssr: false,
+    loading: MinimalLoadingFallback,
   },
 );

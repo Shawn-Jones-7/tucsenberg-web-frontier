@@ -8,7 +8,65 @@
 
 const fs = require('fs');
 const path = require('path');
-const { execSync } = require('child_process');
+const { execSync, spawnSync } = require('child_process');
+
+const ESLINT_PACKAGE_PATH = require.resolve('eslint/package.json');
+const ESLINT_CLI_PATH = path.join(
+  path.dirname(ESLINT_PACKAGE_PATH),
+  'bin',
+  'eslint.js',
+);
+const ESLINT_BASE_ARGS = [
+  '.',
+  '--ext',
+  '.js,.jsx,.ts,.tsx',
+  '--config',
+  'eslint.config.mjs',
+  '--cache',
+  '--cache-location',
+  '.eslintcache',
+];
+
+function parseEslintJsonOutput(rawOutput) {
+  if (typeof rawOutput !== 'string') {
+    throw new Error('ESLint output is not a string');
+  }
+
+  const trimmed = rawOutput.trim();
+  const start = trimmed.indexOf('[');
+  const end = trimmed.lastIndexOf(']');
+
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error('Unable to locate ESLint JSON payload in output');
+  }
+
+  const jsonText = trimmed.slice(start, end + 1);
+  return JSON.parse(jsonText);
+}
+
+function runEslintWithJson() {
+  const result = spawnSync(
+    process.execPath,
+    [ESLINT_CLI_PATH, ...ESLINT_BASE_ARGS, '--format', 'json'],
+    {
+      encoding: 'utf8',
+      maxBuffer: 10 * 1024 * 1024, // 10MB
+    },
+  );
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  const rawOutput = (result.stdout || result.stderr || '').toString();
+  const lintResults = parseEslintJsonOutput(rawOutput);
+
+  return {
+    lintResults,
+    exitCode: result.status ?? 0,
+    rawOutput,
+  };
+}
 
 class QualityGate {
   constructor() {
@@ -344,18 +402,26 @@ class QualityGate {
    */
   async runESLintCheck() {
     try {
-      execSync('pnpm lint:check', { stdio: 'pipe' });
-      return { errors: 0, warnings: 0, status: 'passed' };
-    } catch (error) {
-      const output = error.stdout || error.stderr || '';
-      const errorMatch = output.match(/(\d+) error/);
-      const warningMatch = output.match(/(\d+) warning/);
+      const { lintResults, exitCode } = runEslintWithJson();
+      const totals = lintResults.reduce(
+        (acc, fileResult) => {
+          acc.errors += fileResult.errorCount || 0;
+          acc.warnings += fileResult.warningCount || 0;
+          return acc;
+        },
+        { errors: 0, warnings: 0 },
+      );
 
       return {
-        errors: errorMatch ? parseInt(errorMatch[1]) : 0,
-        warnings: warningMatch ? parseInt(warningMatch[1]) : 0,
-        status: 'failed',
-        output,
+        ...totals,
+        status: exitCode === 0 && totals.errors === 0 ? 'passed' : 'failed',
+      };
+    } catch (error) {
+      return {
+        errors: 0,
+        warnings: 0,
+        status: 'error',
+        message: error.message,
       };
     }
   }

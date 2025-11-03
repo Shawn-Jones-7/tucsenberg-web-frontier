@@ -298,10 +298,55 @@ describe('ContactFormContainer - 提交和错误处理', () => {
 
       await renderContactForm();
 
+      const successButton = await screen.findByTestId('turnstile-success');
+      await act(async () => {
+        fireEvent.click(successButton);
+      });
+
       // 检查成功消息
       expect(
         screen.getByText(/message sent successfully/i),
       ).toBeInTheDocument();
+
+      // Turnstile 成功后按钮应由于速率限制被禁用
+      const submitButton = screen.getByRole('button', { name: /submit/i });
+      expect(submitButton).toBeDisabled();
+      expect(
+        screen.getByText(/wait before submitting again/i),
+      ).toBeInTheDocument();
+    });
+
+    it('should re-enable submission after cooldown duration elapses', async () => {
+      const originalCooldown = process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS;
+      process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS = '25';
+
+      try {
+        mockUseActionState.mockReturnValue([{ success: true }, vi.fn(), false]);
+
+        await renderContactForm();
+
+        const successButton = await screen.findByTestId('turnstile-success');
+        await act(async () => {
+          fireEvent.click(successButton);
+        });
+
+        const submitButton = screen.getByRole('button', { name: /submit/i });
+        expect(submitButton).toBeDisabled();
+
+        await act(async () => {
+          await new Promise((resolve) => {
+            setTimeout(resolve, 50);
+          });
+        });
+
+        expect(submitButton).not.toBeDisabled();
+      } finally {
+        if (originalCooldown === undefined) {
+          delete process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS;
+        } else {
+          process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS = originalCooldown;
+        }
+      }
     });
 
     it('速率限制应该在5分钟后解除', async () => {

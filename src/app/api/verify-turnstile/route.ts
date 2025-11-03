@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
+import {
+  getAllowedTurnstileHosts,
+  getExpectedTurnstileAction,
+  isAllowedTurnstileAction,
+  isAllowedTurnstileHostname,
+} from '@/lib/security/turnstile-config';
 
 interface TurnstileVerificationRequest {
   token: string;
@@ -80,8 +86,12 @@ async function verifyWithCloudflare({
   const verificationData = new URLSearchParams({
     secret: secretKey,
     response: token,
-    remoteip: remoteip || clientIP,
   });
+
+  const ipAddress = remoteip || clientIP;
+  if (ipAddress && ipAddress !== 'unknown') {
+    verificationData.set('remoteip', ipAddress);
+  }
 
   const verificationResponse = await fetch(
     'https://challenges.cloudflare.com/turnstile/v0/siteverify',
@@ -119,7 +129,7 @@ function handleVerificationResult(
   clientIP: string,
 ) {
   // Log verification attempt (for monitoring)
-  logger.warn('Turnstile verification:', {
+  logger.info('Turnstile verification attempt', {
     success: result.success,
     hostname: result.hostname,
     challenge_ts: result.challenge_ts,
@@ -141,6 +151,40 @@ function handleVerificationResult(
         error: 'Verification failed',
         message: 'Bot protection challenge failed',
         errorCodes: result['error-codes'],
+      },
+      { status: 400 },
+    );
+  }
+
+  if (!isAllowedTurnstileHostname(result.hostname)) {
+    logger.warn('Turnstile verification failed due to unexpected hostname', {
+      hostname: result.hostname,
+      allowed: getAllowedTurnstileHosts(),
+      clientIP,
+    });
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Verification failed',
+        message: 'Bot protection challenge failed (hostname mismatch)',
+      },
+      { status: 400 },
+    );
+  }
+
+  if (!isAllowedTurnstileAction(result.action)) {
+    logger.warn('Turnstile verification failed due to action mismatch', {
+      action: result.action,
+      expectedAction: getExpectedTurnstileAction(),
+      clientIP,
+    });
+
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Verification failed',
+        message: 'Bot protection challenge failed (action mismatch)',
       },
       { status: 400 },
     );

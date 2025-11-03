@@ -21,6 +21,19 @@
 - **包管理器**: pnpm 8.0+ (推荐)
 - **操作系统**: macOS, Linux, Windows
 
+### 🔐 Turnstile 配置
+
+本地或部署环境需要在 `.env.local`（或对应的环境变量管理服务）中提供 Cloudflare Turnstile 凭证：
+
+```bash
+NEXT_PUBLIC_TURNSTILE_SITE_KEY=你的站点公钥
+TURNSTILE_SECRET_KEY=你的服务端私钥
+```
+
+> ⚠️ 请勿将真实密钥提交到版本库。若需要示例值，可在本地 `.env.example` 中添加占位符，实际密钥通过环境变量注入。
+
+针对额外安全策略（如限制域名、Action 值）可使用：`TURNSTILE_ALLOWED_HOSTS`、`TURNSTILE_EXPECTED_ACTION`、`NEXT_PUBLIC_TURNSTILE_ACTION`。
+
 ## 🚀 快速开始
 
 ### 1. 克隆项目

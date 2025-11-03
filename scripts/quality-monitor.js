@@ -10,9 +10,71 @@
  * - 集成CI/CD质量检查
  */
 
-const { execSync } = require('child_process');
+const { spawnSync } = require('child_process');
 const fs = require('fs');
 const path = require('path');
+
+const ESLINT_PACKAGE_PATH = require.resolve('eslint/package.json');
+const ESLINT_CLI_PATH = path.join(
+  path.dirname(ESLINT_PACKAGE_PATH),
+  'bin',
+  'eslint.js',
+);
+const ESLINT_BASE_ARGS = [
+  '.',
+  '--ext',
+  '.js,.jsx,.ts,.tsx',
+  '--config',
+  'eslint.config.mjs',
+  '--cache',
+  '--cache-location',
+  '.eslintcache',
+];
+
+function parseEslintJsonOutput(rawOutput) {
+  if (typeof rawOutput !== 'string') {
+    throw new Error('ESLint output is not a string');
+  }
+
+  const trimmed = rawOutput.trim();
+  const start = trimmed.indexOf('[');
+  const end = trimmed.lastIndexOf(']');
+
+  if (start === -1 || end === -1 || end <= start) {
+    throw new Error('Unable to locate ESLint JSON payload in output');
+  }
+
+  const jsonText = trimmed.slice(start, end + 1);
+  return JSON.parse(jsonText);
+}
+
+function runEslintForMetrics() {
+  const result = spawnSync(
+    process.execPath,
+    [ESLINT_CLI_PATH, ...ESLINT_BASE_ARGS, '--format', 'json'],
+    {
+      encoding: 'utf8',
+      maxBuffer: 10 * 1024 * 1024,
+    },
+  );
+
+  if (result.error) {
+    throw result.error;
+  }
+
+  const rawOutput = (result.stdout || result.stderr || '').toString();
+
+  try {
+    const lintResults = parseEslintJsonOutput(rawOutput);
+    return { lintResults, rawOutput };
+  } catch (parseError) {
+    const enhancedError = new Error(
+      `Failed to parse ESLint JSON output: ${parseError.message}`,
+    );
+    enhancedError.rawOutput = rawOutput;
+    throw enhancedError;
+  }
+}
 
 // 质量指标阈值配置
 const QUALITY_THRESHOLDS = {
@@ -50,41 +112,16 @@ class QualityMonitor {
     console.log('🔍 收集代码质量指标...');
 
     try {
-      // 直接运行ESLint命令，避免pnpm输出干扰
-      // 复用项目脚本，确保与 lint:check 完全一致（并开启缓存），仅覆盖输出格式为 JSON
-      const lintOutput = execSync('pnpm run -s lint:check -- --format json', {
-        encoding: 'utf8',
-        maxBuffer: 10 * 1024 * 1024, // 10MB buffer
-        stdio: ['pipe', 'pipe', 'pipe'], // 确保只获取stdout
-      });
-
-      const lintResults = JSON.parse(lintOutput);
+      const { lintResults } = runEslintForMetrics();
       return this.analyzeLintResults(lintResults);
     } catch (error) {
-      // ESLint有错误时也会抛出异常，但我们仍需要解析结果
-      if (error.stdout) {
-        try {
-          // 清理输出，移除非JSON内容
-          const cleanOutput = error.stdout.trim();
-          const jsonStart = cleanOutput.indexOf('[');
-          const jsonEnd = cleanOutput.lastIndexOf(']') + 1;
-
-          if (jsonStart >= 0 && jsonEnd > jsonStart) {
-            const jsonOutput = cleanOutput.substring(jsonStart, jsonEnd);
-            const lintResults = JSON.parse(jsonOutput);
-            return this.analyzeLintResults(lintResults);
-          }
-          console.error('❌ 未找到有效的JSON输出');
-          throw new Error('ESLint输出格式无效');
-        } catch (parseError) {
-          console.error('❌ 解析ESLint输出失败:', parseError.message);
-          console.error('原始输出:', error.stdout.substring(0, 500));
-          throw parseError;
-        }
+      if (error.rawOutput) {
+        console.error('❌ 解析ESLint输出失败:', error.message);
+        console.error('原始输出片段:', error.rawOutput.substring(0, 500));
+      } else {
+        console.error('❌ ESLint执行失败:', error.message);
       }
 
-      // 如果没有stdout，可能是严重错误
-      console.error('❌ ESLint执行失败:', error.message);
       throw error;
     }
   }

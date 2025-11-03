@@ -3,10 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // 导入被测试的组件（静态变体，避免在测试中直接渲染 Server Component）
 
-import { HeroSectionStatic } from '@/components/home/hero-section';
+import {
+  HeroSectionStatic,
+  type HeroSectionMessages,
+} from '@/components/home/hero-section';
 
 // 测试用静态翻译消息，覆盖 HeroSection 所需 key
-const mockMessages = {
+const mockMessages: HeroSectionMessages = {
   version: 'v1.0.0',
   title: { line1: 'Modern B2B', line2: 'Enterprise Solution' },
   subtitle: 'Build powerful business applications with our modern tech stack',
@@ -17,7 +20,7 @@ const mockMessages = {
     performance: 'A+ Performance',
     languages: '2 Languages',
   },
-} as const;
+};
 
 const renderHero = () => render(<HeroSectionStatic messages={mockMessages} />);
 
@@ -316,7 +319,7 @@ describe('HeroSection', () => {
     it('should handle missing translations gracefully', () => {
       // 使用静态 messages 的变体：即使部分字段为空也应稳定渲染
       const renderHeroWithMessages = (
-        overrides: Partial<typeof mockMessages>,
+        overrides: Partial<HeroSectionMessages>,
       ) =>
         render(
           <HeroSectionStatic messages={{ ...mockMessages, ...overrides }} />,

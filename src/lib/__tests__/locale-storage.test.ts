@@ -9,20 +9,30 @@ import type {
 } from '../locale-storage';
 
 // Mock constants
-vi.mock('@/constants/i18n-constants', () => ({
-  CACHE_DURATIONS: {
-    COOKIE_MAX_AGE: 2592000000, // 30 days in milliseconds
-  },
-  CACHE_LIMITS: {
-    MAX_DETECTION_HISTORY: 50,
-  },
-  PERFORMANCE_THRESHOLDS: {
-    EXCELLENT: 6,
-    GOOD: 4,
-    FAIR: 2,
-    POOR: 1,
-  },
-}));
+vi.mock('@/constants/i18n-constants', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/constants/i18n-constants')
+  >('@/constants/i18n-constants');
+
+  return {
+    ...actual,
+    CACHE_DURATIONS: {
+      ...actual.CACHE_DURATIONS,
+      COOKIE_MAX_AGE: 2592000000, // 30 days in milliseconds
+    },
+    CACHE_LIMITS: {
+      ...actual.CACHE_LIMITS,
+      MAX_DETECTION_HISTORY: 50,
+    },
+    PERFORMANCE_THRESHOLDS: {
+      ...actual.PERFORMANCE_THRESHOLDS,
+      EXCELLENT: 6,
+      GOOD: 4,
+      FAIR: 2,
+      POOR: 1,
+    },
+  };
+});
 
 // Mock localStorage
 const mockLocalStorage = {

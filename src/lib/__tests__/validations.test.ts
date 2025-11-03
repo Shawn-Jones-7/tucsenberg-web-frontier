@@ -99,6 +99,17 @@ describe('validations - Schema Validation', () => {
       }
     });
 
+    it('should reject form data without company', () => {
+      const invalidData = { ...validFormData, company: '' };
+      const result = contactFormSchema.safeParse(invalidData);
+      expect(result.success).toBe(false);
+      if (!result.success) {
+        expect(result.error.issues[0]?.message).toContain(
+          'Company name must be between',
+        );
+      }
+    });
+
     it('should validate optional phone number', () => {
       const dataWithPhone = { ...validFormData, phone: '+1234567890' };
       const result = contactFormSchema.safeParse(dataWithPhone);

@@ -118,6 +118,7 @@ export async function processFormSubmission(
     subject: formData.subject,
     message: formData.message,
     submittedAt: formData.submittedAt,
+    marketingConsent: formData.marketingConsent,
   };
 
   // 并行处理邮件发送和数据存储
@@ -127,13 +128,13 @@ export async function processFormSubmission(
       firstName: formData.firstName,
       lastName: formData.lastName,
       email: formData.email,
-      company: formData.company || '',
-      phone: formData.phone || '',
+      company: formData.company,
+      phone: formData.phone,
       subject: formData.subject,
       message: formData.message,
       acceptPrivacy: true, // 已通过验证，默认为true
-      marketingConsent: false, // 默认值
-      website: '', // 蜜罐字段，默认为空
+      marketingConsent: formData.marketingConsent || false,
+      website: formData.website,
     }),
   ]);
 

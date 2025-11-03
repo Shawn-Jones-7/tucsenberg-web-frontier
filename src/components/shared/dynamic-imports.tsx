@@ -41,20 +41,3 @@ export const DynamicAnimatedIcon = CoreDynamicComponents.AnimatedIcon;
 // UI组件的向后兼容导出
 export const DynamicAnimatedCounter = CoreDynamicComponents.AnimatedCounter;
 export const DynamicDropdownMenu = CoreDynamicComponents.DropdownMenu;
-
-// ==================== 统一的组件集合导出 ====================
-
-/**
- * 所有动态导入组件的统一集合
- * Unified collection of all dynamic import components
- */
-export const AllDynamicComponents = {
-  // 核心组件
-  ...CoreDynamicComponents,
-} as const;
-
-/**
- * 开发环境专用组件集合
- * Development-only components collection
- */
-export const DevelopmentComponents = {} as const;

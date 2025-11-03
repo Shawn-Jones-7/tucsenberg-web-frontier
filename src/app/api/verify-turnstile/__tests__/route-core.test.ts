@@ -11,6 +11,10 @@ vi.mock('@/lib/env', () => ({
   env: {
     TURNSTILE_SECRET_KEY: 'test-secret-key',
     TURNSTILE_SITE_KEY: 'test-site-key',
+    TURNSTILE_ALLOWED_HOSTS: 'localhost',
+    TURNSTILE_EXPECTED_ACTION: 'contact_form',
+    NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
+    NEXT_PUBLIC_TURNSTILE_ACTION: 'contact_form',
   },
 }));
 
@@ -35,6 +39,7 @@ describe('Verify Turnstile API Route - Core Tests', () => {
           'error-codes': [],
           'challenge_ts': '2023-01-01T00:00:00.000Z',
           'hostname': 'localhost',
+          'action': 'contact_form',
         }),
       });
 

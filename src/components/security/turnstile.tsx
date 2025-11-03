@@ -10,7 +10,11 @@ import { logger } from '@/lib/logger';
  */
 
 interface TurnstileProps {
+  /**
+   * @deprecated Use onSuccess instead. Maintained for backward compatibility.
+   */
   onVerify?: (_token: string) => void;
+  onSuccess?: (_token: string) => void;
   onError?: (_error: string) => void;
   onExpire?: () => void;
   onLoad?: () => void;
@@ -19,6 +23,8 @@ interface TurnstileProps {
   size?: 'normal' | 'compact';
   tabIndex?: number;
   id?: string;
+  action?: string;
+  cData?: string;
 }
 
 /**
@@ -27,7 +33,7 @@ interface TurnstileProps {
  * This component provides bot protection using Cloudflare's Turnstile service.
  * It's a privacy-focused alternative to reCAPTCHA that doesn't track users.
  *
- * @param onVerify - Callback when CAPTCHA is successfully verified
+ * @param onSuccess - Callback when CAPTCHA is successfully verified
  * @param onError - Callback when CAPTCHA encounters an error
  * @param onExpire - Callback when CAPTCHA token expires
  * @param onLoad - Callback when CAPTCHA widget loads
@@ -39,6 +45,7 @@ interface TurnstileProps {
  */
 export function TurnstileWidget({
   onVerify,
+  onSuccess,
   onError,
   onExpire,
   onLoad,
@@ -47,6 +54,8 @@ export function TurnstileWidget({
   size = 'normal',
   tabIndex,
   id,
+  action = env.NEXT_PUBLIC_TURNSTILE_ACTION || 'contact_form',
+  cData,
 }: TurnstileProps) {
   const siteKey = env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
@@ -55,7 +64,20 @@ export function TurnstileWidget({
     logger.warn(
       'Turnstile site key not configured. Bot protection is disabled.',
     );
-    return null;
+    if (onError) {
+      onError('Turnstile site key not configured');
+    }
+    return (
+      <div
+        className={`turnstile-fallback ${className || ''}`}
+        role='status'
+        aria-live='polite'
+      >
+        <div className='text-destructive text-sm'>
+          Security verification is temporarily unavailable.
+        </div>
+      </div>
+    );
   }
 
   // Don't render in test environment
@@ -72,9 +94,10 @@ export function TurnstileWidget({
     );
   }
 
-  const handleVerify = (token: string) => {
-    if (onVerify) {
-      onVerify(token);
+  const handleSuccess = (token: string) => {
+    const handler = onSuccess ?? onVerify;
+    if (handler) {
+      handler(token);
     }
   };
 
@@ -102,7 +125,7 @@ export function TurnstileWidget({
     <div className={`turnstile-container ${className || ''}`}>
       <Turnstile
         siteKey={siteKey}
-        onSuccess={handleVerify}
+        onSuccess={handleSuccess}
         onError={handleError}
         onExpire={handleExpire}
         onLoad={handleLoad}
@@ -110,6 +133,8 @@ export function TurnstileWidget({
           theme,
           size,
           tabIndex,
+          action,
+          cData,
         }}
         id={id}
       />
@@ -126,12 +151,15 @@ export function useTurnstile() {
   const [error, _setError] = React.useState<string | null>(null);
   const [isLoading, _setIsLoading] = React.useState(false);
 
-  const handleVerify = React.useCallback((verificationToken: string) => {
-    setToken(verificationToken);
-    setIsVerified(true);
-    _setError(null);
-    _setIsLoading(false);
-  }, []);
+  const handleSuccessCallback = React.useCallback(
+    (verificationToken: string) => {
+      setToken(verificationToken);
+      setIsVerified(true);
+      _setError(null);
+      _setIsLoading(false);
+    },
+    [],
+  );
 
   const handleError = React.useCallback((errorMessage: string) => {
     _setError(errorMessage);
@@ -165,7 +193,8 @@ export function useTurnstile() {
     error,
     isLoading,
     handlers: {
-      onVerify: handleVerify,
+      onVerify: handleSuccessCallback,
+      onSuccess: handleSuccessCallback,
       onError: handleError,
       onExpire: handleExpire,
       onLoad: handleLoad,

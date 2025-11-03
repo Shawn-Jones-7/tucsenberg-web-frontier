@@ -17,10 +17,28 @@ import {
   type FooterLink,
   type FooterSection,
 } from '@/lib/footer-config';
+import { logger } from '@/lib/logger';
 import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { ZERO } from '@/constants';
 import { COUNT_14 } from '@/constants/count';
+
+function createSafeTranslator(
+  translator: (key: string) => string,
+): (key: string) => string {
+  return (key: string) => {
+    try {
+      const value = translator(key);
+      return typeof value === 'string' ? value : key;
+    } catch (error) {
+      logger.warn('Footer translation fallback triggered', {
+        key,
+        error: error instanceof Error ? error.message : String(error),
+      });
+      return key;
+    }
+  };
+}
 
 // Footer Link Component
 interface FooterLinkComponentProps {
@@ -138,7 +156,18 @@ const CompanyLogo: FC = () => {
 // Main Footer Component
 export async function Footer() {
   const { sections } = FOOTER_CONFIG;
-  const t = await getTranslations();
+  let translator: (key: string) => string;
+
+  try {
+    translator = await getTranslations();
+  } catch (error) {
+    logger.error('Failed to load footer translations', {
+      error: error instanceof Error ? error.message : 'Unknown error',
+    });
+    translator = (key) => key;
+  }
+
+  const t = createSafeTranslator(translator);
   const locale = (await getLocale()) as 'en' | 'zh';
 
   return (

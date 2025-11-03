@@ -2,23 +2,12 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ErrorLevel, MonitoringEventType } from '@/lib/i18n-monitoring';
 
 // Mock constants
-vi.mock('@/constants/i18n-constants', () => ({
-  CACHE_LIMITS: { MAX_SIZE: 1000 },
-  MONITORING_CONFIG: {
-    ERROR_SAMPLE_RATE: 100,
-    PERFORMANCE_SAMPLE_RATE: 10,
-  },
-  PERFORMANCE_THRESHOLDS: {
-    TRANSLATION_LOAD_TIME: 1000,
-  },
-  REPORTING_THRESHOLDS: {
-    ERROR_RATE: 5,
-  },
-  TIME_UNITS: {
-    MINUTE: 60000,
-    HOUR: 3600000,
-  },
-}));
+vi.mock('@/constants/i18n-constants', async () => {
+  const actual = await vi.importActual<
+    typeof import('@/constants/i18n-constants')
+  >('@/constants/i18n-constants');
+  return actual;
+});
 
 // Mock types
 vi.mock('@/types/i18n', () => ({

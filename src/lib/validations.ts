@@ -93,18 +93,18 @@ export const contactFormSchema = z.object({
 
   company: z
     .string()
-    .min(
-      VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH,
-      `Company name must be at least ${VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH} characters`,
+    .transform((val) => val.trim())
+    .refine(
+      (val) =>
+        val.length >= VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH &&
+        val.length <= VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH,
+      {
+        message: `Company name must be between ${VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH} and ${VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH} characters`,
+      },
     )
-    .max(
-      VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH,
-      `Company name must be less than ${VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH} characters`,
-    )
-    .regex(
-      /^[a-zA-Z0-9\s\u4e00-\u9fff&.,'-]+$/,
-      'Company name contains invalid characters',
-    ),
+    .refine((val) => /^[a-zA-Z0-9\s\u4e00-\u9fff&.,'-]+$/.test(val), {
+      message: 'Company name contains invalid characters',
+    }),
 
   message: z
     .string()
@@ -208,7 +208,17 @@ export const emailTemplateDataSchema = z.object({
   firstName: z.string(),
   lastName: z.string(),
   email: z.string().email(),
-  company: z.string(),
+  company: z
+    .string()
+    .transform((val) => val.trim())
+    .refine(
+      (val) =>
+        val.length >= VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH &&
+        val.length <= VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH,
+      {
+        message: `Company name must be between ${VALIDATION_CONSTANTS.COMPANY_MIN_LENGTH} and ${VALIDATION_CONSTANTS.COMPANY_MAX_LENGTH} characters`,
+      },
+    ),
   message: z.string(),
   phone: z.string().optional(),
   subject: z.string().optional(),

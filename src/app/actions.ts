@@ -7,6 +7,8 @@
  * @description React 19 Server Actions 基础设施
  * @version 1.0.0
  */
+import * as Sentry from '@sentry/nextjs';
+import type { ZodIssue } from 'zod';
 import { logger } from '@/lib/logger';
 import {
   createErrorResultWithLogging,
@@ -44,6 +46,78 @@ export interface ContactFormWithToken extends ContactFormData {
   submittedAt: string;
 }
 
+const FIELD_ERROR_KEY_PREFIX = new Map<string, string>([
+  ['firstName', 'errors.firstName'],
+  ['lastName', 'errors.lastName'],
+  ['email', 'errors.email'],
+  ['company', 'errors.company'],
+  ['message', 'errors.message'],
+  ['phone', 'errors.phone'],
+  ['subject', 'errors.subject'],
+  ['acceptPrivacy', 'errors.acceptPrivacy'],
+  ['website', 'errors.website'],
+]);
+
+const FALLBACK_ERROR_KEY = 'errors.generic';
+
+function getBaseErrorKey(issue: ZodIssue): string {
+  const [rawField] = issue.path;
+  if (typeof rawField !== 'string') {
+    return FALLBACK_ERROR_KEY;
+  }
+
+  return FIELD_ERROR_KEY_PREFIX.get(rawField) ?? FALLBACK_ERROR_KEY;
+}
+
+function isRequiredMinimum(issue: ZodIssue): boolean {
+  return (
+    'minimum' in issue &&
+    typeof issue.minimum === 'number' &&
+    issue.minimum <= 1
+  );
+}
+
+function handleCustomIssue(baseKey: string): string {
+  if (baseKey === 'errors.acceptPrivacy') {
+    return `${baseKey}.required`;
+  }
+  if (baseKey === 'errors.subject') {
+    return `${baseKey}.length`;
+  }
+  if (baseKey === 'errors.phone') {
+    return `${baseKey}.invalid`;
+  }
+  return `${baseKey}.invalid`;
+}
+
+function mapIssueToErrorKey(issue: ZodIssue): string {
+  const baseKey = getBaseErrorKey(issue);
+  const message = issue.message?.toLowerCase?.() ?? '';
+
+  if (message.includes('required')) {
+    return `${baseKey}.required`;
+  }
+
+  switch (issue.code) {
+    case 'too_small':
+      return isRequiredMinimum(issue)
+        ? `${baseKey}.required`
+        : `${baseKey}.tooShort`;
+    case 'too_big':
+      return baseKey === 'errors.website'
+        ? `${baseKey}.shouldBeEmpty`
+        : `${baseKey}.tooLong`;
+    case 'custom':
+      return handleCustomIssue(baseKey);
+    case 'invalid_type':
+      return `${baseKey}.invalid`;
+    default:
+      return baseKey === FALLBACK_ERROR_KEY
+        ? FALLBACK_ERROR_KEY
+        : `${baseKey}.invalid`;
+  }
+}
+
 /**
  * 验证联系表单数据（包含Turnstile验证）
  */
@@ -51,10 +125,7 @@ async function validateContactFormData(data: ContactFormWithToken) {
   // 首先验证基础表单数据
   const baseValidation = contactFormSchema.safeParse(data);
   if (!baseValidation.success) {
-    const errorMessages = baseValidation.error.issues.map((error) => {
-      const field = error.path.join('.');
-      return `${field}: ${error.message}`;
-    });
+    const errorMessages = baseValidation.error.issues.map(mapIssueToErrorKey);
 
     return {
       success: false,
@@ -202,6 +273,7 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
       );
     } catch (error) {
       const processingTime = performance.now() - startTime;
+      Sentry.captureException(error);
       logger.error('Contact form Server Action failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,

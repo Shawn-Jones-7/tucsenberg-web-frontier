@@ -3,6 +3,25 @@ import { getTranslations } from 'next-intl/server';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 
+export interface HeroSectionMessages extends Record<string, unknown> {
+  version?: string;
+  title?: {
+    line1?: string;
+    line2?: string;
+  };
+  subtitle?: string;
+  cta?: {
+    demo?: string;
+    github?: string;
+  };
+  stats?: {
+    technologies?: string;
+    typescript?: string;
+    performance?: string;
+    languages?: string;
+  };
+}
+
 // Hero Badge Component
 function HeroBadge({ version }: { version: string }) {
   return (
@@ -179,7 +198,7 @@ export async function HeroSection() {
 }
 
 // Type for nested translation messages (unknown depth; narrowed at runtime)
-type TranslationMessages = Record<string, unknown>;
+type TranslationMessages = HeroSectionMessages;
 
 // Static variant that avoids runtime getTranslations by accepting a minimal
 // messages object for the hero namespace. Intended for first paint (LCP) path.
@@ -205,7 +224,7 @@ export function HeroSectionStatic({
   messages,
   showBg = true,
 }: {
-  messages: TranslationMessages;
+  messages: HeroSectionMessages;
   showBg?: boolean;
 }) {
   const t = (key: string) => getByPath(messages, key);
