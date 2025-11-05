@@ -1,3 +1,6 @@
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const path = require('node:path');
+
 module.exports = {
   forbidden: [
     {
@@ -151,6 +154,9 @@ module.exports = {
     },
   ],
   options: {
+    tsConfig: {
+      fileName: path.join(__dirname, 'tsconfig.json'),
+    },
     doNotFollow: {
       path: 'node_modules|\\.(spec|test|stories)\\.(js|ts|tsx)$',
     },
