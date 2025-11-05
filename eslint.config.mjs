@@ -4,8 +4,10 @@ import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
 import prettierConfig from 'eslint-config-prettier';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
-import security from 'eslint-plugin-security';
+import securityPlugin from 'eslint-plugin-security';
 import securityNode from 'eslint-plugin-security-node';
+
+const security = securityPlugin.default ?? securityPlugin;
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -17,6 +19,14 @@ const compat = new FlatCompat({
 });
 
 export default [
+  {
+    name: 'global-plugin-registration',
+    plugins: {
+      security,
+      'security-node': securityNode,
+      'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
+    },
+  },
   // Base JavaScript configuration
   js.configs.recommended,
 
@@ -542,7 +552,7 @@ export default [
       '.size-limit.js',
       'next.config.ts',
       'tailwind.config.ts',
-      'vitest.config.ts',
+      'vitest.config.mts',
       'playwright.config.ts',
       '*.config.{js,ts,mjs}',
 

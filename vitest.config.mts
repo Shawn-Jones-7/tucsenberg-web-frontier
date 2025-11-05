@@ -85,7 +85,7 @@ export default defineConfig({
         'commitlint.config.js',
         'translation.config.js',
         'tsconfig.json',
-        'vitest.config.ts',
+        'vitest.config.mts',
         'lefthook.yml',
         'semgrep.yml',
         'mdx-components.tsx',
