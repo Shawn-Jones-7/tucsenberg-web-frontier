@@ -353,6 +353,18 @@ describe('ContactFormContainer - 提交和错误处理', () => {
         );
         const submitButton = screen.getByRole('button', { name: /submit/i });
 
+        // 在不同环境下，速率限制提示或 disabled 属性的应用时机可能不同。
+        // 这里以“提示可见”或“按钮禁用”任一成立作为已进入速率限制窗口的判据，提升鲁棒性。
+        try {
+          await waitFor(() =>
+            expect(
+              screen.getByText(/wait before submitting again/i),
+            ).toBeInTheDocument(),
+          );
+        } catch {
+          await waitFor(() => expect(submitButton).toBeDisabled());
+        }
+
         await act(async () => {
           await new Promise((resolve) => {
             setTimeout(resolve, 50);
