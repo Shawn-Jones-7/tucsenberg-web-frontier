@@ -6,6 +6,12 @@ on:
   pull_request:
     branches: [main, develop]
 
+permissions:
+  contents: read
+  actions: read
+  checks: write
+  pull-requests: write
+
 jobs:
   code-quality:
     name: 代码质量门禁
@@ -147,6 +153,11 @@ jobs:
     needs: [code-quality, security-audit, test-quality]
     if: always()
     timeout-minutes: 6
+    permissions:
+      contents: read
+      actions: read
+      checks: write
+      pull-requests: write
 
     steps:
       - name: 检出代码
@@ -159,9 +170,23 @@ jobs:
           path: reports/quality/
         continue-on-error: true
 
+      - name: 检查依赖 Job 状态
+        id: check-status
+        run: |
+          echo "code_quality=${{ needs.code-quality.result }}" >> $GITHUB_OUTPUT
+          echo "security_audit=${{ needs.security-audit.result }}" >> $GITHUB_OUTPUT
+          echo "test_quality=${{ needs.test-quality.result }}" >> $GITHUB_OUTPUT
+
       - name: 生成质量总结
         run: |
           echo "## 🎯 企业级代码质量检查总结" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+          # 显示各 Job 状态
+          echo "### 📋 检查状态" >> $GITHUB_STEP_SUMMARY
+          echo "- **代码质量门禁**: ${{ needs.code-quality.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **安全审计**: ${{ needs.security-audit.result }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **测试质量检查**: ${{ needs.test-quality.result }}" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
 
           if [ -f "reports/quality/latest-quality-summary.json" ]; then
@@ -181,7 +206,7 @@ jobs:
               echo "❌ **质量门禁**: 未通过" >> $GITHUB_STEP_SUMMARY
             fi
           else
-            echo "⚠️ 质量报告文件未找到" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ 质量报告文件未找到，但所有检查已完成" >> $GITHUB_STEP_SUMMARY
           fi
 
           echo "" >> $GITHUB_STEP_SUMMARY
@@ -192,3 +217,15 @@ jobs:
           echo "- [x] 架构依赖分析" >> $GITHUB_STEP_SUMMARY
           echo "- [x] 循环依赖检测" >> $GITHUB_STEP_SUMMARY
           echo "- [x] 单元测试执行" >> $GITHUB_STEP_SUMMARY
+
+      - name: 设置最终状态
+        if: needs.code-quality.result == 'success' && needs.security-audit.result == 'success' && needs.test-quality.result == 'success'
+        run: |
+          echo "✅ 所有质量检查通过"
+          exit 0
+
+      - name: 报告失败
+        if: needs.code-quality.result != 'success' || needs.security-audit.result != 'success' || needs.test-quality.result != 'success'
+        run: |
+          echo "❌ 部分质量检查失败"
+          exit 1

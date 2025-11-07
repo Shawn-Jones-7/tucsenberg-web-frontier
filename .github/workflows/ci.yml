@@ -313,21 +313,21 @@ jobs:
     steps:
       - name: 检查所有作业状态
         run: |
-          echo "基础检查: ${{ needs.basic-checks.conclusion }}"
-          echo "单元测试: ${{ needs.tests.conclusion }}"
-          echo "E2E测试: ${{ needs.e2e-tests.conclusion }}"
-          echo "性能检查: ${{ needs.performance.conclusion }}"
-          echo "安全检查: ${{ needs.security.conclusion }}"
-          echo "翻译质量: ${{ needs.translation-quality.conclusion }}"
-          echo "架构检查: ${{ needs.architecture.conclusion }}"
+          echo "基础检查: ${{ needs.basic-checks.result }}"
+          echo "单元测试: ${{ needs.tests.result }}"
+          echo "E2E测试: ${{ needs.e2e-tests.result }}"
+          echo "性能检查: ${{ needs.performance.result }}"
+          echo "安全检查: ${{ needs.security.result }}"
+          echo "翻译质量: ${{ needs.translation-quality.result }}"
+          echo "架构检查: ${{ needs.architecture.result }}"
 
-          if [[ "${{ needs.basic-checks.conclusion }}" != "success" ||
-                "${{ needs.tests.conclusion }}" != "success" ||
-                "${{ needs.e2e-tests.conclusion }}" != "success" ||
-                "${{ needs.performance.conclusion }}" != "success" ||
-                "${{ needs.security.conclusion }}" != "success" ||
-                "${{ needs.translation-quality.conclusion }}" != "success" ||
-                "${{ needs.architecture.conclusion }}" != "success" ]]; then
+          if [[ "${{ needs.basic-checks.result }}" != "success" ||
+                "${{ needs.tests.result }}" != "success" ||
+                "${{ needs.e2e-tests.result }}" != "success" ||
+                "${{ needs.performance.result }}" != "success" ||
+                "${{ needs.security.result }}" != "success" ||
+                "${{ needs.translation-quality.result }}" != "success" ||
+                "${{ needs.architecture.result }}" != "success" ]]; then
             echo "❌ CI流水线失败"
             exit 1
           else
