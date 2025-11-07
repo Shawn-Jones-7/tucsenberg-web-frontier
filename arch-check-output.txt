@@ -1,0 +1,77 @@
+
+> tucsenberg-web-frontier@0.1.0 arch:check /Users/Data/Warehouse/Focus/tucsenberg-web-frontier
+> dependency-cruiser src --config .dependency-cruiser.js
+
+
+  info enforce-domain-boundaries: src/lib/web-vitals/web-vitals-collector-base.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/web-vitals-collector-base.ts → src/lib/web-vitals/observers.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/web-vitals-collector-analyzer.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/web-vitals-collector-analyzer.ts → src/lib/web-vitals/constants.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/regression-detector.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/observers.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-utils.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-utils.ts → src/lib/web-vitals/constants.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-report-generator.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-report-generator.ts → src/lib/web-vitals/regression-detector.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-report-generator.ts → src/lib/web-vitals/monitoring-utils.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager.ts → src/lib/web-vitals/monitoring-utils.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager.ts → src/lib/web-vitals/monitoring-report-generator.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager.ts → src/lib/web-vitals/monitoring-manager-core.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/regression-detector.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/monitoring-utils.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/monitoring-report-generator.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/collector.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/baseline-manager.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/monitoring-manager-core.ts → src/lib/web-vitals/alert-system.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/regression-detector.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/monitoring-manager.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/constants.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/collector.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/baseline-manager.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/index.ts → src/lib/web-vitals/alert-system.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/collector.ts → src/lib/web-vitals/web-vitals-collector-base.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/collector.ts → src/lib/web-vitals/web-vitals-collector-analyzer.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/collector.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/baseline-manager.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system.ts → src/lib/web-vitals/alert-system-sender.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system.ts → src/lib/web-vitals/alert-system-core.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system.ts → src/lib/web-vitals/alert-system-checker.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-sender.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-sender.ts → src/lib/web-vitals/alert-system-checker.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-sender.ts → src/lib/web-vitals/alert-notifications.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-core.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-core.ts → src/lib/web-vitals/alert-system-sender.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-core.ts → src/lib/web-vitals/alert-system-checker.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-checker.ts → src/lib/web-vitals/types.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-system-checker.ts → src/lib/web-vitals/alert-helpers.ts
+  info enforce-domain-boundaries: src/lib/web-vitals/alert-notifications.ts → src/lib/web-vitals/alert-helpers.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-utils/object-utils.ts → src/lib/security/object-guards.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/presets.ts → src/lib/locale-storage-types-config/interfaces.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/factory.ts → src/lib/locale-storage-types-config/validation.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/factory.ts → src/lib/locale-storage-types-config/presets.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/factory.ts → src/lib/locale-storage-types-config/interfaces.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/factory.ts → src/lib/locale-storage-types-config/defaults.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-types-config/defaults.ts → src/lib/locale-storage-types-config/interfaces.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-preference-events/system-manager.ts → src/lib/locale-storage-preference-events/event-manager.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-preference-events/system-manager.ts → src/lib/locale-storage-preference-events/event-listeners.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-preference-events/stats-analyzer.ts → src/lib/locale-storage-preference-events/history-manager.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-preference-events/event-listeners.ts → src/lib/locale-storage-preference-events/history-manager.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-history-maintenance/maintenance.ts → src/lib/locale-storage-history-maintenance/cleanup.ts
+  info enforce-domain-boundaries: src/lib/locale-storage-history-maintenance/backup.ts → src/lib/locale-storage-history-maintenance/import-export.ts
+  info enforce-domain-boundaries: src/lib/content-query/stats.ts → src/lib/content-query/queries.ts
+  info enforce-domain-boundaries: src/lib/content-query/queries.ts → src/lib/content-query/sorting.ts
+  info enforce-domain-boundaries: src/lib/content-query/queries.ts → src/lib/content-query/filters.ts
+  info enforce-domain-boundaries: src/lib/colors/utils.ts → src/lib/colors/types.ts
+  info enforce-domain-boundaries: src/lib/colors/light-theme.ts → src/lib/colors/types.ts
+  info enforce-domain-boundaries: src/lib/colors/dark-theme.ts → src/lib/colors/types.ts
+  info enforce-domain-boundaries: src/lib/colors/color-system.ts → src/lib/colors/utils.ts
+  info enforce-domain-boundaries: src/lib/colors/color-system.ts → src/lib/colors/light-theme.ts
+  info enforce-domain-boundaries: src/lib/colors/color-system.ts → src/lib/colors/dark-theme.ts
+  info enforce-domain-boundaries: src/lib/airtable/service.ts → src/lib/airtable/types.ts
+  info enforce-domain-boundaries: src/lib/airtable/instance.ts → src/lib/airtable/service.ts
+
+x 69 dependency violations (0 errors, 0 warnings). 469 modules, 1348 dependencies cruised.
+

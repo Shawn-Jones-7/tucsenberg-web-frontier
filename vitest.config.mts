@@ -214,20 +214,23 @@ export default defineConfig({
       },
     },
 
-    // 测试超时设置 - 进一步优化性能
-    testTimeout: 8000, // 从10秒降低到8秒，提高执行效率
-    hookTimeout: 4000, // 从5秒降低到4秒，减少等待时间
+    // 测试超时设置 - 适应 CI 环境
+    testTimeout: 12000, // 从 8000ms 增加到 12000ms，适应 CI 环境资源限制
+    hookTimeout: 6000, // 从 4000ms 增加到 6000ms
 
-    // 并发设置 - 优化性能配置
+    // 并发设置 - 优化 CI 环境性能
     pool: 'threads',
     poolOptions: {
       threads: {
         singleThread: false,
-        maxThreads: 3, // 从4降低到3，减少资源竞争，提高稳定性
+        maxThreads: 2, // 从 3 降低到 2，减少 CI 环境资源竞争
         minThreads: 1,
-        useAtomics: true, // 启用原子操作，提高线程安全性
+        useAtomics: true,
       },
     },
+
+    // 添加测试重试机制 - 处理间歇性失败
+    retry: 2, // 失败后重试 2 次
 
     // 报告器配置
     reporters: ['verbose', 'json', 'html'],

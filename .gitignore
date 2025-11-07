@@ -1,5 +1,8 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
+# Augment AI configuration and rules (local development only)
+.augment/
+
 # dependencies
 /node_modules
 /.pnp
@@ -63,11 +66,17 @@ debug-*.png
 temp-analysis/
 output/
 test-coverage-output.txt
-# 本地依赖巡航临时输出（不提交）
-.tmp_arch*.txt
 
-# 任务记忆备份
+# 临时文件和目录（不提交）
+.tmp_*
+.tmp*
+=*
+
+# 任务记忆备份和临时数据
 docs/data/memory/tasks_memory_*.json
+docs/data/003-Dashboard/
+docs/data/Data/
+docs/data/tucsenberg-web-frontier/
 
 # 临时实现文档
 docs/best-practices-from-*.md

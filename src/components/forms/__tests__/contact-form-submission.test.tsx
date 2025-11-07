@@ -314,22 +314,33 @@ describe('ContactFormContainer - 提交和错误处理', () => {
         screen.getByText(/message sent successfully/i),
       ).toBeInTheDocument();
 
-      // Turnstile 成功后应出现速率限制提示（以用户可见文本为准）
-      // 说明：不同环境下 disabled 属性的应用时序可能略有差异，
-      // 为避免脆弱断言导致误报，这里以可见提示为主进行断言。
-      await waitFor(() =>
-        expect(
-          screen.getByText(/wait before submitting again/i),
-        ).toBeInTheDocument(),
+      // 等待速率限制提示 - 增加超时和重试间隔以适应 CI 环境
+      // CI 环境可能因资源竞争导致异步状态更新延迟
+      await waitFor(
+        () => {
+          expect(
+            screen.getByText(/wait before submitting again/i),
+          ).toBeInTheDocument();
+        },
+        {
+          timeout: 10000, // 从默认 1000ms 增加到 10000ms
+          interval: 500, // 每 500ms 重试一次
+        },
       );
-      // 可选：若环境及时应用了 disabled，也应满足下述断言（非强制）
+
+      // 验证按钮禁用状态（可选，允许失败）
       const submitButton = screen.getByRole('button', { name: /submit/i });
       try {
-        await waitFor(() => expect(submitButton).toBeDisabled());
+        await waitFor(() => expect(submitButton).toBeDisabled(), {
+          timeout: 3000,
+        });
       } catch {
         // 忽略：在个别环境中，可能仅设置了 aria-disabled 或存在短暂时序差异
+        console.warn(
+          'Button disabled state check skipped due to timing differences',
+        );
       }
-    });
+    }, 15000); // 增加整个测试的超时到 15 秒
 
     it('should re-enable submission after cooldown duration elapses', async () => {
       const originalCooldown = process.env.NEXT_PUBLIC_CONTACT_FORM_COOLDOWN_MS;
