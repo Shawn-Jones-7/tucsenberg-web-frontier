@@ -23,6 +23,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -74,6 +76,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -136,6 +140,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -192,6 +198,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -247,6 +255,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -285,6 +295,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4
@@ -313,8 +325,19 @@ jobs:
       - name: 验证翻译
         run: pnpm validate:translations
 
+      - name: 复制翻译资源到 public
+        run: node scripts/copy-translations.js
+
       - name: i18n 形状等价检查
         run: pnpm i18n:shape:check
+
+      - name: 上传 i18n 形状报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-shape-report.json
+          path: reports/i18n-shape-report.json
+          if-no-files-found: ignore
 
   # 架构检查作业
   architecture:
@@ -326,6 +349,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 设置pnpm
         uses: pnpm/action-setup@v4

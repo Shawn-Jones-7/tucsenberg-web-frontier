@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 安装pnpm
         uses: pnpm/action-setup@v4
@@ -45,8 +47,19 @@ jobs:
       - name: ESLint代码检查
         run: pnpm run lint:check
 
+      - name: 复制翻译资源到 public
+        run: node scripts/copy-translations.js
+
       - name: i18n 形状等价检查
         run: pnpm i18n:shape:check
+
+      - name: 上传 i18n 形状报告
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: i18n-shape-report.json
+          path: reports/i18n-shape-report.json
+          if-no-files-found: ignore
 
       - name: 企业级质量门禁
         run: pnpm run quality:gate
@@ -88,6 +101,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 安装pnpm
         uses: pnpm/action-setup@v4
@@ -120,6 +135,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 安装pnpm
         uses: pnpm/action-setup@v4
@@ -165,6 +182,8 @@ jobs:
     steps:
       - name: 检出代码
         uses: actions/checkout@v4
+        with:
+          submodules: false
 
       - name: 下载质量报告
         uses: actions/download-artifact@v4
