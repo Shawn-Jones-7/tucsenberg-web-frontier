@@ -411,9 +411,9 @@ jobs:
           delay=5
 
           for i in $(seq 1 $max_tries); do
-            status=$(curl -s -o /dev/null -w "%{http_code}" -I "$url" || echo "000")
+            status=$(curl -s -o /dev/null -w "%{http_code}" -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" -I "$url" || echo "000")
             if [ "$status" = "000" ]; then
-              status=$(curl -s -o /dev/null -w "%{http_code}" "$url" || echo "000")
+              status=$(curl -s -o /dev/null -w "%{http_code}" -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$url" || echo "000")
             fi
 
             echo "第 $i 次探测: $status"
@@ -430,11 +430,11 @@ jobs:
         run: |
           set -euo pipefail
           BASE="${{ needs.deploy-to-vercel-prod.outputs.prod_url }}"
-          echo "检查根路径..."; curl -f -s "$BASE" > /dev/null
-          echo "检查英文首页..."; curl -f -s "$BASE/en" > /dev/null
-          echo "检查中文首页..."; curl -f -s "$BASE/zh" > /dev/null
-          echo "检查 robots.txt..."; curl -f -s "$BASE/robots.txt" | grep -q "User-agent"
-          echo "检查 sitemap.xml..."; curl -f -s "$BASE/sitemap.xml" | head -n 5
+          echo "检查根路径..."; curl -f -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$BASE" > /dev/null
+          echo "检查英文首页..."; curl -f -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$BASE/en" > /dev/null
+          echo "检查中文首页..."; curl -f -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$BASE/zh" > /dev/null
+          echo "检查 robots.txt..."; curl -f -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$BASE/robots.txt" | grep -q "User-agent"
+          echo "检查 sitemap.xml..."; curl -f -s -H "x-vercel-protection-bypass: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}" "$BASE/sitemap.xml" | head -n 5
           echo "✅ 健康检查与多语言抽样通过"
 
   deployment-summary:
