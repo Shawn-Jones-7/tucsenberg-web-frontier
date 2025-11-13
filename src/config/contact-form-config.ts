@@ -244,16 +244,11 @@ const CONTACT_FORM_FIELD_KEYS_ENUM = z.enum(
   CONTACT_FORM_FIELD_KEYS as readonly string[],
 );
 
+// 注意：Zod v4 中 ZodRecord 不支持 superRefine，这里改用 refine 实现必备键校验
 const FIELDS_SCHEMA = z
   .record(CONTACT_FORM_FIELD_KEYS_ENUM, FIELD_CONFIG_SCHEMA)
-  .superRefine((value, ctx) => {
-    const missing = CONTACT_FORM_FIELD_KEYS.filter((key) => !(key in value));
-    if (missing.length > 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: `Missing field configs: ${missing.join(', ')}`,
-      });
-    }
+  .refine((value) => CONTACT_FORM_FIELD_KEYS.every((key) => key in value), {
+    message: 'Missing required field configs',
   });
 
 export const contactFormConfigSchema = z.object({

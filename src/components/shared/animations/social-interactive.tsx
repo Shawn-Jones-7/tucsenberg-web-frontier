@@ -5,7 +5,11 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import { Skeleton } from '@/components/ui/skeleton';
+
+// 简单的 Skeleton 组件（内联定义）
+const Skeleton = ({ className }: { className?: string }) => (
+  <div className={cn('bg-muted animate-pulse rounded-md', className)} />
+);
 
 // 8. 社交链接动画
 export const AnimatedSocialLink = ({
