@@ -1,265 +1,237 @@
 {
   "tasks": [
     {
-      "id": "b4f3c710-3a72-4c3b-8571-4c487ec48215",
-      "name": "建立 Contact Form 配置模块（类型/默认值/Zod/Builder）",
-      "description": "新增 src/config/contact-form-config.ts，定义字段集合、特性与校验配置；提供 CONTACT_FORM_CONFIG 默认值、contactFormConfigSchema、createContactFormSchemaFromConfig（动态 Zod 组合）、buildFormFieldsFromConfig（将配置映射为 UI 字段描述）。默认配置严格对齐现有必填与顺序。",
-      "notes": "保持默认行为与现状一致；配置支持未来 schemaVersion 迁移。",
-      "status": "COMPLETE",
+      "id": "9f6af756-a5a9-4ce7-8499-c991dc40e0df",
+      "name": "升级 Vitest 核心依赖到 v4 并同步套件",
+      "description": "将 vitest 升级到 ^4.0.8，并同步升级 @vitest/ui 与 @vitest/coverage-v8 到 ^4；新增 @vitest/browser-playwright 以支持 Browser Mode v4 provider；如存在 @vitest/browser，移除之。保持 package.json scripts 不变。",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:21:21.832699Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "src/config/contact-form-config.ts",
-          "type": "CREATE",
-          "description": "新建配置模块"
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "升级 vitest 相关依赖版本",
+          "lineStart": 120,
+          "lineEnd": 162
         },
         {
-          "path": "src/lib/validations.ts",
-          "type": "REFERENCE",
-          "description": "复用既有常量与 helpers"
-        },
-        {
-          "path": "src/app/actions.ts",
-          "type": "REFERENCE",
-          "description": "后续接入动态 Schema"
+          "path": "evidence/vitest-upgrade-feasibility-2025-11-13.md",
+          "type": "OTHER",
+          "description": "变更与验证记录"
         }
       ],
-      "implementationGuide": "pseudocode:\n- 定义 FieldKey 集合: firstName, lastName, email, company, message, phone, subject, acceptPrivacy, marketingConsent, website\n- 定义 FieldConfig: enabled, required, order, type(text/email/tel/textarea), i18nKey\n- 定义 Features: enableTurnstile, showPrivacyCheckbox, showMarketingConsent\n- 定义 Validation: emailDomainWhitelist, messageMinLength, messageMaxLength\n- 导出 CONTACT_FORM_CONFIG 与 contactFormConfigSchema\n- 导出 createContactFormSchemaFromConfig(cfg) 与 buildFormFieldsFromConfig(cfg)",
-      "verificationCriteria": "存在 CONTACT_FORM_CONFIG 与 Zod schema；默认配置与现状等价；builder 函数可按配置生成字段描述与 Schema。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- edit package.json.devDependencies:\n  - vitest = ^4.0.8\n  - @vitest/ui = ^4.0.8\n  - @vitest/coverage-v8 = ^4.0.8\n  - add @vitest/browser-playwright = ^4.0.8\n  - remove @vitest/browser if present\n- pnpm install (生成 lockfile)\n- 不修改 scripts\n- 记录变更到 evidence/",
+      "verificationCriteria": "- pnpm i 成功，未修改 scripts；\n- pnpm test 可运行（初步），无致命报错；\n- 生成依赖变更记录（evidence 更新）。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     },
     {
-      "id": "43de8078-02fe-470b-9f7c-7466157c3ff4",
-      "name": "抽取字段校验器与动态 Schema 生成器",
-      "description": "在 src/lib/form-schema/ 下新增 contact-field-validators.ts 与 contact-form-schema.ts，将 validations 细化为字段级 validator，并暴露 createContactFormSchemaFromConfig 供服务端与 UI 共享。",
-      "notes": "不大改 validations.ts，新增 builder 层保持兼容。",
-      "status": "COMPLETE",
+      "id": "6e505e63-6993-413b-bcf3-0b0c20259c63",
+      "name": "迁移 vitest.config.mts（deps.optimizer.web→client 与覆盖率校验）",
+      "description": "将 test.deps.optimizer.web 更名为 client；校验 coverage 配置兼容 v4（保留 include/exclude；确认未使用已移除选项）。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "b4f3c710-3a72-4c3b-8571-4c487ec48215"
+          "taskId": "9f6af756-a5a9-4ce7-8499-c991dc40e0df"
         }
       ],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:25:04.668047Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "src/lib/form-schema/contact-field-validators.ts",
-          "type": "CREATE",
-          "description": "字段级 Zod 规则"
-        },
-        {
-          "path": "src/lib/form-schema/contact-form-schema.ts",
-          "type": "CREATE",
-          "description": "动态 Schema 生成器"
-        },
-        {
-          "path": "src/lib/validations.ts",
-          "type": "REFERENCE",
-          "description": "常量与辅助函数复用"
+          "path": "vitest.config.mts",
+          "type": "TO_MODIFY",
+          "description": "deps.optimizer.web → client；覆盖率配置核对",
+          "lineStart": 250,
+          "lineEnd": 266
         }
       ],
-      "implementationGuide": "pseudocode:\n- contact-field-validators.ts: 导出 firstName(), lastName(), email(), company(), message(), phone(opt), subject(opt), acceptPrivacy(), marketingConsent(opt), website(honeypot)\n- 可注入 email 域白名单 refine\n- contact-form-schema.ts: 依据配置组装 z.object 动态结构",
-      "verificationCriteria": "可独立从配置生成 Zod schema；email 域白名单可注入；默认生成行为与现状一致；含单元测试。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- open vitest.config.mts\n- replace: test.deps.optimizer.web -> test.deps.optimizer.client\n- ensure: test.coverage.include 已定义（项目已定义 src/**/*，保留）\n- ensure: 未使用 coverage.all / coverage.extensions / ignoreEmptyLines\n- 保存并运行 pnpm test 校验",
+      "verificationCriteria": "- grep 不再出现 deps.optimizer.web；\n- pnpm test 正常；\n- 覆盖率配置与报告生成正常。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     },
     {
-      "id": "9e8c94a7-6ed7-43e3-abf3-5a9a6dab4d60",
-      "name": "UI：ContactFormContainer 接入配置（enabled/required/order）",
-      "description": "在不破坏既有结构的前提下，依据配置控制字段渲染、required 属性与星号显示；保持 Turnstile 与速率限制逻辑不变。必要时在 FormFields 按配置重排。",
-      "notes": "第一阶段不切换至 React19FormTemplate，降低风险。",
-      "status": "COMPLETE",
+      "id": "63bde723-ed2a-4ea0-88b6-0816a4e17701",
+      "name": "迁移 vitest.config.browser.ts 至 v4 Provider API",
+      "description": "为 Browser Mode 引入 @vitest/browser-playwright，并将 provider 从字符串写法改为函数写法；移除三斜线引用；避免与 environment: 'happy-dom' 混用。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "b4f3c710-3a72-4c3b-8571-4c487ec48215"
+          "taskId": "9f6af756-a5a9-4ce7-8499-c991dc40e0df"
         }
       ],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:29:53.261239Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "src/components/forms/contact-form-container.tsx",
+          "path": "vitest.config.browser.ts",
           "type": "TO_MODIFY",
-          "description": "注入配置驱动渲染"
+          "description": "provider 改为 playwright()，移除三斜线引用",
+          "lineStart": 1,
+          "lineEnd": 80
         },
         {
-          "path": "src/components/forms/fields/contact-fields.tsx",
-          "type": "REFERENCE",
-          "description": "字段组件保留"
-        },
-        {
-          "path": "src/components/forms/fields/name-fields.tsx",
-          "type": "REFERENCE",
-          "description": "字段组件保留"
-        },
-        {
-          "path": "src/components/forms/fields/message-field.tsx",
-          "type": "REFERENCE",
-          "description": "字段组件保留"
-        },
-        {
-          "path": "src/components/forms/fields/checkbox-fields.tsx",
-          "type": "REFERENCE",
-          "description": "字段组件保留"
+          "path": "vitest.config.browser.ts",
+          "type": "TO_MODIFY",
+          "description": "browser.provider 与 instances 段落",
+          "lineStart": 49,
+          "lineEnd": 76
         }
       ],
-      "implementationGuide": "pseudocode:\n- import CONTACT_FORM_CONFIG\n- const uiFields = buildFormFieldsFromConfig(CONTACT_FORM_CONFIG)\n- 过滤 disabled 字段；按 order 排序；为 required 字段设置 required 与星号\n- showPrivacyCheckbox=false 则不渲染隐私复选框",
-      "verificationCriteria": "关闭某字段 enabled 后 UI 不渲染；required 切换影响 required 属性与星号；默认配置下渲染结果与现状一致。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- import { playwright } from '@vitest/browser-playwright'\n- test.browser.provider: playwright()\n- 删除 /// <reference types='@vitest/browser/providers/playwright' />\n- 如启用 browser 模式，移除 environment: 'happy-dom'（改由 browser runner 提供环境）\n- 运行浏览器模式测试验证",
+      "verificationCriteria": "- 配置中使用 provider: playwright()；\n- 不再有三斜线引用；\n- 浏览器测试可启动（如配置并有用例）。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     },
     {
-      "id": "4c0218e5-4843-4e0a-8977-f4155dabe1d6",
-      "name": "服务端：Actions 与 API 使用动态 Schema",
-      "description": "在 actions.ts 与 contact-api-validation.ts 将静态 contactFormSchema 替换为动态 Schema，并增加邮箱域白名单错误键映射（errors.email.domainNotAllowed）。",
-      "notes": "确保默认配置下行为完全一致。",
-      "status": "COMPLETE",
+      "id": "0676ee66-373d-4f3a-b716-a3d42cbe402a",
+      "name": "Mock 行为差异审查与用例修复",
+      "description": "针对 v4 中 vi.restoreAllMocks 不再重置 automock、构造函数 spy 支持与名称变化等，搜索并修复依赖旧语义的测试用例。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "43de8078-02fe-470b-9f7c-7466157c3ff4"
+          "taskId": "9f6af756-a5a9-4ce7-8499-c991dc40e0df"
         }
       ],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:33:57.071033Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "src/app/actions.ts",
-          "type": "TO_MODIFY",
-          "description": "替换 Schema 来源并补充错误键映射"
+          "path": "src",
+          "type": "OTHER",
+          "description": "测试源码目录（多处用例修复）"
         },
         {
-          "path": "src/app/api/contact/contact-api-validation.ts",
-          "type": "TO_MODIFY",
-          "description": "替换 Schema 来源并补充错误键映射"
-        }
-      ],
-      "implementationGuide": "pseudocode:\n- import CONTACT_FORM_CONFIG 与 createContactFormSchemaFromConfig\n- const schema = createContactFormSchemaFromConfig(CONTACT_FORM_CONFIG)\n- 使用 schema.safeParse(data)\n- 对域白名单失败映射到 errors.email.domainNotAllowed\n- 保持 Turnstile/重放保护/Resend/Airtable/日志不变",
-      "verificationCriteria": "默认配置下现有用例全部通过；修改配置后 Server Action 与 API 校验一致；域白名单错误返回 errors.email.domainNotAllowed。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
-    },
-    {
-      "id": "7130a40c-e626-4314-a965-c760d6cde23e",
-      "name": "扩展 FeatureFlags 与站点配置（WhatsApp）",
-      "description": "扩展 src/config/app.ts FEATURE_FLAGS 增加 ENABLE_WHATSAPP_CHAT；在 site-config.ts 增加 contact.whatsappNumber（或 social.whatsapp）。",
-      "notes": "为 UI 按钮与后续集成提供统一来源。",
-      "status": "COMPLETE",
-      "dependencies": [],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:38:36.149873Z",
-      "relatedFiles": [
-        {
-          "path": "src/config/app.ts",
-          "type": "TO_MODIFY",
-          "description": "增加 ENABLE_WHATSAPP_CHAT"
+          "path": "tests",
+          "type": "OTHER",
+          "description": "测试场景目录（多处用例修复）"
         },
         {
-          "path": "src/config/paths/site-config.ts",
+          "path": "docs/known-issues/vitest-4-upgrade.md",
           "type": "TO_MODIFY",
-          "description": "增加 whatsappNumber"
+          "description": "补充已知问题与修复策略"
         }
       ],
-      "implementationGuide": "pseudocode:\n- FEATURE_FLAGS: ENABLE_WHATSAPP_CHAT: env.ENABLE_WHATSAPP_CHAT ?? true\n- SITE_CONFIG.contact.whatsappNumber?: string\n- 导出类型更新，并为空值提供容错",
-      "verificationCriteria": "环境变量可开启或关闭聊天入口；SITE_CONFIG 存在 WhatsApp 号码并类型正确。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- 搜索: vi.restoreAllMocks / vi.resetAllMocks / vi.clearAllMocks / vi.spyOn(... new) / mockImplementation(()=>)\n- 策略：\n  - 若依赖 restoreAllMocks 还原 automock，改为 resetAllMocks 或显式 mockRestore/重设返回\n  - 构造函数 spy，使用 function/class 实现替代箭头函数\n- 跑全量测试并迭代修复",
+      "verificationCriteria": "- 全量测试通过；\n- 相关用例不再因 restoreAllMocks 语义变化失败；\n- 记录修复点与原因。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     },
     {
-      "id": "c968f2a7-79db-496d-8dbf-22b046d13c3f",
-      "name": "实现 WhatsApp 悬浮按钮并在 Layout 受控注入",
-      "description": "新建组件 WhatsAppFloatingButton（支持 href=wa.me/号码），按 FEATURE_FLAGS.ENABLE_WHATSAPP_CHAT 与 SITE_CONFIG.contact.whatsappNumber 渲染；在 layout.tsx 条件注入，支持懒加载。",
-      "notes": "不依赖服务端 API，仅前端入口。",
-      "status": "COMPLETE",
+      "id": "1c2f948d-3cf9-401e-ac96-35c698c2b016",
+      "name": "覆盖率基线重测与阈值校准",
+      "description": "由于 V8 覆盖率 AST 重映射更精确，重测覆盖率；仅在必要时对局部阈值微调以维持 Phase1≥65%。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "7130a40c-e626-4314-a965-c760d6cde23e"
-        }
-      ],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:41:04.563259Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/integrations/whatsapp-button.tsx",
-          "type": "CREATE",
-          "description": "悬浮按钮组件"
+          "taskId": "6e505e63-6993-413b-bcf3-0b0c20259c63"
         },
         {
-          "path": "src/app/[locale]/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "条件渲染按钮"
+          "taskId": "0676ee66-373d-4f3a-b716-a3d42cbe402a"
         }
       ],
-      "implementationGuide": "pseudocode:\n- 新建组件读取 flag 与 number，有效则渲染 fixed 位置按钮，aria-label 完整\n- 在 layout.tsx 懒加载并条件渲染，靠近 Footer 放置\n- 链接示例: https://wa.me/<number>",
-      "verificationCriteria": "开关打开且号码存在时显示按钮并可跳转；关闭时不渲染；懒加载不影响首屏。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
-    },
-    {
-      "id": "ba2f3385-5e38-45dc-a5eb-c220ff97c4c8",
-      "name": "主题定制最小注入（单站点）",
-      "description": "新增 src/config/theme-customization.ts 定义 brand/layout 及组件默认变体；在 layout 注入 CSS 变量；组件默认值在未显式指定时生效。",
-      "notes": "轻量化，避免大改样式系统。",
-      "status": "COMPLETE",
-      "dependencies": [],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:43:05.455799Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "src/config/theme-customization.ts",
-          "type": "CREATE",
-          "description": "主题配置"
+          "path": "vitest.config.mts",
+          "type": "TO_MODIFY",
+          "description": "阈值可能需要微调（仅必要时）",
+          "lineStart": 124,
+          "lineEnd": 217
         },
         {
-          "path": "src/app/[locale]/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "注入 CSS 变量"
+          "path": "coverage/coverage-final.json",
+          "type": "OTHER",
+          "description": "覆盖率输出（运行后生成）"
         }
       ],
-      "implementationGuide": "pseudocode:\n- THEME_CUSTOMIZATION = brand(primary,secondary,accent), layout(maxContentWidth, headerStyle), components(button defaultVariant/defaultSize)\n- layout.tsx 注入 :root CSS 变量或全局样式\n- 仅提供默认 fallback，不改变组件 API",
-      "verificationCriteria": "变更配置后主色等变量生效；未配置时维持现状；无明显性能回退。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- 执行 pnpm test:coverage\n- 比对 ./coverage 与 json-summary\n- 分析下降原因：死代码、类型护栏、分支不可达\n- 必要时微调 vitest.config.mts 中特定文件 thresholds（不放宽全局目标）\n- 更新 evidence 记录",
+      "verificationCriteria": "- 覆盖率报告生成成功；\n- 全局覆盖率≥65%；\n- 如调阈值，有充分证据并在 evidence 说明。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     },
     {
-      "id": "cecb847b-735c-4269-9303-f8715e85b36d",
-      "name": "测试与文档：动态 Schema/配置驱动 UI/WhatsApp 开关",
-      "description": "新增单元测试与文档：1) 动态 Schema 组合与邮箱白名单；2) ContactFormContainer 的 required/星号与启用/禁用；3) WhatsApp 按钮的 FeatureFlag 门控；4) 默认配置回归；更新 README/docs。",
-      "notes": "不扩大测试范围；重点覆盖配置分支与回归。",
-      "status": "COMPLETE",
+      "id": "d6bbfd47-c8a8-4aad-b905-697137779b23",
+      "name": "Browser Mode 校验与 Playwright 集成验证",
+      "description": "在本地与 CI 等价环境中验证浏览器模式可用性，确保 provider 配置、实例、视口等设置生效；必要时确认是否需要安装 playwright 包（如仅有 @playwright/test）。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "4c0218e5-4843-4e0a-8977-f4155dabe1d6"
-        },
-        {
-          "taskId": "9e8c94a7-6ed7-43e3-abf3-5a9a6dab4d60"
-        },
-        {
-          "taskId": "c968f2a7-79db-496d-8dbf-22b046d13c3f"
+          "taskId": "63bde723-ed2a-4ea0-88b6-0816a4e17701"
         }
       ],
-      "createdAt": "2025-11-12T09:12:01.205Z",
-      "updatedAt": "2025-11-12T14:55:05.641083Z",
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
       "relatedFiles": [
         {
-          "path": "tests/contact-form/builder.test.ts",
-          "type": "CREATE",
-          "description": "动态 Schema 组合测试"
+          "path": "vitest.config.browser.ts",
+          "type": "REFERENCE",
+          "description": "Browser Mode 配置"
         },
         {
-          "path": "src/components/forms/__tests__/contact-form-container.test.tsx",
-          "type": "TO_MODIFY",
-          "description": "增加配置驱动用例"
-        },
-        {
-          "path": "src/components/integrations/__tests__/whatsapp-button.test.tsx",
-          "type": "CREATE",
-          "description": "开关门控"
-        },
-        {
-          "path": "README.md",
-          "type": "TO_MODIFY",
-          "description": "新增配置与使用说明"
+          "path": "package.json",
+          "type": "REFERENCE",
+          "description": "@playwright/test 与相关脚本"
         }
       ],
-      "implementationGuide": "pseudocode:\n- builder.test: 覆盖 enabled/required/order、隐私复选框关闭策略、域白名单\n- contact-form-container.test: required 与星号切换、字段隐藏\n- whatsapp-button.test: flag 与号码门控\n- README: 配置字段、示例与常见问题",
-      "verificationCriteria": "新增测试全部通过；默认配置下现有测试不回退；README 增加配置说明与示例。",
-      "analysisResult": "以配置优先贯穿 UI 与服务端：新增联系表单配置模块（类型、默认值、Zod 配置校验与动态 Schema 生成器），让基础必填字段可配置，同时维持现有 ContactFormContainer 与服务端处理链。扩展 FEATURE_FLAGS 启用 WhatsApp 聊天入口（懒加载 UI），并提供轻量主题配置（CSS 变量注入）。所有变更保持默认配置与现状一致，并补齐关键测试与文档。"
+      "implementationGuide": "pseudocode:\n- 本地运行：pnpm vitest --config vitest.config.browser.ts 或 npm script 等价命令\n- 如提示缺少 playwright，安装 devDep: playwright 并执行 playwright install\n- 验证截图/并行/viewport 配置按预期工作",
+      "verificationCriteria": "- 浏览器模式测试可运行；\n- 不出现 provider 相关报错；\n- 关键用例在浏览器模式下通过。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
+    },
+    {
+      "id": "08f24573-a58d-4a00-a132-3c6460857726",
+      "name": "质量门禁回归：类型/ESLint/体系化检查",
+      "description": "在不修改 CI 配置前提下，本地执行与 CI 等价的质量门禁：类型检查、ESLint、质量门禁脚本、尺寸预算检查等，确保零报错。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "1c2f948d-3cf9-401e-ac96-35c698c2b016"
+        },
+        {
+          "taskId": "d6bbfd47-c8a8-4aad-b905-697137779b23"
+        }
+      ],
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "REFERENCE",
+          "description": "质量门禁相关脚本定义",
+          "lineStart": 10,
+          "lineEnd": 60
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- pnpm type-check:tests\n- pnpm lint:check\n- pnpm ci:quality\n- pnpm size:check / build:check（如需要）\n- 记录结果与问题修复点",
+      "verificationCriteria": "- 所有命令零报错；\n- 构建与静态检查通过；\n- 质量门禁报告符合门槛。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
+    },
+    {
+      "id": "ba7687fd-9f7e-4cb0-839c-a638df15c422",
+      "name": "文档与回滚方案更新",
+      "description": "更新 docs/known-issues/vitest-4-upgrade.md 与 evidence/ 记录，补充升级步骤、兼容性观察、阈值变化原因与回滚命令；声明“无迁移，直接替换”。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "08f24573-a58d-4a00-a132-3c6460857726"
+        }
+      ],
+      "createdAt": "2025-11-13T03:48:58.796Z",
+      "updatedAt": "2025-11-13T03:48:58.796Z",
+      "relatedFiles": [
+        {
+          "path": "docs/known-issues/vitest-4-upgrade.md",
+          "type": "TO_MODIFY",
+          "description": "补充 v4 升级实操与常见问题"
+        },
+        {
+          "path": "evidence/vitest-upgrade-feasibility-2025-11-13.md",
+          "type": "TO_MODIFY",
+          "description": "补充验证过程与最终结论"
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 更新已知问题文档：mock 差异、coverage 变化、provider 迁移\n- 在 evidence/ 增补执行日志与比对结论\n- 记录回滚命令：pnpm up -D vitest@3.2.4 等\n- 产出最终交付说明",
+      "verificationCriteria": "- 文档更新完整（升级、差异、验证、回滚）；\n- evidence 中包含最终验证与时间戳；\n- 明确声明“无迁移，直接替换”。",
+      "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
     }
   ]
 }
