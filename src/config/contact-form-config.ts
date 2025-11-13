@@ -311,9 +311,9 @@ export function buildFormFieldsFromConfig(
     .sort((a, b) => a.order - b.order)
     .map((field) => ({
       ...field,
-      labelKey: `contact.form.${field.i18nKey}`,
+      labelKey: field.i18nKey,
       placeholderKey: PLACEHOLDER_KEYS[field.key]
-        ? `contact.form.${PLACEHOLDER_KEYS[field.key]!}`
+        ? PLACEHOLDER_KEYS[field.key]!
         : undefined,
       isCheckbox: field.type === 'checkbox',
       isHoneypot: field.key === 'website',

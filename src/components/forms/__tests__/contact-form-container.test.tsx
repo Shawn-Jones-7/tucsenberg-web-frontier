@@ -253,7 +253,7 @@ describe('ContactFormContainer - 配置驱动', () => {
     ...overrides,
   });
 
-  let builderSpy: ReturnType<typeof vi.spyOn> | null = null;
+  let builderSpy: any = null;
 
   afterEach(() => {
     builderSpy?.mockRestore();

@@ -43,7 +43,6 @@ const LazyWhatsAppFloatingButton = nextDynamic(
     ),
   {
     loading: () => null,
-    ssr: false,
   },
 );
 
