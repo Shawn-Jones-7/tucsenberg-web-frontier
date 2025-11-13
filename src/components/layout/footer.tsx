@@ -90,9 +90,11 @@ const FooterSectionComponent: FC<
 
   return (
     <div className='space-y-4'>
-      <h3 className='text-foreground/60 text-[14px] font-semibold'>
+      {/* 使用 h2 提升标题层级，避免从 h1 直接跳到 h3 造成 heading-order 违规；
+          同时提高前景色不透明度以满足对比度要求 */}
+      <h2 className='text-foreground/85 text-[14px] font-semibold'>
         {sectionTitle}
-      </h3>
+      </h2>
       <ul className='space-y-3'>
         {section.links.map((link) => (
           <li key={link.key}>
