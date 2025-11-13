@@ -44,7 +44,7 @@ function TechStackStats({ t }: { t: TFunc }) {
           <div className='text-primary text-2xl font-bold'>
             {techStackData.length}
           </div>
-          <div className='text-muted-foreground text-sm'>
+          <div className='text-foreground/85 text-sm'>
             {t('stats.totalTech')}
           </div>
         </div>
@@ -52,21 +52,17 @@ function TechStackStats({ t }: { t: TFunc }) {
           <div className='text-primary text-2xl font-bold'>
             {Object.keys(techStackCategories).length}
           </div>
-          <div className='text-muted-foreground text-sm'>
+          <div className='text-foreground/85 text-sm'>
             {t('stats.categories')}
           </div>
         </div>
         <div className='text-center'>
           <div className='text-primary text-2xl font-bold'>100%</div>
-          <div className='text-muted-foreground text-sm'>
-            {t('stats.modern')}
-          </div>
+          <div className='text-foreground/85 text-sm'>{t('stats.modern')}</div>
         </div>
         <div className='text-center'>
           <div className='text-primary text-2xl font-bold'>A+</div>
-          <div className='text-muted-foreground text-sm'>
-            {t('stats.quality')}
-          </div>
+          <div className='text-foreground/85 text-sm'>{t('stats.quality')}</div>
         </div>
       </div>
     </div>
@@ -95,9 +91,7 @@ function TechStackTitle({
       <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl'>
         {title}
       </h2>
-      <p className='text-muted-foreground mx-auto max-w-2xl text-lg'>
-        {subtitle}
-      </p>
+      <p className='text-foreground/85 mx-auto max-w-2xl text-lg'>{subtitle}</p>
     </div>
   );
 }

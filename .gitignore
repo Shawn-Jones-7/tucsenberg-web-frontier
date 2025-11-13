@@ -122,3 +122,8 @@ reports/**/*.xml
 reports/**/*.html
 backups/
 .lighthouseci/
+
+# 证据文档和临时交接文档（不提交）
+evidence/
+docs/analysis-report/交接文档-*.md
+docs/known-issues/vitest-4-upgrade.md

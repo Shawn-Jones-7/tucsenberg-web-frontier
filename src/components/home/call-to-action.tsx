@@ -53,7 +53,7 @@ export function CallToAction() {
               {t('title')}
             </h2>
 
-            <p className='text-muted-foreground mx-auto mb-8 max-w-2xl text-lg sm:text-xl'>
+            <p className='text-foreground/85 mx-auto mb-8 max-w-2xl text-lg sm:text-xl'>
               {t('subtitle')}
             </p>
 

@@ -26,10 +26,8 @@ export interface HeroSectionMessages extends Record<string, unknown> {
 function HeroBadge({ version }: { version: string }) {
   return (
     <div className='mb-8 flex justify-center'>
-      <Badge
-        variant='secondary'
-        className='px-4 py-2 text-sm font-medium'
-      >
+      {/* 提升对比度：使用高对比配色，避免 secondary 方案在深色主题下对比不足 */}
+      <Badge className='bg-foreground text-background px-4 py-2 text-sm font-medium'>
         <span className='mr-2'>🚀</span>
         {version}
       </Badge>
@@ -38,9 +36,20 @@ function HeroBadge({ version }: { version: string }) {
 }
 
 // Hero Title Component
-function HeroTitle({ line1, line2 }: { line1: string; line2: string }) {
+function HeroTitle({
+  line1,
+  line2,
+  id,
+}: {
+  line1: string;
+  line2: string;
+  id?: string;
+}) {
   return (
-    <h1 className='text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl'>
+    <h1
+      className='text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl'
+      {...(id ? { id } : {})}
+    >
       <span className='block'>{line1}</span>
       <span className='text-foreground block'>{line2}</span>
     </h1>
@@ -79,7 +88,7 @@ function HeroActionButtons({ t }: { t: (_key: string) => string }) {
     <div className='flex flex-col items-center gap-4 sm:flex-row sm:justify-center'>
       <Button
         size='lg'
-        className='group px-8 py-3 text-lg'
+        className='group bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-lg'
         asChild
       >
         <a
@@ -129,7 +138,7 @@ function HeroStats({ t }: { t: (_key: string) => string }) {
           className='text-center'
         >
           <div className='text-foreground text-3xl font-bold'>{stat.value}</div>
-          <div className='text-muted-foreground text-sm'>
+          <div className='text-foreground/80 text-sm'>
             {t(`stats.${stat.key}`)}
           </div>
         </div>
@@ -148,6 +157,7 @@ function HeroSectionBody(props: {
     <section
       data-testid='hero-section'
       className='from-background via-background to-muted/20 relative overflow-hidden bg-gradient-to-br py-20 sm:py-32'
+      aria-labelledby='hero-heading'
     >
       {showBg ? (
         <>
@@ -167,9 +177,10 @@ function HeroSectionBody(props: {
           <HeroTitle
             line1={t('title.line1')}
             line2={t('title.line2')}
+            id='hero-heading'
           />
 
-          <p className='text-muted-foreground mx-auto mb-10 max-w-2xl text-lg sm:text-xl'>
+          <p className='text-foreground/80 mx-auto mb-10 max-w-2xl text-lg sm:text-xl'>
             {t('subtitle')}
           </p>
 

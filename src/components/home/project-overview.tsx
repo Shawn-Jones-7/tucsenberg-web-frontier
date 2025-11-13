@@ -104,7 +104,7 @@ function ProjectHighlights({ t }: { t: (_key: string) => string }) {
       <Card className='from-primary/5 to-secondary/5 bg-gradient-to-br'>
         <CardHeader>
           <CardTitle className='text-2xl'>{t('highlights.title')}</CardTitle>
-          <CardDescription className='text-lg'>
+          <CardDescription className='text-foreground/90 text-lg'>
             {t('highlights.subtitle')}
           </CardDescription>
         </CardHeader>
@@ -141,7 +141,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-muted-foreground text-sm'>
+            <div className='text-foreground/85 text-sm'>
               {t('architecture.frontend.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -166,7 +166,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-muted-foreground text-sm'>
+            <div className='text-foreground/85 text-sm'>
               {t('architecture.ui.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -191,7 +191,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-muted-foreground text-sm'>
+            <div className='text-foreground/85 text-sm'>
               {t('architecture.tooling.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -235,7 +235,7 @@ export function ProjectOverview() {
             <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl'>
               {t('title')}
             </h2>
-            <p className='text-muted-foreground mx-auto max-w-2xl text-lg'>
+            <p className='text-foreground/85 mx-auto max-w-2xl text-lg'>
               {t('subtitle')}
             </p>
           </div>
@@ -250,7 +250,7 @@ export function ProjectOverview() {
             <Card className='from-primary/10 to-secondary/10 mx-auto max-w-2xl bg-gradient-to-r'>
               <CardHeader>
                 <CardTitle className='text-2xl'>{t('cta.title')}</CardTitle>
-                <CardDescription className='text-lg'>
+                <CardDescription className='text-foreground/90 text-lg'>
                   {t('cta.description')}
                 </CardDescription>
               </CardHeader>
