@@ -57,20 +57,47 @@ const createMockPerformanceObserver = () => ({
 
 const _mockPerformanceObserver = createMockPerformanceObserver();
 
+class MockPerformanceObserver {
+  callback: PerformanceObserverCallback | undefined;
+  constructor(cb?: PerformanceObserverCallback) {
+    this.callback = cb;
+  }
+  observe(options?: any) {
+    mockObserve(options);
+  }
+  disconnect() {
+    mockDisconnect();
+  }
+  takeRecords() {
+    return mockTakeRecords();
+  }
+}
+
+const PerformanceObserverSpy = vi.fn(function PerformanceObserverMock(
+  this: any,
+  cb?: PerformanceObserverCallback,
+) {
+  return new (MockPerformanceObserver as any)(cb);
+});
+
 Object.defineProperty(global, 'PerformanceObserver', {
-  value: vi.fn(() => createMockPerformanceObserver()),
+  value: PerformanceObserverSpy as unknown as PerformanceObserver,
   writable: true,
 });
 
 // Mock intersection observer
-const mockIntersectionObserver = {
-  observe: vi.fn(),
-  disconnect: vi.fn(),
-  unobserve: vi.fn(),
-};
+class MockIntersectionObserver {
+  callback: IntersectionObserverCallback | undefined;
+  constructor(cb?: IntersectionObserverCallback) {
+    this.callback = cb;
+  }
+  observe() {}
+  disconnect() {}
+  unobserve() {}
+}
 
 Object.defineProperty(global, 'IntersectionObserver', {
-  value: vi.fn(() => mockIntersectionObserver),
+  value: MockIntersectionObserver as unknown as IntersectionObserver,
   writable: true,
 });
 

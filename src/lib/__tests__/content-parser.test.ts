@@ -6,8 +6,14 @@ import { getContentFiles, parseContentFile } from '@/lib/content-parser';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
 
-// Mock dependencies
-vi.mock('fs');
+// Mock依赖（v4：为内置模块手动提供函数实现）
+vi.mock('fs', () => {
+  const existsSync = vi.fn();
+  const readFileSync = vi.fn();
+  const readdirSync = vi.fn();
+  const exports = { existsSync, readFileSync, readdirSync } as any;
+  return { default: exports, ...exports };
+});
 vi.mock('@/lib/logger');
 vi.mock('@/lib/content-utils', () => ({
   CONTENT_DIR: '/mock/content',

@@ -4,7 +4,7 @@
 
 import React from 'react';
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,6 +12,13 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '../dropdown-menu';
+
+// 局部 Mock lucide-react（v4：避免 hoist 导致的集中 Mock 冲突）
+vi.mock('lucide-react', () => ({
+  CheckIcon: () => null,
+  ChevronRightIcon: () => null,
+  CircleIcon: () => null,
+}));
 
 describe('DropdownMenu - Accessibility', () => {
   it('supports keyboard navigation', () => {

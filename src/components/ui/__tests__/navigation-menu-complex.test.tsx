@@ -32,16 +32,15 @@ vi.mock('lucide-react', () => ({
 function setupComplexTest() {
   const user = userEvent.setup();
 
-  // Mock ResizeObserver for all tests
-  const mockResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-    unobserve: vi.fn(),
-  }));
+  // v4 构造器类 mock：确保可被 `new` 调用
+  class MockResizeObserver {
+    observe = vi.fn();
+    disconnect = vi.fn();
+    unobserve = vi.fn();
+  }
+  vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
-  vi.stubGlobal('ResizeObserver', mockResizeObserver);
-
-  return { user, mockResizeObserver };
+  return { user };
 }
 
 describe('NavigationMenu - Complex Structures', () => {

@@ -32,16 +32,17 @@ vi.mock('lucide-react', () => ({
 function setupKeyboardTest() {
   const user = userEvent.setup();
 
-  // Mock ResizeObserver for all tests
-  const mockResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-    unobserve: vi.fn(),
-  }));
+  // Mock ResizeObserver（v4 需支持可被 new 的构造器）
+  class MockResizeObserver {
+    observe = vi.fn();
+    disconnect = vi.fn();
+    unobserve = vi.fn();
+  }
 
-  vi.stubGlobal('ResizeObserver', mockResizeObserver);
+  // 替换全局构造器，确保 Radix UI 内部 new ResizeObserver() 正常工作
+  vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
-  return { user, mockResizeObserver };
+  return { user, mockResizeObserver: MockResizeObserver };
 }
 
 describe('NavigationMenu - Keyboard Navigation', () => {

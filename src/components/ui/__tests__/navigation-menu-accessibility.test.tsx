@@ -32,16 +32,16 @@ vi.mock('lucide-react', () => ({
 function setupAccessibilityTest() {
   const user = userEvent.setup();
 
-  // Mock ResizeObserver for all tests
-  const mockResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-    unobserve: vi.fn(),
-  }));
+  // v4 构造器类 mock：确保 `new ResizeObserver()` 正常
+  class MockResizeObserver {
+    observe = vi.fn();
+    disconnect = vi.fn();
+    unobserve = vi.fn();
+  }
 
-  vi.stubGlobal('ResizeObserver', mockResizeObserver);
+  vi.stubGlobal('ResizeObserver', MockResizeObserver);
 
-  return { user, mockResizeObserver };
+  return { user };
 }
 
 describe('NavigationMenu - ARIA & Accessibility', () => {

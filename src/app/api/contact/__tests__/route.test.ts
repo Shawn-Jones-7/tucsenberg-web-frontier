@@ -93,7 +93,8 @@ Object.defineProperty(process, 'env', {
 
 describe('Contact API Route', () => {
   beforeEach(async () => {
-    vi.clearAllMocks();
+    // Vitest v4: ensure mock implementations are reset between tests
+    vi.resetAllMocks();
 
     // Reset default mock implementations
     mockAirtableService.isReady.mockReturnValue(true);
@@ -134,6 +135,18 @@ describe('Contact API Route', () => {
         details: null,
         data: validFormData,
       });
+
+      // Ensure submission processing is mocked to succeed under Vitest v4
+      const { processFormSubmission } = await import(
+        '@/app/api/contact/contact-api-validation'
+      );
+      vi.mocked(processFormSubmission).mockResolvedValue({
+        success: true,
+        emailSent: true,
+        recordCreated: true,
+        emailMessageId: 'email-123',
+        airtableRecordId: 'record-123',
+      } as any);
 
       // Mock successful service responses
       mockAirtableService.createContact.mockResolvedValue({ id: 'record-123' });

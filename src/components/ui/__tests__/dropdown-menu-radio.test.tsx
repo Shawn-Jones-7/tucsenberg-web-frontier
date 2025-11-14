@@ -14,6 +14,13 @@ import {
   DropdownMenuTrigger,
 } from '../dropdown-menu';
 
+// 局部 Mock lucide-react（v4：避免 hoist 导致的集中 Mock 冲突）
+vi.mock('lucide-react', () => ({
+  CheckIcon: () => null,
+  ChevronRightIcon: () => null,
+  CircleIcon: () => null,
+}));
+
 describe('DropdownMenu - Radio Components', () => {
   let user: ReturnType<typeof userEvent.setup>;
 

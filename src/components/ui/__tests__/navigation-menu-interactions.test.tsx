@@ -32,16 +32,23 @@ vi.mock('lucide-react', () => ({
 function setupInteractionTest() {
   const user = userEvent.setup();
 
-  // Mock ResizeObserver for all tests
-  const mockResizeObserver = vi.fn(() => ({
-    observe: vi.fn(),
-    disconnect: vi.fn(),
-    unobserve: vi.fn(),
-  }));
+  // Mock ResizeObserver for all tests (Vitest v4: use class/function constructor)
+  class MockResizeObserver {
+    callback: ResizeObserverCallback | undefined;
+    constructor(cb?: ResizeObserverCallback) {
+      this.callback = cb;
+    }
+    observe() {}
+    disconnect() {}
+    unobserve() {}
+  }
 
-  vi.stubGlobal('ResizeObserver', mockResizeObserver);
+  vi.stubGlobal(
+    'ResizeObserver',
+    MockResizeObserver as unknown as ResizeObserver,
+  );
 
-  return { user, mockResizeObserver };
+  return { user };
 }
 
 describe('NavigationMenu - Interactions', () => {

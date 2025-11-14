@@ -281,13 +281,13 @@ describe('Navigation Menu Components', () => {
     });
 
     it('handles click interactions', async () => {
-      // Mock ResizeObserver properly for this test
-      const mockResizeObserver = vi.fn().mockImplementation(() => ({
-        observe: vi.fn(),
-        unobserve: vi.fn(),
-        disconnect: vi.fn(),
-      }));
-      global.ResizeObserver = mockResizeObserver;
+      // v4 构造器类 mock：确保 `new ResizeObserver()` 正常
+      class MockResizeObserver {
+        observe = vi.fn();
+        unobserve = vi.fn();
+        disconnect = vi.fn();
+      }
+      global.ResizeObserver = MockResizeObserver as any;
 
       // Mock window.location to prevent navigation errors
       const mockLocation = {
@@ -587,14 +587,6 @@ describe('Navigation Menu Components', () => {
 
   describe('Accessibility', () => {
     it('supports keyboard navigation', async () => {
-      // Mock ResizeObserver to prevent errors during keyboard navigation
-      const mockResizeObserver = vi.fn().mockImplementation(() => ({
-        observe: vi.fn(),
-        unobserve: vi.fn(),
-        disconnect: vi.fn(),
-      }));
-      global.ResizeObserver = mockResizeObserver;
-
       render(
         <NavigationMenu>
           <NavigationMenuList>

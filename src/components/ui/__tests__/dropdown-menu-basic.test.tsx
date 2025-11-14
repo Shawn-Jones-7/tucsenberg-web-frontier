@@ -3,13 +3,19 @@
  */
 
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuPortal,
   DropdownMenuTrigger,
 } from '../dropdown-menu';
+
+vi.mock('lucide-react', () => ({
+  CheckIcon: () => null,
+  ChevronRightIcon: () => null,
+  CircleIcon: () => null,
+}));
 
 describe('DropdownMenu - Basic Components', () => {
   describe('DropdownMenu', () => {

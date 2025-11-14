@@ -164,7 +164,12 @@ describe('Badge Custom Props - Core Tests', () => {
 
       if (ref.current) {
         ref.current.style.border = '2px solid blue';
-        expect(ref.current).toHaveStyle('border: 2px solid blue');
+        // 使用更健壮的断言（避免样式序列化差异）
+        const cs = getComputedStyle(ref.current);
+        expect(cs.borderTopWidth).toBe('2px');
+        expect(cs.borderTopStyle).toBe('solid');
+        // 颜色在 jsdom 中通常归一化为 rgb()
+        expect(cs.borderTopColor).toMatch(/blue|rgb\(0, 0, 255\)/);
       }
     });
   });

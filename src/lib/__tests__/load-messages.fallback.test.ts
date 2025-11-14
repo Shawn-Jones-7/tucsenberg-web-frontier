@@ -10,6 +10,15 @@ vi.mock('next/cache', () => ({
   unstable_cache: (fn: any) => fn,
 }));
 
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    error: (..._args: unknown[]) => {},
+    warn: (..._args: unknown[]) => {},
+    info: (..._args: unknown[]) => {},
+    debug: (..._args: unknown[]) => {},
+  },
+}));
+
 describe('Load Messages - Fallback Behavior', () => {
   beforeEach(() => {
     // Force network failure and ensure fs fallback cannot find file

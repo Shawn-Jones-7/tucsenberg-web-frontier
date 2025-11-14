@@ -17,7 +17,12 @@ import {
 } from '../content-utils';
 
 // Mock dependencies
-vi.mock('fs');
+vi.mock('fs', () => {
+  const existsSync = vi.fn();
+  const readFileSync = vi.fn();
+  const exports = { existsSync, readFileSync } as any;
+  return { default: exports, ...exports };
+});
 vi.mock('@/lib/logger', () => ({
   logger: {
     warn: vi.fn(),

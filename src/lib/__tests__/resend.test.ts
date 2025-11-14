@@ -11,10 +11,18 @@ const mockResendInstance = {
     send: mockResendSend,
   },
 };
-const mockResend = vi.fn().mockImplementation(() => mockResendInstance);
+// v4 构造器 mock：使用 class/function 构造器，记录调用参数并返回实例
+const mockResendCtorCalls = vi.fn();
+class ResendCtorMock {
+  constructor(...args: any[]) {
+    mockResendCtorCalls(...args);
+    // eslint-disable-next-line no-constructor-return -- Mock constructor needs to return mockResendInstance
+    return mockResendInstance as any;
+  }
+}
 
 vi.mock('resend', () => ({
-  Resend: mockResend,
+  Resend: ResendCtorMock,
 }));
 
 // Use TypeScript Mock modules to bypass Vite's special handling
@@ -43,10 +51,10 @@ vi.mock('./validations', async () => {
 const setupResendTest = async (): Promise<ResendServiceConstructor> => {
   // Clear mocks but preserve the mock functions
   mockResendSend.mockReset();
-  mockResend.mockClear();
+  mockResendCtorCalls.mockClear();
 
   // Ensure the mock returns the correct instance
-  mockResend.mockReturnValue(mockResendInstance);
+  // 构造器已固定返回 mockResendInstance，无需在此返回
 
   // Dynamic import to ensure mocks are applied
   const module = await import('../resend');
@@ -77,7 +85,7 @@ describe('resend - Service Initialization', () => {
     it('should initialize successfully with valid API key', async () => {
       const service = new ResendServiceClass();
       expect(service.isReady()).toBe(true);
-      expect(mockResend).toHaveBeenCalledWith('test-resend-key');
+      expect(mockResendCtorCalls).toHaveBeenCalledWith('test-resend-key');
     });
 
     it('should handle missing API key gracefully', async () => {

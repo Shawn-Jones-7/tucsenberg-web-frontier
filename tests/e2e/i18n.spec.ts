@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { checkA11y, injectAxe } from 'axe-playwright';
+import { checkA11y, injectAxe } from './helpers/axe';
 import { clickNavLinkByName, getNav } from './helpers/navigation';
 import {
   removeInterferingElements,
