@@ -105,19 +105,10 @@ export interface EnvironmentCompatibilityResult {
  * 环境兼容性检查
  * Environment compatibility check
  */
-function checkTestEnv(
-  issues: string[],
-  warnings: string[],
-  recommendations: string[],
-): void {
+function checkTestEnv(issues: string[], recommendations: string[]): void {
   if (process.env.NEXT_PUBLIC_DISABLE_REACT_SCAN !== 'true') {
     issues.push('测试环境中 React Scan 未被禁用');
     recommendations.push('设置 NEXT_PUBLIC_DISABLE_REACT_SCAN=true');
-  }
-
-  if (process.env.NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT !== 'true') {
-    warnings.push('测试环境中 Web Eval Agent 未启用');
-    recommendations.push('考虑设置 NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT=true');
   }
 }
 
@@ -159,7 +150,7 @@ export function checkEnvironmentCompatibility(): EnvironmentCompatibilityResult 
   const environment = process.env.NODE_ENV || 'development';
 
   // 检查测试环境配置
-  if (isTestEnvironment()) checkTestEnv(issues, warnings, recommendations);
+  if (isTestEnvironment()) checkTestEnv(issues, recommendations);
 
   // 检查开发环境配置
   if (isDevelopmentEnvironment()) checkDevEnv(warnings, recommendations);
@@ -211,24 +202,6 @@ function analyzeReactScan(config: PerformanceConfig): {
   return { status: 'healthy', detail: 'React Scan is disabled' };
 }
 
-function analyzeWebEval(config: PerformanceConfig): {
-  status: 'healthy' | 'warning';
-  detail: string;
-} {
-  if (config.webEvalAgent.enabled) {
-    if (isTestEnvironment())
-      return {
-        status: 'healthy',
-        detail: 'Web Eval Agent is properly configured for testing',
-      };
-    return {
-      status: 'warning',
-      detail: 'Web Eval Agent is enabled outside test environment',
-    };
-  }
-  return { status: 'healthy', detail: 'Web Eval Agent is disabled' };
-}
-
 function analyzeBundleAndSize(config: PerformanceConfig): {
   bundle: 'healthy';
   bundleDetail: string;
@@ -257,10 +230,6 @@ export function performHealthCheck(config: PerformanceConfig): {
   const reactScan = analyzeReactScan(config);
   status.reactScan = reactScan.status;
   details.reactScan = reactScan.detail;
-
-  const webEval = analyzeWebEval(config);
-  status.webEvalAgent = webEval.status;
-  details.webEvalAgent = webEval.detail;
 
   const bundleSize = analyzeBundleAndSize(config);
   status.bundleAnalyzer = bundleSize.bundle;

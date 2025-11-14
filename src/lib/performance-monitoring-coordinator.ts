@@ -12,7 +12,6 @@ import { ZERO } from '@/constants';
  *
  * 统一管理多个性能监控工具的协调运作：
  * - React Scan: 实时组件性能监控
- * - Web Eval Agent: 端到端用户体验测试
  * - Bundle Analyzer: 构建产物分析
  * - Size Limit: 包大小监控
  * - Web Vitals: 核心网页指标监控
@@ -51,15 +50,10 @@ export {
   ReactScanUtils,
   useBundleAnalyzerIntegration,
   useReactScanIntegration,
-  useWebEvalAgentIntegration,
   useWebVitalsIntegration,
   validateBundleAnalyzerConfig,
   validateReactScanConfig,
-  validateWebEvalAgentConfig,
   validateWebVitalsConfig,
-  WebEvalAgent,
-  WebEvalAgentAnalyzer,
-  WebEvalAgentIntegration,
   WebVitals,
   WebVitalsAnalyzer,
   WebVitalsIntegration,
@@ -79,7 +73,6 @@ export {
   ReactScanConfig,
   SizeLimitConfig,
   validateConfig,
-  WebEvalAgentConfig,
   WebVitalsConfig,
 } from '@/lib/performance-monitoring-types';
 
@@ -140,57 +133,6 @@ export function useReactScanIntegration() {
           data: {
             componentName,
             renderCount,
-            timestamp: Date.now(),
-          },
-        });
-      }
-    },
-  };
-}
-
-/**
- * Web Eval Agent 集成钩子 (向后兼容)
- * Web Eval Agent integration hook (backward compatible)
- */
-export function useWebEvalAgentIntegration() {
-  const config = performanceCoordinator.getConfig();
-
-  return {
-    enabled: config.webEvalAgent.enabled,
-    recordUserInteraction: (
-      action: string,
-      timing: number,
-      success: boolean,
-    ) => {
-      if (config.webEvalAgent.enabled) {
-        performanceCoordinator.recordMetric({
-          source: 'web-eval-agent',
-          type: 'user-interaction',
-          data: {
-            action,
-            timing,
-            success,
-            timestamp: Date.now(),
-          },
-        });
-      }
-    },
-    recordNetworkRequest: (params: {
-      url: string;
-      method: string;
-      status: number;
-      timing: number;
-    }) => {
-      const { url, method, status, timing } = params;
-      if (config.webEvalAgent.enabled && config.webEvalAgent.captureNetwork) {
-        performanceCoordinator.recordMetric({
-          source: 'web-eval-agent',
-          type: 'network',
-          data: {
-            url,
-            method,
-            status,
-            timing,
             timestamp: Date.now(),
           },
         });

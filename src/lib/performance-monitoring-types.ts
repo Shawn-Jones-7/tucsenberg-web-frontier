@@ -14,7 +14,6 @@ import {
   PERCENTAGE_HALF,
   SECONDS_PER_MINUTE,
   TEN_SECONDS_MS,
-  THIRTY_SECONDS_MS,
   THREE_SECONDS_MS,
   ZERO,
 } from '@/constants';
@@ -30,7 +29,6 @@ import { PERFORMANCE_CONSTANTS } from '@/constants/performance';
  */
 export type PerformanceMetricSource =
   | 'react-scan'
-  | 'web-eval-agent'
   | 'bundle-analyzer'
   | 'size-limit'
   | 'custom'
@@ -138,27 +136,6 @@ export interface ReactScanConfig {
   maxTrackedComponents?: number;
   /** 渲染时间阈值 (毫秒) */
   renderThreshold?: number;
-}
-
-/**
- * Web Eval Agent 配置
- * Web Eval Agent configuration
- */
-export interface WebEvalAgentConfig {
-  /** 是否启用 */
-  enabled: boolean;
-  /** 是否捕获网络请求 */
-  captureNetwork: boolean;
-  /** 是否捕获日志 */
-  captureLogs: boolean;
-  /** 是否捕获截图 */
-  captureScreenshots?: boolean;
-  /** 是否捕获性能指标 */
-  capturePerformance?: boolean;
-  /** 测试超时时间 (毫秒) */
-  timeout?: number;
-  /** 每个会话最大交互次数 */
-  maxInteractionsPerSession?: number;
 }
 
 /**
@@ -288,8 +265,6 @@ export interface BundleConfig {
 export interface PerformanceConfig {
   /** React Scan 配置 */
   reactScan: ReactScanConfig;
-  /** Web Eval Agent 配置 */
-  webEvalAgent: WebEvalAgentConfig;
   /** Bundle Analyzer 配置 */
   bundleAnalyzer: BundleAnalyzerConfig;
   /** Size Limit 配置 */
@@ -397,16 +372,6 @@ export function generateEnvironmentConfig(): PerformanceConfig {
       showComponentNames: isDevelopment,
       maxTrackedComponents: PERCENTAGE_FULL,
       renderThreshold: PERCENTAGE_FULL, // 100ms
-    },
-    webEvalAgent: {
-      enabled:
-        isTest || process.env.NEXT_PUBLIC_ENABLE_WEB_EVAL_AGENT === 'true',
-      captureNetwork: true,
-      captureLogs: true,
-      captureScreenshots: isTest,
-      capturePerformance: true,
-      timeout: THIRTY_SECONDS_MS,
-      maxInteractionsPerSession: PERCENTAGE_HALF,
     },
     bundleAnalyzer: {
       enabled: process.env.ANALYZE === 'true',

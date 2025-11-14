@@ -1,87 +1,33 @@
 /*
- * Lightweight Sentry client wrapper for on-demand loading.
- * - Avoids bundling @sentry/nextjs in the shared chunk
- * - Only loads in production when actually used
- * - In tests, respects vi.mock('@sentry/nextjs') via dynamic import
+ * Sentry client wrapper (no-op placeholder).
+ *
+ * 当前阶段项目未启用 Sentry。为了避免引入不必要的动态依赖和构建警告，
+ * 这里保留与原先相同的函数签名，但内部全部实现为 no-op。
+ *
+ * 未来如果需要启用 Sentry，可以在本文件中补充真实实现（例如动态导入
+ * @sentry/nextjs 并在这些函数中调用对应 API）。
  */
 
-// 避免在构建期解析 @sentry/nextjs，最小化类型声明以消除模块解析依赖
-type SentryModule = {
-  captureException: (error: unknown) => void;
-  captureMessage: (message: string, level?: unknown) => void;
-  addBreadcrumb: (breadcrumb: unknown) => void;
-  setTag: (key: string, value: string) => void;
-  setUser: (user: unknown) => void;
-  setContext: (name: string, context: Record<string, unknown>) => void;
-};
-
-const DISABLE_SENTRY =
-  process.env['NEXT_PUBLIC_DISABLE_SENTRY'] === '1' ||
-  process.env['DISABLE_SENTRY_BUNDLE'] === '1';
-
-let sentryPromise: Promise<SentryModule> | null = null;
-
-function loadSentry(): Promise<SentryModule> | null {
-  // Only load on the client or modern runtimes; keep production-only to reduce noise
-  if (DISABLE_SENTRY) return null;
-  if (process.env.NODE_ENV !== 'production') return null;
-  if (!sentryPromise) {
-    // 使用动态 import 且仅在生产启用，测试/开发构建不会触发依赖解析
-    // 这里通过字符串拼接规避静态分析提前解析依赖
-    const mod = '@sentry/nextjs' as const;
-    sentryPromise = import(mod);
-  }
-  return sentryPromise;
+export function captureException(_error: unknown) {
+  // no-op
 }
 
-function withSentry(action: (s: SentryModule) => void) {
-  const p = loadSentry();
-  if (!p) return; // no-op in non-production
-  p.then((s) => {
-    try {
-      action(s);
-    } catch {
-      // swallow errors from Sentry calls to avoid impacting UX
-    }
-  }).catch(() => {
-    // swallow promise rejection to avoid unhandled rejection
-  });
+export function captureMessage(_message: string, _level?: unknown) {
+  // no-op
 }
 
-export function captureException(error: unknown) {
-  withSentry((s) => s.captureException(error));
+export function addBreadcrumb(_breadcrumb: unknown) {
+  // no-op
 }
 
-export function captureMessage(
-  message: string,
-  level?: Parameters<SentryModule['captureMessage']>[1],
-) {
-  withSentry((s) => {
-    if (level !== undefined) {
-      s.captureMessage(message, level);
-    } else {
-      s.captureMessage(message);
-    }
-  });
+export function setTag(_key: string, _value: string) {
+  // no-op
 }
 
-export function addBreadcrumb(
-  breadcrumb: Parameters<SentryModule['addBreadcrumb']>[0],
-) {
-  withSentry((s) => s.addBreadcrumb(breadcrumb));
+export function setUser(_user: unknown) {
+  // no-op
 }
 
-export function setTag(key: string, value: string) {
-  withSentry((s) => s.setTag(key, value));
+export function setContext(_name: string, _context: Record<string, unknown>) {
+  // no-op
 }
-
-export function setUser(user: Parameters<SentryModule['setUser']>[0]) {
-  withSentry((s) => s.setUser(user));
-}
-
-export function setContext(name: string, context: Record<string, unknown>) {
-  withSentry((s) => s.setContext(name, context));
-}
-
-// For potential future use; intentionally not exported to keep surface minimal
-// function flush(timeout?: number) { withSentry((s) => s.flush(timeout)); }

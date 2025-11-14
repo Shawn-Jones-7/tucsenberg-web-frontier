@@ -415,10 +415,6 @@ export class PerformanceMetricsManager {
         stats.bySource['react-scan'] =
           (stats.bySource['react-scan'] || ZERO) + ONE;
         break;
-      case 'web-eval-agent':
-        stats.bySource['web-eval-agent'] =
-          (stats.bySource['web-eval-agent'] || ZERO) + ONE;
-        break;
       case 'bundle-analyzer':
         stats.bySource['bundle-analyzer'] =
           (stats.bySource['bundle-analyzer'] || ZERO) + ONE;

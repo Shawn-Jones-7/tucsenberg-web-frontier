@@ -5,7 +5,6 @@ import type {
   EnvironmentCompatibilityResult,
   WebVitalsIntegration,
 } from '@/lib/performance-monitoring-integrations-vitals';
-import type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
 
 /**
  * 性能监控集成钩子和工具 - 主入口
@@ -22,12 +21,6 @@ export {
   ReactScanAnalyzer,
   ReactScanUtils,
 } from '@/lib/performance-monitoring-integrations-react-scan';
-export type { WebEvalAgentIntegration } from '@/lib/performance-monitoring-integrations-web-eval';
-export {
-  useWebEvalAgentIntegration,
-  validateWebEvalAgentConfig,
-  WebEvalAgentAnalyzer,
-} from '@/lib/performance-monitoring-integrations-web-eval';
 export type { BundleAnalyzerIntegration } from '@/lib/performance-monitoring-integrations-bundle';
 export {
   useBundleAnalyzerIntegration,
@@ -56,9 +49,6 @@ export {
 export type {
   // React Scan 集成
   ReactScanIntegration as ReactScan,
-
-  // Web Eval Agent 集成
-  WebEvalAgentIntegration as WebEvalAgent,
 
   // Bundle Analyzer 集成
   BundleAnalyzerIntegration as BundleAnalyzer,

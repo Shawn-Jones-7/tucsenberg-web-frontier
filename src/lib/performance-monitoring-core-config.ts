@@ -76,10 +76,6 @@ export class PerformanceConfigManager {
         ...defaultConfig.reactScan,
         ...customConfig.reactScan,
       },
-      webEvalAgent: {
-        ...defaultConfig.webEvalAgent,
-        ...customConfig.webEvalAgent,
-      },
       bundleAnalyzer: {
         ...defaultConfig.bundleAnalyzer,
         ...customConfig.bundleAnalyzer,
@@ -236,8 +232,6 @@ export class PerformanceConfigManager {
     switch (module) {
       case 'reactScan':
         return { ...this.config.reactScan } as PerformanceConfig[T];
-      case 'webEvalAgent':
-        return { ...this.config.webEvalAgent } as PerformanceConfig[T];
       case 'bundleAnalyzer':
         return { ...this.config.bundleAnalyzer } as PerformanceConfig[T];
       case 'sizeLimit':
@@ -291,12 +285,7 @@ export class PerformanceConfigManager {
    * 检查是否为必需模块
    */
   private isRequiredModule(module: string): boolean {
-    return [
-      'reactScan',
-      'webEvalAgent',
-      'bundleAnalyzer',
-      'sizeLimit',
-    ].includes(module);
+    return ['reactScan', 'bundleAnalyzer', 'sizeLimit'].includes(module);
   }
 
   /**
@@ -319,10 +308,6 @@ export class PerformanceConfigManager {
       case 'reactScan':
         this.config.reactScan = (nextValue ??
           this.config.reactScan) as PerformanceConfig['reactScan'];
-        break;
-      case 'webEvalAgent':
-        this.config.webEvalAgent = (nextValue ??
-          this.config.webEvalAgent) as PerformanceConfig['webEvalAgent'];
         break;
       case 'bundleAnalyzer':
         this.config.bundleAnalyzer = (nextValue ??
