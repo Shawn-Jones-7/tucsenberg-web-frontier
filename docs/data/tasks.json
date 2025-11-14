@@ -232,6 +232,257 @@
       "implementationGuide": "pseudocode:\n- 更新已知问题文档：mock 差异、coverage 变化、provider 迁移\n- 在 evidence/ 增补执行日志与比对结论\n- 记录回滚命令：pnpm up -D vitest@3.2.4 等\n- 产出最终交付说明",
       "verificationCriteria": "- 文档更新完整（升级、差异、验证、回滚）；\n- evidence 中包含最终验证与时间戳；\n- 明确声明“无迁移，直接替换”。",
       "analysisResult": "Vitest 升级（v3.2.4→v4.0.8）在本项目的技术可行：Node(>=20)与Vite(7)满足要求；需同步升级 @vitest/ui 与 @vitest/coverage-v8，并迁移 Browser Mode 至 @vitest/browser-playwright 的 provider API；配置项 deps.optimizer.web→client；覆盖率 AST 重映射可能引发阈值波动；mock 语义（restoreAllMocks 等）变化需审查；不修改 CI/CD 配置。整体风险中等，可通过分阶段验证与回滚方案降低风险。"
+    },
+    {
+      "id": "80e071e9-f685-441a-9015-4d3a2aabad3f",
+      "name": "Phase1: TypeScript 與類型包小版本對齊",
+      "description": "升級 typescript 至 5.9.3；@types/react 至 19.2.4；@types/react-dom 至 19.2.3；保持 @types/node 為 20.x 以符合 engines Node 20。",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "TS 與類型包版本對齊",
+          "lineStart": 110,
+          "lineEnd": 200
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json devDependencies\n  - typescript: ^5.9.3\n  - @types/react: ^19.2.4\n  - @types/react-dom: ^19.2.3\n  - 維持 @types/node 為 20.x\n- 執行 pnpm i\n- 驗證 pnpm type-check:tests",
+      "verificationCriteria": "- type-check:tests 通過\n- 構建與測試可正常執行\n- evidence 記錄變更",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "c83f039d-e9cb-4d77-a30c-d8eb424048ac",
+      "name": "Phase1: ESLint 與 TS-ESLint 以及 Next Lint 小版本對齊",
+      "description": "升級 eslint 至 9.39.1；typescript-eslint 至 8.46.4；eslint-config-next 保持 15.x 對齊 15.5.6；不調整規則。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "80e071e9-f685-441a-9015-4d3a2aabad3f"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "Lint 套件對齊",
+          "lineStart": 120,
+          "lineEnd": 180
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json devDependencies\n  - eslint: ^9.39.1\n  - typescript-eslint: ^8.46.4\n  - eslint-config-next: ^15.5.6\n- pnpm i\n- 驗證 pnpm lint:check",
+      "verificationCriteria": "- lint:check 零報錯\n- 構建與測試不受影響\n- evidence 記錄",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "fc028581-0939-43f9-9bd2-44b25419f9bf",
+      "name": "Phase1: Tailwind 與格式化生態小版本對齊",
+      "description": "升級 tailwindcss 至 4.1.17；@tailwindcss/postcss 至 4.1.17；prettier-plugin-tailwindcss 至 0.7.1。",
+      "status": "pending",
+      "dependencies": [],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "Tailwind 與 Prettier 插件對齊",
+          "lineStart": 140,
+          "lineEnd": 200
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json devDependencies\n  - tailwindcss: ^4.1.17\n  - @tailwindcss/postcss: ^4.1.17\n  - prettier-plugin-tailwindcss: ^0.7.1\n- pnpm i\n- 驗證 pnpm format:check 與 pnpm build:check",
+      "verificationCriteria": "- format:check 通過\n- next build --no-lint 通過\n- evidence 記錄",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "2dbae32c-0abc-4b00-8530-439e57fdf0a6",
+      "name": "Phase1: 升級 jsdom 至 27.x 並校驗覆蓋率",
+      "description": "將 jsdom 升級到 27.2.0 以匹配 Vitest v4 的覆蓋率行為；Node 需不低於 20.19.0。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "6e505e63-6993-413b-bcf3-0b0c20259c63"
+        },
+        {
+          "taskId": "9f6af756-a5a9-4ce7-8499-c991dc40e0df"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "升級 jsdom",
+          "lineStart": 140,
+          "lineEnd": 160
+        },
+        {
+          "path": "vitest.config.mts",
+          "type": "REFERENCE",
+          "description": "覆蓋率配置與阈值",
+          "lineStart": 120,
+          "lineEnd": 220
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json devDependencies jsdom: ^27.2.0\n- pnpm i\n- 執行 pnpm test:coverage 與基線比對\n- 如需微調特定文件 thresholds 但保持全局大於等於 65%",
+      "verificationCriteria": "- 覆蓋率報告生成\n- 全局覆蓋率大於等於 65%\n- evidence 記錄",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "9de30267-8d50-4230-aebc-73c1cf906f5f",
+      "name": "Phase2: 平台與觀測庫小版本升級",
+      "description": "升級 @sentry/nextjs 10.25.0、next-intl 4.5.2、web-vitals 5.1.0、resend 6.4.2。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "80e071e9-f685-441a-9015-4d3a2aabad3f"
+        },
+        {
+          "taskId": "c83f039d-e9cb-4d77-a30c-d8eb424048ac"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "平台與觀測庫對齊",
+          "lineStart": 60,
+          "lineEnd": 120
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json dependencies\n  - @sentry/nextjs: ^10.25.0\n  - next-intl: ^4.5.2\n  - web-vitals: ^5.1.0\n  - resend: ^6.4.2\n- pnpm i\n- 驗證 next build 與關鍵頁面冒煙、單元與整合測試",
+      "verificationCriteria": "- next build 通過\n- 單元與整合測試通過\n- evidence 記錄",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "f46bbb95-6e59-47e0-a027-c1c6ab1206e7",
+      "name": "Phase2: UI 與圖示字體庫小版本升級",
+      "description": "升級 lucide-react 至 0.553.x 與 geist 至 1.5.x。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c83f039d-e9cb-4d77-a30c-d8eb424048ac"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:29.213Z",
+      "updatedAt": "2025-11-13T04:18:29.213Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "UI 相關對齊",
+          "lineStart": 60,
+          "lineEnd": 120
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json dependencies\n  - lucide-react: ^0.553.0\n  - geist: ^1.5.1\n- pnpm i\n- 驗證關鍵頁面渲染與現有快照 (如有)",
+      "verificationCriteria": "- UI 渲染正常\n- 如有快照需更新並審核\n- evidence 記錄",
+      "analysisResult": "基於現有 Vitest v4 升級任務，補充第一至第三階段的全模組小步升級，保持 Node 20 與 Next 15 兼容，不修改 CI/CD。所有任務均以 type-check / lint / build / test 作為驗收，並沉澱 evidence。"
+    },
+    {
+      "id": "efecb9fc-5aeb-4468-bdfa-865d70d2ae18",
+      "name": "Phase3: 工程工具小版本升級與一致性治理",
+      "description": "升級 dependency-cruiser 至 17.2.0、knip 至 5.69.1、js-yaml 至 4.1.1；保持工具鏈補丁最新，確保項目視圖與無用檢查的穩定性。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c83f039d-e9cb-4d77-a30c-d8eb424048ac"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:43.831Z",
+      "updatedAt": "2025-11-13T04:18:43.831Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "工程工具版本對齊",
+          "lineStart": 100,
+          "lineEnd": 180
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json devDependencies\n  - dependency-cruiser: ^17.2.0\n  - knip: ^5.69.1\n  - js-yaml: ^4.1.1\n- pnpm i\n- 驗證 pnpm arch:metrics 與 pnpm unused:check",
+      "verificationCriteria": "- 工具腳本可正常執行\n- 不新增告警或錯誤\n- evidence 記錄",
+      "analysisResult": "續補第三階段任務，涵蓋工程工具治理、無障礙測試棧收斂與 Vite 小版本對齊，均需在本地完成驗證並沉澱 evidence，不修改 CI/CD。"
+    },
+    {
+      "id": "3b2e9ac8-c662-4a69-9a9f-e777391a9d2d",
+      "name": "Phase3: 無障礙測試棧收斂（統一 @axe-core/playwright）",
+      "description": "將 E2E 測試中 axe-playwright 的使用統一替換為 @axe-core/playwright，必要時增加輕量適配層以最小化用例改動。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c83f039d-e9cb-4d77-a30c-d8eb424048ac"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:43.831Z",
+      "updatedAt": "2025-11-13T04:18:43.831Z",
+      "relatedFiles": [
+        {
+          "path": "tests/e2e/homepage.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "替換 axe-playwright 導入",
+          "lineStart": 1,
+          "lineEnd": 20
+        },
+        {
+          "path": "tests/e2e/navigation.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "替換 axe-playwright 導入",
+          "lineStart": 1,
+          "lineEnd": 20
+        },
+        {
+          "path": "tests/e2e/i18n.spec.ts",
+          "type": "TO_MODIFY",
+          "description": "替換 axe-playwright 導入",
+          "lineStart": 1,
+          "lineEnd": 20
+        },
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "依賴變更",
+          "lineStart": 90,
+          "lineEnd": 130
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 搜索 tests/e2e 內 import axe-playwright 語句\n- 改為使用 @axe-core/playwright 對等 API 或薄封裝\n- 移除 axe-playwright 依賴（若無他處引用）\n- 重新運行 E2E 測試",
+      "verificationCriteria": "- E2E 測試通過\n- 移除 axe-playwright 依賴\n- evidence 記錄",
+      "analysisResult": "續補第三階段任務，涵蓋工程工具治理、無障礙測試棧收斂與 Vite 小版本對齊，均需在本地完成驗證並沉澱 evidence，不修改 CI/CD。"
+    },
+    {
+      "id": "ed724522-5779-4249-a2d7-5e014fc33f1c",
+      "name": "Phase3: Vite 7.2.x 小版本對齊（overrides）",
+      "description": "將 package.json 內 pnpm.overrides 的 vite 小版本區間對齊至 7.2.x（例如 >=7.2.2），保持與生態最新補丁一致並驗證構建與測試。",
+      "status": "pending",
+      "dependencies": [
+        {
+          "taskId": "c83f039d-e9cb-4d77-a30c-d8eb424048ac"
+        }
+      ],
+      "createdAt": "2025-11-13T04:18:43.831Z",
+      "updatedAt": "2025-11-13T04:18:43.831Z",
+      "relatedFiles": [
+        {
+          "path": "package.json",
+          "type": "TO_MODIFY",
+          "description": "更新 overrides.vite 小版本區間",
+          "lineStart": 160,
+          "lineEnd": 172
+        }
+      ],
+      "implementationGuide": "pseudocode:\n- 修改 package.json 內 pnpm.overrides.vite 為 >=7.2.2 或更高 7.2.x 補丁\n- pnpm i\n- 驗證 pnpm build:check 與 pnpm test",
+      "verificationCriteria": "- next build --no-lint 通過\n- 單元與整合測試通過\n- evidence 記錄",
+      "analysisResult": "續補第三階段任務，涵蓋工程工具治理、無障礙測試棧收斂與 Vite 小版本對齊，均需在本地完成驗證並沉澱 evidence，不修改 CI/CD。"
     }
   ]
 }

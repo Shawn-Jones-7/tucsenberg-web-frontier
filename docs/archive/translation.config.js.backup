@@ -1,0 +1,268 @@
+/**
+ * 翻译管理配置文件
+ * 统一配置翻译工具的行为和质量标准
+ */
+
+module.exports = {
+  // 基础配置
+  locales: ['en', 'zh'],
+  defaultLocale: 'en',
+  messagesDir: './messages',
+
+  // 扫描配置
+  scanner: {
+    patterns: [
+      'src/**/*.{ts,tsx,js,jsx}',
+      'app/**/*.{ts,tsx,js,jsx}',
+      '!src/**/*.test.{ts,tsx,js,jsx}',
+      '!src/**/*.spec.{ts,tsx,js,jsx}',
+      '!**/*.d.ts',
+    ],
+    translationFunctions: ['t', 'useTranslations', 'getTranslations'],
+    outputDir: './reports',
+  },
+
+  // 同步配置
+  sync: {
+    createMissingKeys: true,
+    removeUnusedKeys: false, // 谨慎删除
+    backupBeforeSync: false, // 关闭备份，依赖 Git 版本控制
+    validateAfterSync: true,
+    backupDir: './backups/translations', // 保留配置以防需要临时启用
+  },
+
+  // 验证规则
+  validation: {
+    rules: {
+      checkMissingKeys: true,
+      checkEmptyValues: true,
+      checkTypeConsistency: true,
+      checkSuspiciousTranslations: true,
+      checkPlaceholderConsistency: true,
+      checkTranslationLength: true,
+      checkSpecialCharacters: true,
+    },
+
+    // 质量阈值
+    thresholds: {
+      minTranslationCoverage: 95, // 最小翻译覆盖率 (%)
+      maxLengthRatio: 6.0, // 翻译长度比例上限 (中英文差异较大是正常的)
+      minLengthRatio: 0.2, // 翻译长度比例下限
+      maxIssues: 20, // 最大允许问题数 (调整为更合理的值)
+      criticalIssueThreshold: 0, // 关键问题阈值
+    },
+
+    // 白名单配置
+    whitelist: {
+      // 品牌名称和专有名词 (允许相同)
+      brandTerms: [
+        'Tucsenberg',
+        'Next.js',
+        'React',
+        'TypeScript',
+        'GitHub',
+        'LinkedIn',
+        'Twitter',
+        'API',
+        'URL',
+        'SEO',
+        'UI',
+        'UX',
+        'CSS',
+        'HTML',
+        'JavaScript',
+      ],
+
+      // 允许相同值的键模式
+      allowSameValueKeys: [
+        'url',
+        'link',
+        'email',
+        'phone',
+        'social',
+        'structured-data',
+        'schema',
+      ],
+    },
+  },
+
+  // Lingo.dev集成配置
+  lingo: {
+    enabled: false, // 默认禁用，需要API密钥时启用
+    apiKey: process.env.LINGO_API_KEY,
+    projectId: process.env.LINGO_PROJECT_ID,
+    baseUrl: 'https://api.lingo.dev',
+
+    // 质量检查配置
+    qualityCheck: {
+      enabled: true,
+      minScore: 80, // 最小质量分数
+      maxIssues: 5, // 最大问题数
+      criticalIssueThreshold: 1, // 关键问题阈值
+    },
+  },
+
+  // 质量基准
+  qualityBenchmarks: {
+    en: {
+      averageScore: 85,
+      categories: {
+        grammar: 90,
+        consistency: 85,
+        terminology: 80,
+        fluency: 88,
+      },
+    },
+    zh: {
+      averageScore: 82,
+      categories: {
+        grammar: 88,
+        consistency: 80,
+        terminology: 78,
+        fluency: 85,
+      },
+    },
+  },
+
+  // 术语词典
+  terminology: {
+    // 品牌术语（不应翻译）
+    brandTerms: [
+      'Tucsenberg',
+      'Next.js',
+      'React',
+      'TypeScript',
+      'GitHub',
+      'API',
+      'URL',
+      'SEO',
+      'UI',
+      'UX',
+    ],
+
+    // 技术术语映射
+    technicalTerms: {
+      en: {
+        dashboard: 'dashboard',
+        authentication: 'authentication',
+        authorization: 'authorization',
+        middleware: 'middleware',
+        component: 'component',
+      },
+      zh: {
+        dashboard: '仪表板',
+        authentication: '身份验证',
+        authorization: '授权',
+        middleware: '中间件',
+        component: '组件',
+      },
+    },
+  },
+
+  // 报告配置
+  reporting: {
+    outputDir: './reports',
+    formats: ['json', 'html'], // 支持的报告格式
+    includeDetails: true,
+    includeTrends: true,
+
+    // 报告模板
+    templates: {
+      summary: './templates/translation-summary.hbs',
+      detailed: './templates/translation-detailed.hbs',
+    },
+  },
+
+  // CI/CD集成配置
+  cicd: {
+    // 失败条件
+    failOn: {
+      missingKeys: true,
+      criticalIssues: true,
+      lowCoverage: true,
+      qualityThreshold: 80,
+    },
+
+    // 警告条件
+    warnOn: {
+      unusedKeys: true,
+      suspiciousTranslations: true,
+      lengthRatioIssues: true,
+    },
+
+    // 通知配置
+    notifications: {
+      slack: {
+        enabled: false,
+        webhook: process.env.SLACK_WEBHOOK_URL,
+        channel: '#translations',
+      },
+      email: {
+        enabled: false,
+        recipients: ['team@tucsenberg.com'],
+      },
+    },
+  },
+
+  // 自动化配置
+  automation: {
+    // 自动修复
+    autoFix: {
+      enabled: false, // 默认禁用自动修复
+      rules: [
+        'createMissingKeys',
+        'fixPlaceholderIssues',
+        'normalizeWhitespace',
+      ],
+    },
+
+    // 定期检查
+    schedule: {
+      enabled: false,
+      cron: '0 2 * * 1', // 每周一凌晨2点
+      tasks: ['scan', 'validate', 'generateReport'],
+    },
+  },
+
+  // 开发工具配置
+  devTools: {
+    // VS Code扩展配置
+    vscode: {
+      enabled: true,
+      highlightMissingKeys: true,
+      showTranslationPreview: true,
+      autoComplete: true,
+    },
+
+    // 热重载配置
+    hotReload: {
+      enabled: true,
+      watchPaths: ['./messages/**/*.json'],
+      debounceMs: 500,
+    },
+  },
+
+  // 性能配置
+  performance: {
+    // 缓存配置
+    cache: {
+      enabled: true,
+      ttl: 3600, // 1小时
+      maxSize: 1000, // 最大缓存条目数
+    },
+
+    // 并发配置
+    concurrency: {
+      maxWorkers: 4,
+      batchSize: 100,
+    },
+  },
+
+  // 调试配置
+  debug: {
+    enabled: process.env.NODE_ENV === 'development',
+    verbose: false,
+    logLevel: 'info', // error, warn, info, debug
+    outputFile: './logs/translation-debug.log',
+  },
+};
