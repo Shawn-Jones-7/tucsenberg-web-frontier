@@ -26,7 +26,7 @@ export function AutomatedTestSection({
       {testResults && (
         <div className='mt-6'>
           <h3 className='mb-2 font-medium text-gray-900'>测试结果：</h3>
-          <pre className='overflow-auto rounded-lg bg-gray-900 p-4 font-mono text-sm whitespace-pre-wrap text-gray-100'>
+          <pre className='overflow-auto whitespace-pre-wrap rounded-lg bg-gray-900 p-4 font-mono text-sm text-gray-100'>
             {testResults}
           </pre>
         </div>

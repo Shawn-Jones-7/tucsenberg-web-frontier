@@ -88,9 +88,9 @@ function ErrorFallback({ onReset, error: _error }: ErrorFallbackProps) {
           className='text-center'
           data-testid='error-boundary-card-header'
         >
-          <div className='bg-destructive/10 mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full'>
+          <div className='mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-destructive/10'>
             <span
-              className='text-destructive h-6 w-6'
+              className='h-6 w-6 text-destructive'
               data-testid='alert-triangle-icon'
             >
               ⚠️

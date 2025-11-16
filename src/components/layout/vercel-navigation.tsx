@@ -101,8 +101,8 @@ function renderDropdownItem({ item, t, hoverState }: RenderDropdownItemProps) {
           'relative rounded-xl bg-transparent px-4 py-2.5 text-[15px] font-medium tracking-[0.01em]',
           'text-foreground/90 hover:text-foreground',
           'hover:bg-zinc-950/[.03] dark:hover:bg-white/10',
-          'data-[state=open]:bg-zinc-950/[.05] dark:data-[state=open]:bg-white/12',
-          'focus-visible:ring-ring/50 transition-colors duration-150 outline-none focus-visible:ring-[3px]',
+          'dark:data-[state=open]:bg-white/12 data-[state=open]:bg-zinc-950/[.05]',
+          'outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
         )}
         onClick={() => hoverState.handleClick(item.key)}
         aria-expanded={isOpen}
@@ -130,7 +130,7 @@ function renderLinkItem(item: NavigationItem, t: (key: string) => string) {
             'relative inline-flex h-9 items-center rounded-xl bg-transparent px-4 py-2 text-[15px] font-medium tracking-[0.01em]',
             'text-foreground/90 hover:text-foreground',
             'hover:bg-zinc-950/[.03] dark:hover:bg-white/10',
-            'focus-visible:ring-ring/50 transition-colors duration-150 outline-none focus-visible:ring-[3px]',
+            'outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
           )}
         >
           {t(item.translationKey)}

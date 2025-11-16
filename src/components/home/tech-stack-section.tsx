@@ -35,34 +35,34 @@ function TechStackStats({ t }: { t: TFunc }) {
   return (
     <div
       ref={ref}
-      className={`bg-card mt-12 rounded-lg border p-6 transition-all duration-700 ease-out ${
+      className={`mt-12 rounded-lg border bg-card p-6 transition-all duration-700 ease-out ${
         isVisible ? 'translate-y-0 opacity-100' : 'translate-y-8 opacity-0'
       }`}
     >
       <div className='grid grid-cols-2 gap-6 sm:grid-cols-4'>
         <div className='text-center'>
-          <div className='text-primary text-2xl font-bold'>
+          <div className='text-2xl font-bold text-primary'>
             {techStackData.length}
           </div>
-          <div className='text-foreground/85 text-sm'>
+          <div className='text-sm text-foreground/85'>
             {t('stats.totalTech')}
           </div>
         </div>
         <div className='text-center'>
-          <div className='text-primary text-2xl font-bold'>
+          <div className='text-2xl font-bold text-primary'>
             {Object.keys(techStackCategories).length}
           </div>
-          <div className='text-foreground/85 text-sm'>
+          <div className='text-sm text-foreground/85'>
             {t('stats.categories')}
           </div>
         </div>
         <div className='text-center'>
-          <div className='text-primary text-2xl font-bold'>100%</div>
-          <div className='text-foreground/85 text-sm'>{t('stats.modern')}</div>
+          <div className='text-2xl font-bold text-primary'>100%</div>
+          <div className='text-sm text-foreground/85'>{t('stats.modern')}</div>
         </div>
         <div className='text-center'>
-          <div className='text-primary text-2xl font-bold'>A+</div>
-          <div className='text-foreground/85 text-sm'>{t('stats.quality')}</div>
+          <div className='text-2xl font-bold text-primary'>A+</div>
+          <div className='text-sm text-foreground/85'>{t('stats.quality')}</div>
         </div>
       </div>
     </div>
@@ -91,7 +91,7 @@ function TechStackTitle({
       <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl'>
         {title}
       </h2>
-      <p className='text-foreground/85 mx-auto max-w-2xl text-lg'>{subtitle}</p>
+      <p className='mx-auto max-w-2xl text-lg text-foreground/85'>{subtitle}</p>
     </div>
   );
 }
@@ -147,7 +147,7 @@ function TechStackTabs({
               {items.map((tech, techIndex) => (
                 <Card
                   key={`tech-${techIndex}`}
-                  className='group hover:shadow-primary/5 transition-all duration-200 hover:shadow-lg'
+                  className='group transition-all duration-200 hover:shadow-lg hover:shadow-primary/5'
                 >
                   <CardHeader className='pb-3'>
                     <div className='flex items-center justify-between'>

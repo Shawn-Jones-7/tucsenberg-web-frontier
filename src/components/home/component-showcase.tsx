@@ -51,7 +51,7 @@ export function ComponentShowcase() {
             <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl'>
               {t('title')}
             </h2>
-            <p className='text-muted-foreground mx-auto max-w-2xl text-lg'>
+            <p className='mx-auto max-w-2xl text-lg text-muted-foreground'>
               {t('subtitle')}
             </p>
           </div>

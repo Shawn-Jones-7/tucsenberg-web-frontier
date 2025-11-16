@@ -302,7 +302,7 @@ describe('Label State Management - Core Tests', () => {
           />
           <Label
             htmlFor='multi-state-input'
-            className='peer-invalid:text-red-500 peer-disabled:opacity-50 peer-required:after:content-["*"]'
+            className='peer-required:after:content-["*"] peer-invalid:text-red-500 peer-disabled:opacity-50'
             data-testid='multi-state-label'
           >
             Multi State Label

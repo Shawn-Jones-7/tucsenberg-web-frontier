@@ -72,11 +72,11 @@ function FeatureGrid({ t }: { t: (_key: string) => string }) {
         return (
           <Card
             key={index}
-            className='group hover:shadow-primary/5 transition-all duration-200 hover:shadow-lg'
+            className='group transition-all duration-200 hover:shadow-lg hover:shadow-primary/5'
           >
             <CardHeader>
               <div className='flex items-center justify-between'>
-                <Icon className='text-primary h-8 w-8' />
+                <Icon className='h-8 w-8 text-primary' />
                 <Badge variant='secondary'>{feature.badge}</Badge>
               </div>
               <CardTitle className='text-xl'>{feature.title}</CardTitle>
@@ -101,10 +101,10 @@ function ProjectHighlights({ t }: { t: (_key: string) => string }) {
 
   return (
     <div className='mb-16'>
-      <Card className='from-primary/5 to-secondary/5 bg-gradient-to-br'>
+      <Card className='bg-gradient-to-br from-primary/5 to-secondary/5'>
         <CardHeader>
           <CardTitle className='text-2xl'>{t('highlights.title')}</CardTitle>
-          <CardDescription className='text-foreground/90 text-lg'>
+          <CardDescription className='text-lg text-foreground/90'>
             {t('highlights.subtitle')}
           </CardDescription>
         </CardHeader>
@@ -141,7 +141,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-foreground/85 text-sm'>
+            <div className='text-sm text-foreground/85'>
               {t('architecture.frontend.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -166,7 +166,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-foreground/85 text-sm'>
+            <div className='text-sm text-foreground/85'>
               {t('architecture.ui.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -191,7 +191,7 @@ function TechnicalArchitecture({ t }: { t: (_key: string) => string }) {
             </CardTitle>
           </CardHeader>
           <CardContent className='space-y-2'>
-            <div className='text-foreground/85 text-sm'>
+            <div className='text-sm text-foreground/85'>
               {t('architecture.tooling.description')}
             </div>
             <div className='flex flex-wrap gap-1'>
@@ -235,7 +235,7 @@ export function ProjectOverview() {
             <h2 className='mb-4 text-3xl font-bold tracking-tight sm:text-4xl'>
               {t('title')}
             </h2>
-            <p className='text-foreground/85 mx-auto max-w-2xl text-lg'>
+            <p className='mx-auto max-w-2xl text-lg text-foreground/85'>
               {t('subtitle')}
             </p>
           </div>
@@ -247,10 +247,10 @@ export function ProjectOverview() {
 
           {/* 行动号召 */}
           <div className='text-center'>
-            <Card className='from-primary/10 to-secondary/10 mx-auto max-w-2xl bg-gradient-to-r'>
+            <Card className='mx-auto max-w-2xl bg-gradient-to-r from-primary/10 to-secondary/10'>
               <CardHeader>
                 <CardTitle className='text-2xl'>{t('cta.title')}</CardTitle>
-                <CardDescription className='text-foreground/90 text-lg'>
+                <CardDescription className='text-lg text-foreground/90'>
                   {t('cta.description')}
                 </CardDescription>
               </CardHeader>

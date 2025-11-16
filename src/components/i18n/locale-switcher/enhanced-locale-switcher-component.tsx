@@ -75,7 +75,7 @@ function DetectionInfoSection({
   return (
     <>
       <DropdownMenuSeparator />
-      <DropdownMenuLabel className='text-muted-foreground text-xs'>
+      <DropdownMenuLabel className='text-xs text-muted-foreground'>
         {t('title')}
       </DropdownMenuLabel>
       <div className='px-2 py-1 text-xs'>
@@ -143,7 +143,7 @@ function LocaleTrigger({
           </div>
         )}
         {switchSuccess && (
-          <div className='absolute -top-1 -right-1'>
+          <div className='absolute -right-1 -top-1'>
             <div className='h-2 w-2 animate-pulse rounded-full bg-green-500' />
           </div>
         )}

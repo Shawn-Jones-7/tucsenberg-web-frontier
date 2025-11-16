@@ -60,7 +60,7 @@ const FooterLinkComponent: FC<FooterLinkComponentProps> = ({
         href={link.href}
         target='_blank'
         rel='noopener noreferrer'
-        className={`text-foreground hover:text-foreground/50 focus-visible:ring-ring/50 inline-flex items-center gap-1 rounded-xl px-4 py-2.5 text-[15px] font-medium transition-colors duration-150 outline-none focus-visible:ring-[3px] dark:hover:text-white/50 ${className}`}
+        className={`inline-flex items-center gap-1 rounded-xl px-4 py-2.5 text-[15px] font-medium text-foreground outline-none transition-colors duration-150 hover:text-foreground/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:text-white/50 ${className}`}
       >
         {linkText}
         <ExternalLinkIcon size={COUNT_14} />
@@ -71,7 +71,7 @@ const FooterLinkComponent: FC<FooterLinkComponentProps> = ({
   return (
     <Link
       href={link.href}
-      className={`text-foreground hover:text-foreground/50 focus-visible:ring-ring/50 inline-flex rounded-xl px-4 py-2.5 text-[15px] font-medium transition-colors duration-150 outline-none focus-visible:ring-[3px] dark:hover:text-white/50 ${className}`}
+      className={`inline-flex rounded-xl px-4 py-2.5 text-[15px] font-medium text-foreground outline-none transition-colors duration-150 hover:text-foreground/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:text-white/50 ${className}`}
     >
       {linkText}
     </Link>
@@ -92,7 +92,7 @@ const FooterSectionComponent: FC<
     <div className='space-y-4'>
       {/* 使用 h2 提升标题层级，避免从 h1 直接跳到 h3 造成 heading-order 违规；
           同时提高前景色不透明度以满足对比度要求 */}
-      <h2 className='text-foreground/85 text-[14px] font-semibold'>
+      <h2 className='text-[14px] font-semibold text-foreground/85'>
         {sectionTitle}
       </h2>
       <ul className='space-y-3'>

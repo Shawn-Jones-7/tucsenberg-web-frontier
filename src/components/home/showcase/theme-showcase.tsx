@@ -37,10 +37,10 @@ export function ThemeShowcase({ t }: ThemeShowcaseProps) {
             <div className='space-y-2'>
               <h3 className='font-medium'>{t('themes.colors.title')}</h3>
               <div className='grid grid-cols-4 gap-2'>
-                <div className='bg-primary h-8 rounded'></div>
-                <div className='bg-secondary h-8 rounded'></div>
-                <div className='bg-muted h-8 rounded'></div>
-                <div className='bg-accent h-8 rounded'></div>
+                <div className='h-8 rounded bg-primary'></div>
+                <div className='h-8 rounded bg-secondary'></div>
+                <div className='h-8 rounded bg-muted'></div>
+                <div className='h-8 rounded bg-accent'></div>
               </div>
             </div>
             <div className='space-y-2'>

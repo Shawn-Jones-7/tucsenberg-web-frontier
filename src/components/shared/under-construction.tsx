@@ -45,7 +45,7 @@ export function UnderConstruction({
     <div
       className={cn(
         'flex min-h-[80vh] flex-col items-center justify-center px-4 py-16',
-        'from-background via-background to-muted/20 bg-gradient-to-br',
+        'bg-gradient-to-br from-background via-background to-muted/20',
         className,
       )}
     >
@@ -62,12 +62,12 @@ export function UnderConstruction({
         {/* 页面标题 */}
         <div className='space-y-4'>
           <h1 className='text-4xl font-bold tracking-tight md:text-5xl'>
-            <span className='md:from-primary md:to-primary/60 text-foreground md:bg-gradient-to-r md:bg-clip-text md:text-transparent'>
+            <span className='text-foreground md:bg-gradient-to-r md:from-primary md:to-primary/60 md:bg-clip-text md:text-transparent'>
               {tPage('title')}
             </span>
           </h1>
 
-          <p className='text-muted-foreground mx-auto max-w-lg text-xl leading-relaxed'>
+          <p className='mx-auto max-w-lg text-xl leading-relaxed text-muted-foreground'>
             {tPage('description')}
           </p>
         </div>
@@ -75,19 +75,19 @@ export function UnderConstruction({
         {/* 功能预告 */}
         <div ref={detailsRef}>
           {showDeferred ? (
-            <div className='bg-card rounded-lg border p-6 shadow-sm'>
-              <h3 className='text-card-foreground mb-3 text-lg font-semibold'>
+            <div className='rounded-lg border bg-card p-6 shadow-sm'>
+              <h3 className='mb-3 text-lg font-semibold text-card-foreground'>
                 {t('comingSoon')}
               </h3>
               <p className='text-muted-foreground'>{tPage('features')}</p>
             </div>
           ) : (
             <div
-              className='bg-muted/40 rounded-lg border p-6'
+              className='rounded-lg border bg-muted/40 p-6'
               aria-hidden='true'
             >
-              <div className='bg-muted mb-3 h-5 w-40 animate-pulse rounded' />
-              <div className='bg-muted h-4 w-full animate-pulse rounded' />
+              <div className='mb-3 h-5 w-40 animate-pulse rounded bg-muted' />
+              <div className='h-4 w-full animate-pulse rounded bg-muted' />
             </div>
           )}
         </div>
@@ -95,25 +95,25 @@ export function UnderConstruction({
         {/* 进度指示器 */}
         {showProgress &&
           (showDeferred ? (
-            <div className='bg-card rounded-lg border p-6 shadow-sm'>
-              <h3 className='text-card-foreground mb-6 text-lg font-semibold'>
+            <div className='rounded-lg border bg-card p-6 shadow-sm'>
+              <h3 className='mb-6 text-lg font-semibold text-card-foreground'>
                 {t('progress.title')}
               </h3>
               <ProgressIndicator currentStep={currentStep} />
             </div>
           ) : (
             <div
-              className='bg-muted/40 rounded-lg border p-6'
+              className='rounded-lg border bg-muted/40 p-6'
               aria-hidden='true'
             >
-              <div className='bg-muted mb-6 h-5 w-32 animate-pulse rounded' />
-              <div className='bg-muted h-2 w-full animate-pulse rounded' />
+              <div className='mb-6 h-5 w-32 animate-pulse rounded bg-muted' />
+              <div className='h-2 w-full animate-pulse rounded bg-muted' />
             </div>
           ))}
 
         {/* 预计完成时间 */}
-        <div className='bg-primary/5 border-primary/20 rounded-lg border p-4'>
-          <p className='text-primary font-medium'>
+        <div className='rounded-lg border border-primary/20 bg-primary/5 p-4'>
+          <p className='font-medium text-primary'>
             {t('expectedCompletion', { date: t(expectedDateKey) })}
           </p>
         </div>
@@ -139,15 +139,15 @@ export function UnderConstruction({
         </div>
 
         {/* 底部提示 */}
-        <div className='border-border/50 border-t pt-8'>
-          <p className='text-muted-foreground text-sm'>{t('stayTuned')}</p>
+        <div className='border-t border-border/50 pt-8'>
+          <p className='text-sm text-muted-foreground'>{t('stayTuned')}</p>
         </div>
       </div>
 
       {/* 背景装饰 - 延后呈现，降低 LCP 绘制压力 */}
       {showBg ? (
         <div className='pointer-events-none fixed inset-0 -z-10 overflow-hidden'>
-          <div className='bg-primary/3 absolute top-1/4 left-1/4 h-64 w-64 rounded-full blur-3xl' />
+          <div className='bg-primary/3 absolute left-1/4 top-1/4 h-64 w-64 rounded-full blur-3xl' />
         </div>
       ) : null}
     </div>

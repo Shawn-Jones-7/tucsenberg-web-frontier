@@ -42,13 +42,13 @@ export const LanguageItem = memo(
             <span className='text-lg'>{config.flag}</span>
             <div className='flex flex-col'>
               <div className='flex items-center space-x-2'>
-                <span className='bg-muted rounded px-1.5 py-0.5 font-mono text-xs'>
+                <span className='rounded bg-muted px-1.5 py-0.5 font-mono text-xs'>
                   {config.code}
                 </span>
                 <span className='font-medium'>{config.nativeName}</span>
               </div>
               {!compact && (
-                <span className='text-muted-foreground text-xs'>
+                <span className='text-xs text-muted-foreground'>
                   {config.name} • {config.region}
                 </span>
               )}

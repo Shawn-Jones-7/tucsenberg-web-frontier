@@ -327,7 +327,7 @@ describe('Social Icons Mapper & Links Tests - Index', () => {
       render(
         <SocialIconLink
           {...defaultProps}
-          className='focus:ring-primary focus:ring-2'
+          className='focus:ring-2 focus:ring-primary'
           data-testid='social-link'
         />,
       );

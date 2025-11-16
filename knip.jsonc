@@ -1,0 +1,59 @@
+{
+  "$schema": "./node_modules/knip/schema.json",
+  // 将 Next.js App Router 入口、配置与测试文件标记为入口，减少文件系统路由带来的误报。
+  "entry": [
+    "src/app/**/{page,layout,template,loading,error,not-found,route,head}.{ts,tsx}",
+    "src/app/**/default.tsx",
+    "src/app/api/**/*.{ts,tsx}",
+    "src/middleware.ts",
+    "src/constants/index.ts",
+    "src/components/**/*.{ts,tsx}",
+    "src/lib/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,tsx,js}",
+    "tests/**/*.{ts,tsx}",
+    "playwright.config.ts",
+    "vitest.config.mts",
+    "vitest.config.browser.ts",
+    "next.config.mjs",
+  ],
+  // 项目扫描范围：聚焦源代码、脚本与测试，不扫描生成物/文档。
+  "project": [
+    "src/**/*.{ts,tsx}",
+    "scripts/**/*.{ts,tsx,js}",
+    "tests/**/*.{ts,tsx}",
+  ],
+  // 对“在同一文件内已被消费”的导出不再视为未用，
+  // 适用于 src/config/app.ts 等集中配置文件，避免误报。
+  "ignoreExportsUsedInFile": true,
+  // 跳过模板/测试脚手架文件，避免误报。
+  "ignore": [
+    // 预留的性能测试常量文件，用于后续性能基准/回归测试构建
+    "src/constants/test-performance-constants.ts",
+    "src/app/[locale]/layout-test.tsx",
+    "src/templates/**",
+    "src/test/**",
+    "src/testing/**",
+  ],
+  // 系统自带的 open 命令无需额外二进制依赖，忽略告警。
+  "ignoreBinaries": ["open"],
+  // 工具型依赖由 CI/lint/分析脚本消费，标记为已使用以便聚焦业务未用项。
+  "ignoreDependencies": [
+    "@next/eslint-plugin-next",
+    "@sentry/cli",
+    "axe-core",
+    "concurrently",
+    "eslint-config-next",
+    "eslint-import-resolver-typescript",
+    "eslint-plugin-import",
+    "eslint-plugin-promise",
+    "eslint-plugin-react",
+    "eslint-plugin-react-hooks",
+    "husky",
+    "lighthouse",
+    "next-sitemap",
+    "react-scan",
+    "sharp",
+    "source-map-explorer",
+    "typescript-eslint",
+  ],
+}

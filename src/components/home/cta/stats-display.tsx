@@ -10,10 +10,10 @@ export function StatsDisplay({ stats }: StatsDisplayProps) {
           key={index}
           className='text-center'
         >
-          <div className='text-foreground text-2xl font-bold sm:text-3xl'>
+          <div className='text-2xl font-bold text-foreground sm:text-3xl'>
             {stat.value}
           </div>
-          <div className='text-muted-foreground text-sm'>{stat.label}</div>
+          <div className='text-sm text-muted-foreground'>{stat.label}</div>
         </div>
       ))}
     </div>

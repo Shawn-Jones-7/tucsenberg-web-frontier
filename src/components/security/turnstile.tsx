@@ -73,7 +73,7 @@ export function TurnstileWidget({
         role='status'
         aria-live='polite'
       >
-        <div className='text-destructive text-sm'>
+        <div className='text-sm text-destructive'>
           Security verification is temporarily unavailable.
         </div>
       </div>
@@ -87,7 +87,7 @@ export function TurnstileWidget({
         className={`turnstile-mock ${className || ''}`}
         data-testid='turnstile-mock'
       >
-        <div className='text-muted-foreground text-sm'>
+        <div className='text-sm text-muted-foreground'>
           Bot protection disabled in test mode
         </div>
       </div>

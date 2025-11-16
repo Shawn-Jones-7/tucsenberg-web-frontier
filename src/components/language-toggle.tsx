@@ -121,7 +121,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
               // 胶囊形容器：更紧凑的高度32px，圆角16px（完全胶囊）
               'h-8 rounded-full px-3',
               // 加粗边框（2px）
-              'border-border border-2',
+              'border-2 border-border',
               // 背景：纯白色（悬停时保持纯白）
               'bg-background hover:bg-background',
               // 文字与图标：深灰黑
@@ -129,24 +129,24 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
               // 间距：更紧凑
               'gap-1.5',
               // 过渡动画：140ms
-              'transition-all duration-[140ms] ease-in-out',
+              'duration-[140ms] transition-all ease-in-out',
             )}
           >
             <Globe
-              className='text-foreground/70 h-3.5 w-3.5'
+              className='h-3.5 w-3.5 text-foreground/70'
               data-testid='globe-icon'
             />
-            <span className='text-foreground/70 text-xs font-medium'>
+            <span className='text-xs font-medium text-foreground/70'>
               {currentLanguageName}
             </span>
             {isPending ? (
-              <Loader2 className='text-foreground/70 h-3.5 w-3.5 animate-spin' />
+              <Loader2 className='h-3.5 w-3.5 animate-spin text-foreground/70' />
             ) : (
               <svg
                 className={cn(
-                  'text-foreground/70 h-3.5 w-3.5',
+                  'h-3.5 w-3.5 text-foreground/70',
                   // 箭头旋转：展开180°，收起0°，160ms过渡
-                  'transition-transform duration-[160ms] ease-in-out',
+                  'duration-[160ms] transition-transform ease-in-out',
                   isOpen && 'rotate-180',
                 )}
                 fill='none'
@@ -191,11 +191,11 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 // 列表项：左对齐，行高24-28px，行间距6-8px
                 'flex w-full items-center justify-between px-3.5 py-2',
                 // Vercel 风格：浅灰文字 + 椭圆灰色背景悬停
-                'text-foreground/70 font-medium',
-                'hover:text-foreground hover:bg-[#F5F5F5] dark:hover:bg-white/8',
+                'font-medium text-foreground/70',
+                'dark:hover:bg-white/8 hover:bg-[#F5F5F5] hover:text-foreground',
                 'rounded-md',
                 // 过渡：120ms
-                'transition-all duration-[120ms] ease-in-out',
+                'duration-[120ms] transition-all ease-in-out',
                 'cursor-pointer',
               )}
               onClick={() => handleLanguageSwitch('en')}
@@ -209,7 +209,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
               )}
               {effectiveLocale === 'en' && switchingTo !== 'en' && (
                 <Check
-                  className='text-foreground h-4 w-4'
+                  className='h-4 w-4 text-foreground'
                   data-testid='check-icon'
                 />
               )}
@@ -227,11 +227,11 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 // 列表项：左对齐，行高24-28px，行间距6-8px
                 'flex w-full items-center justify-between px-3.5 py-2',
                 // Vercel 风格：浅灰文字 + 椭圆灰色背景悬停
-                'text-foreground/70 font-medium',
-                'hover:text-foreground hover:bg-[#F5F5F5] dark:hover:bg-white/8',
+                'font-medium text-foreground/70',
+                'dark:hover:bg-white/8 hover:bg-[#F5F5F5] hover:text-foreground',
                 'rounded-md',
                 // 过渡：120ms
-                'transition-all duration-[120ms] ease-in-out',
+                'duration-[120ms] transition-all ease-in-out',
                 'cursor-pointer',
               )}
               onClick={() => handleLanguageSwitch('zh')}
@@ -245,7 +245,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
               )}
               {effectiveLocale === 'zh' && switchingTo !== 'zh' && (
                 <Check
-                  className='text-foreground h-4 w-4'
+                  className='h-4 w-4 text-foreground'
                   data-testid='check-icon'
                 />
               )}

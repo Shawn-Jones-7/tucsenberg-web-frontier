@@ -59,12 +59,12 @@ describe('NavigationMenu - Complex Structures', () => {
                 <li className='row-span-3'>
                   <NavigationMenuLink
                     href='/'
-                    className='from-muted/50 to-muted flex h-full w-full flex-col justify-end rounded-md bg-gradient-to-b p-6 no-underline outline-none select-none focus:shadow-md'
+                    className='flex h-full w-full select-none flex-col justify-end rounded-md bg-gradient-to-b from-muted/50 to-muted p-6 no-underline outline-none focus:shadow-md'
                   >
-                    <div className='mt-4 mb-2 text-lg font-medium'>
+                    <div className='mb-2 mt-4 text-lg font-medium'>
                       shadcn/ui
                     </div>
-                    <p className='text-muted-foreground text-sm leading-tight'>
+                    <p className='text-sm leading-tight text-muted-foreground'>
                       Beautifully designed components built with Radix UI and
                       Tailwind CSS.
                     </p>

@@ -193,7 +193,7 @@ describe('Social Icons Link - Main Tests', () => {
       render(
         <SocialIconLink
           {...defaultProps}
-          className='focus:ring-primary focus:ring-2'
+          className='focus:ring-2 focus:ring-primary'
           data-testid='social-link'
         />,
       );

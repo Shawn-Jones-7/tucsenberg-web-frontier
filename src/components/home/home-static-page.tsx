@@ -43,7 +43,7 @@ export function HomeStatic({
 
   return (
     <div
-      className='bg-background text-foreground min-h-screen'
+      className='min-h-screen bg-background text-foreground'
       data-fast-lcp-zh={zhFast ? '1' : undefined}
     >
       {/* LCP-critical: render statically from provided messages */}

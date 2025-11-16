@@ -33,7 +33,7 @@ export function ThemeMenuItem({
     <DropdownMenuItem
       onClick={onClick}
       onKeyDown={onKeyDown}
-      className={`focus:bg-accent focus:text-accent-foreground ${supportsViewTransitions && !prefersReducedMotion ? 'hover:bg-accent transition-all duration-200' : ''} ${isSelected ? 'bg-accent text-accent-foreground' : ''} `}
+      className={`focus:bg-accent focus:text-accent-foreground ${supportsViewTransitions && !prefersReducedMotion ? 'transition-all duration-200 hover:bg-accent' : ''} ${isSelected ? 'bg-accent text-accent-foreground' : ''} `}
       role='menuitem'
       aria-label={ariaLabel}
     >
@@ -52,7 +52,7 @@ export function ThemeMenuItem({
       )}
       {supportsViewTransitions && (
         <span
-          className='text-muted-foreground ml-auto text-xs'
+          className='ml-auto text-xs text-muted-foreground'
           aria-hidden='true'
         >
           ✨

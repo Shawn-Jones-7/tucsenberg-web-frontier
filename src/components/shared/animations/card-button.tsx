@@ -19,7 +19,7 @@ export const AnimatedCard = ({
   <Card
     className={cn(
       'border-primary/20 bg-card/50 backdrop-blur-sm',
-      'hover:shadow-primary/5 hover:-translate-y-1 hover:shadow-lg',
+      'hover:-translate-y-1 hover:shadow-lg hover:shadow-primary/5',
       'transition-all duration-300 ease-out',
       'hover:border-primary/30',
       className,
@@ -48,7 +48,7 @@ export const AnimatedButton = ({
     className={cn(
       'transition-all duration-200 ease-out',
       'hover:scale-105 active:scale-95',
-      'hover:shadow-primary/20 hover:shadow-lg',
+      'hover:shadow-lg hover:shadow-primary/20',
       variant === 'default' && 'hover:bg-primary/90',
       variant === 'outline' && 'hover:bg-primary/5',
       variant === 'ghost' && 'hover:bg-primary/10',

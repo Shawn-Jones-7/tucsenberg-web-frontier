@@ -42,8 +42,8 @@ export function ActionCards({ t, actions }: ActionCardsProps) {
             }`}
           >
             <CardHeader className='text-center'>
-              <div className='bg-primary/10 mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg'>
-                <Icon className='text-primary h-6 w-6' />
+              <div className='mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-lg bg-primary/10'>
+                <Icon className='h-6 w-6 text-primary' />
               </div>
               <CardTitle className='text-lg'>{action.title}</CardTitle>
               <CardDescription>{action.description}</CardDescription>

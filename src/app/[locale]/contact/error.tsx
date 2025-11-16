@@ -16,13 +16,13 @@ export default function ContactRouteError({ error, reset }: RouteErrorProps) {
   }, [error]);
 
   return (
-    <div className='bg-background flex min-h-[60vh] flex-col items-center justify-center px-4 py-16'>
+    <div className='flex min-h-[60vh] flex-col items-center justify-center bg-background px-4 py-16'>
       <div className='mx-auto flex w-full max-w-lg flex-col items-center gap-6 text-center'>
         <div className='space-y-3'>
-          <h2 className='text-foreground text-2xl font-semibold'>
+          <h2 className='text-2xl font-semibold text-foreground'>
             联系表单暂时不可用
           </h2>
-          <p className='text-muted-foreground text-sm leading-relaxed'>
+          <p className='text-sm leading-relaxed text-muted-foreground'>
             我们的团队会立即查看问题。您可以稍后重试提交，或者通过其他渠道与我们联系。
           </p>
         </div>

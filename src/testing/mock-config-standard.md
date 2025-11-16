@@ -155,7 +155,6 @@ Object.defineProperty(global, 'ResizeObserver', {
 ### 中优先级（短期修复）
 4. `src/lib/__tests__/navigation.test.ts` - 简单Mock配置
 5. `src/lib/__tests__/locale-detection.test.ts` - 浏览器API Mock
-6. `src/hooks/__tests__/use-performance-monitor.test.ts` - 性能API Mock
 
 ### 低优先级（长期优化）
 7. 其他测试文件的Mock配置统一

@@ -215,7 +215,7 @@ export const SocialIconLink: FC<SocialIconLinkProps> = (props) => {
         target='_blank'
         rel='noopener noreferrer'
         aria-label={ariaLabel}
-        className={`text-foreground hover:text-foreground/50 focus-visible:ring-ring/50 inline-flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[15px] font-medium transition-colors duration-150 outline-none focus-visible:ring-[3px] dark:hover:text-white/50 ${className}`}
+        className={`inline-flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-[15px] font-medium text-foreground outline-none transition-colors duration-150 hover:text-foreground/50 focus-visible:ring-[3px] focus-visible:ring-ring/50 dark:hover:text-white/50 ${className}`}
         {...(dataTestId && { 'data-testid': dataTestId })}
       >
         <SocialIconMapper
@@ -244,7 +244,7 @@ export const SocialIconLink: FC<SocialIconLinkProps> = (props) => {
         target='_blank'
         rel='noopener noreferrer'
         aria-label={ariaLabel}
-        className={`text-muted-foreground hover:bg-accent hover:text-accent-foreground inline-flex items-center justify-center rounded-md p-2 transition-colors ${className}`}
+        className={`inline-flex items-center justify-center rounded-md p-2 text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground ${className}`}
         {...(dataTestId && { 'data-testid': dataTestId })}
       >
         {children || (

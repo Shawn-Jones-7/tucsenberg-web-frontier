@@ -204,15 +204,15 @@
 
   /* B2B企业级设计风格 */
   .enterprise-card {
-    @apply bg-card border-border rounded-lg border shadow-sm;
+    @apply rounded-lg border border-border bg-card shadow-sm;
   }
 
   .enterprise-header {
-    @apply text-foreground mb-4 text-2xl font-semibold;
+    @apply mb-4 text-2xl font-semibold text-foreground;
   }
 
   .enterprise-text {
-    @apply text-muted-foreground leading-relaxed;
+    @apply leading-relaxed text-muted-foreground;
   }
 
   /* View Transitions API 支持 */

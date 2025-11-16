@@ -83,7 +83,7 @@ export function EmailSubscription({
         {isSubscribed ? (
           <div className='space-y-2 text-center'>
             <CheckCircle className='mx-auto h-8 w-8 text-green-500' />
-            <p className='text-muted-foreground text-sm'>
+            <p className='text-sm text-muted-foreground'>
               {translate('emailSubscription.success')}
             </p>
           </div>
@@ -193,7 +193,7 @@ export function FeaturePreview({ showFeaturePreview }: FeaturePreviewProps) {
             className='text-center transition-shadow hover:shadow-lg'
           >
             <CardHeader>
-              <feature.icon className='text-primary mx-auto h-8 w-8' />
+              <feature.icon className='mx-auto h-8 w-8 text-primary' />
               <CardTitle className='text-lg'>{feature.title}</CardTitle>
             </CardHeader>
             <CardContent>
@@ -224,10 +224,10 @@ export function HeaderSection({ pageType, expectedDate }: HeaderSectionProps) {
           className='text-primary drop-shadow-lg'
         />
         <div className='space-y-2'>
-          <h1 className='from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-4xl font-bold text-transparent md:text-6xl'>
+          <h1 className='bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-4xl font-bold text-transparent md:text-6xl'>
             {tPage('title')}
           </h1>
-          <p className='text-muted-foreground mx-auto max-w-2xl text-xl md:text-2xl'>
+          <p className='mx-auto max-w-2xl text-xl text-muted-foreground md:text-2xl'>
             {tPage('subtitle')}
           </p>
         </div>

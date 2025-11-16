@@ -64,7 +64,7 @@ function ProgressStepItem({
           'flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300',
           {
             'bg-primary text-primary-foreground': step.completed,
-            'bg-primary/20 text-primary border-primary animate-pulse border-2':
+            'animate-pulse border-2 border-primary bg-primary/20 text-primary':
               step.current,
             'bg-muted text-muted-foreground': !step.completed && !step.current,
           },
@@ -116,7 +116,7 @@ function ProgressStepItem({
         className={cn(
           'mt-2 text-center text-xs transition-colors duration-300',
           {
-            'text-primary font-medium': step.current || step.completed,
+            'font-medium text-primary': step.current || step.completed,
             'text-muted-foreground': !step.current && !step.completed,
           },
         )}
@@ -159,9 +159,9 @@ const ProgressIndicatorComponent = ({
 
       {/* 连接线 */}
       <div className='relative -mt-8 mb-4'>
-        <div className='bg-muted absolute top-4 right-4 left-4 h-0.5'>
+        <div className='absolute left-4 right-4 top-4 h-0.5 bg-muted'>
           <div
-            className='bg-primary h-full transition-all duration-500 ease-out'
+            className='h-full bg-primary transition-all duration-500 ease-out'
             style={{
               width: `${Math.max(0, (currentStep / COUNT_TRIPLE) * PERCENTAGE_FULL)}%`,
             }}
@@ -171,10 +171,10 @@ const ProgressIndicatorComponent = ({
 
       {/* 进度百分比 */}
       <div className='text-center'>
-        <div className='text-primary text-2xl font-bold'>
+        <div className='text-2xl font-bold text-primary'>
           {Math.round((currentStep / COUNT_TRIPLE) * PERCENTAGE_FULL)}%
         </div>
-        <div className='text-muted-foreground text-sm'>
+        <div className='text-sm text-muted-foreground'>
           {currentStep >= COUNT_TRIPLE ? t('nearCompletion') : t('status')}
         </div>
       </div>

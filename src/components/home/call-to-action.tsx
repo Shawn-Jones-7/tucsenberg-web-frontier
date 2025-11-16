@@ -32,7 +32,7 @@ export function CallToAction() {
   const { actions, stats } = getCallToActionData(t);
 
   return (
-    <section className='cv-600 from-primary/5 via-background to-secondary/5 bg-gradient-to-br py-20'>
+    <section className='cv-600 bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20'>
       <div className='container mx-auto px-4'>
         <div
           ref={ref}
@@ -53,7 +53,7 @@ export function CallToAction() {
               {t('title')}
             </h2>
 
-            <p className='text-foreground/85 mx-auto mb-8 max-w-2xl text-lg sm:text-xl'>
+            <p className='mx-auto mb-8 max-w-2xl text-lg text-foreground/85 sm:text-xl'>
               {t('subtitle')}
             </p>
 

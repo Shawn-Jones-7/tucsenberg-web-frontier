@@ -360,7 +360,7 @@ const FormFields = memo(({ t, isPending }: FormFieldsProps) => {
                   type='checkbox'
                   disabled={isPending}
                   required={field.required}
-                  className='border-input h-4 w-4 rounded border'
+                  className='h-4 w-4 rounded border border-input'
                   aria-describedby={`${field.key}-error`}
                 />
                 <Label
@@ -499,7 +499,7 @@ const DynamicTurnstile = dynamic(
     ssr: false,
     loading: () => (
       <div
-        className='bg-muted h-12 w-full animate-pulse rounded-md'
+        className='h-12 w-full animate-pulse rounded-md bg-muted'
         aria-hidden='true'
       />
     ),
@@ -568,7 +568,7 @@ function LazyTurnstile({
         />
       ) : (
         <div
-          className='bg-muted h-12 w-full animate-pulse rounded-md'
+          className='h-12 w-full animate-pulse rounded-md bg-muted'
           aria-hidden='true'
         />
       )}

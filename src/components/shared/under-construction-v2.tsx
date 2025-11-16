@@ -28,15 +28,15 @@ export function UnderConstructionV2({
     <div
       className={cn(
         'relative min-h-screen overflow-hidden',
-        'from-background via-background to-muted/30 bg-gradient-to-br',
+        'bg-gradient-to-br from-background via-background to-muted/30',
         className,
       )}
     >
       {/* 背景装饰 */}
       <div className='pointer-events-none absolute inset-0 overflow-hidden'>
-        <div className='bg-primary/5 absolute -top-40 -right-40 h-80 w-80 rounded-full blur-3xl' />
-        <div className='bg-secondary/5 absolute -bottom-40 -left-40 h-80 w-80 rounded-full blur-3xl' />
-        <div className='bg-accent/5 absolute top-1/2 left-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl' />
+        <div className='absolute -right-40 -top-40 h-80 w-80 rounded-full bg-primary/5 blur-3xl' />
+        <div className='absolute -bottom-40 -left-40 h-80 w-80 rounded-full bg-secondary/5 blur-3xl' />
+        <div className='absolute left-1/2 top-1/2 h-64 w-64 -translate-x-1/2 -translate-y-1/2 rounded-full bg-accent/5 blur-3xl' />
       </div>
 
       <div className='relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-16'>

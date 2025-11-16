@@ -45,7 +45,7 @@ export function InteractiveShowcase({
                 {t('components.interactive.likes')}
               </span>
             </Button>
-            <span className='text-muted-foreground text-sm'>{likeCount}</span>
+            <span className='text-sm text-muted-foreground'>{likeCount}</span>
           </div>
         </div>
         <div className='flex gap-2'>

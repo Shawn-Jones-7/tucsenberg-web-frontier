@@ -21,7 +21,7 @@ export function SocialLinks() {
           <a
             key={link.label}
             href={link.href}
-            className='text-muted-foreground hover:text-foreground transition-colors'
+            className='text-muted-foreground transition-colors hover:text-foreground'
             aria-label={link.label}
           >
             <IconComponent className='h-6 w-6' />

@@ -40,7 +40,7 @@ export function SubscriptionForm({
     <Card className='mx-auto max-w-md'>
       <CardContent className='p-6'>
         <div className='space-y-4'>
-          <div className='text-muted-foreground flex items-center justify-center space-x-2'>
+          <div className='flex items-center justify-center space-x-2 text-muted-foreground'>
             <Mail className='h-5 w-5' />
             <span className='text-sm font-medium'>邮件订阅</span>
           </div>

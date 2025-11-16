@@ -83,7 +83,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
             <SheetTitle className='text-lg font-semibold'>
               {t('seo.siteName')}
             </SheetTitle>
-            <SheetDescription className='text-muted-foreground text-sm'>
+            <SheetDescription className='text-sm text-muted-foreground'>
               {t('seo.description')}
             </SheetDescription>
           </SheetHeader>
@@ -112,7 +112,7 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                     'flex items-center rounded-md px-3 py-2 text-sm font-medium transition-colors duration-200',
                     isActive
                       ? 'bg-accent text-accent-foreground'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent/50',
+                      : 'text-muted-foreground hover:bg-accent/50 hover:text-foreground',
                   )}
                   aria-current={isActive ? 'page' : undefined}
                   onClick={() => setIsOpen(false)}

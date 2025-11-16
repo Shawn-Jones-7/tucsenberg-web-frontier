@@ -3,6 +3,7 @@ import { contactFieldValidators } from '@/lib/form-schema/contact-field-validato
 import {
   buildFormFieldsFromConfig,
   CONTACT_FORM_CONFIG,
+  contactFormConfigSchema,
   createContactFormSchemaFromConfig,
 } from '@/config/contact-form-config';
 
@@ -73,6 +74,38 @@ describe('contact form configuration builder', () => {
         (issue) => issue.path[0] === 'email',
       );
       expect(domainIssue?.message).toContain('domain is not allowed');
+    }
+  });
+
+  it('contactFormConfigSchema 可以校验 CONTACT_FORM_CONFIG 结构', () => {
+    const parseResult = contactFormConfigSchema.safeParse(CONTACT_FORM_CONFIG);
+
+    expect(parseResult.success).toBe(true);
+  });
+
+  it('contactFormConfigSchema 对非法 message 长度配置给出错误', () => {
+    const invalidConfig = {
+      ...CONTACT_FORM_CONFIG,
+      validation: {
+        ...CONTACT_FORM_CONFIG.validation,
+        // 故意设置成非法配置：最小值大于最大值
+        messageMinLength: 200,
+        messageMaxLength: 100,
+      },
+    };
+
+    const result = contactFormConfigSchema.safeParse(invalidConfig);
+
+    expect(result.success).toBe(false);
+    if (!result.success) {
+      const issues = result.error.issues;
+      expect(
+        issues.some((issue) =>
+          issue.message.includes(
+            'messageMinLength must be <= messageMaxLength',
+          ),
+        ),
+      ).toBe(true);
     }
   });
 });

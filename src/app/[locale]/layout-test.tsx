@@ -29,7 +29,7 @@ export default async function TestLocaleLayout({
       <body className='flex min-h-screen flex-col antialiased'>
         <NextIntlClientProvider messages={messages}>
           {/* 简化的Header用于测试 */}
-          <header className='bg-background/95 w-full border-b'>
+          <header className='w-full border-b bg-background/95'>
             <div className='container mx-auto px-4'>
               <div className='flex h-16 items-center justify-between'>
                 <div className='flex items-center gap-4'>
@@ -51,7 +51,7 @@ export default async function TestLocaleLayout({
           <main className='flex-1'>{children}</main>
 
           {/* 简化的Footer */}
-          <footer className='bg-background border-_t py-4'>
+          <footer className='border-_t bg-background py-4'>
             <div className='container mx-auto px-4 text-center'>
               <p>Test Footer</p>
             </div>

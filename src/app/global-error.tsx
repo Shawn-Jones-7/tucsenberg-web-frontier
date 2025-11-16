@@ -18,12 +18,12 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   return (
     <html>
       <body>
-        <div className='bg-background flex min-h-screen flex-col items-center justify-center px-4'>
+        <div className='flex min-h-screen flex-col items-center justify-center bg-background px-4'>
           <div className='mx-auto max-w-md text-center'>
-            <h1 className='text-foreground mb-4 text-2xl font-bold'>
+            <h1 className='mb-4 text-2xl font-bold text-foreground'>
               Something went wrong!
             </h1>
-            <p className='text-muted-foreground mb-6'>
+            <p className='mb-6 text-muted-foreground'>
               We apologize for the inconvenience. An unexpected error has
               occurred.
             </p>
@@ -32,7 +32,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
                 <summary className='cursor-pointer text-sm font-medium'>
                   Error Details (Development Only)
                 </summary>
-                <pre className='bg-muted mt-2 overflow-auto rounded p-2 text-xs'>
+                <pre className='mt-2 overflow-auto rounded bg-muted p-2 text-xs'>
                   {error.message}
                   {error.stack && (
                     <>

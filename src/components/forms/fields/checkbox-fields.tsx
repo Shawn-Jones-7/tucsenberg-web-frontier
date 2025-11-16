@@ -22,7 +22,7 @@ export function CheckboxFields({ t, isPending }: CheckboxFieldsProps) {
             type='checkbox'
             disabled={isPending}
             required
-            className='border-input h-4 w-4 rounded border'
+            className='h-4 w-4 rounded border border-input'
           />
           <Label
             htmlFor='acceptPrivacy'
@@ -40,7 +40,7 @@ export function CheckboxFields({ t, isPending }: CheckboxFieldsProps) {
             name='marketingConsent'
             type='checkbox'
             disabled={isPending}
-            className='border-input h-4 w-4 rounded border'
+            className='h-4 w-4 rounded border border-input'
           />
           <Label
             htmlFor='marketingConsent'

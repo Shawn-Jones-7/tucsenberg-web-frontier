@@ -8,7 +8,7 @@ import { Button } from '@/components/ui/button';
 
 // 简单的 Skeleton 组件（内联定义）
 const Skeleton = ({ className }: { className?: string }) => (
-  <div className={cn('bg-muted animate-pulse rounded-md', className)} />
+  <div className={cn('animate-pulse rounded-md bg-muted', className)} />
 );
 
 // 8. 社交链接动画
@@ -25,7 +25,7 @@ export const AnimatedSocialLink = ({
     variant='ghost'
     size='sm'
     asChild
-    className='hover:bg-primary/10 hover:shadow-primary/20 h-9 w-9 rounded-full transition-all duration-200 ease-out hover:scale-110 hover:shadow-md'
+    className='h-9 w-9 rounded-full transition-all duration-200 ease-out hover:scale-110 hover:bg-primary/10 hover:shadow-md hover:shadow-primary/20'
   >
     <a
       href={href}

@@ -41,11 +41,11 @@ function ContactPageHeader({
   return (
     <div className='mb-12 text-center'>
       <h1 className='mb-4 text-4xl font-bold tracking-tight md:text-5xl'>
-        <span className='from-primary to-primary/60 bg-gradient-to-r bg-clip-text text-transparent'>
+        <span className='bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent'>
           {title}
         </span>
       </h1>
-      <p className='text-muted-foreground mx-auto max-w-2xl text-xl'>
+      <p className='mx-auto max-w-2xl text-xl text-muted-foreground'>
         {description}
       </p>
     </div>
@@ -78,9 +78,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
               </h3>
               <div className='space-y-4'>
                 <div className='flex items-center space-x-3'>
-                  <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10'>
                     <svg
-                      className='text-primary h-5 w-5'
+                      className='h-5 w-5 text-primary'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'
@@ -102,9 +102,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
                 </div>
 
                 <div className='flex items-center space-x-3'>
-                  <div className='bg-primary/10 flex h-10 w-10 items-center justify-center rounded-lg'>
+                  <div className='flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10'>
                     <svg
-                      className='text-primary h-5 w-5'
+                      className='h-5 w-5 text-primary'
                       fill='none'
                       stroke='currentColor'
                       viewBox='0 0 24 24'

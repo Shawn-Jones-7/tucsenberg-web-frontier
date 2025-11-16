@@ -23,10 +23,10 @@ function NavSkeleton() {
       className='hidden items-center space-x-1 md:flex'
       aria-hidden='true'
     >
-      <div className='bg-muted h-9 w-16 animate-pulse rounded-xl' />
-      <div className='bg-muted h-9 w-20 animate-pulse rounded-xl' />
-      <div className='bg-muted h-9 w-16 animate-pulse rounded-xl' />
-      <div className='bg-muted h-9 w-16 animate-pulse rounded-xl' />
+      <div className='h-9 w-16 animate-pulse rounded-xl bg-muted' />
+      <div className='h-9 w-20 animate-pulse rounded-xl bg-muted' />
+      <div className='h-9 w-16 animate-pulse rounded-xl bg-muted' />
+      <div className='h-9 w-16 animate-pulse rounded-xl bg-muted' />
     </div>
   );
 }

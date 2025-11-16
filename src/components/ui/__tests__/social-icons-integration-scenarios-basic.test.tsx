@@ -109,7 +109,7 @@ describe('Social Icons Integration Scenarios - Advanced Tests', () => {
 
     it('handles responsive layouts', () => {
       render(
-        <div className='flex flex-col space-y-2 sm:flex-row sm:space-y-0 sm:space-x-4'>
+        <div className='flex flex-col space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0'>
           <SocialIconLink
             href='https://twitter.com/example'
             platform='twitter'

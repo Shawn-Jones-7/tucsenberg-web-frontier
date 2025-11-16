@@ -54,7 +54,7 @@ export function UnderConstructionV3({
   return (
     <div
       className={cn(
-        'bg-background relative min-h-screen overflow-hidden',
+        'relative min-h-screen overflow-hidden bg-background',
         className,
       )}
     >

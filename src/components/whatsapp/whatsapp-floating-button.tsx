@@ -32,7 +32,7 @@ export function WhatsAppFloatingButton({
     >
       <a
         aria-label={label}
-        className={`fixed right-6 bottom-6 z-[1100] flex items-center gap-2 rounded-full bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${className}`}
+        className={`fixed bottom-6 right-6 z-[1100] flex items-center gap-2 rounded-full bg-emerald-700 px-4 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/40 transition hover:bg-emerald-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${className}`}
         href={href}
         rel='noreferrer'
         target='_blank'

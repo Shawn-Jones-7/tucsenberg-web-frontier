@@ -40,7 +40,7 @@ const textComponents = {
     </a>
   ),
   blockquote: ({ children }: { children: React.ReactNode }) => (
-    <blockquote className='mb-4 border-l-4 border-blue-500 pl-4 text-gray-700 italic dark:text-gray-300'>
+    <blockquote className='mb-4 border-l-4 border-blue-500 pl-4 italic text-gray-700 dark:text-gray-300'>
       {children}
     </blockquote>
   ),

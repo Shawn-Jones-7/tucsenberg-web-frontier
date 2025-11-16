@@ -1,4 +1,3 @@
-/// <reference types="vitest" />
 // v4: provider types reference removed; provider is configured via function API
 import { resolve } from 'path';
 import { playwright } from '@vitest/browser-playwright';

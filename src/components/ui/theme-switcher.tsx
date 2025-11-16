@@ -53,7 +53,7 @@ export const ThemeSwitcher = ({ className, ...rest }: ThemeSwitcherProps) => {
     return (
       <div
         className={cn(
-          'bg-background ring-border relative isolate flex h-8 rounded-full p-1 ring-1',
+          'relative isolate flex h-8 rounded-full bg-background p-1 ring-1 ring-border',
           className,
         )}
         {...rest}
@@ -67,7 +67,7 @@ export const ThemeSwitcher = ({ className, ...rest }: ThemeSwitcherProps) => {
             type='button'
             disabled
           >
-            <Icon className='text-muted-foreground relative z-10 m-auto h-4 w-4' />
+            <Icon className='relative z-10 m-auto h-4 w-4 text-muted-foreground' />
           </button>
         ))}
       </div>
@@ -85,7 +85,7 @@ export const ThemeSwitcher = ({ className, ...rest }: ThemeSwitcherProps) => {
   return (
     <div
       className={cn(
-        'bg-background ring-border relative isolate flex h-8 rounded-full p-1 ring-1',
+        'relative isolate flex h-8 rounded-full bg-background p-1 ring-1 ring-border',
         className,
       )}
       {...rest}

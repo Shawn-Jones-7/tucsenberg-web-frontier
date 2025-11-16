@@ -27,7 +27,7 @@ function HeroBadge({ version }: { version: string }) {
   return (
     <div className='mb-8 flex justify-center'>
       {/* 提升对比度：使用高对比配色，避免 secondary 方案在深色主题下对比不足 */}
-      <Badge className='bg-foreground text-background px-4 py-2 text-sm font-medium'>
+      <Badge className='bg-foreground px-4 py-2 text-sm font-medium text-background'>
         <span className='mr-2'>🚀</span>
         {version}
       </Badge>
@@ -47,11 +47,11 @@ function HeroTitle({
 }) {
   return (
     <h1
-      className='text-foreground mb-6 text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl'
+      className='mb-6 text-4xl font-bold tracking-tight text-foreground sm:text-6xl lg:text-7xl'
       {...(id ? { id } : {})}
     >
       <span className='block'>{line1}</span>
-      <span className='text-foreground block'>{line2}</span>
+      <span className='block text-foreground'>{line2}</span>
     </h1>
   );
 }
@@ -88,7 +88,7 @@ function HeroActionButtons({ t }: { t: (_key: string) => string }) {
     <div className='flex flex-col items-center gap-4 sm:flex-row sm:justify-center'>
       <Button
         size='lg'
-        className='group bg-foreground text-background hover:bg-foreground/90 px-8 py-3 text-lg'
+        className='group bg-foreground px-8 py-3 text-lg text-background hover:bg-foreground/90'
         asChild
       >
         <a
@@ -137,8 +137,8 @@ function HeroStats({ t }: { t: (_key: string) => string }) {
           key={`stat-${stat.key}-${index}`}
           className='text-center'
         >
-          <div className='text-foreground text-3xl font-bold'>{stat.value}</div>
-          <div className='text-foreground/80 text-sm'>
+          <div className='text-3xl font-bold text-foreground'>{stat.value}</div>
+          <div className='text-sm text-foreground/80'>
             {t(`stats.${stat.key}`)}
           </div>
         </div>
@@ -156,14 +156,14 @@ function HeroSectionBody(props: {
   return (
     <section
       data-testid='hero-section'
-      className='from-background via-background to-muted/20 relative overflow-hidden bg-gradient-to-br py-20 sm:py-32'
+      className='relative overflow-hidden bg-gradient-to-br from-background via-background to-muted/20 py-20 sm:py-32'
       aria-labelledby='hero-heading'
     >
       {showBg ? (
         <>
-          <div className='bg-background absolute inset-0 -z-10 md:hidden' />
+          <div className='absolute inset-0 -z-10 bg-background md:hidden' />
           <div className='absolute inset-0 -z-10 hidden md:block'>
-            <div className='absolute top-0 left-1/2 -translate-x-1/2 transform'>
+            <div className='absolute left-1/2 top-0 -translate-x-1/2 transform'>
               <div className='h-[600px] w-[600px] bg-[radial-gradient(circle_at_top_left,hsl(var(--primary)/0.03)_0%,transparent_32px)]' />
             </div>
           </div>
@@ -180,7 +180,7 @@ function HeroSectionBody(props: {
             id='hero-heading'
           />
 
-          <p className='text-foreground/80 mx-auto mb-10 max-w-2xl text-lg sm:text-xl'>
+          <p className='mx-auto mb-10 max-w-2xl text-lg text-foreground/80 sm:text-xl'>
             {t('subtitle')}
           </p>
 

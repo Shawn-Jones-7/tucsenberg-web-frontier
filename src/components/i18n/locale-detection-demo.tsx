@@ -78,7 +78,7 @@ const DetectionResult = ({ detection }: DetectionResultProps) => (
           </Badge>
         </div>
         {detection.details?.browserLanguages && (
-          <div className='text-muted-foreground text-sm'>
+          <div className='text-sm text-muted-foreground'>
             浏览器语言: {detection.details.browserLanguages.join(', ')}
           </div>
         )}
@@ -154,7 +154,7 @@ interface PreferenceDetailsProps {
 const PreferenceDetails = ({ preference }: PreferenceDetailsProps) => (
   <div>
     <h4 className='mb-2 font-semibold'>偏好详情</h4>
-    <div className='bg-muted rounded-md p-3'>
+    <div className='rounded-md bg-muted p-3'>
       <div className='grid grid-cols-2 gap-2 text-sm'>
         <div>语言: {preference.locale}</div>
         <div>来源: {preference.source}</div>
@@ -171,7 +171,7 @@ const PreferenceDetails = ({ preference }: PreferenceDetailsProps) => (
 const BrowserInfo = () => (
   <div>
     <h4 className='mb-2 font-semibold'>浏览器信息</h4>
-    <div className='bg-muted space-y-1 rounded-md p-3 text-sm'>
+    <div className='space-y-1 rounded-md bg-muted p-3 text-sm'>
       {typeof navigator !== 'undefined' && (
         <>
           <div>语言: {navigator.language}</div>
