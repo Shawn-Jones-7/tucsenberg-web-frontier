@@ -112,8 +112,9 @@ module.exports = {
     // === 跨域依赖规则（显式域匹配，避免跨规则反向引用） ===
     {
       name: 'no-cross-domain-direct-access:web-vitals',
-      severity: 'warn', // 从 'error' 降级为 'warn'，避免阻塞 CI
-      comment: 'web-vitals 域应避免直接依赖其他 lib 域（建议通过公开 API）',
+      severity: 'error',
+      comment:
+        'web-vitals 域应避免直接依赖其他 lib 域（试点已稳定，升级为 error）',
       from: {
         path: '^src/lib/web-vitals/',
       },
@@ -138,6 +139,31 @@ module.exports = {
       },
     },
     {
+      name: 'web-vitals-no-ui-deps',
+      severity: 'error',
+      comment:
+        'web-vitals 域不依赖 UI/Page 层（试点收紧为 error，保障无 UI 反向依赖）',
+      from: {
+        path: '^src/lib/web-vitals/',
+      },
+      to: {
+        path: '^src/(app|components)/',
+        pathNot: '/(types|constants)\\.(ts|tsx)$',
+      },
+    },
+    {
+      name: 'i18n-no-ui-deps',
+      severity: 'warn',
+      comment: 'i18n 域不依赖 UI/Page 层（新扩面灰度）',
+      from: {
+        path: '^src/lib/i18n',
+      },
+      to: {
+        path: '^src/(app|components)/',
+        pathNot: '/(types|constants)\\.(ts|tsx)$',
+      },
+    },
+    {
       name: 'no-relative-cross-layer-imports',
       severity: 'error',
       comment: '禁止相对路径跨层导入 - 必须使用@/别名',
@@ -154,7 +180,11 @@ module.exports = {
       from: { path: '^src/lib/([^/]+)/' },
       to: {
         path: '^src/lib/[^/]+/',
-        pathNot: '^src/(components|hooks|app)/',
+        pathNot: [
+          '^src/(components|hooks|app)/',
+          // 白名单：locale-storage-types-utils 访问 security object guards
+          '^src/lib/security/object-guards.ts$',
+        ].join('|'),
       },
     },
     {

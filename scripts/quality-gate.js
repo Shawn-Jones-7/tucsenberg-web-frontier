@@ -8,6 +8,7 @@
 
 const fs = require('fs');
 const path = require('path');
+const glob = require('glob');
 const { execSync, spawnSync } = require('child_process');
 
 const ESLINT_PACKAGE_PATH = require.resolve('eslint/package.json');
@@ -82,6 +83,7 @@ class QualityGate {
             statements: 85,
           },
           blocking: false, // 渐进式改进：覆盖率不达标时警告但不阻塞
+          diffWarningThreshold: 2, // 变更覆盖率较全量下降超过该阈值触发 warning
         },
         codeQuality: {
           enabled: true,
@@ -113,6 +115,15 @@ class QualityGate {
       environment: process.env.NODE_ENV || 'development',
       ciMode: process.env.CI === 'true',
       branch: process.env.GITHUB_REF_NAME || 'unknown',
+      pilotDomain: {
+        prefix: 'src/lib/web-vitals/',
+        testGlobs: [
+          '**/*.test.{ts,tsx}',
+          '**/*.spec.{ts,tsx}',
+          '**/__tests__/**/*.{ts,tsx}',
+        ],
+      },
+      diffBaseRef: process.env.QUALITY_DIFF_BASE || 'origin/main',
     };
 
     this.results = {
@@ -124,6 +135,136 @@ class QualityGate {
         blocked: false,
       },
     };
+  }
+
+  getMergeBase() {
+    const candidates = [this.config.diffBaseRef, 'origin/main', 'main'];
+    for (const ref of candidates) {
+      if (!ref) continue;
+      try {
+        const base = execSync(`git merge-base HEAD ${ref}`, {
+          encoding: 'utf8',
+          stdio: ['ignore', 'pipe', 'ignore'],
+        })
+          .toString()
+          .trim();
+        if (base) return base;
+      } catch {
+        // ignore
+      }
+    }
+    try {
+      return execSync('git rev-parse HEAD~1', {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+        .toString()
+        .trim();
+    } catch {
+      return '';
+    }
+  }
+
+  getChangedFiles(filter = 'ACM') {
+    const base = this.getMergeBase();
+    const range = base ? `${base}...HEAD` : '';
+    const cmd = base
+      ? `git diff --name-only --diff-filter=${filter} ${range}`
+      : `git diff --name-only --diff-filter=${filter}`;
+    try {
+      const output = execSync(cmd, {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      })
+        .toString()
+        .trim();
+      if (!output) return [];
+      return output.split('\n');
+    } catch {
+      return [];
+    }
+  }
+
+  findCoverageSummaryPath() {
+    const candidates = [
+      path.join(process.cwd(), 'reports', 'coverage', 'coverage-summary.json'),
+      path.join(process.cwd(), 'coverage', 'coverage-summary.json'),
+    ];
+    return candidates.find((p) => fs.existsSync(p));
+  }
+
+  normalizeCoverageEntries(coverageData) {
+    const entries = new Map();
+    Object.keys(coverageData || {})
+      .filter((key) => key !== 'total')
+      .forEach((key) => {
+        const rel = path.relative(process.cwd(), key);
+        entries.set(rel, coverageData[key]);
+        entries.set(key, coverageData[key]);
+      });
+    return entries;
+  }
+
+  calculateDiffCoverage(coverageData) {
+    const changedFiles = this.getChangedFiles('ACM').filter((file) =>
+      file.match(/\.(js|jsx|ts|tsx)$/),
+    );
+    if (changedFiles.length === 0) return null;
+
+    const entries = this.normalizeCoverageEntries(coverageData);
+    let covered = 0;
+    let total = 0;
+
+    changedFiles.forEach((file) => {
+      const summary = entries.get(file);
+      if (summary?.lines?.total) {
+        covered += summary.lines.covered || 0;
+        total += summary.lines.total || 0;
+      }
+    });
+
+    if (total === 0) return { pct: 0, drop: 0 };
+
+    const pct = (covered / total) * 100;
+    const overall = coverageData?.total?.lines?.pct || pct;
+    return {
+      pct,
+      drop: overall - pct,
+    };
+  }
+
+  getAddedPilotDomainFiles() {
+    const added = this.getChangedFiles('A');
+    const prefix = this.config.pilotDomain.prefix;
+    if (!prefix) return [];
+    return added.filter(
+      (file) =>
+        file.startsWith(prefix) && !file.match(/\.(test|spec)\.(ts|tsx)$/),
+    );
+  }
+
+  hasTestForFile(filePath) {
+    const dir = path.dirname(filePath);
+    const base = path.basename(filePath, path.extname(filePath));
+    const candidates = [
+      path.join(dir, `${base}.test.ts`),
+      path.join(dir, `${base}.test.tsx`),
+      path.join(dir, `${base}.spec.ts`),
+      path.join(dir, `${base}.spec.tsx`),
+      path.join(dir, '__tests__', `${base}.test.ts`),
+      path.join(dir, '__tests__', `${base}.spec.ts`),
+      path.join(dir, '__tests__', `${base}.test.tsx`),
+      path.join(dir, '__tests__', `${base}.spec.tsx`),
+    ];
+
+    if (candidates.some((p) => fs.existsSync(p))) {
+      return true;
+    }
+
+    const globs = (this.config.pilotDomain.testGlobs || []).map((pattern) =>
+      path.join(dir, pattern),
+    );
+    return globs.some((pattern) => glob.sync(pattern).length > 0);
   }
 
   /**
@@ -236,13 +377,9 @@ class QualityGate {
       });
 
       // 读取覆盖率数据
-      const coverageJsonPath = path.join(
-        process.cwd(),
-        'coverage',
-        'coverage-summary.json',
-      );
+      const coverageJsonPath = this.findCoverageSummaryPath();
 
-      if (fs.existsSync(coverageJsonPath)) {
+      if (coverageJsonPath && fs.existsSync(coverageJsonPath)) {
         const rawData = fs.readFileSync(coverageJsonPath, 'utf8');
         const coverageData = JSON.parse(rawData);
         gate.checks.coverage = coverageData.total;
@@ -266,6 +403,18 @@ class QualityGate {
         } else {
           gate.status = 'passed';
         }
+
+        // 变更覆盖率对比（diff coverage）
+        const diffCoverage = this.calculateDiffCoverage(coverageData);
+        if (
+          diffCoverage &&
+          diffCoverage.drop > this.config.gates.coverage.diffWarningThreshold
+        ) {
+          gate.status = gate.status === 'passed' ? 'warning' : gate.status;
+          gate.issues.push(
+            `变更覆盖率下降 ${diffCoverage.drop.toFixed(2)}%（变更 ${diffCoverage.pct.toFixed(2)}% vs 全量 ${(coverageData.total?.lines?.pct || 0).toFixed(2)}%）`,
+          );
+        }
       } else {
         gate.status = 'error';
         gate.issues.push('覆盖率报告文件不存在');
@@ -273,6 +422,18 @@ class QualityGate {
     } catch (error) {
       gate.status = gate.blocking ? 'error' : 'warning';
       gate.issues.push(`覆盖率检查失败: ${error.message}`);
+    }
+
+    // 试点域（web-vitals）新增文件需配套测试的提示
+    const addedPilotFiles = this.getAddedPilotDomainFiles();
+    const missingTests = addedPilotFiles.filter(
+      (file) => !this.hasTestForFile(file),
+    );
+    if (missingTests.length > 0) {
+      gate.status = gate.status === 'passed' ? 'warning' : gate.status;
+      gate.issues.push(
+        `试点域缺少测试（新增文件未找到配套测试）: ${missingTests.join(', ')}`,
+      );
     }
 
     console.log(

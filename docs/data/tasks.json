@@ -4,10 +4,10 @@
       "id": "e771e19e-e308-429c-9c2e-070b568255d8",
       "name": "准备阶段：基线与范围确认",
       "description": "选择1个试点域（建议src/lib/web-vitals或content/i18n），收集当前dependency-cruiser跨域依赖基线（约70条）并按域归档到docs/analysis-report/arch-violations-<date>.md，记录全局/核心域覆盖率基线；确认规则变更具备开关/降级路径（warning→error），不改CI pipeline。",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [],
       "createdAt": "2025-11-17T01:57:48.883Z",
-      "updatedAt": "2025-11-17T01:57:48.883Z",
+      "updatedAt": "2025-11-17T03:00:00.000Z",
       "relatedFiles": [
         {
           "path": "docs/analysis-report/中长期架构治理思路.md",
@@ -23,14 +23,14 @@
       "id": "76901927-e345-43ca-870c-6d12f29e1581",
       "name": "试点域规则灰度收紧",
       "description": "在试点域启用dependency-cruiser依赖方向forbidden/warning规则，目标warning<5；在quality-gate增加“新增试点域文件需有测试”warning；开启diff覆盖率下降>1–2% warning，观察噪音。",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "e771e19e-e308-429c-9c2e-070b568255d8"
         }
       ],
       "createdAt": "2025-11-17T01:57:48.883Z",
-      "updatedAt": "2025-11-17T01:57:48.883Z",
+      "updatedAt": "2025-11-17T03:30:00.000Z",
       "relatedFiles": [
         {
           "path": ".dependency-cruiser.js",
@@ -51,14 +51,14 @@
       "id": "cca67384-5fa3-4d89-b389-46f88d922a35",
       "name": "试点收紧与扩面",
       "description": "当试点warning稳定<5，将试点跨域规则升级为error或对改动文件error，并在同类域复制warning级；覆盖率若连续4周>60%则提升全局阈值到60%（保留缓冲）。",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "76901927-e345-43ca-870c-6d12f29e1581"
         }
       ],
       "createdAt": "2025-11-17T01:57:48.883Z",
-      "updatedAt": "2025-11-17T01:57:48.883Z",
+      "updatedAt": "2025-11-17T04:00:00.000Z",
       "relatedFiles": [
         {
           "path": ".dependency-cruiser.js",
@@ -79,14 +79,14 @@
       "id": "9c917a3b-aac1-4887-9455-6b110f7311b1",
       "name": "域级机会式重构与规则分层",
       "description": "在迭代触达的域按Boy Scout清理跨域依赖、抽公共工具到Core Lib、去UI反向依赖；为安全/解析模块加严ESLint/安全规则（禁any、需异常处理等），tests目录保持放宽复杂度但禁jest.*。",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "cca67384-5fa3-4d89-b389-46f88d922a35"
         }
       ],
       "createdAt": "2025-11-17T01:57:48.883Z",
-      "updatedAt": "2025-11-17T01:57:48.883Z",
+      "updatedAt": "2025-11-17T04:05:00.000Z",
       "relatedFiles": [
         {
           "path": "eslint.config.mjs",
@@ -107,14 +107,14 @@
       "id": "041193b6-8f01-4455-aa57-11a322da08dd",
       "name": "度量与阶段总结",
       "description": "建立季度度量与阶段总结：Arch违规数、循环依赖、全局/核心域覆盖率、安全告警。达标或变更后在docs/analysis-report追加简短总结，记录计划与实际差异。",
-      "status": "pending",
+      "status": "completed",
       "dependencies": [
         {
           "taskId": "cca67384-5fa3-4d89-b389-46f88d922a35"
         }
       ],
       "createdAt": "2025-11-17T01:57:48.883Z",
-      "updatedAt": "2025-11-17T01:57:48.883Z",
+      "updatedAt": "2025-11-17T04:10:00.000Z",
       "relatedFiles": [
         {
           "path": "docs/analysis-report",

@@ -164,6 +164,48 @@ export default [
     },
   },
 
+  // 安全/解析模块加强规则（禁 any、需显式错误处理）
+  {
+    name: 'security-and-parser-hardened',
+    files: [
+      'src/lib/security/**/*.{ts,tsx}',
+      'src/lib/content-parser.ts',
+      'src/lib/content-validation.ts',
+    ],
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+      'no-throw-literal': 'error',
+      'promise/always-return': 'off',
+      'promise/catch-or-return': ['error', { allowFinally: true }],
+      'no-console': ['error', { allow: ['warn', 'error'] }],
+    },
+  },
+
+  // 测试目录放宽复杂度但禁用 jest 导入
+  {
+    name: 'tests-relaxed-but-no-jest',
+    files: [
+      '**/__tests__/**/*.{ts,tsx,js,jsx}',
+      'tests/**/*.{ts,tsx,js,jsx}',
+      '**/*.{test,spec}.{ts,tsx,js,jsx}',
+    ],
+    rules: {
+      'complexity': 'off',
+      'max-params': 'off',
+      'no-restricted-imports': [
+        'error',
+        {
+          paths: [
+            {
+              name: 'jest',
+              message: '项目使用 Vitest，禁止引入 jest.* API',
+            },
+          ],
+        },
+      ],
+    },
+  },
+
   // Node.js Security configuration (补充规则 - 仅保留 eslint-plugin-security 未覆盖的功能)
   {
     name: 'security-node-supplementary-config',
