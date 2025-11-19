@@ -4,7 +4,6 @@ import {
   BYTES_PER_KB,
   COUNT_PAIR,
   HOURS_PER_DAY,
-  MAGIC_9,
   MAGIC_36,
   ONE,
   SECONDS_PER_MINUTE,
@@ -61,5 +60,19 @@ export function formatDuration(milliseconds: number): string {
  * Generate unique ID
  */
 export function generateUniqueId(): string {
-  return `${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return crypto.randomUUID().replaceAll('-', '');
+  }
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buf = new Uint32Array(2);
+    crypto.getRandomValues(buf);
+    return Array.from(buf, (value) => value.toString(MAGIC_36)).join('');
+  }
+  throw new Error('Secure random generator unavailable for unique id');
 }

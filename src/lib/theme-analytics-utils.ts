@@ -38,7 +38,8 @@ export class ThemeAnalyticsUtils {
       return randomValue < sampleRate;
     }
 
-    // 降级到Math.random()
+    // 无安全随机时退回 Math.random，仅用于采样非安全场景
+    // nosemgrep -- 作为观测采样降级分支，无敏感安全需求
     return Math.random() < sampleRate;
   }
 

@@ -9,7 +9,46 @@ interface I18nAnalyticsData {
   locale: string;
   event: string;
   timestamp: number;
-  [key: string]: unknown;
+  metadata?: Record<string, string | number | boolean | null>;
+}
+
+const ALLOWED_I18N_ANALYTICS_FIELDS = [
+  'locale',
+  'event',
+  'timestamp',
+  'metadata',
+] as const;
+type I18nAnalyticsField = (typeof ALLOWED_I18N_ANALYTICS_FIELDS)[number];
+
+function hasOnlyAllowedFields(target: Record<string, unknown>): boolean {
+  return Object.keys(target).every((key) =>
+    ALLOWED_I18N_ANALYTICS_FIELDS.includes(key as I18nAnalyticsField),
+  );
+}
+
+function isPlainSafeObject(value: unknown): value is Record<string, unknown> {
+  if (!value || typeof value !== 'object' || Array.isArray(value)) {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  return proto === Object.prototype || proto === null;
+}
+
+function isValidMetadata(metadata: Record<string, unknown>): boolean {
+  for (const [key, value] of Object.entries(metadata)) {
+    if (!key || key.startsWith('__')) {
+      return false;
+    }
+    if (
+      value !== null &&
+      typeof value !== 'string' &&
+      typeof value !== 'number' &&
+      typeof value !== 'boolean'
+    ) {
+      return false;
+    }
+  }
+  return true;
 }
 
 /**
@@ -21,8 +60,32 @@ function validateI18nAnalyticsData(data: unknown): data is I18nAnalyticsData {
   }
 
   const record = data as Record<string, unknown>;
-  const requiredFields = ['locale', 'event', 'timestamp'];
-  return requiredFields.every((field) => field in record);
+  if (!hasOnlyAllowedFields(record)) {
+    return false;
+  }
+
+  const hasValidLocale =
+    typeof record.locale === 'string' && record.locale.trim().length > 0;
+  const hasValidEvent =
+    typeof record.event === 'string' && record.event.trim().length > 0;
+  const hasValidTimestamp =
+    typeof record.timestamp === 'number' && Number.isFinite(record.timestamp);
+
+  if (!hasValidLocale || !hasValidEvent || !hasValidTimestamp) {
+    return false;
+  }
+
+  if (record.metadata !== undefined) {
+    if (!isPlainSafeObject(record.metadata)) {
+      return false;
+    }
+
+    if (!isValidMetadata(record.metadata as Record<string, unknown>)) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /**
@@ -129,18 +192,50 @@ export function GET(request: NextRequest) {
 
     // 如果指定了特定语言，过滤数据
     if (locale && locale !== 'all') {
+      const allowedLocales = ['en', 'zh', 'ja', 'other'] as Array<
+        keyof typeof mockStats.localeDistribution
+      >;
+
+      if (!allowedLocales.includes(locale as (typeof allowedLocales)[number])) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: 'Invalid locale parameter',
+          },
+          { status: 400 },
+        );
+      }
+
+      const safeLocale = locale as keyof typeof mockStats.localeDistribution;
+      let localeDistribution:
+        | { en: number }
+        | { zh: number }
+        | { ja: number }
+        | { other: number };
+
+      switch (safeLocale) {
+        case 'en':
+          localeDistribution = { en: mockStats.localeDistribution.en };
+          break;
+        case 'zh':
+          localeDistribution = { zh: mockStats.localeDistribution.zh };
+          break;
+        case 'ja':
+          localeDistribution = { ja: mockStats.localeDistribution.ja };
+          break;
+        default:
+          localeDistribution = { other: mockStats.localeDistribution.other };
+          break;
+      }
       return createCachedResponse(
         {
           success: true,
           data: {
-            ...mockStats,
-            locale,
-            localeDistribution: {
-              [locale]:
-                mockStats.localeDistribution[
-                  locale as keyof typeof mockStats.localeDistribution
-                ] || 0,
-            },
+            locale: safeLocale,
+            localeDistribution,
+            summary: mockStats.summary,
+            events: mockStats.events,
+            timeRange: mockStats.timeRange,
           },
         },
         { maxAge: 300 },

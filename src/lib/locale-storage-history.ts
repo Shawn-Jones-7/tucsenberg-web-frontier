@@ -140,12 +140,22 @@ export class LocaleHistoryManager {
     metadata?: Record<string, unknown>;
   }): StorageOperationResult<LocaleDetectionHistory> {
     const { locale, source, confidence, metadata } = params;
-    const result = addDetectionRecord({
+    const input: {
+      locale: Locale;
+      source: LocaleSource;
+      confidence: number;
+      metadata?: Record<string, unknown>;
+    } = {
       locale,
       source,
       confidence,
-      ...(metadata !== undefined && { metadata }),
-    });
+    };
+
+    if (metadata !== undefined) {
+      input.metadata = metadata;
+    }
+
+    const result = addDetectionRecord(input);
 
     if (result.success) {
       HistoryEventManager.emitEvent(

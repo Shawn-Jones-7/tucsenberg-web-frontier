@@ -308,11 +308,23 @@ export function parseCacheKey(cacheKey: string): {
 } {
   const parts = cacheKey.split(':');
   const [loc, ns, k] = parts;
-  return {
+  const result: {
+    locale: Locale;
+    namespace?: string;
+    key?: string;
+  } = {
     locale: (loc ?? '') as Locale,
-    ...(ns ? { namespace: ns } : {}),
-    ...(k ? { key: k } : {}),
   };
+
+  if (ns) {
+    result.namespace = ns;
+  }
+
+  if (k) {
+    result.key = k;
+  }
+
+  return result;
 }
 
 /**

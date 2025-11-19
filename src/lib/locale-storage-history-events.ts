@@ -14,6 +14,21 @@ import type {
 import { logger } from '@/lib/logger';
 import { COUNT_TEN, ONE, PERCENTAGE_FULL, ZERO } from '@/constants';
 
+type HistoryEventType =
+  | 'preference_saved'
+  | 'cache_cleared'
+  | 'backup_created'
+  | 'backup_restored'
+  | 'history_error';
+
+const createHistoryEventCounts = (): Record<HistoryEventType, number> => ({
+  preference_saved: ZERO,
+  cache_cleared: ZERO,
+  backup_created: ZERO,
+  backup_restored: ZERO,
+  history_error: ZERO,
+});
+
 // ==================== 事件管理器 ====================
 
 /**
@@ -299,20 +314,37 @@ export function createStatsListener(): {
   listener: StorageEventListener;
   getStats: () => {
     totalEvents: number;
-    eventsByType: Record<string, number>;
+    eventsByType: Record<HistoryEventType, number>;
     recentEvents: StorageEvent[];
   };
 } {
   const stats = {
     totalEvents: ZERO,
-    eventsByType: {} as Record<string, number>,
+    eventsByType: createHistoryEventCounts(),
     recentEvents: [] as StorageEvent[],
   };
 
   const listener: StorageEventListener = (event: StorageEvent) => {
     stats.totalEvents += ONE;
-    stats.eventsByType[event.type] =
-      (stats.eventsByType[event.type] || ZERO) + ONE;
+    switch (event.type as HistoryEventType) {
+      case 'preference_saved':
+        stats.eventsByType.preference_saved += ONE;
+        break;
+      case 'cache_cleared':
+        stats.eventsByType.cache_cleared += ONE;
+        break;
+      case 'backup_created':
+        stats.eventsByType.backup_created += ONE;
+        break;
+      case 'backup_restored':
+        stats.eventsByType.backup_restored += ONE;
+        break;
+      case 'history_error':
+        stats.eventsByType.history_error += ONE;
+        break;
+      default:
+        break;
+    }
 
     // 保留最近10个事件
     stats.recentEvents.unshift(event);
@@ -321,7 +353,17 @@ export function createStatsListener(): {
     }
   };
 
-  const getStats = () => ({ ...stats });
+  const getStats = () => ({
+    totalEvents: stats.totalEvents,
+    eventsByType: {
+      preference_saved: stats.eventsByType.preference_saved,
+      cache_cleared: stats.eventsByType.cache_cleared,
+      backup_created: stats.eventsByType.backup_created,
+      backup_restored: stats.eventsByType.backup_restored,
+      history_error: stats.eventsByType.history_error,
+    } as Record<HistoryEventType, number>,
+    recentEvents: stats.recentEvents.slice(),
+  });
 
   return { listener, getStats };
 }

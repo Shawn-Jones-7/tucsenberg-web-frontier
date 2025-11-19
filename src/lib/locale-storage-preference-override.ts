@@ -22,6 +22,29 @@ import { safeGetArrayItem } from '@/lib/security-object-access';
 import { ONE, PERCENTAGE_HALF, ZERO } from '@/constants';
 import { MAGIC_0_8 } from '@/constants/decimal';
 
+const isSafeMetadataEntry = (key: string, value: unknown) =>
+  key !== '' &&
+  !key.startsWith('__') &&
+  (typeof value === 'string' ||
+    typeof value === 'number' ||
+    typeof value === 'boolean' ||
+    value === null);
+
+const toSafeMetadata = (
+  source?: Record<string, unknown>,
+): Record<string, unknown> | undefined => {
+  if (!source || typeof source !== 'object' || Array.isArray(source)) {
+    return undefined;
+  }
+  const entries: Array<[string, unknown]> = [];
+  for (const [key, value] of Object.entries(source)) {
+    if (isSafeMetadataEntry(key, value)) {
+      entries.push([key, value]);
+    }
+  }
+  return entries.length ? Object.fromEntries(entries) : undefined;
+};
+
 // ==================== 用户覆盖管理 ====================
 
 /**
@@ -32,17 +55,26 @@ export function setUserOverride(
   locale: Locale,
   metadata?: Record<string, unknown>,
 ): StorageOperationResult<UserLocalePreference> {
+  const safeMetadata = toSafeMetadata(metadata);
   const preference: UserLocalePreference = {
     locale,
     source: 'user',
     confidence: ONE, // 用户手动选择，置信度最高
     timestamp: Date.now(),
-    metadata: {
-      ...metadata,
-      isOverride: true,
-      originalSource: 'user_manual',
-    },
+    metadata: { isOverride: true, originalSource: 'user_manual' },
   };
+  if (safeMetadata) {
+    const mergedEntries: Array<[string, unknown]> = [
+      ['isOverride', true],
+      ['originalSource', 'user_manual'],
+    ];
+
+    for (const [key, value] of Object.entries(safeMetadata)) {
+      mergedEntries.push([key, value]);
+    }
+
+    preference.metadata = Object.fromEntries(mergedEntries);
+  }
 
   // 保存偏好
   const saveResult = saveUserPreference(preference);
@@ -103,13 +135,16 @@ export function getUserOverride(): StorageOperationResult<Locale> {
       preferenceResult.data &&
       preferenceResult.data.source === 'user_override'
     ) {
-      return {
+      const response: StorageOperationResult<Locale> = {
         success: true,
         data: preferenceResult.data.locale,
         timestamp: Date.now(),
         responseTime: Date.now() - startTime,
-        ...(preferenceResult.source && { source: preferenceResult.source }),
       };
+      if (preferenceResult.source) {
+        response.source = preferenceResult.source;
+      }
+      return response;
     }
 
     // 没有找到覆盖
@@ -150,16 +185,23 @@ export function clearUserOverride(): StorageOperationResult<void> {
       preferenceResult.data.source === 'user_override'
     ) {
       // 创建一个新的非覆盖偏好
+      const safeMeta = toSafeMetadata(preferenceResult.data.metadata) || {};
+      const clearedAt = Date.now();
+      const metadataEntries: Array<[string, unknown]> = [
+        ['isOverride', false],
+        ['clearedAt', clearedAt],
+      ];
+
+      for (const [key, value] of Object.entries(safeMeta)) {
+        metadataEntries.push([key, value]);
+      }
+
       const newPreference: UserLocalePreference = {
-        ...preferenceResult.data,
+        locale: preferenceResult.data.locale,
         source: 'auto',
         confidence: MAGIC_0_8,
         timestamp: Date.now(),
-        metadata: {
-          ...preferenceResult.data.metadata,
-          isOverride: false,
-          clearedAt: Date.now(),
-        },
+        metadata: Object.fromEntries(metadataEntries),
       };
 
       saveUserPreference(newPreference);
@@ -247,12 +289,20 @@ export function recordOverrideOperation(
 ): void {
   const history = getOverrideHistory();
 
-  const newEntry = {
+  const safeMetadata = toSafeMetadata(metadata);
+  const newEntry: {
+    locale: Locale;
+    timestamp: number;
+    action: 'set' | 'clear';
+    metadata?: Record<string, unknown>;
+  } = {
     locale,
     timestamp: Date.now(),
     action,
-    ...(metadata && { metadata }),
   };
+  if (safeMetadata) {
+    newEntry.metadata = safeMetadata;
+  }
 
   history.unshift(newEntry);
 

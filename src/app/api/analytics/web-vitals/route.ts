@@ -148,15 +148,47 @@ export function GET(request: NextRequest) {
       },
     };
 
+    const allowedMetrics = ['CLS', 'FID', 'LCP', 'FCP', 'TTFB'] as Array<
+      keyof typeof mockStats.metrics
+    >;
+
     // 如果指定了特定指标，只返回该指标的数据
-    if (metric && mockStats.metrics[metric as keyof typeof mockStats.metrics]) {
+    if (
+      metric &&
+      allowedMetrics.includes(metric as (typeof allowedMetrics)[number])
+    ) {
+      const safeMetric = metric as keyof typeof mockStats.metrics;
+      let metricStats:
+        | (typeof mockStats.metrics)['CLS']
+        | (typeof mockStats.metrics)['FID']
+        | (typeof mockStats.metrics)['LCP']
+        | (typeof mockStats.metrics)['FCP']
+        | (typeof mockStats.metrics)['TTFB'];
+
+      switch (safeMetric) {
+        case 'FID':
+          metricStats = mockStats.metrics.FID;
+          break;
+        case 'LCP':
+          metricStats = mockStats.metrics.LCP;
+          break;
+        case 'FCP':
+          metricStats = mockStats.metrics.FCP;
+          break;
+        case 'TTFB':
+          metricStats = mockStats.metrics.TTFB;
+          break;
+        default:
+          metricStats = mockStats.metrics.CLS;
+          break;
+      }
       return createCachedResponse(
         {
           success: true,
           data: {
             timeRange,
-            metric,
-            stats: mockStats.metrics[metric as keyof typeof mockStats.metrics],
+            metric: safeMetric,
+            stats: metricStats,
           },
         },
         { maxAge: 120 },

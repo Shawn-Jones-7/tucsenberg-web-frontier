@@ -53,6 +53,7 @@ export class I18nCacheManager implements CacheManager {
       storageKey: 'i18n_cache',
     };
 
+    // nosemgrep: object-injection-sink-spread-operator -- 合并受控默认配置与入参
     this.config = { ...defaultConfig, ...config };
     this.metricsCollector = new I18nMetricsCollector();
     this.cache = new LRUCache<Messages>(this.config, this.metricsCollector);
@@ -276,6 +277,7 @@ export class I18nCacheManager implements CacheManager {
 
   // 设置缓存配置
   updateConfig(newConfig: Partial<CacheConfig>): void {
+    // nosemgrep: object-injection-sink-spread-operator -- 配置合并仅使用受控对象
     this.config = { ...this.config, ...newConfig };
     // 注意：这里可能需要重新创建缓存实例以应用新配置
   }

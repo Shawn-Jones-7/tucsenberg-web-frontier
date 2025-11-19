@@ -282,7 +282,26 @@ export function validateEnvironmentConfig(): {
  * Generate request ID for log tracing
  */
 export function generateRequestId(): string {
-  return `req_${Date.now()}_${Math.random().toString(MAGIC_36).substring(COUNT_PAIR, MAGIC_9)}`;
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return `req_${crypto.randomUUID().replaceAll('-', '')}`;
+  }
+
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buffer = new Uint32Array(MAGIC_9);
+    crypto.getRandomValues(buffer);
+    const randomPart = Array.from(buffer, (value) =>
+      value.toString(MAGIC_36).padStart(COUNT_PAIR, '0'),
+    ).join('');
+    return `req_${randomPart}`;
+  }
+
+  throw new Error('Secure random generator unavailable for request id');
 }
 
 /**
@@ -300,11 +319,22 @@ export function formatErrorResponse(
   timestamp: string;
   details?: Record<string, unknown>;
 } {
-  return {
+  const response: {
+    error: string;
+    message: string;
+    statusCode: number;
+    timestamp: string;
+    details?: Record<string, unknown>;
+  } = {
     error: 'ContactFormError',
     message,
     statusCode,
     timestamp: new Date().toISOString(),
-    ...(details && { details }),
   };
+
+  if (details) {
+    response.details = details;
+  }
+
+  return response;
 }

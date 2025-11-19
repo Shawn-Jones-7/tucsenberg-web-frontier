@@ -128,18 +128,17 @@ export class LRUCache<T> implements CacheStorage<T> {
   }
 
   // 获取所有值
-  values(): IterableIterator<T> {
-    return Array.from(this.cache.values())
-      .map((item) => item.data)
-      [Symbol.iterator]();
+  *values(): IterableIterator<T> {
+    for (const item of this.cache.values()) {
+      yield item.data;
+    }
   }
 
   // 获取所有条目
-  entries(): IterableIterator<[string, T]> {
-    const entries = Array.from(this.cache.entries()).map(
-      ([key, item]) => [key, item.data] as [string, T],
-    );
-    return entries[Symbol.iterator]();
+  *entries(): IterableIterator<[string, T]> {
+    for (const [key, item] of this.cache.entries()) {
+      yield [key, item.data];
+    }
   }
 
   // 获取缓存统计信息
@@ -167,8 +166,12 @@ export class LRUCache<T> implements CacheStorage<T> {
     const hits = items.map((item) => item.hits);
     const ttls = items.map((item) => item.ttl);
 
+    const baseStats = this.getStats();
+
     return {
-      ...this.getStats(),
+      size: baseStats.size,
+      totalHits: baseStats.totalHits,
+      averageAge: baseStats.averageAge,
       memoryUsage: this.estimateMemoryUsage(),
       ageDistribution: {
         min: Math.min(...ages),

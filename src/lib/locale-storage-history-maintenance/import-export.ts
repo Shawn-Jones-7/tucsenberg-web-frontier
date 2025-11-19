@@ -42,10 +42,21 @@ export function exportHistoryAsJson(): StorageOperationResult<string> {
 
   try {
     const jsonString = JSON.stringify(historyResult.data, null, COUNT_PAIR);
-    return {
-      ...historyResult,
+    const response: StorageOperationResult<string> = {
+      success: true,
+      timestamp: Date.now(),
       data: jsonString,
     };
+
+    if (historyResult.source) {
+      response.source = historyResult.source;
+    }
+
+    if (historyResult.responseTime !== undefined) {
+      response.responseTime = historyResult.responseTime;
+    }
+
+    return response;
   } catch (error) {
     return {
       success: false,
@@ -79,6 +90,7 @@ export function importHistory(
     }
 
     // 更新时间戳
+    // nosemgrep: object-injection-sink-spread-operator -- history 为受控的验证通过对象，仅追加 lastUpdated
     const updatedHistory: LocaleDetectionHistory = {
       ...history,
       lastUpdated: Date.now(),

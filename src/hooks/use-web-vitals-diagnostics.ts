@@ -55,13 +55,26 @@ const useWebVitalsRefresh = (
   loadHistoricalData: () => DiagnosticReport[],
   saveToStorage: (_reports: DiagnosticReport[]) => void,
 ) => {
+  const UINT32_MAX = 0xffffffff;
+
   const generateReport = useCallback((): DiagnosticReport => {
     const vitals = enhancedWebVitalsCollector.getDetailedMetrics();
+    const score =
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+        ? (() => {
+            const buf = new Uint32Array(1);
+            crypto.getRandomValues(buf);
+            const first = buf.at(0) ?? 0;
+            const normalized = first / UINT32_MAX;
+            return MAGIC_85 + normalized * MAGIC_15;
+          })()
+        : MAGIC_85 + MAGIC_15; // 无安全随机时取上限，保证可预测
 
     return {
       timestamp: Date.now(),
       vitals: vitals,
-      score: MAGIC_85 + Math.random() * MAGIC_15,
+      score,
       issues: [],
       recommendations: [],
       pageUrl:

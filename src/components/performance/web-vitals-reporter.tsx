@@ -22,6 +22,30 @@ interface WebVitalsReporterProps {
   sampleRate?: number;
 }
 
+const MAX_UINT32 = 0xffffffff;
+
+/**
+ * 使用加密安全的随机数做采样；若无 crypto，则退化为全量上报以避免漏报。
+ */
+function shouldSample(sampleRate: number): boolean {
+  if (sampleRate >= 1) return true;
+  if (sampleRate <= 0) return false;
+
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buffer = new Uint32Array(1);
+    crypto.getRandomValues(buffer);
+    const threshold = sampleRate * MAX_UINT32;
+    const first = buffer.at(0) ?? 0;
+    return first <= threshold;
+  }
+
+  // 无 crypto 时不做随机采样，倾向于记录完整数据
+  return true;
+}
+
 /**
  * Web Vitals 监控组件
  *
@@ -53,7 +77,7 @@ export function WebVitalsReporter({
     if (!enabled && !debug) return;
 
     // 采样率控制
-    if (Math.random() > sampleRate) return;
+    if (!shouldSample(sampleRate)) return;
 
     /**
      * 处理指标的函数

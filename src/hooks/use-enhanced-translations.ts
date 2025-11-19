@@ -42,27 +42,34 @@ export function useEnhancedTranslations(
   // 仅允许严格 ICU 参数类型：string | number | Date
   type StrictICUValue = string | number | Date;
   type InputValues = Record<string, unknown>;
+  const isSafeKey = (key: string) => key !== '' && !key.startsWith('__');
 
   const normalizeValues = useCallback((values?: InputValues) => {
     if (!values) return undefined;
-    const normalized: Record<string, StrictICUValue> = {};
+    const normalizedEntries: Array<[string, StrictICUValue]> = [];
     for (const [k, v] of Object.entries(values)) {
+      if (!isSafeKey(k)) {
+        continue;
+      }
       if (typeof v === 'string' || typeof v === 'number') {
-        // eslint-disable-next-line security/detect-object-injection -- k来自Object.entries，安全的对象键
-        normalized[k] = v;
+        normalizedEntries.push([k, v]);
       } else if (v instanceof Date) {
-        // eslint-disable-next-line security/detect-object-injection -- k来自Object.entries，安全的对象键
-        normalized[k] = v;
+        normalizedEntries.push([k, v]);
       } else if (typeof v === 'boolean') {
         // 严格类型下不接受 boolean，统一转为字符串
-        // eslint-disable-next-line security/detect-object-injection -- k来自Object.entries，安全的对象键
-        normalized[k] = v ? 'true' : 'false';
+        normalizedEntries.push([k, v ? 'true' : 'false']);
       } else {
         // 其余类型（对象/数组/undefined/null）跳过，避免传入 undefined
         // 如需富文本参数，请使用 t.rich
       }
     }
-    return Object.keys(normalized).length > 0 ? normalized : undefined;
+    if (normalizedEntries.length === ZERO) {
+      return undefined;
+    }
+    return Object.fromEntries(normalizedEntries) as Record<
+      string,
+      StrictICUValue
+    >;
   }, []);
 
   // 增强的翻译函数
@@ -100,14 +107,14 @@ export function useEnhancedTranslations(
   // 批量翻译函数
   const batchT = useCallback(
     (keys: string[], values?: InputValues) => {
-      return keys.reduce(
-        (acc, key) => {
-          // eslint-disable-next-line security/detect-object-injection -- key来自函数参数keys数组，用于翻译键，安全的对象访问
-          acc[key] = enhancedT(key, values);
-          return acc;
-        },
-        {} as Record<string, string>,
-      );
+      const entries: Array<[string, string]> = [];
+      keys.forEach((key) => {
+        if (!isSafeKey(key)) {
+          return;
+        }
+        entries.push([key, enhancedT(key, values)]);
+      });
+      return Object.fromEntries(entries) as Record<string, string>;
     },
     [enhancedT],
   );

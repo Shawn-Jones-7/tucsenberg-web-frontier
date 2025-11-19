@@ -205,6 +205,16 @@ export default [
               name: 'jest',
               message: '项目使用 Vitest，禁止引入 jest.* API',
             },
+            {
+              name: '@jest/globals',
+              message: '项目使用 Vitest，禁止引入 jest.* API',
+            },
+          ],
+          patterns: [
+            {
+              group: ['@jest/*'],
+              message: '项目使用 Vitest，禁止引入 jest.* API',
+            },
           ],
         },
       ],

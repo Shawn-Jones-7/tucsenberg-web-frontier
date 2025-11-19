@@ -1,4 +1,4 @@
-import { COUNT_PAIR, MAGIC_15 } from '../constants/count';
+import { COUNT_PAIR, MAGIC_15, MAGIC_16 } from '../constants/count';
 import { ZERO } from '../constants/magic-numbers';
 import { ALERT_SYSTEM_CONSTANTS } from '../constants/performance-constants';
 
@@ -194,18 +194,23 @@ export function generateNonce(): string {
     return crypto.randomUUID().replace(/-/g, '');
   }
 
-  // Fallback for environments without crypto.randomUUID
-  return (
-    Math.random()
-      .toString(NONCE_CONSTANTS.RADIX_36)
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const bytes = new Uint8Array(MAGIC_16);
+    crypto.getRandomValues(bytes);
+    return Array.from(bytes, (value) =>
+      value.toString(NONCE_CONSTANTS.RADIX_36).padStart(COUNT_PAIR, '0'),
+    )
+      .join('')
       .substring(
         NONCE_CONSTANTS.SUBSTRING_START,
         NONCE_CONSTANTS.SUBSTRING_END,
-      ) +
-    Math.random()
-      .toString(NONCE_CONSTANTS.RADIX_36)
-      .substring(NONCE_CONSTANTS.SUBSTRING_START, NONCE_CONSTANTS.SUBSTRING_END)
-  );
+      );
+  }
+
+  throw new Error('Secure nonce generation unavailable');
 }
 
 /**

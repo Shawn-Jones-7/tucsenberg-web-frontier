@@ -7,11 +7,13 @@ import type {
   WebhookEntry,
   WebhookPayload,
 } from '@/types/whatsapp-webhook-base';
-import type {
-  EventFilter,
-  EventStatistics,
-  MessageReceivedEvent,
-  WebhookEvent,
+import {
+  WEBHOOK_EVENT_TYPES,
+  type EventFilter,
+  type EventStatistics,
+  type MessageReceivedEvent,
+  type WebhookEvent,
+  type WebhookEventType,
 } from '@/types/whatsapp-webhook-events';
 import type { IncomingWhatsAppMessage } from '@/types/whatsapp-webhook-messages';
 import type {
@@ -25,6 +27,19 @@ import { MAGIC_0_95, MAGIC_0_99, ONE, ZERO } from '@/constants';
  * Webhook工具函数
  * Webhook utility functions
  */
+const createEventTypeCounts = (): Record<WebhookEventType, number> => ({
+  account_update: ZERO,
+  message_delivery: ZERO,
+  message_read: ZERO,
+  message_received: ZERO,
+  message_status: ZERO,
+  phone_number_quality: ZERO,
+  security_event: ZERO,
+  template_status: ZERO,
+  user_status_change: ZERO,
+  webhook_error: ZERO,
+});
+
 export class WebhookUtils {
   /**
    * 解析Webhook载荷为事件
@@ -311,32 +326,108 @@ export class WebhookUtils {
    * Aggregate event statistics
    */
   static aggregateEventStatistics(events: WebhookEvent[]): EventStatistics {
-    const eventsByType: Record<string, number> = {};
+    const eventsByType = createEventTypeCounts();
     const processingTimes: number[] = [];
 
     events.forEach((event) => {
-      eventsByType[event.type] = (eventsByType[event.type] || 0) + 1;
+      const eventType = event.type as WebhookEventType;
+      if (!WEBHOOK_EVENT_TYPES.includes(eventType)) {
+        return;
+      }
+      switch (eventType) {
+        case 'message_received':
+          eventsByType.message_received += ONE;
+          break;
+        case 'message_status':
+          eventsByType.message_status += ONE;
+          break;
+        case 'message_read':
+          eventsByType.message_read += ONE;
+          break;
+        case 'message_delivery':
+          eventsByType.message_delivery += ONE;
+          break;
+        case 'user_status_change':
+          eventsByType.user_status_change += ONE;
+          break;
+        case 'account_update':
+          eventsByType.account_update += ONE;
+          break;
+        case 'template_status':
+          eventsByType.template_status += ONE;
+          break;
+        case 'phone_number_quality':
+          eventsByType.phone_number_quality += ONE;
+          break;
+        case 'security_event':
+          eventsByType.security_event += ONE;
+          break;
+        case 'webhook_error':
+          eventsByType.webhook_error += ONE;
+          break;
+        default:
+          break;
+      }
       // 模拟处理时间（实际应用中应该记录真实的处理时间）
-      processingTimes.push(Math.random() * 100);
+      const duration = (() => {
+        if (
+          typeof crypto !== 'undefined' &&
+          typeof crypto.getRandomValues === 'function'
+        ) {
+          const buf = new Uint32Array(1);
+          crypto.getRandomValues(buf);
+          const randomValue = buf.at(0) ?? ZERO;
+          // 将随机值映射到 0-100 范围
+          return (randomValue / 0xffffffff) * 100;
+        }
+        return 50; // 无安全随机时使用固定模拟值
+      })();
+      processingTimes.push(duration);
     });
 
     processingTimes.sort((a, b) => a - b);
 
+    const getQuantile = (quantile: number): number => {
+      if (processingTimes.length === ZERO) {
+        return ZERO;
+      }
+      const index = Math.min(
+        processingTimes.length - ONE,
+        Math.floor(processingTimes.length * quantile),
+      );
+      return processingTimes.at(index) ?? ZERO;
+    };
+
+    const eventsByTypeResult: EventStatistics['events_by_type'] = {
+      message_received: eventsByType.message_received,
+      message_status: eventsByType.message_status,
+      message_read: eventsByType.message_read,
+      message_delivery: eventsByType.message_delivery,
+      user_status_change: eventsByType.user_status_change,
+      account_update: eventsByType.account_update,
+      template_status: eventsByType.template_status,
+      phone_number_quality: eventsByType.phone_number_quality,
+      security_event: eventsByType.security_event,
+      webhook_error: eventsByType.webhook_error,
+    };
+
     const result: EventStatistics = {
       total_events: events.length,
-      events_by_type: eventsByType,
+      events_by_type: eventsByTypeResult,
       processing_times: {
         average_ms:
-          processingTimes.reduce((a, b) => a + b, ZERO) /
-            processingTimes.length || ZERO,
-        min_ms: processingTimes[0] || ZERO,
-        max_ms: processingTimes[processingTimes.length - ONE] || ZERO,
-        p95_ms:
-          processingTimes[Math.floor(processingTimes.length * MAGIC_0_95)] ||
-          ZERO,
-        p99_ms:
-          processingTimes[Math.floor(processingTimes.length * MAGIC_0_99)] ||
-          ZERO,
+          processingTimes.length > ZERO
+            ? processingTimes.reduce((a, b) => a + b, ZERO) /
+              processingTimes.length
+            : ZERO,
+        min_ms:
+          processingTimes.length > ZERO ? (processingTimes[0] ?? ZERO) : ZERO,
+        max_ms:
+          processingTimes.length > ZERO
+            ? (processingTimes[processingTimes.length - ONE] ?? ZERO)
+            : ZERO,
+        p95_ms: getQuantile(MAGIC_0_95),
+        p99_ms: getQuantile(MAGIC_0_99),
       },
       error_rate: ZERO, // 应该基于实际错误计算
       success_rate: ONE, // 应该基于实际成功率计算

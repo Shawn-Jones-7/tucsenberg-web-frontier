@@ -30,6 +30,28 @@ import {
 } from '@/constants';
 import { MB } from '@/constants/units';
 
+const PERFORMANCE_METRIC_TYPES: PerformanceMetricType[] = [
+  'component',
+  'page',
+  'bundle',
+  'network',
+  'user-interaction',
+  'memory',
+  'cpu',
+  'rendering',
+  'loading',
+];
+
+const PERFORMANCE_METRIC_SOURCES: PerformanceMetricSource[] = [
+  'react-scan',
+  'bundle-analyzer',
+  'size-limit',
+  'custom',
+  'web-vitals',
+  'lighthouse',
+  'user-timing',
+];
+
 interface MetricsStats {
   total: number;
   byType: Record<PerformanceMetricType, number>;
@@ -100,7 +122,24 @@ export class PerformanceMetricsManager {
    * Generate metric ID
    */
   private generateMetricId(): string {
-    return `metric_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`;
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `metric_${crypto.randomUUID().replaceAll('-', '')}`;
+    }
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const buf = new Uint32Array(3);
+      crypto.getRandomValues(buf);
+      const randomPart = Array.from(buf, (value) =>
+        value.toString(MAGIC_36).padStart(COUNT_PAIR, '0'),
+      ).join('');
+      return `metric_${Date.now()}_${randomPart.substring(0, MAGIC_9)}`;
+    }
+    throw new Error('Secure random generator unavailable for metric id');
   }
 
   /**
@@ -119,10 +158,22 @@ export class PerformanceMetricsManager {
     }
 
     const fullMetric: PerformanceMetrics = {
-      ...metric,
-      id: metric.id || this.generateMetricId(),
+      source: metric.source,
+      type: metric.type,
+      data: metric.data,
       timestamp: Date.now(),
     };
+    if (metric.id) {
+      fullMetric.id = metric.id;
+    } else {
+      fullMetric.id = this.generateMetricId();
+    }
+    if (metric.tags) {
+      fullMetric.tags = metric.tags;
+    }
+    if (metric.priority) {
+      fullMetric.priority = metric.priority;
+    }
 
     this.metrics.push(fullMetric);
 
@@ -302,10 +353,19 @@ export class PerformanceMetricsManager {
     };
     averageValue: number;
   } {
+    const typeCounts = new Map<PerformanceMetricType, number>();
+    const sourceCounts = new Map<PerformanceMetricSource, number>();
+    PERFORMANCE_METRIC_TYPES.forEach((t) => typeCounts.set(t, ZERO));
+    PERFORMANCE_METRIC_SOURCES.forEach((s) => sourceCounts.set(s, ZERO));
+
     const stats = {
       total: this.metrics.length,
-      byType: {} as Record<PerformanceMetricType, number>,
-      bySource: {} as Record<PerformanceMetricSource, number>,
+      byType: Object.fromEntries(
+        PERFORMANCE_METRIC_TYPES.map((t) => [t, ZERO]),
+      ) as Record<PerformanceMetricType, number>,
+      bySource: Object.fromEntries(
+        PERFORMANCE_METRIC_SOURCES.map((s) => [s, ZERO]),
+      ) as Record<PerformanceMetricSource, number>,
       timeRange: {
         oldest: ZERO,
         newest: ZERO,
@@ -318,19 +378,23 @@ export class PerformanceMetricsManager {
       return stats;
     }
 
-    // 统计类型与来源分布（拆分子函数以降低复杂度）
-    const incType = (t: PerformanceMetricType) => {
-      this.incTypeGroupA(stats, t);
-      this.incTypeGroupB(stats, t);
-    };
-    const incSource = (s: PerformanceMetricSource) => {
-      this.incSourceGroupA(stats, s);
-      this.incSourceGroupB(stats, s);
-    };
     this.metrics.forEach((metric) => {
-      incType(metric.type);
-      incSource(metric.source);
+      if (typeCounts.has(metric.type)) {
+        const next = (typeCounts.get(metric.type) ?? ZERO) + ONE;
+        typeCounts.set(metric.type, next);
+      }
+      if (sourceCounts.has(metric.source)) {
+        const next = (sourceCounts.get(metric.source) ?? ZERO) + ONE;
+        sourceCounts.set(metric.source, next);
+      }
     });
+
+    stats.byType = Object.fromEntries(
+      PERFORMANCE_METRIC_TYPES.map((t) => [t, typeCounts.get(t) ?? ZERO]),
+    ) as Record<PerformanceMetricType, number>;
+    stats.bySource = Object.fromEntries(
+      PERFORMANCE_METRIC_SOURCES.map((s) => [s, sourceCounts.get(s) ?? ZERO]),
+    ) as Record<PerformanceMetricSource, number>;
 
     // 计算时间范围
     const timestamps = this.metrics.map((m) => m.timestamp);
@@ -353,104 +417,6 @@ export class PerformanceMetricsManager {
     stats.averageValue = totalValue / this.metrics.length;
 
     return stats;
-  }
-
-  // 分组处理：类型计数（组A）
-  private incTypeGroupA(
-    stats: MetricsStats & { byType: Record<PerformanceMetricType, number> },
-    t: PerformanceMetricType,
-  ): void {
-    switch (t) {
-      case 'component':
-        stats.byType.component = (stats.byType.component || ZERO) + ONE;
-        break;
-      case 'page':
-        stats.byType.page = (stats.byType.page || ZERO) + ONE;
-        break;
-      case 'bundle':
-        stats.byType.bundle = (stats.byType.bundle || ZERO) + ONE;
-        break;
-      case 'network':
-        stats.byType.network = (stats.byType.network || ZERO) + ONE;
-        break;
-      case 'user-interaction':
-        stats.byType['user-interaction'] =
-          (stats.byType['user-interaction'] || ZERO) + ONE;
-        break;
-      default:
-        break;
-    }
-  }
-
-  // 分组处理：类型计数（组B）
-  private incTypeGroupB(
-    stats: MetricsStats & { byType: Record<PerformanceMetricType, number> },
-    t: PerformanceMetricType,
-  ): void {
-    switch (t) {
-      case 'memory':
-        stats.byType.memory = (stats.byType.memory || ZERO) + ONE;
-        break;
-      case 'cpu':
-        stats.byType.cpu = (stats.byType.cpu || ZERO) + ONE;
-        break;
-      case 'rendering':
-        stats.byType.rendering = (stats.byType.rendering || ZERO) + ONE;
-        break;
-      case 'loading':
-        stats.byType.loading = (stats.byType.loading || ZERO) + ONE;
-        break;
-      default:
-        break;
-    }
-  }
-
-  // 分组处理：来源计数（组A）
-  private incSourceGroupA(
-    stats: MetricsStats & { bySource: Record<PerformanceMetricSource, number> },
-    s: PerformanceMetricSource,
-  ): void {
-    switch (s) {
-      case 'react-scan':
-        stats.bySource['react-scan'] =
-          (stats.bySource['react-scan'] || ZERO) + ONE;
-        break;
-      case 'bundle-analyzer':
-        stats.bySource['bundle-analyzer'] =
-          (stats.bySource['bundle-analyzer'] || ZERO) + ONE;
-        break;
-      case 'size-limit':
-        stats.bySource['size-limit'] =
-          (stats.bySource['size-limit'] || ZERO) + ONE;
-        break;
-      default:
-        break;
-    }
-  }
-
-  // 分组处理：来源计数（组B）
-  private incSourceGroupB(
-    stats: MetricsStats & { bySource: Record<PerformanceMetricSource, number> },
-    s: PerformanceMetricSource,
-  ): void {
-    switch (s) {
-      case 'custom':
-        stats.bySource.custom = (stats.bySource.custom || ZERO) + ONE;
-        break;
-      case 'web-vitals':
-        stats.bySource['web-vitals'] =
-          (stats.bySource['web-vitals'] || ZERO) + ONE;
-        break;
-      case 'lighthouse':
-        stats.bySource.lighthouse = (stats.bySource.lighthouse || ZERO) + ONE;
-        break;
-      case 'user-timing':
-        stats.bySource['user-timing'] =
-          (stats.bySource['user-timing'] || ZERO) + ONE;
-        break;
-      default:
-        break;
-    }
   }
 
   /**

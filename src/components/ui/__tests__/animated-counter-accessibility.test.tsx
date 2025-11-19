@@ -297,10 +297,11 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
 
       // Rapidly change props
       for (let i = 0; i < 100; i++) {
+        const deterministicDuration = 200 + (i % 10) * 25;
         rerender(
           <AnimatedCounter
             to={i}
-            duration={Math.random() * 1000}
+            duration={deterministicDuration}
           />,
         );
       }

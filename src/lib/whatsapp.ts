@@ -19,6 +19,28 @@ interface WhatsAppWebhookBody {
   }>;
 }
 
+function extractIncomingMessage(body: WhatsAppWebhookBody) {
+  const entries = Array.isArray(body.entry) ? body.entry : [];
+  if (entries.length === 0) {
+    return null;
+  }
+
+  const firstEntry = entries[0];
+  const changes = Array.isArray(firstEntry?.changes)
+    ? (firstEntry?.changes ?? [])
+    : [];
+  if (changes.length === 0) {
+    return null;
+  }
+
+  const firstChange = changes[0];
+  const rawMessages = Array.isArray(firstChange?.value?.messages)
+    ? (firstChange.value?.messages ?? [])
+    : [];
+
+  return rawMessages.length > 0 ? rawMessages[0]! : null;
+}
+
 /**
  * WhatsApp Business API 服务类
  * 提供发送消息、处理 webhook 等功能
@@ -81,14 +103,24 @@ export class WhatsAppService {
       // WhatsApp API expects recipient as second parameter
       const recipient = parseInt(to, COUNT_TEN);
       // WhatsApp template message with correct structure
-      const templateObject = {
+      const templateObject: {
+        name: string;
+        language: {
+          policy: 'deterministic';
+          code: string;
+        };
+        components?: Array<Record<string, unknown>>;
+      } = {
         name: templateName,
         language: {
           policy: 'deterministic' as const,
           code: languageCode,
         },
-        ...(components && { components }),
       };
+
+      if (components && components.length > 0) {
+        templateObject.components = components;
+      }
       const response = await this.client.messages.template(
         templateObject as unknown as Parameters<
           typeof this.client.messages.template
@@ -122,18 +154,17 @@ export class WhatsAppService {
    */
   async handleIncomingMessage(body: WhatsAppWebhookBody) {
     try {
-      const messages = body.entry?.[0]?.changes?.[0]?.value?.messages;
-      if (!messages || messages.length === 0) {
-        return { success: true };
-      }
-
-      const [message] = messages;
+      const message = extractIncomingMessage(body);
       if (!message) {
         return { success: true };
       }
 
+      // nosemgrep: object-injection-sink-dynamic-property -- message 来源受控解析
       const { from } = message;
-      const messageBody = message.text?.body;
+      const messageBody =
+        message.text && typeof message.text === 'object'
+          ? message.text.body
+          : undefined;
 
       // 使用logger替代console.log
       logger.info(`Received WhatsApp message from ${from}: ${messageBody}`);

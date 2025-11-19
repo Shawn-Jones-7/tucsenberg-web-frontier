@@ -158,7 +158,8 @@ export const getCachedTranslations = cache(
         const entry = Object.entries(messages as Record<string, unknown>).find(
           ([k]) => k === namespace,
         );
-        return (entry ? entry[1] : {}) as unknown;
+        // nosemgrep: object-injection-sink-dynamic-property -- 使用 Object.entries 找到匹配命名空间后返回对应对象
+        return entry ? (entry[1] as unknown) : {};
       }
       return {};
     }

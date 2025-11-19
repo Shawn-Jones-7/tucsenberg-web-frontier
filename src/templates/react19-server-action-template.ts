@@ -129,7 +129,26 @@ async function processFormSubmission(
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     // 生成记录ID（实际应用中可能来自数据库）
-    const recordId = `record_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    const recordId = (() => {
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+      ) {
+        return `record_${crypto.randomUUID().replaceAll('-', '')}`;
+      }
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.getRandomValues === 'function'
+      ) {
+        const buf = new Uint32Array(3);
+        crypto.getRandomValues(buf);
+        const randomPart = Array.from(buf, (value) =>
+          value.toString(36).padStart(4, '0'),
+        ).join('');
+        return `record_${Date.now()}_${randomPart.substring(0, 12)}`;
+      }
+      throw new Error('Secure random generator unavailable for record id');
+    })();
 
     return {
       success: true,

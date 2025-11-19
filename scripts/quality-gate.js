@@ -83,7 +83,7 @@ class QualityGate {
             statements: 85,
           },
           blocking: false, // 渐进式改进：覆盖率不达标时警告但不阻塞
-          diffWarningThreshold: 2, // 变更覆盖率较全量下降超过该阈值触发 warning
+          diffWarningThreshold: 1.5, // 变更覆盖率较全量下降超过该阈值触发 warning（目标 1-2% 区间）
         },
         codeQuality: {
           enabled: true,

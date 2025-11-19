@@ -248,6 +248,7 @@ export function updatePreferenceConfidence(
     };
   }
 
+  // nosemgrep: object-injection-sink-spread-operator -- currentResult.data 已经过验证
   const updatedPreference: UserLocalePreference = {
     ...currentResult.data,
     confidence: Math.max(ZERO, Math.min(ONE, confidence)),

@@ -175,16 +175,22 @@ module.exports = {
     },
     {
       name: 'enforce-domain-boundaries',
-      severity: 'info',
-      comment: '强制域边界 - 域内文件应优先使用域内依赖（提示级别）',
-      from: { path: '^src/lib/([^/]+)/' },
+      severity: 'error',
+      comment:
+        '强制域边界（试点升级）- web-vitals 跨域直接阻断，保持稳定后扩面',
+      from: { path: '^src/lib/web-vitals/' },
       to: {
-        path: '^src/lib/[^/]+/',
-        pathNot: [
-          '^src/(components|hooks|app)/',
-          // 白名单：locale-storage-types-utils 访问 security object guards
-          '^src/lib/security/object-guards.ts$',
-        ].join('|'),
+        path: '^src/lib/(?!web-vitals/)[^/]+/',
+        pathNot: ['^src/lib/security/object-guards.ts$'].join('|'),
+      },
+    },
+    {
+      name: 'i18n-domain-boundaries',
+      severity: 'warn',
+      comment: 'i18n 域跨域依赖提示（灰度扩面）',
+      from: { path: '^src/lib/i18n/' },
+      to: {
+        path: '^src/lib/(?!i18n/)[^/]+/',
       },
     },
     {

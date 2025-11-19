@@ -529,7 +529,29 @@ export const ErrorUtils = {
     version: string = '1.0.0',
   ): ErrorReport {
     return {
-      id: `error_${Date.now()}_${Math.random().toString(MAGIC_36).substr(COUNT_PAIR, MAGIC_9)}`,
+      id: (() => {
+        const timestamp = Date.now();
+        if (
+          typeof crypto !== 'undefined' &&
+          typeof crypto.randomUUID === 'function'
+        ) {
+          return `error_${timestamp}_${crypto.randomUUID().replaceAll('-', '')}`;
+        }
+        if (
+          typeof crypto !== 'undefined' &&
+          typeof crypto.getRandomValues === 'function'
+        ) {
+          const buf = new Uint32Array(3);
+          crypto.getRandomValues(buf);
+          const randomPart = Array.from(buf, (value) =>
+            value.toString(MAGIC_36).padStart(COUNT_PAIR, '0'),
+          ).join('');
+          return `error_${timestamp}_${randomPart.substring(0, MAGIC_9)}`;
+        }
+        throw new Error(
+          'Secure random generator unavailable for error report id',
+        );
+      })(),
       timestamp: new Date().toISOString(),
       error: errorDetails,
       environment,

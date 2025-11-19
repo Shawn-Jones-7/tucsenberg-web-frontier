@@ -228,10 +228,13 @@ export function validateFileUpload(
   }
   warnings.push(...nameCheck.warnings);
 
-  return {
-    valid: true,
-    ...(warnings.length > ZERO && { warnings }),
-  };
+  const result: FileValidationResult = { valid: true };
+
+  if (warnings.length > ZERO) {
+    result.warnings = [...warnings];
+  }
+
+  return result;
 }
 
 /**

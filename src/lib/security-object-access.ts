@@ -24,16 +24,20 @@ export function safeGetProperty<T extends object>(
   key: string | number | symbol,
   allowedKeys?: readonly (string | number | symbol)[],
 ): T[keyof T] | undefined {
+  const stringKey = String(key);
+  const UNSAFE_KEYS = ['__proto__', 'constructor', 'prototype'];
+  if (UNSAFE_KEYS.includes(stringKey)) {
+    return undefined;
+  }
+
   // 如果提供了白名单，进行验证
   if (allowedKeys && !allowedKeys.includes(key)) {
     return undefined;
   }
 
   // 安全的属性访问
-  if (Object.prototype.hasOwnProperty.call(obj, key)) {
-    return obj[key as keyof T];
-  }
-  return undefined;
+  const descriptor = Object.getOwnPropertyDescriptor(obj, key);
+  return descriptor?.value as T[keyof T];
 }
 
 /**
@@ -53,6 +57,12 @@ export function safeSetProperty<T extends object>(params: {
   allowedKeys?: readonly (string | number | symbol)[];
 }): boolean {
   const { obj, key, value, allowedKeys } = params;
+  const stringKey = String(key);
+  const UNSAFE_KEYS = ['__proto__', 'constructor', 'prototype'];
+
+  if (UNSAFE_KEYS.includes(stringKey)) {
+    return false;
+  }
   // 如果提供了白名单，进行验证
   if (allowedKeys && !allowedKeys.includes(key)) {
     return false;
@@ -103,6 +113,7 @@ export function safeGetPathMapping<T>(
 ): T {
   // 安全的属性访问
   if (Object.prototype.hasOwnProperty.call(pathMap, path)) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 路径已通过 hasOwnProperty 校验后访问
     return pathMap[path as keyof typeof pathMap] ?? defaultValue;
   }
   return defaultValue;
@@ -139,11 +150,11 @@ export function safeGetNestedProperty(
       }
 
       const currentObj = current as Record<string, unknown>;
-      if (Object.prototype.hasOwnProperty.call(currentObj, key)) {
-        current = currentObj[key as keyof typeof currentObj];
-      } else {
+      const descriptor = Object.getOwnPropertyDescriptor(currentObj, key);
+      if (!descriptor) {
         return undefined;
       }
+      current = descriptor.value;
     } else {
       return undefined;
     }
@@ -184,6 +195,7 @@ export function safeIterateObject<T extends Record<string, unknown>>(
     }
 
     if (Object.prototype.hasOwnProperty.call(obj, key)) {
+      // nosemgrep: object-injection-sink-dynamic-property -- 访问前已通过白名单与hasOwn检查
       callback(key, obj[key as keyof T]);
     }
   }
@@ -226,7 +238,15 @@ export function safeMergeObjects<T extends Record<string, unknown>>(
   source: Record<string, unknown>,
   allowedKeys: readonly string[],
 ): T {
-  const result = { ...target };
+  const result = Object.create(null) as T;
+
+  // 先复制目标对象的安全属性，避免直接使用扩展拷贝带来的注入风险
+  for (const key of Object.keys(target)) {
+    const descriptor = Object.getOwnPropertyDescriptor(target, key);
+    if (descriptor) {
+      Object.defineProperty(result, key, descriptor);
+    }
+  }
 
   for (const key of Object.keys(source)) {
     if (

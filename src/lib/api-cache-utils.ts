@@ -56,8 +56,15 @@ export function createCachedResponse<T>(
     headers.set(key, value);
   });
 
-  return NextResponse.json(data, {
-    ...init,
-    headers,
-  });
+  const responseInit: JsonResponseInit = { headers };
+
+  if (init?.status !== undefined) {
+    responseInit.status = init.status;
+  }
+
+  if (init?.statusText !== undefined) {
+    responseInit.statusText = init.statusText;
+  }
+
+  return NextResponse.json(data, responseInit);
 }

@@ -98,15 +98,20 @@ export class WhatsAppMessageService {
     imageUrl: string,
     caption?: string,
   ): Promise<WhatsAppServiceResponse> {
+    const imagePayload: ImageMessage['image'] = {
+      link: imageUrl,
+    };
+
+    if (caption) {
+      imagePayload.caption = caption;
+    }
+
     const message: ImageMessage = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
       to,
       type: 'image',
-      image: {
-        link: imageUrl,
-        ...(caption && { caption }),
-      },
+      image: imagePayload,
     };
 
     return this.sendMessage(message);
@@ -122,29 +127,32 @@ export class WhatsAppMessageService {
     parameters?: string[];
   }): Promise<WhatsAppServiceResponse> {
     const { to, templateName, languageCode, parameters } = args;
+    const template: NonNullable<SendMessageRequest['template']> = {
+      name: templateName,
+      language: {
+        code: languageCode,
+        policy: 'deterministic',
+      },
+    };
+
+    if (parameters && parameters.length > 0) {
+      template.components = [
+        {
+          type: 'body',
+          parameters: parameters.map((param) => ({
+            type: 'text',
+            text: param,
+          })),
+        },
+      ];
+    }
+
     const message: SendMessageRequest = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
       to,
       type: 'template',
-      template: {
-        name: templateName,
-        language: {
-          code: languageCode,
-          policy: 'deterministic',
-        },
-        ...(parameters && {
-          components: [
-            {
-              type: 'body',
-              parameters: parameters.map((param) => ({
-                type: 'text',
-                text: param,
-              })),
-            },
-          ],
-        }),
-      },
+      template,
     };
 
     return this.sendMessage(message);
@@ -161,37 +169,41 @@ export class WhatsAppMessageService {
     footerText?: string;
   }): Promise<WhatsAppServiceResponse> {
     const { to, bodyText, buttons, headerText, footerText } = args;
+    const interactive: InteractiveMessage['interactive'] = {
+      type: 'button',
+      body: {
+        text: bodyText,
+      },
+      action: {
+        buttons: buttons.map((button) => ({
+          type: 'reply',
+          reply: {
+            id: button.id,
+            title: button.title,
+          },
+        })),
+      },
+    };
+
+    if (headerText) {
+      interactive.header = {
+        type: 'text',
+        text: headerText,
+      };
+    }
+
+    if (footerText) {
+      interactive.footer = {
+        text: footerText,
+      };
+    }
+
     const message: InteractiveMessage = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
       to,
       type: 'interactive',
-      interactive: {
-        type: 'button',
-        ...(headerText && {
-          header: {
-            type: 'text',
-            text: headerText,
-          },
-        }),
-        body: {
-          text: bodyText,
-        },
-        ...(footerText && {
-          footer: {
-            text: footerText,
-          },
-        }),
-        action: {
-          buttons: buttons.map((button) => ({
-            type: 'reply',
-            reply: {
-              id: button.id,
-              title: button.title,
-            },
-          })),
-        },
-      },
+      interactive,
     };
 
     return this.sendMessage(message);
@@ -211,35 +223,39 @@ export class WhatsAppMessageService {
     options?: { headerText?: string; footerText?: string };
   }): Promise<WhatsAppServiceResponse> {
     const { to, bodyText, buttonText, sections, options } = args;
+    const interactive: InteractiveMessage['interactive'] = {
+      type: 'list',
+      body: {
+        text: bodyText,
+      },
+      action: {
+        button: buttonText,
+        sections: sections.map((section) => ({
+          title: section.title || '',
+          rows: section.rows,
+        })),
+      },
+    };
+
+    if (options?.headerText) {
+      interactive.header = {
+        type: 'text',
+        text: options.headerText,
+      };
+    }
+
+    if (options?.footerText) {
+      interactive.footer = {
+        text: options.footerText,
+      };
+    }
+
     const message: InteractiveMessage = {
       messaging_product: 'whatsapp',
       recipient_type: 'individual',
       to,
       type: 'interactive',
-      interactive: {
-        type: 'list',
-        ...(options?.headerText && {
-          header: {
-            type: 'text',
-            text: options.headerText,
-          },
-        }),
-        body: {
-          text: bodyText,
-        },
-        ...(options?.footerText && {
-          footer: {
-            text: options.footerText,
-          },
-        }),
-        action: {
-          button: buttonText,
-          sections: sections.map((section) => ({
-            title: section.title || '',
-            rows: section.rows,
-          })),
-        },
-      },
+      interactive,
     };
 
     return this.sendMessage(message);

@@ -222,9 +222,13 @@ export class AccessLogger {
       operation,
       timestamp: Date.now(),
       success,
-      ...(responseTime !== undefined && { responseTime }),
-      ...(error !== undefined && { error }),
     };
+    if (responseTime !== undefined) {
+      logEntry.responseTime = responseTime;
+    }
+    if (error !== undefined) {
+      logEntry.error = error;
+    }
 
     this.accessLog.unshift(logEntry);
 
@@ -352,9 +356,13 @@ export class ErrorLogger {
       error,
       timestamp: Date.now(),
       severity,
-      ...(context !== undefined && { context }),
-      ...(stack !== undefined && { stack }),
     };
+    if (context !== undefined) {
+      errorEntry.context = context;
+    }
+    if (stack !== undefined) {
+      errorEntry.stack = stack;
+    }
 
     this.errorLog.unshift(errorEntry);
 
@@ -417,18 +425,18 @@ export class ErrorLogger {
       medium: ZERO,
       high: ZERO,
       critical: ZERO,
-    } as const as {
-      low: number;
-      medium: number;
-      high: number;
-      critical: number;
     };
     const dist: {
       low: number;
       medium: number;
       high: number;
       critical: number;
-    } = { ...severityDistribution };
+    } = {
+      low: severityDistribution.low,
+      medium: severityDistribution.medium,
+      high: severityDistribution.high,
+      critical: severityDistribution.critical,
+    };
     for (const entry of this.errorLog) {
       switch (entry.severity) {
         case 'low':
@@ -522,15 +530,24 @@ export function cleanupAnalyticsData(
   );
   AccessLogger.clearAccessLog();
   filteredAccessLog.forEach((entry) => {
-    AccessLogger.logAccess({
+    const payload: {
+      key: string;
+      operation: string;
+      success: boolean;
+      responseTime?: number;
+      error?: string;
+    } = {
       key: entry.key,
       operation: entry.operation,
       success: entry.success,
-      ...(entry.responseTime !== undefined && {
-        responseTime: entry.responseTime,
-      }),
-      ...(entry.error !== undefined && { error: entry.error }),
-    });
+    };
+    if (entry.responseTime !== undefined) {
+      payload.responseTime = entry.responseTime;
+    }
+    if (entry.error !== undefined) {
+      payload.error = entry.error;
+    }
+    AccessLogger.logAccess(payload);
   });
 
   // 清理错误日志
@@ -540,12 +557,22 @@ export function cleanupAnalyticsData(
   );
   ErrorLogger.clearErrorLog();
   filteredErrorLog.forEach((entry) => {
-    ErrorLogger.logError({
+    const payload: {
+      error: string;
+      context?: string;
+      severity: ErrorLogEntry['severity'];
+      stack?: string;
+    } = {
       error: entry.error,
-      ...(entry.context !== undefined && { context: entry.context }),
       severity: entry.severity,
-      ...(entry.stack !== undefined && { stack: entry.stack }),
-    });
+    };
+    if (entry.context !== undefined) {
+      payload.context = entry.context;
+    }
+    if (entry.stack !== undefined) {
+      payload.stack = entry.stack;
+    }
+    ErrorLogger.logError(payload);
   });
 
   // 触发清理事件

@@ -12,12 +12,61 @@ import {
   MAGIC_32,
   MAGIC_48,
   MAGIC_64,
-  MAGIC_HEX_3,
-  MAGIC_HEX_8,
   SECONDS_PER_MINUTE,
   ZERO,
 } from '@/constants';
 import { MAGIC_6 } from '@/constants/count';
+
+const getCrypto = (): Crypto | null => {
+  if (typeof globalThis === 'undefined') {
+    return null;
+  }
+  const candidate = (globalThis as { crypto?: Crypto }).crypto;
+  if (candidate && typeof candidate.getRandomValues === 'function') {
+    return candidate;
+  }
+  return null;
+};
+
+function secureRandomBytes(length: number): Uint8Array {
+  const cryptoSource = getCrypto();
+  if (cryptoSource) {
+    const array = new Uint8Array(length);
+    cryptoSource.getRandomValues(array);
+    return array;
+  }
+
+  throw new Error('Secure random generator unavailable');
+}
+
+function secureRandomUUID(): string {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return crypto.randomUUID();
+  }
+
+  const array = secureRandomBytes(MAGIC_16);
+  const dv = new DataView(array.buffer);
+
+  const b6 = dv.getUint8(MAGIC_6);
+  dv.setUint8(MAGIC_6, (b6 & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6);
+  const b8 = dv.getUint8(MAGIC_8);
+  dv.setUint8(MAGIC_8, (b8 & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT);
+
+  const hex = Array.from(array, (byte) =>
+    byte.toString(MAGIC_16).padStart(COUNT_PAIR, '0'),
+  ).join('');
+
+  return [
+    hex.substring(ZERO, MAGIC_8),
+    hex.substring(MAGIC_8, MAGIC_12),
+    hex.substring(MAGIC_12, MAGIC_16),
+    hex.substring(MAGIC_16, MAGIC_20),
+    hex.substring(MAGIC_20, MAGIC_32),
+  ].join('-');
+}
 
 /**
  * 安全令牌生成工具
@@ -41,63 +90,22 @@ const TOKEN_CONSTANTS = {
 export function generateSecureToken(
   length: number = TOKEN_CONSTANTS.DEFAULT_TOKEN_LENGTH,
 ): string {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    // Generate half the length in bytes since each byte becomes COUNT_PAIR hex characters
-    const byteLength = Math.ceil(length / TOKEN_CONSTANTS.HEX_RADIX);
-    const array = new Uint8Array(byteLength);
-    crypto.getRandomValues(array);
-    const hex = Array.from(array, (byte) =>
-      byte
-        .toString(TOKEN_CONSTANTS.HEX_BASE)
-        .padStart(TOKEN_CONSTANTS.HEX_PAD_LENGTH, '0'),
-    ).join('');
-    return hex.substring(ZERO, length);
-  }
-
-  // Fallback for environments without crypto.getRandomValues
-  const chars =
-    'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let result = '';
-  for (let i = ZERO; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return result;
+  // Generate half the length in bytes since each byte becomes COUNT_PAIR hex characters
+  const byteLength = Math.ceil(length / TOKEN_CONSTANTS.HEX_RADIX);
+  const array = secureRandomBytes(byteLength);
+  const hex = Array.from(array, (byte) =>
+    byte
+      .toString(TOKEN_CONSTANTS.HEX_BASE)
+      .padStart(TOKEN_CONSTANTS.HEX_PAD_LENGTH, '0'),
+  ).join('');
+  return hex.substring(ZERO, length);
 }
 
 /**
  * Generate a secure random UUID v4
  */
 export function generateUUID(): string {
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(MAGIC_16);
-    crypto.getRandomValues(array);
-    const dv = new DataView(array.buffer);
-
-    // Set version (4) and variant bits via DataView to avoid dynamic indexing
-    const b6 = dv.getUint8(MAGIC_6);
-    dv.setUint8(MAGIC_6, (b6 & HEX_MASK_LOW_NIBBLE) | HEX_MASK_BIT_6);
-    const b8 = dv.getUint8(MAGIC_8);
-    dv.setUint8(MAGIC_8, (b8 & HEX_MASK_6_BITS) | HEX_MASK_HIGH_BIT);
-
-    const hex = Array.from(array, (byte) =>
-      byte.toString(MAGIC_16).padStart(COUNT_PAIR, '0'),
-    ).join('');
-
-    return [
-      hex.substring(ZERO, MAGIC_8),
-      hex.substring(MAGIC_8, MAGIC_12),
-      hex.substring(MAGIC_12, MAGIC_16),
-      hex.substring(MAGIC_16, MAGIC_20),
-      hex.substring(MAGIC_20, MAGIC_32),
-    ].join('-');
-  }
-
-  // Fallback UUID generation
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * MAGIC_16) | 0;
-    const v = c === 'x' ? r : (r & MAGIC_HEX_3) | MAGIC_HEX_8;
-    return v.toString(MAGIC_16);
-  });
+  return secureRandomUUID();
 }
 
 /**
@@ -136,20 +144,11 @@ export function generateOTP(length: number = MAGIC_6): string {
   const digits = '0123456789';
   let result = '';
 
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-
-    const dv = new DataView(array.buffer);
-    for (let i = ZERO; i < length; i++) {
-      const idx = dv.getUint8(i) % digits.length >>> 0;
-      result += digits.charAt(idx);
-    }
-  } else {
-    // Fallback
-    for (let i = ZERO; i < length; i++) {
-      result += digits.charAt(Math.floor(Math.random() * digits.length));
-    }
+  const array = secureRandomBytes(length);
+  const dv = new DataView(array.buffer);
+  for (let i = ZERO; i < length; i++) {
+    const idx = dv.getUint8(i) % digits.length >>> 0;
+    result += digits.charAt(idx);
   }
 
   return result;
@@ -162,20 +161,11 @@ export function generateVerificationCode(length: number = MAGIC_8): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
   let result = '';
 
-  if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-    const array = new Uint8Array(length);
-    crypto.getRandomValues(array);
-
-    const dv = new DataView(array.buffer);
-    for (let i = ZERO; i < length; i++) {
-      const idx = dv.getUint8(i) % chars.length >>> 0;
-      result += chars.charAt(idx);
-    }
-  } else {
-    // Fallback
-    for (let i = ZERO; i < length; i++) {
-      result += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
+  const array = secureRandomBytes(length);
+  const dv = new DataView(array.buffer);
+  for (let i = ZERO; i < length; i++) {
+    const idx = dv.getUint8(i) % chars.length >>> 0;
+    result += chars.charAt(idx);
   }
 
   return result;

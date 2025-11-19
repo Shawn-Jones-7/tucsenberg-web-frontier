@@ -54,6 +54,7 @@ export class I18nMonitor {
       defaultConfig.remoteEndpoint = endpoint;
     }
 
+    // nosemgrep: object-injection-sink-spread-operator -- 配置源于受控默认值与受信任的局部配置
     this.config = { ...defaultConfig, ...config };
     this.eventCollector = new EventCollector(this.config);
   }
@@ -128,12 +129,14 @@ export class I18nMonitor {
   }
 
   updateConfig(newConfig: Partial<MonitoringConfig>): void {
+    // nosemgrep: object-injection-sink-spread-operator -- 仅合并受控配置对象
     this.config = { ...this.config, ...newConfig };
     this.eventCollector.updateConfig(this.config);
     // PerformanceMonitor 是静态类，无需更新配置
   }
 
   getConfig(): MonitoringConfig {
+    // nosemgrep: object-injection-sink-spread-operator -- 返回配置副本用于只读用途
     return { ...this.config };
   }
 

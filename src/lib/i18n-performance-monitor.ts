@@ -145,10 +145,12 @@ export class PerformanceMonitor {
   }
 
   getPerformanceData(): PerformanceData {
+    // nosemgrep: object-injection-sink-spread-operator -- 返回内部受控数据副本
     return { ...this.performanceData };
   }
 
   updateConfig(newConfig: Partial<MonitoringConfig>): void {
+    // nosemgrep: object-injection-sink-spread-operator -- 合并受控配置
     this.config = { ...this.config, ...newConfig };
   }
 

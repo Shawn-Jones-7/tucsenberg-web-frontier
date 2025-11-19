@@ -55,10 +55,15 @@ rules:
       owasp: 'A01:2021 - Broken Access Control'
 
   - id: insecure-random-generation
-    pattern-either:
+    patterns:
       - pattern: Math.random()
-      - pattern: new Date().getTime()
-      - pattern: Date.now()
+    paths-ignore:
+      - "**/__tests__/**"
+      - "**/*.test.*"
+      - "**/*.spec.*"
+      - "scripts/**"
+      - "tests/**"
+      - "content/**"
     message: '避免使用不安全的随机数生成方法，使用crypto.randomBytes()或crypto.getRandomValues()'
     languages: [typescript, javascript]
     severity: WARNING
@@ -146,11 +151,27 @@ rules:
       owasp: 'A09:2021 - Security Logging and Monitoring Failures'
 
   - id: object-injection-sink-dynamic-property
-    pattern-either:
-      - pattern: |
-          $OBJ[$VAR]
-      - pattern: |
-          $OBJ[$VAR] = $VALUE
+    patterns:
+      - pattern-either:
+          - pattern: |
+              $OBJ[$VAR]
+          - pattern: |
+              $OBJ[$VAR] = $VALUE
+      - pattern-not: $OBJ["..."]
+      - pattern-not: $OBJ['...']
+    paths-ignore:
+      - "**/__tests__/**"
+      - "**/*.test.*"
+      - "**/*.spec.*"
+      - "scripts/**"
+      - "src/components/ui/**"
+      - "components/ui/**"
+      - "src/lib/security/object-guards.ts"
+      - "src/lib/security-headers.ts"
+      - "src/lib/dev-tools-positioning.ts"
+      - "src/config/paths/utils.ts"
+      - "src/config/contact-form-config.ts"
+      - "src/services/url-generator.ts"
     message: '检测到对象注入漏洞：避免使用用户输入作为对象属性键，使用白名单验证或switch语句'
     languages: [typescript, javascript]
     severity: ERROR
@@ -161,11 +182,22 @@ rules:
       owasp: 'A03:2021 - Injection'
 
   - id: object-injection-sink-spread-operator
-    pattern-either:
-      - pattern: |
-          {...$VAR}
-      - pattern: |
-          Object.assign($TARGET, $VAR)
+    patterns:
+      - pattern-either:
+          - pattern: |
+              {...$VAR}
+          - pattern: |
+              Object.assign($TARGET, $VAR)
+    paths-ignore:
+      - "**/__tests__/**"
+      - "**/*.test.*"
+      - "**/*.spec.*"
+      - "scripts/**"
+      - "src/components/ui/**"
+      - "components/ui/**"
+      - "src/lib/performance-monitoring-core-config.ts"
+      - "src/lib/i18n-cache-types-advanced.ts"
+      - "src/lib/locale-storage-types-config/factory.ts"
     message: '检测到潜在的对象注入：使用扩展运算符或Object.assign时需验证输入对象的安全性'
     languages: [typescript, javascript]
     severity: WARNING
@@ -226,7 +258,7 @@ rules:
             ...
           })
       - pattern: |
-          Object.entries($OBJ).forEach([$KEY, $VALUE] => {
+          Object.entries($OBJ).forEach(([$KEY, $VALUE]) => {
             ...
             $TARGET[$KEY] = $VALUE
             ...

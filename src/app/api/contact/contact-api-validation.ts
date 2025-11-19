@@ -250,9 +250,13 @@ export async function getContactFormStats() {
       recentContacts: ZERO,
     };
 
-    const normalizedStats = stats
-      ? { ...defaultStats, ...stats }
-      : defaultStats;
+    const normalizedStats = {
+      totalContacts: stats?.totalContacts ?? defaultStats.totalContacts,
+      newContacts: stats?.newContacts ?? defaultStats.newContacts,
+      completedContacts:
+        stats?.completedContacts ?? defaultStats.completedContacts,
+      recentContacts: stats?.recentContacts ?? defaultStats.recentContacts,
+    };
 
     return {
       success: true,
@@ -292,13 +296,17 @@ export function sanitizeFormData(
   data: ContactFormWithToken,
 ): ContactFormWithToken {
   return {
-    ...data,
+    turnstileToken: data.turnstileToken.trim(),
+    submittedAt: data.submittedAt,
     firstName: data.firstName.trim(),
     lastName: data.lastName.trim(),
     email: data.email.toLowerCase().trim(),
     company: data.company?.trim() || '',
-    phone: data.phone?.trim() || '',
-    subject: data.subject?.trim() || '',
+    phone: data.phone?.trim() || undefined,
+    subject: data.subject?.trim() || undefined,
     message: data.message.trim(),
+    acceptPrivacy: data.acceptPrivacy,
+    marketingConsent: data.marketingConsent ?? false,
+    website: data.website?.trim() || undefined,
   };
 }

@@ -208,3 +208,9 @@
 - 至少完成一组 Cache Components PoC，并获得可量化的性能或体验收益指标。  
 
 > **总体评价**：在当前 Next.js 与 next-intl 生态状态下，采用「Next 16 + Turbopack + 局部 Cache Components PoC」的渐进式方案，在风险可控的前提下最大化了升级收益，是适合本项目的现实选择。
+
+### 4.4 Codemod 执行策略补充
+
+- 优先策略：先 **dry-run/评估** 官方 `npx @next/codemod@canary upgrade latest`，确认不会对自定义 webpack/中间件/i18n 造成侵入式改动，再决定是否正式执行。  
+- 评估关注点：middleware→proxy 自动迁移、去除 `unstable_*` / `experimental_ppr`、lint 工具链变更、Turbopack 配置迁移。  
+- 记录要求：在 shrimp 任务 7、9 对应文档中标记 codemod 的执行状态（未跑/已 dry-run/已正式执行）、原因和影响；若因风险暂不执行，需说明理由与后续跟进。  

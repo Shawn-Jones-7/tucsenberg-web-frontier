@@ -6,6 +6,8 @@ import {
   ZERO,
 } from '@/constants';
 
+const SAFE_LOCALE_REGEX = /^[A-Za-z0-9._-]+$/;
+
 interface I18nEvent {
   type: 'locale_change' | 'translation_error' | 'fallback_used' | 'load_time';
   locale: string;
@@ -142,15 +144,22 @@ export class I18nAnalytics {
         event.timestamp <= timeRange.end.getTime(),
     );
 
-    const localeUsage: Record<string, number> = {};
+    const localeUsageMap = new Map<string, number>();
     let translationErrors = ZERO;
     let fallbackUsage = ZERO;
     const loadTimes: number[] = [];
+    const isSafeLocaleKey = (key: string) =>
+      key !== '' && !key.startsWith('__') && SAFE_LOCALE_REGEX.test(key);
+    const incrementLocale = (key: string) => {
+      if (!isSafeLocaleKey(key)) return;
+      const current = localeUsageMap.get(key) ?? ZERO;
+      localeUsageMap.set(key, current + ONE);
+    };
 
     for (const event of filteredEvents) {
       switch (event.type) {
         case 'locale_change':
-          localeUsage[event.locale] = (localeUsage[event.locale] || ZERO) + ONE;
+          incrementLocale(event.locale);
           break;
         case 'translation_error':
           translationErrors += ONE;
@@ -174,7 +183,7 @@ export class I18nAnalytics {
         : ZERO;
 
     return {
-      localeUsage,
+      localeUsage: Object.fromEntries(localeUsageMap),
       translationErrors,
       fallbackUsage,
       averageLoadTime,
@@ -253,7 +262,24 @@ export class I18nAnalytics {
   }
 
   private generateSessionId(): string {
-    return `session_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `session_${crypto.randomUUID().replaceAll('-', '').substring(0, 12)}`;
+    }
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const buffer = new Uint32Array(3);
+      crypto.getRandomValues(buffer);
+      const randomPart = Array.from(buffer, (value) =>
+        value.toString(36).padStart(2, '0'),
+      ).join('');
+      return `session_${Date.now()}_${randomPart.substring(0, 12)}`;
+    }
+    throw new Error('Secure random generator unavailable for session id');
   }
 
   private initializeTracking(): void {
@@ -318,13 +344,19 @@ export class I18nAnalytics {
   private calculateLocaleDistribution(
     events: I18nEvent[],
   ): Record<string, number> {
-    const distribution: Record<string, number> = {};
+    const distributionMap = new Map<string, number>();
+    const isSafeLocaleKey = (key: string) =>
+      key !== '' && !key.startsWith('__') && SAFE_LOCALE_REGEX.test(key);
 
     for (const event of events) {
-      distribution[event.locale] = (distribution[event.locale] || ZERO) + ONE;
+      if (!isSafeLocaleKey(event.locale)) {
+        continue;
+      }
+      const current = distributionMap.get(event.locale) ?? ZERO;
+      distributionMap.set(event.locale, current + ONE);
     }
 
-    return distribution;
+    return Object.fromEntries(distributionMap);
   }
 
   private calculateErrorRate(events: I18nEvent[]): number {

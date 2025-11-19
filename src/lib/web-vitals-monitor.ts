@@ -286,18 +286,33 @@ export class WebVitalsMonitor {
       cls: this.metrics.cls || ZERO,
       fid: this.metrics.fid || ZERO,
       lcp: this.metrics.lcp || ZERO,
-      ...(this.metrics.fcp !== undefined && { fcp: this.metrics.fcp }),
-      ...(this.metrics.ttfb !== undefined && { ttfb: this.metrics.ttfb }),
-      ...(this.metrics.inp !== undefined && { inp: this.metrics.inp }),
     };
 
-    const ratings = {
+    if (this.metrics.fcp !== undefined) {
+      metrics.fcp = this.metrics.fcp;
+    }
+
+    if (this.metrics.ttfb !== undefined) {
+      metrics.ttfb = this.metrics.ttfb;
+    }
+
+    if (this.metrics.inp !== undefined) {
+      metrics.inp = this.metrics.inp;
+    }
+
+    const ratings: Record<string, MetricRating> = {
       cls: this.getMetricRating('CLS', metrics.cls),
       fid: this.getMetricRating('FID', metrics.fid),
       lcp: this.getMetricRating('LCP', metrics.lcp),
-      ...(metrics.fcp && { fcp: this.getMetricRating('FCP', metrics.fcp) }),
-      ...(metrics.ttfb && { ttfb: this.getMetricRating('TTFB', metrics.ttfb) }),
     };
+
+    if (metrics.fcp) {
+      ratings.fcp = this.getMetricRating('FCP', metrics.fcp);
+    }
+
+    if (metrics.ttfb) {
+      ratings.ttfb = this.getMetricRating('TTFB', metrics.ttfb);
+    }
 
     // 计算总体性能评分
     const ratingValues = Object.values(ratings);

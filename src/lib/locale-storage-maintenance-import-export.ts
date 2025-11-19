@@ -109,14 +109,20 @@ export class LocaleImportExportManager {
       // 导入检测历史数据
       importedItems += this.importHistory(data, errors);
 
-      return {
+      const result: StorageOperationResult<{
+        importedItems: number;
+        errors: string[];
+      }> = {
         success: errors.length === ZERO,
         timestamp: Date.now(),
         data: { importedItems, errors },
-        ...(errors.length > ZERO && {
-          error: `导入完成，但有 ${errors.length} 个错误`,
-        }),
       };
+
+      if (errors.length > ZERO) {
+        result.error = `导入完成，但有 ${errors.length} 个错误`;
+      }
+
+      return result;
     } catch (error) {
       return {
         success: false,

@@ -8,6 +8,7 @@ import { logger } from '@/lib/logger';
 import { getSecurityHeaders, type SecurityHeader } from '@/config/security';
 import { ZERO } from '@/constants';
 
+// nosemgrep: object-injection-sink-dynamic-property -- 本文件的 header 键均来自常量或受控白名单，未直接使用外部输入作为属性名
 const HEADER_KEYS = {
   contentSecurityPolicy: 'Content-Security-Policy',
   strictTransportSecurity: 'Strict-Transport-Security',
@@ -52,9 +53,12 @@ export function getCORSHeaders(origin?: string): Record<string, string> {
   };
 
   if (origin && allowedOrigins.includes(origin)) {
+    // nosemgrep: object-injection-sink-dynamic-property -- origin 已在白名单校验后使用
     headers['Access-Control-Allow-Origin'] = origin;
+    // nosemgrep: object-injection-sink-dynamic-property -- origin 已在白名单校验后使用
     headers['Access-Control-Allow-Credentials'] = 'true';
   } else if (process.env.NODE_ENV === 'development') {
+    // nosemgrep: object-injection-sink-dynamic-property -- 开发环境允许通配符
     headers['Access-Control-Allow-Origin'] = '*';
   }
 
@@ -145,6 +149,31 @@ export interface SecurityMiddlewareConfig {
   frameOptionsValue?: 'DENY' | 'SAMEORIGIN';
 }
 
+const resolveSecurityMiddlewareConfig = (
+  config: Partial<SecurityMiddlewareConfig>,
+  defaults: SecurityMiddlewareConfig,
+): SecurityMiddlewareConfig => {
+  const frameOptionsValue: NonNullable<
+    SecurityMiddlewareConfig['frameOptionsValue']
+  > = (config.frameOptionsValue ?? defaults.frameOptionsValue)!;
+
+  return {
+    enableCSP: config.enableCSP ?? defaults.enableCSP,
+    enableHSTS: config.enableHSTS ?? defaults.enableHSTS,
+    enableXSSProtection:
+      config.enableXSSProtection ?? defaults.enableXSSProtection,
+    enableFrameOptions:
+      config.enableFrameOptions ?? defaults.enableFrameOptions,
+    enableContentTypeOptions:
+      config.enableContentTypeOptions ?? defaults.enableContentTypeOptions,
+    enableReferrerPolicy:
+      config.enableReferrerPolicy ?? defaults.enableReferrerPolicy,
+    enablePermissionsPolicy:
+      config.enablePermissionsPolicy ?? defaults.enablePermissionsPolicy,
+    frameOptionsValue,
+  };
+};
+
 /**
  * Get security middleware headers
  */
@@ -162,37 +191,44 @@ export function getSecurityMiddlewareHeaders(
     enablePermissionsPolicy: true,
     frameOptionsValue: 'DENY',
   };
-
-  const finalConfig = { ...defaultConfig, ...config };
+  const finalConfig = resolveSecurityMiddlewareConfig(config, defaultConfig);
   const headers = toHeaderRecord(getSecurityHeaders(nonce));
 
   if (!finalConfig.enableCSP) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.contentSecurityPolicy];
   }
 
   if (!finalConfig.enableHSTS) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.strictTransportSecurity];
   }
 
   if (!finalConfig.enableXSSProtection) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.xssProtection];
   }
 
   if (!finalConfig.enableFrameOptions) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.frameOptions];
   } else if (finalConfig.frameOptionsValue) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，值来源受控配置
     headers[HEADER_KEYS.frameOptions] = finalConfig.frameOptionsValue;
   }
 
   if (!finalConfig.enableContentTypeOptions) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.contentTypeOptions];
   }
 
   if (!finalConfig.enableReferrerPolicy) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.referrerPolicy];
   }
 
   if (!finalConfig.enablePermissionsPolicy) {
+    // nosemgrep: object-injection-sink-dynamic-property -- 访问常量键，非外部输入
     delete headers[HEADER_KEYS.permissionsPolicy];
   }
 

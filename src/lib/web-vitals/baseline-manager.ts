@@ -142,7 +142,25 @@ export class PerformanceBaselineManager {
    * 生成唯一ID
    */
   private generateId(): string {
-    return `baseline-${Date.now()}-${Math.random().toString(WEB_VITALS_CONSTANTS.HASH_BASE).substr(WEB_VITALS_CONSTANTS.ID_SUBSTR_START, WEB_VITALS_CONSTANTS.ID_RANDOM_LENGTH)}`;
+    const timestamp = Date.now();
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `baseline-${timestamp}-${crypto.randomUUID().replaceAll('-', '')}`;
+    }
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      const randomPart = Array.from(buf, (value) =>
+        value.toString(WEB_VITALS_CONSTANTS.HASH_BASE).padStart(6, '0'),
+      ).join('');
+      return `baseline-${timestamp}-${randomPart.substring(0, WEB_VITALS_CONSTANTS.ID_RANDOM_LENGTH)}`;
+    }
+    throw new Error('Secure random generator unavailable for baseline id');
   }
 
   /**

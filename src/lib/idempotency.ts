@@ -194,10 +194,28 @@ export function withIdempotency<T>(
  * ```
  */
 export function generateIdempotencyKey(): string {
-  // 使用时间戳 + 随机数生成唯一键
   const timestamp = Date.now();
-  const random = Math.random().toString(36).substring(2, 15);
-  return `${timestamp}-${random}`;
+
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return `${timestamp}-${crypto.randomUUID().replaceAll('-', '')}`;
+  }
+
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buf = new Uint32Array(3);
+    crypto.getRandomValues(buf);
+    const random = Array.from(buf, (value) =>
+      value.toString(36).padStart(4, '0'),
+    ).join('');
+    return `${timestamp}-${random}`;
+  }
+
+  throw new Error('Secure random generator unavailable for idempotency key');
 }
 
 /**

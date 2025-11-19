@@ -102,14 +102,23 @@ export function getUsagePatterns(): UsagePatterns {
     averageSessionDuration,
   );
 
+  const { operationCounts } = accessStats;
+  const operationDistribution = {
+    read: operationCounts.read,
+    write: operationCounts.write,
+    update: operationCounts.update,
+    remove: operationCounts.remove,
+    delete: operationCounts.delete,
+    clear: operationCounts.clear,
+    list: operationCounts.list,
+    other: operationCounts.other,
+  } as const;
+
   return {
     mostAccessedKeys,
     leastAccessedKeys,
     peakUsageHours,
-    operationDistribution: { ...accessStats.operationCounts } as Record<
-      string,
-      number
-    >,
+    operationDistribution,
     averageSessionDuration,
     userBehaviorInsights,
   };

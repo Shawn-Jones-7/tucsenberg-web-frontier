@@ -168,13 +168,24 @@ export class AlertSystemSender {
    */
   private generateAlertId(): string {
     const timestamp = Date.now();
-    const randomPart = Math.random()
-      .toString(ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE)
-      .substr(
-        ALERT_SYSTEM_CONSTANTS.RANDOM_ID_START,
-        ALERT_SYSTEM_CONSTANTS.RANDOM_ID_LENGTH,
-      );
-    return `alert-${timestamp}-${randomPart}`;
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.randomUUID === 'function'
+    ) {
+      return `alert-${timestamp}-${crypto.randomUUID().replaceAll('-', '')}`;
+    }
+    if (
+      typeof crypto !== 'undefined' &&
+      typeof crypto.getRandomValues === 'function'
+    ) {
+      const buf = new Uint32Array(2);
+      crypto.getRandomValues(buf);
+      const randomPart = Array.from(buf, (value) =>
+        value.toString(ALERT_SYSTEM_CONSTANTS.RANDOM_ID_BASE).padStart(6, '0'),
+      ).join('');
+      return `alert-${timestamp}-${randomPart.substring(0, ALERT_SYSTEM_CONSTANTS.RANDOM_ID_LENGTH)}`;
+    }
+    throw new Error('Secure random generator unavailable for alert id');
   }
 
   /**

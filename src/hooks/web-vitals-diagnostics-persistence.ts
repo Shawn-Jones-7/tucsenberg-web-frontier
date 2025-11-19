@@ -86,14 +86,13 @@ export function useWebVitalsInitialization(
   // 返回初始化数据，让调用者决定如何使用
   const initialData = useMemo(() => {
     const historicalReports = loadHistoricalData();
+    const lastReport = historicalReports.at(-1);
 
     // 检查是否需要刷新数据
     const shouldRefresh =
       historicalReports.length === 0 ||
       (historicalReports.length > 0 &&
-        Date.now() -
-          (historicalReports[historicalReports.length - 1]?.timestamp || 0) >
-          MAGIC_300000); // COUNT_FIVE分钟
+        Date.now() - (lastReport?.timestamp || 0) > MAGIC_300000); // COUNT_FIVE分钟
 
     return {
       historicalReports,
@@ -266,7 +265,7 @@ export function compressHistoricalData(
 
   const compressed: DiagnosticReport[] = [];
   for (let i = 0; i < reports.length; i += step) {
-    const report = reports[Math.floor(i)];
+    const report = reports.at(Math.floor(i));
     if (report) {
       compressed.push(report);
     }

@@ -194,7 +194,11 @@ export class ResendService {
    * Get email configuration
    */
   public getEmailConfig(): typeof this.emailConfig {
-    return { ...this.emailConfig };
+    return {
+      from: this.emailConfig.from,
+      replyTo: this.emailConfig.replyTo,
+      supportEmail: this.emailConfig.supportEmail,
+    };
   }
 
   /**

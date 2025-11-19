@@ -101,16 +101,38 @@ export async function sendWebhookNotification(
 /**
  * 存储预警到本地存储
  */
+function generateAlertId(prefix: string): string {
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return `${prefix}-${crypto.randomUUID().replaceAll('-', '')}`;
+  }
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buf = new Uint32Array(2);
+    crypto.getRandomValues(buf);
+    const randomPart = Array.from(buf, (value) =>
+      value.toString(ALERT_ID_CONSTANTS.BASE_36).padStart(6, '0'),
+    ).join('');
+    return `${prefix}-${randomPart.substring(0, ALERT_ID_CONSTANTS.SUBSTR_LENGTH)}`;
+  }
+  throw new Error('Secure random generator unavailable for alert id');
+}
+
 export function storeAlerts(alerts: AlertData[]): void {
   if (typeof localStorage === 'undefined') return;
 
   try {
+    const batchTimestamp = Date.now();
     const existingAlerts = JSON.parse(
       localStorage.getItem('performance_alerts') || '[]',
     );
     const newAlerts = alerts.map((alert) => ({
       ...alert,
-      id: `alert-${Date.now()}-${Math.random().toString(ALERT_ID_CONSTANTS.BASE_36).substr(ALERT_ID_CONSTANTS.SUBSTR_START, ALERT_ID_CONSTANTS.SUBSTR_LENGTH)}`,
+      id: generateAlertId(`alert-${batchTimestamp}`),
       timestamp: Date.now(),
     }));
 

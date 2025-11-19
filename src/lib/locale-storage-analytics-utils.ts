@@ -437,15 +437,21 @@ function compressAccessLog(beforeSize: number): boolean {
   );
   AccessLogger.clearAccessLog();
   recentAccessLog.forEach((entry) => {
-    AccessLogger.logAccess({
+    const payload: Parameters<typeof AccessLogger.logAccess>[0] = {
       key: entry.key,
       operation: entry.operation,
       success: entry.success,
-      ...(entry.responseTime !== undefined && {
-        responseTime: entry.responseTime,
-      }),
-      ...(entry.error !== undefined && { error: entry.error }),
-    });
+    };
+
+    if (entry.responseTime !== undefined) {
+      payload.responseTime = entry.responseTime;
+    }
+
+    if (entry.error !== undefined) {
+      payload.error = entry.error;
+    }
+
+    AccessLogger.logAccess(payload);
   });
   return true;
 }
@@ -456,12 +462,20 @@ function compressErrorLog(beforeSize: number): boolean {
   const recentErrorLog = beforeErrorLog.slice(ZERO, 500);
   ErrorLogger.clearErrorLog();
   recentErrorLog.forEach((entry) => {
-    ErrorLogger.logError({
+    const payload: Parameters<typeof ErrorLogger.logError>[0] = {
       error: entry.error,
-      ...(entry.context !== undefined && { context: entry.context }),
       severity: entry.severity,
-      ...(entry.stack !== undefined && { stack: entry.stack }),
-    });
+    };
+
+    if (entry.context !== undefined) {
+      payload.context = entry.context;
+    }
+
+    if (entry.stack !== undefined) {
+      payload.stack = entry.stack;
+    }
+
+    ErrorLogger.logError(payload);
   });
   return true;
 }
@@ -537,5 +551,22 @@ export function formatPercentage(
  * Generate unique ID
  */
 export function generateUniqueId(): string {
-  return `analytics_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.randomUUID === 'function'
+  ) {
+    return `analytics_${crypto.randomUUID().replaceAll('-', '')}`;
+  }
+  if (
+    typeof crypto !== 'undefined' &&
+    typeof crypto.getRandomValues === 'function'
+  ) {
+    const buf = new Uint32Array(3);
+    crypto.getRandomValues(buf);
+    const randomPart = Array.from(buf, (value) =>
+      value.toString(36).padStart(4, '0'),
+    ).join('');
+    return `analytics_${Date.now()}_${randomPart.substring(0, 12)}`;
+  }
+  throw new Error('Secure random generator unavailable for analytics id');
 }

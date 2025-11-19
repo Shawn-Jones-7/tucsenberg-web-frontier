@@ -123,10 +123,26 @@ export function addDetectionRecord(params: {
       HistoryCacheManager.clearCache();
     }
 
-    return {
-      ...result,
+    const response: StorageOperationResult<LocaleDetectionHistory> = {
+      success: result.success,
+      timestamp: result.timestamp ?? Date.now(),
       responseTime: Date.now() - startTime,
     };
+
+    if (result.data) {
+      response.data = result.data;
+    }
+    if (result.error) {
+      response.error = result.error;
+    }
+    if (result.source) {
+      response.source = result.source;
+    }
+    if (result.metadata) {
+      response.metadata = result.metadata;
+    }
+
+    return response;
   } catch (error) {
     return {
       success: false,

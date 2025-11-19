@@ -148,42 +148,63 @@ function buildWhatsAppMessage(
   throw new Error(`Unsupported message type: ${type}`);
 }
 
-export async function POST(request: NextRequest) {
-  try {
-    const body = await request.json();
+interface ParsedRequest {
+  to: string;
+  type: string;
+  content: Record<string, unknown>;
+}
 
-    // 验证请求体
-    const validationResult = SendMessageSchema.safeParse(body);
-    if (!validationResult.success) {
-      return NextResponse.json(
+async function parseSendMessageRequest(
+  request: NextRequest,
+): Promise<{ error?: NextResponse; data?: ParsedRequest }> {
+  const body = await request.json();
+  const validationResult = SendMessageSchema.safeParse(body);
+  if (!validationResult.success) {
+    return {
+      error: NextResponse.json(
         {
           _error: 'Invalid request body',
           details: validationResult.error.issues,
         },
         { status: 400 },
-      );
+      ),
+    };
+  }
+
+  const { to, type, content } = validationResult.data;
+  const contentValidationError = validateMessageContent(type, content);
+  if (contentValidationError) {
+    return { error: contentValidationError };
+  }
+
+  return { data: { to, type, content } };
+}
+
+function extractMessageId(
+  result: Awaited<ReturnType<typeof sendWhatsAppMessage>>,
+) {
+  const messages = Array.isArray(result.data?.messages)
+    ? result.data.messages
+    : [];
+  return messages.at(0)?.id;
+}
+
+export async function POST(request: NextRequest) {
+  try {
+    const parsed = await parseSendMessageRequest(request);
+    if (parsed.error) {
+      return parsed.error;
     }
+    const { to, type, content } = parsed.data!;
 
-    const { to, type, content } = validationResult.data;
-
-    // 验证消息内容
-    const contentValidationError = validateMessageContent(type, content);
-    if (contentValidationError) {
-      return contentValidationError;
-    }
-
-    // 构建消息对象
     const message = buildWhatsAppMessage(to, type, content);
-
-    // 发送消息
     const result = await sendWhatsAppMessage(message);
 
-    // 提取消息ID，处理不同的响应格式
     if (!result.success) {
       throw new Error(result.error || 'Failed to send message');
     }
 
-    const messageId = result.data?.messages?.[0]?.id;
+    const messageId = extractMessageId(result);
 
     return NextResponse.json(
       {

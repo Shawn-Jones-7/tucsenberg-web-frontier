@@ -32,6 +32,8 @@ pre-commit:
             echo "请使用命名导出：export { specificExport } from './module'"; exit 1; fi
         done
         for f in $FILES; do
+          # 例外：src/config/security.ts 被 next.config.ts 引用，必须使用相对路径
+          if [ "$f" = "src/config/security.ts" ]; then continue; fi
           if git diff --cached -- "$f" | grep -qE "^\+.*from ['\"']\./|^\+.*from ['\"']\.\./"; then
             echo "❌ 发现新增相对路径导入: $f"; echo "🚫 请使用 @/ 路径别名替代相对路径导入";
             echo "例如：import { something } from '@/lib/module'"; exit 1; fi

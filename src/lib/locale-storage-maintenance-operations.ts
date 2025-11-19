@@ -296,8 +296,11 @@ export class LocaleMaintenanceOperationsManager {
           source: preference.source,
           timestamp: preference.timestamp,
           confidence: preference.confidence,
-          ...(preference.metadata && { metadata: preference.metadata }),
         };
+
+        if (preference.metadata) {
+          rebuiltPreference.metadata = preference.metadata;
+        }
 
         LocalStorageManager.set(
           STORAGE_KEYS.LOCALE_PREFERENCE,

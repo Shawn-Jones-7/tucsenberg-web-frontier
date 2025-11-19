@@ -10,7 +10,6 @@ import type {
 } from '@/lib/i18n-monitoring-types';
 import { logger } from '@/lib/logger';
 import { ZERO } from '@/constants';
-import { MONITORING_CONFIG } from '@/constants/i18n-constants';
 
 // 事件收集器
 export class EventCollector {
@@ -28,6 +27,7 @@ export class EventCollector {
   addEvent(event: Omit<MonitoringEvent, 'id' | 'timestamp'>): void {
     if (!this.config.enabled) return;
 
+    // nosemgrep: object-injection-sink-spread-operator -- 事件字段来源受控输入，附加受信任的元数据
     const fullEvent: MonitoringEvent = {
       ...event,
       id: this.generateEventId(),
@@ -61,12 +61,27 @@ export class EventCollector {
   }
 
   private generateEventId(): string {
-    return `${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(
-        MONITORING_CONFIG.ERROR_SAMPLE_RATE / 50,
-        MONITORING_CONFIG.PERFORMANCE_SAMPLE_RATE - 1,
-      )}`;
+    const entropy = (() => {
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.randomUUID === 'function'
+      ) {
+        return crypto.randomUUID().replaceAll('-', '');
+      }
+      if (
+        typeof crypto !== 'undefined' &&
+        typeof crypto.getRandomValues === 'function'
+      ) {
+        const buf = new Uint32Array(2);
+        crypto.getRandomValues(buf);
+        return Array.from(buf, (value) =>
+          value.toString(36).padStart(6, '0'),
+        ).join('');
+      }
+      throw new Error('Secure random generator unavailable for event id');
+    })();
+
+    return `${Date.now()}-${entropy.substring(0, 12)}`;
   }
 
   private logToConsole(event: MonitoringEvent): void {
@@ -137,6 +152,7 @@ export class EventCollector {
   }
 
   getEvents(): MonitoringEvent[] {
+    // nosemgrep: object-injection-sink-spread-operator -- 返回内部受控数组的副本
     return [...this.events];
   }
 
@@ -145,10 +161,12 @@ export class EventCollector {
   }
 
   updateConfig(newConfig: Partial<MonitoringConfig>): void {
+    // nosemgrep: object-injection-sink-spread-operator -- 合并受控配置
     this.config = { ...this.config, ...newConfig };
   }
 
   getConfig(): MonitoringConfig {
+    // nosemgrep: object-injection-sink-spread-operator -- 返回配置副本用于只读
     return { ...this.config };
   }
 }

@@ -184,6 +184,7 @@ export class I18nMetricsCollector implements MetricsCollector {
 
   // 获取当前指标
   getMetrics(): I18nMetrics {
+    // nosemgrep: object-injection-sink-spread-operator -- 返回内部受控指标副本
     return { ...this.metrics };
   }
 

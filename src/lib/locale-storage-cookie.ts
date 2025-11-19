@@ -157,11 +157,29 @@ export class CookieManager {
           ANIMATION_DURATION_VERY_SLOW,
     );
 
-    const cookieOptions = {
-      ...COOKIE_CONFIG,
-      ...options,
+    type MutableCookieOptions = {
+      secure?: boolean;
+      sameSite?: 'lax' | 'strict' | 'none';
+      path?: string;
+      maxAge?: number;
+      expires: string;
+    };
+
+    const cookieOptions: MutableCookieOptions = {
+      secure: COOKIE_CONFIG.secure,
+      sameSite: COOKIE_CONFIG.sameSite,
+      path: COOKIE_CONFIG.path,
+      maxAge: COOKIE_CONFIG.maxAge,
       expires: expiryDate.toUTCString(),
-    } as const;
+    };
+
+    if (options) {
+      if (options.secure !== undefined) cookieOptions.secure = options.secure;
+      if (options.sameSite !== undefined)
+        cookieOptions.sameSite = options.sameSite;
+      if (options.path !== undefined) cookieOptions.path = options.path;
+      if (options.maxAge !== undefined) cookieOptions.maxAge = options.maxAge;
+    }
 
     const optionsStr = Object.entries(cookieOptions)
       .map(([key, val]) => {
