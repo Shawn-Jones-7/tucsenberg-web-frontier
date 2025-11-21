@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { ContactFormContainer } from '@/components/forms/contact-form-container';
 
 /**

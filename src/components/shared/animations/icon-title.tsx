@@ -2,7 +2,6 @@
  * 图标和标题动画组件
  */
 
-import React from 'react';
 import { Clock, Zap } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';

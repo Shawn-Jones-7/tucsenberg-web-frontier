@@ -1,4 +1,3 @@
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 // 导入被测试的组件（静态变体，避免在测试中直接渲染 Server Component）

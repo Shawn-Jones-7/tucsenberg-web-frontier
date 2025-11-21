@@ -5,7 +5,6 @@
  * 注意：高级测试场景请参考 enhanced-locale-switcher-language-switching.test.tsx
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

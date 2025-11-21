@@ -1,4 +1,3 @@
-import React from 'react';
 import { vi } from 'vitest';
 
 // Use vi.hoisted to ensure mocks are set up before imports

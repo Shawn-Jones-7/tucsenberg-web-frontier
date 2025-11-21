@@ -12,7 +12,6 @@
  * - 样式应用
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { Moon, Sun } from 'lucide-react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

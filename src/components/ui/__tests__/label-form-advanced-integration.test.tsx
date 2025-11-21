@@ -12,7 +12,6 @@
  * 基础功能测试请参考 label-form-advanced-integration-core.test.tsx
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';

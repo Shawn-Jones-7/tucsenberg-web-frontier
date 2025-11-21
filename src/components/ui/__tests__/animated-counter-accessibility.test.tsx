@@ -48,6 +48,11 @@ describe('AnimatedCounter - Accessibility & Edge Cases', () => {
         dispatchEvent: vi.fn(),
       })),
     });
+
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
   });
 
   describe('Accessibility', () => {

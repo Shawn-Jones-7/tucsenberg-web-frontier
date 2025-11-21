@@ -14,7 +14,6 @@
  * - label-event-handling-basic.test.tsx - 基本事件处理功能测试
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

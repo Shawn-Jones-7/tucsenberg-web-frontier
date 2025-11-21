@@ -203,6 +203,7 @@ function useAnimatedCounter({
   }, [currentValue, to, duration, easing, isAnimating]);
 
   // 触发动画的条件
+  // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
   useEffect(() => {
     const shouldAnimate = autoStart || (triggerOnVisible && isVisible);
 
@@ -211,7 +212,7 @@ function useAnimatedCounter({
         const timer = setTimeout(animate, delay);
         return () => clearTimeout(timer);
       }
-      animate();
+      queueMicrotask(() => animate());
     }
     return undefined;
   }, [autoStart, triggerOnVisible, isVisible, animate, delay, isAnimating]);

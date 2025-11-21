@@ -250,6 +250,7 @@ export function useIntersectionObserverWithDelay(
   } = useIntersectionObserver(options);
   const [isVisible, setIsVisible] = useState(false);
 
+  // ✅ Fixed: Only update state when value actually changes, use queueMicrotask to avoid synchronous setState
   useEffect(() => {
     if (baseIsVisible && delay > ZERO) {
       const timer = setTimeout(() => {
@@ -257,14 +258,14 @@ export function useIntersectionObserverWithDelay(
       }, delay);
 
       return () => clearTimeout(timer);
-    } else if (baseIsVisible) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
+    } else if (baseIsVisible && !isVisible) {
+      queueMicrotask(() => setIsVisible(true));
+    } else if (!baseIsVisible && isVisible) {
+      queueMicrotask(() => setIsVisible(false));
     }
 
     return undefined;
-  }, [baseIsVisible, delay]);
+  }, [baseIsVisible, delay, isVisible]);
 
   return {
     ref,

@@ -187,15 +187,20 @@ export function useWebVitalsDiagnostics(): UseWebVitalsDiagnosticsReturn {
   const { clearHistory } = useDataManagement(setState);
 
   // 初始化历史数据
+  // ✅ Fixed: Extract initialization logic to reduce callback nesting
   useEffect(() => {
-    setState((prev) => ({
-      ...prev,
-      historicalReports: initialData.historicalReports,
-    }));
+    const initializeData = () => {
+      setState((prev) => ({
+        ...prev,
+        historicalReports: initialData.historicalReports,
+      }));
 
-    if (initialData.shouldRefresh && !isTestEnvironment) {
-      refreshDiagnostics();
-    }
+      if (initialData.shouldRefresh && !isTestEnvironment) {
+        refreshDiagnostics();
+      }
+    };
+
+    queueMicrotask(initializeData);
   }, [initialData, refreshDiagnostics, isTestEnvironment]);
 
   return createDiagnosticsReturn({

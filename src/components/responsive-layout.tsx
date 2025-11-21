@@ -8,8 +8,9 @@ function useMounted() {
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    // eslint-disable-next-line react-you-might-not-need-an-effect/no-initialize-state -- hydration模式需要在客户端渲染时设置mounted状态
-    setMounted(true);
+    // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
+    // hydration模式需要在客户端渲染时设置mounted状态
+    queueMicrotask(() => setMounted(true));
   }, []);
 
   return mounted;

@@ -10,6 +10,7 @@ import {
   SECONDS_PER_MINUTE,
 } from '@/constants';
 import { MB } from '@/constants/app-constants';
+import { useCurrentTime } from '@/hooks/use-current-time';
 import type {
   DiagnosticReport,
   WebVitalsDataPersistence,
@@ -83,22 +84,27 @@ export function useWebVitalsInitialization(
   loadHistoricalData: () => DiagnosticReport[],
   _refreshDiagnostics: () => void,
 ): WebVitalsInitializationData {
+  // ✅ Use custom hook for current time to avoid purity violation
+  // Update every 30 seconds (sufficient for 5-minute refresh threshold)
+  const currentTime = useCurrentTime(30000);
+
   // 返回初始化数据，让调用者决定如何使用
   const initialData = useMemo(() => {
     const historicalReports = loadHistoricalData();
     const lastReport = historicalReports.at(-1);
 
+    // ✅ Fixed: Use currentTime from hook instead of Date.now() during render
     // 检查是否需要刷新数据
     const shouldRefresh =
       historicalReports.length === 0 ||
       (historicalReports.length > 0 &&
-        Date.now() - (lastReport?.timestamp || 0) > MAGIC_300000); // COUNT_FIVE分钟
+        currentTime - (lastReport?.timestamp || 0) > MAGIC_300000); // COUNT_FIVE分钟
 
     return {
       historicalReports,
       shouldRefresh,
     };
-  }, [loadHistoricalData]);
+  }, [loadHistoricalData, currentTime]);
 
   return { initialData };
 }

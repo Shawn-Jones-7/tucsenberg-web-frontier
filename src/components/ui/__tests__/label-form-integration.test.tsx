@@ -11,7 +11,6 @@
  * - label-form-advanced-integration.test.tsx - Advanced form integration tests
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';

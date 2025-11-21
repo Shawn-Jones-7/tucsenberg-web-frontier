@@ -1,6 +1,9 @@
-import { logger } from '@/lib/logger';
+import { logger as _logger } from '@/lib/logger';
 
 export async function register() {
+  // Sentry 已移除（2025-11-20）
+  // 如果未来需要启用，请取消注释以下代码并恢复配置文件
+  /*
   try {
     if (process.env['NEXT_RUNTIME'] === 'nodejs') {
       await import('./sentry.server.config');
@@ -10,9 +13,7 @@ export async function register() {
       await import('./sentry.edge.config');
     }
   } catch (error) {
-    // 记录错误但不阻止应用启动
-    // 使用结构化日志记录错误信息
-    logger.error(
+    _logger.error(
       'Failed to register instrumentation',
       {
         runtime: process.env['NEXT_RUNTIME'],
@@ -21,8 +22,12 @@ export async function register() {
       error instanceof Error ? error : new Error(String(error)),
     );
   }
+  */
 }
 
+// Sentry 已移除（2025-11-20）
+// 如果未来需要启用错误监控，请取消注释以下代码
+/*
 // Required for Sentry 10.x - handles errors from nested React Server Components
 export async function onRequestError(
   error: unknown,
@@ -47,3 +52,4 @@ export async function onRequestError(
     Sentry.captureRequestError(error, request, context);
   }
 }
+*/

@@ -132,6 +132,10 @@ export function useCounterAnimation(
   const animationRef = React.useRef<number | null>(null);
   const startTimeRef = React.useRef<number | null>(null);
   const startValueRef = React.useRef(ZERO);
+  // ✅ Fixed: Use ref to store callback for recursive calls
+  const animateRef = React.useRef<((_timestamp: number) => void) | undefined>(
+    undefined,
+  );
 
   const animate = React.useCallback(
     (timestamp: number) => {
@@ -152,7 +156,8 @@ export function useCounterAnimation(
       config.onUpdate?.(newValue);
 
       if (progress < ONE) {
-        animationRef.current = requestAnimationFrame(animate);
+        // ✅ Fixed: Use ref to access current callback
+        animationRef.current = requestAnimationFrame(animateRef.current!);
       } else {
         config.onComplete?.();
         animationRef.current = null;
@@ -163,6 +168,9 @@ export function useCounterAnimation(
   );
 
   React.useEffect(() => {
+    // ✅ Keep ref up to date with latest callback (in effect, not render)
+    animateRef.current = animate;
+
     if (animationRef.current) {
       cancelAnimationFrame(animationRef.current);
     }

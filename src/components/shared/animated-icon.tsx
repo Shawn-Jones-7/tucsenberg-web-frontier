@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { memo } from 'react';
 import { cn } from '@/lib/utils';
 import { useReducedMotion } from '@/hooks/use-reduced-motion';
 
@@ -119,5 +119,5 @@ const AnimatedIconComponent = ({
   return null;
 };
 
-export const AnimatedIcon = React.memo(AnimatedIconComponent);
+export const AnimatedIcon = memo(AnimatedIconComponent);
 AnimatedIcon.displayName = 'AnimatedIcon';

@@ -79,6 +79,11 @@ describe('Mobile Navigation Responsive - Main Tests', () => {
     user = userEvent.setup();
     vi.clearAllMocks();
 
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
+
     // Setup default mocks
     (useTranslations as ReturnType<typeof vi.fn>).mockReturnValue(
       (key: string) => {

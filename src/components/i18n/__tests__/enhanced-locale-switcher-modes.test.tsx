@@ -12,7 +12,6 @@
  * - 组件生命周期
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useLocale, useTranslations } from 'next-intl';

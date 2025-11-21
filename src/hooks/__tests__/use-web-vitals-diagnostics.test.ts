@@ -29,6 +29,11 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
+// Mock useCurrentTime to prevent infinite setInterval loop in tests
+vi.mock('@/hooks/use-current-time', () => ({
+  useCurrentTime: vi.fn(() => Date.now()),
+}));
+
 const renderDiagnosticsHook = (): RenderHookResult<
   UseWebVitalsDiagnosticsReturn,
   void
@@ -190,6 +195,11 @@ describe('useWebVitalsDiagnostics', () => {
     // 2. 统一使用vi.clearAllMocks()重置所有Mock
     vi.clearAllMocks();
     vi.useFakeTimers();
+
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
 
     performanceNowSpy = vi
       .spyOn(globalThis.performance, 'now')

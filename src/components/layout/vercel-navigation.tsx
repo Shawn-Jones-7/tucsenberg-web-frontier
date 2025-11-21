@@ -10,7 +10,7 @@
  */
 'use client';
 
-import React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslations } from 'next-intl';
 import {
   mainNavigation,
@@ -38,11 +38,11 @@ interface VercelNavigationProps {
 
 // Hook for hover delay interaction
 function useHoverDelay() {
-  const [openItem, setOpenItem] = React.useState<string | null>(null);
-  const openTimerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
-  const closeTimerRef = React.useRef<NodeJS.Timeout | undefined>(undefined);
+  const [openItem, setOpenItem] = useState<string | null>(null);
+  const openTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
+  const closeTimerRef = useRef<NodeJS.Timeout | undefined>(undefined);
 
-  const handleMouseEnter = React.useCallback((key: string) => {
+  const handleMouseEnter = useCallback((key: string) => {
     if (closeTimerRef.current) {
       clearTimeout(closeTimerRef.current);
     }
@@ -51,7 +51,7 @@ function useHoverDelay() {
     }, 50); // 50ms delay to open (faster response)
   }, []);
 
-  const handleMouseLeave = React.useCallback(() => {
+  const handleMouseLeave = useCallback(() => {
     if (openTimerRef.current) {
       clearTimeout(openTimerRef.current);
     }
@@ -60,12 +60,12 @@ function useHoverDelay() {
     }, 80); // 80ms delay to close (faster response)
   }, []);
 
-  const handleClick = React.useCallback((key: string) => {
+  const handleClick = useCallback((key: string) => {
     setOpenItem((current) => (current === key ? null : key));
   }, []);
 
   // Cleanup on unmount
-  React.useEffect(() => {
+  useEffect(() => {
     return () => {
       if (openTimerRef.current) clearTimeout(openTimerRef.current);
       if (closeTimerRef.current) clearTimeout(closeTimerRef.current);

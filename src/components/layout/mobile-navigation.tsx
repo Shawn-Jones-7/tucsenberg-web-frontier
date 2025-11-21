@@ -6,7 +6,7 @@
  */
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import {
@@ -42,11 +42,16 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
   const t = useTranslations();
   const pathname = usePathname();
   const [isOpen, setIsOpen] = useState(false);
+  const previousPathnameRef = useRef(pathname);
 
   // Close menu when route changes
+  // ✅ Fixed: Only close if pathname actually changed, use queueMicrotask to avoid synchronous setState
   useEffect(() => {
-    setIsOpen(false);
-  }, [pathname]);
+    if (previousPathnameRef.current !== pathname && isOpen) {
+      queueMicrotask(() => setIsOpen(false));
+    }
+    previousPathnameRef.current = pathname;
+  }, [pathname, isOpen]);
 
   return (
     <div className={cn('md:hidden', className)}>

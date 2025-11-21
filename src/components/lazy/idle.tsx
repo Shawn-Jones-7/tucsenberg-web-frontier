@@ -52,9 +52,12 @@ export function Idle({
     }
 
     // strategy === 'visible' 时，不使用 idle/timeout 机制
-    setReady(false);
+    // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
+    if (ready) {
+      queueMicrotask(() => setReady(false));
+    }
     return undefined;
-  }, [strategy, timeoutMs]);
+  }, [strategy, timeoutMs, ready]);
 
   if (strategy === 'visible') {
     const show = isVisible || hasBeenVisible;

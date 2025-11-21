@@ -33,6 +33,11 @@ describe('useIntersectionObserver', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
+
     // Reset accessibility mock to default
     mockAccessibilityUtils.prefersReducedMotion.mockReturnValue(false);
 

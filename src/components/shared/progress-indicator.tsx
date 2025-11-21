@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { memo } from 'react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
 import { COUNT_PAIR, COUNT_TRIPLE, PERCENTAGE_FULL } from '@/constants';
@@ -182,4 +182,4 @@ const ProgressIndicatorComponent = ({
   );
 };
 
-export const ProgressIndicator = React.memo(ProgressIndicatorComponent);
+export const ProgressIndicator = memo(ProgressIndicatorComponent);

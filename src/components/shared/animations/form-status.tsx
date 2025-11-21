@@ -2,7 +2,6 @@
  * 表单和状态动画组件
  */
 
-import React from 'react';
 import { CheckCircle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 

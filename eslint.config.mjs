@@ -2,6 +2,9 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { FlatCompat } from '@eslint/eslintrc';
 import js from '@eslint/js';
+// Next.js ESLint configs - 使用官方推荐的直接导入方式
+import nextVitals from 'eslint-config-next/core-web-vitals';
+import nextTs from 'eslint-config-next/typescript';
 import prettierConfig from 'eslint-config-prettier';
 import promisePlugin from 'eslint-plugin-promise';
 import reactYouMightNotNeedAnEffect from 'eslint-plugin-react-you-might-not-need-an-effect';
@@ -33,20 +36,12 @@ export default [
       'build/**',
     ],
   },
-  {
-    name: 'global-plugin-registration',
-    plugins: {
-      security,
-      'security-node': securityNode,
-      'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
-    },
-  },
   // Base JavaScript configuration
   js.configs.recommended,
 
-  // Next.js configuration using compat
-  ...compat.extends('next/core-web-vitals'),
-  ...compat.extends('next/typescript'),
+  // Next.js configuration - 直接 spread 官方配置 (避免 FlatCompat 循环引用问题)
+  ...nextVitals,
+  ...nextTs,
 
   // Import resolver settings for @/* alias (TypeScript + Node)
   {
@@ -87,6 +82,9 @@ export default [
   {
     name: 'theme-switcher-ssr-exception',
     files: ['**/theme-switcher.tsx', '**/horizontal-theme-toggle-simple.tsx'],
+    plugins: {
+      'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
+    },
     rules: {
       // next-themes 推荐的 SSR 水合模式需要在 useEffect 中初始化 mounted 状态
       'react-you-might-not-need-an-effect/no-initialize-state': 'off',
@@ -104,6 +102,9 @@ export default [
       '**/use-scroll-shadow.ts',
       '**/use-web-vitals-diagnostics.ts',
     ],
+    plugins: {
+      'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
+    },
     rules: {
       // SSR 兼容性模式：使用 lazy initializer 或 useEffect 安全访问浏览器 API
       'react-you-might-not-need-an-effect/no-initialize-state': 'off',
@@ -486,6 +487,9 @@ export default [
       'src/types/i18n.ts',
       'src/components/language-toggle.tsx',
     ],
+    plugins: {
+      security,
+    },
     rules: {
       // 仅豁免i18n特定的必要规则
       'no-magic-numbers': 'off', // i18n配置中的数字常量
@@ -540,6 +544,9 @@ export default [
       'scripts/__fixtures__/**/*.{js,jsx,ts,tsx}',
       '**/mocks/**/*.{js,jsx,ts,tsx}',
     ],
+    plugins: {
+      security,
+    },
     languageOptions: {
       globals: {
         describe: 'readonly',
@@ -638,6 +645,10 @@ export default [
       'src/constants/test-*.ts',
       'continue-eslint-fixes.ts',
     ],
+    plugins: {
+      security,
+      'react-you-might-not-need-an-effect': reactYouMightNotNeedAnEffect,
+    },
     rules: {
       // 🎯 渐进式改进：开发工具保持基本质量标准
       'max-lines-per-function': [
@@ -834,6 +845,9 @@ export default [
       'scripts/__fixtures__/**/*.{js,jsx,ts,tsx}',
       '**/mocks/**/*.{js,jsx,ts,tsx}',
     ],
+    plugins: {
+      security,
+    },
     rules: {
       // 明确禁用架构规则，确保测试文件可以使用相对路径导入
       'no-restricted-imports': 'off',
@@ -866,6 +880,9 @@ export default [
   {
     name: 'types-compatibility-overrides',
     files: ['src/types/**/*.{ts,tsx}'],
+    plugins: {
+      security,
+    },
     rules: {
       '@typescript-eslint/no-unused-vars': [
         'error',
@@ -881,6 +898,9 @@ export default [
   {
     name: 'scripts-directory-overrides',
     files: ['scripts/**/*.{js,ts}'],
+    plugins: {
+      security,
+    },
     rules: {
       // Allow console statements in scripts
       'no-console': 'off',

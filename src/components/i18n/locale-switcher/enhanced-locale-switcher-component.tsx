@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { Languages } from 'lucide-react';
 import { useLocale, useTranslations } from 'next-intl';
 import type { Locale } from '@/types/i18n';
@@ -64,8 +64,9 @@ function DetectionInfoSection({
   isUserOverride: boolean;
 }) {
   const t = useTranslations('language.detector');
+  // ✅ Fixed: Memoize icon component reference to avoid re-resolving on each render
+  const IconComponent = useMemo(() => resolveSourceIcon(source), [source]);
   if (!visible) return null;
-  const SourceIcon = resolveSourceIcon(source);
   const confidenceColor =
     confidence > MAGIC_0_8
       ? 'green'
@@ -81,7 +82,7 @@ function DetectionInfoSection({
       <div className='px-2 py-1 text-xs'>
         <div className='mb-1 flex items-center justify-between'>
           <div className='flex items-center space-x-1'>
-            <SourceIcon className='h-3 w-3' />
+            {React.createElement(IconComponent, { className: 'h-3 w-3' })}
             <span>
               {t('source')}: {t(`sources.${source}`)}
             </span>

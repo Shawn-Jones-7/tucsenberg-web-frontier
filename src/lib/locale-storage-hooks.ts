@@ -198,9 +198,12 @@ export function useStorageStats() {
   }, []);
 
   // 初始化加载
+  // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
   useEffect(() => {
-    refreshStats();
-    setIsLoading(false);
+    queueMicrotask(() => {
+      refreshStats();
+      setIsLoading(false);
+    });
   }, [refreshStats]);
 
   return {

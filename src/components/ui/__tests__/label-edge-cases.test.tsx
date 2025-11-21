@@ -14,7 +14,6 @@
  * - label-edge-cases-basic.test.tsx - 基本边缘情况测试
  */
 
-import React from 'react';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it } from 'vitest';

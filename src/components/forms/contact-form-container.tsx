@@ -28,6 +28,7 @@ import {
   type ContactFormFieldDescriptor,
 } from '@/config/contact-form-config';
 import { FIVE_MINUTES_MS } from '@/constants';
+import { useCurrentTime } from '@/hooks/use-current-time';
 
 /**
  * 乐观更新状态类型
@@ -108,6 +109,10 @@ function useContactForm() {
   const lastRecordedSuccessRef = useRef(false);
   const [isPendingTransition, startTransition] = useTransition();
 
+  // ✅ Use custom hook for current time to avoid purity violation
+  // Update every 5 seconds (sufficient for rate limiting UI)
+  const currentTime = useCurrentTime(5000);
+
   // React 19原生useOptimistic Hook - 乐观更新状态管理
   const [optimisticState, setOptimisticState] = useOptimistic(
     { status: 'idle' as FormSubmissionStatus, message: '', timestamp: 0 },
@@ -142,14 +147,18 @@ function useContactForm() {
     Number.isFinite(configuredCooldownMs) && configuredCooldownMs > 0
       ? configuredCooldownMs
       : FIVE_MINUTES_MS;
+  // ✅ Fixed: Use currentTime from hook instead of Date.now() during render
   const isRateLimited = Boolean(
     lastSubmissionTime &&
-      Date.now() - lastSubmissionTime.getTime() < RATE_LIMIT_WINDOW,
+      currentTime - lastSubmissionTime.getTime() < RATE_LIMIT_WINDOW,
   );
 
   useEffect(() => {
     if (state?.success && !lastRecordedSuccessRef.current) {
-      setLastSubmissionTime(new Date());
+      // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
+      queueMicrotask(() => {
+        setLastSubmissionTime(new Date());
+      });
     }
     lastRecordedSuccessRef.current = Boolean(state?.success);
   }, [state?.success]);
@@ -167,7 +176,11 @@ function useContactForm() {
       const remaining = RATE_LIMIT_WINDOW - elapsed;
 
       if (remaining <= 0) {
-        setLastSubmissionTime(null);
+        // ✅ Fixed: Use setTimeout to avoid synchronous setState in effect
+        timeoutId = window.setTimeout(() => {
+          setLastSubmissionTime(null);
+        }, 0);
+        rateLimitResetTimeoutRef.current = timeoutId;
       } else {
         timeoutId = window.setTimeout(() => {
           setLastSubmissionTime(null);

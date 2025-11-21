@@ -54,7 +54,7 @@ function tryHandleExplicitLocalizedRequest(
   return null;
 }
 
-export default function middleware(request: NextRequest) {
+export default function proxy(request: NextRequest) {
   const nonce = generateNonce();
   const early = tryHandleExplicitLocalizedRequest(request, nonce);
   if (early) return early;

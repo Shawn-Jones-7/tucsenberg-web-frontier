@@ -77,6 +77,11 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     user = userEvent.setup();
     vi.clearAllMocks();
 
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
+
     // Reset pathname to root
     mockPathname.current = '/';
 

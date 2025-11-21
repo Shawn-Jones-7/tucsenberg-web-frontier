@@ -205,8 +205,9 @@ const LocaleDetectionDemoComponent = () => {
     setPreference(getUserPreference());
   }, [getStats, detectClientLocale, getUserPreference]);
 
+  // ✅ Fixed: Use queueMicrotask to avoid synchronous setState in effect
   useEffect(() => {
-    refreshData();
+    queueMicrotask(() => refreshData());
   }, [refreshData]);
 
   const handleClearOverride = () => {

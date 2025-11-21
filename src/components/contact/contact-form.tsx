@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import { ContactForm as EnhancedContactForm } from '@/components/forms/contact-form';
 
 /**

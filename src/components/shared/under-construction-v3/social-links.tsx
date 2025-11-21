@@ -1,4 +1,3 @@
-import React from 'react';
 import { Github, Twitter } from 'lucide-react';
 
 interface SocialLink {

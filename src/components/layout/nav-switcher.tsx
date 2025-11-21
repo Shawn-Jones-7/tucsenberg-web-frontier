@@ -10,7 +10,7 @@
  */
 'use client';
 
-import React from 'react';
+import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
 
 /**
@@ -49,7 +49,7 @@ interface NavSwitcherProps {
 export function NavSwitcher({ className }: NavSwitcherProps) {
   // Idle preloading: Preload navigation chunk after initial render
   // This reduces perceived latency for first interaction
-  React.useEffect(() => {
+  useEffect(() => {
     // Use requestIdleCallback for non-blocking preload
     const idleCallback =
       typeof window !== 'undefined' && 'requestIdleCallback' in window

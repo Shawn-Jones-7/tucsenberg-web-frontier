@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { forwardRef, type HTMLAttributes } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '@/lib/utils';
 
@@ -23,7 +23,7 @@ const badgeVariants = cva(
 );
 
 export interface BadgeProps
-  extends React.HTMLAttributes<HTMLDivElement>,
+  extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof badgeVariants> {
   // 支持额外的HTML属性，即使它们不是div的标准属性
   disabled?: boolean;
@@ -33,7 +33,7 @@ export interface BadgeProps
   autoComplete?: string;
 }
 
-const Badge = React.forwardRef<HTMLDivElement, BadgeProps>(
+const Badge = forwardRef<HTMLDivElement, BadgeProps>(
   ({ className, variant, ...props }, ref) => {
     return (
       <div

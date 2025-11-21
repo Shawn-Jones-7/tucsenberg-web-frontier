@@ -1,4 +1,3 @@
-import React from 'react';
 import { act, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
@@ -56,6 +55,11 @@ describe('AnimatedCounter Component', () => {
     Object.defineProperty(global.performance, 'now', {
       value: mockPerformanceNow,
       writable: true,
+    });
+
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
     });
   });
 

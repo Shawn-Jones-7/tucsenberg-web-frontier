@@ -2,7 +2,6 @@
  * @vitest-environment jsdom
  */
 
-import React from 'react';
 import { act, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AnimatedCounter } from '@/components/ui/animated-counter';
@@ -105,6 +104,11 @@ describe('AnimatedCounter - Performance & Refs', () => {
       animationFrameCallbacks = animationFrameCallbacks.filter(
         (_, index) => index !== id - 1,
       );
+    });
+
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
     });
   });
 

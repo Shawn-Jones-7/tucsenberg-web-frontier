@@ -105,6 +105,11 @@ describe('AnimatedCounter - Formatters and Easing', () => {
         (_, index) => index !== id - 1,
       );
     });
+
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
   });
 
   describe('Easing Functions', () => {

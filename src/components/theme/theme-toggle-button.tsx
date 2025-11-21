@@ -1,6 +1,6 @@
 'use client';
 
-import React from 'react';
+import { forwardRef } from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -16,7 +16,7 @@ interface ThemeToggleButtonProps
   onClick?: (_e: React.MouseEvent) => void;
 }
 
-export const ThemeToggleButton = React.forwardRef<
+export const ThemeToggleButton = forwardRef<
   HTMLButtonElement,
   ThemeToggleButtonProps
 >(

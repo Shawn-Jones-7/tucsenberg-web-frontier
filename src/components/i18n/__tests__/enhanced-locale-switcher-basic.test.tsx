@@ -15,7 +15,6 @@
  * - enhanced-locale-switcher-modes.test.tsx - 模式和生命周期测试
  */
 
-import React from 'react';
 import { usePathname } from 'next/navigation';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';

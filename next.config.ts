@@ -28,15 +28,13 @@ const SENTRY_DISABLED =
 const nextConfig: NextConfig = {
   /* config options here */
 
+  // Turbopack 配置 - 明确指定项目根目录
+  turbopack: {
+    root: __dirname,
+  },
+
   // Configure pageExtensions to include markdown and MDX files
   pageExtensions: ['js', 'jsx', 'md', 'mdx', 'ts', 'tsx'],
-
-  // ESLint 配置
-  eslint: {
-    dirs: ['src'],
-    // 临时放宽构建期 ESLint 阻塞，Phase 3 清零后恢复为严格模式
-    ignoreDuringBuilds: true,
-  },
 
   // Enable source maps for better error tracking
   productionBrowserSourceMaps: true,
@@ -69,8 +67,9 @@ const nextConfig: NextConfig = {
   // Performance optimizations
   experimental: {
     optimizePackageImports: ['lucide-react', '@radix-ui/react-icons'],
-    // 仅在 CI/测试环境启用 testProxy，生产环境禁用以避免运行时缺少 turbopack runtime 导致的 500
-    testProxy: process.env.CI === 'true',
+    // Next.js 16 已移除 testProxy 配置 - 使用 next/experimental/testing/server 替代
+    // 旧配置: testProxy: process.env.CI === 'true',
+    // 新方式: 在测试文件中使用 unstable_doesProxyMatch() 和相关 API
     // 内联关键CSS，消除渲染阻塞的<link rel="stylesheet">请求，提升首屏渲染（LCP）
     inlineCss: true,
     // PPR 需要 Next.js canary 版本，暂时禁用
@@ -82,6 +81,9 @@ const nextConfig: NextConfig = {
   // 但 Turbopack 在处理它们时遇到问题，所以我们暂时移除这个配置
   // 让 Next.js 使用默认的外部包处理方式
 
+  // ⚠️ Webpack 配置保留 - 待验证 Turbopack 性能后移除
+  // Next.js 16 默认使用 Turbopack，此配置仅在 build:webpack 兜底时生效
+  // 在 Turbopack 通过 size:check 验证后，应移除此配置块和 splitChunks 逻辑
   webpack: (config, { dev, isServer }) => {
     // Path alias configuration for @/ -> src/
     config.resolve.alias = {

@@ -69,6 +69,11 @@ describe('ResponsiveLayout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
+    // Mock queueMicrotask to execute immediately for synchronous testing
+    global.queueMicrotask = vi.fn((callback: () => void) => {
+      callback();
+    });
+
     mockUseBreakpoint.mockReturnValue(defaultBreakpointData);
     mockUseReducedMotion.mockReturnValue(false);
 

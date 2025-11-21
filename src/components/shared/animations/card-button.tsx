@@ -2,7 +2,6 @@
  * 卡片和按钮动画组件
  */
 
-import React from 'react';
 import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';

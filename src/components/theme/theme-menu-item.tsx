@@ -1,6 +1,5 @@
 'use client';
 
-import React from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { DropdownMenuItem } from '@/components/ui/dropdown-menu';
 
