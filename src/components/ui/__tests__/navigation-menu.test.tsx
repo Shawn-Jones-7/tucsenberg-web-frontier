@@ -431,7 +431,15 @@ describe('Navigation Menu Components', () => {
       );
 
       const link = screen.getByTestId('nav-link');
-      expect(link).toHaveClass('flex', 'flex-col', 'gap-1', 'rounded-sm');
+      expect(link).toHaveClass(
+        'inline-flex',
+        'h-[30px]',
+        'items-center',
+        'rounded-full',
+        'px-3',
+        'py-2',
+        'text-sm',
+      );
     });
 
     it('applies custom className', () => {

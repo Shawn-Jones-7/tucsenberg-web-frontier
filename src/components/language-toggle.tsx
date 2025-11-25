@@ -118,18 +118,12 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
             data-testid='language-toggle-button'
             aria-label={currentLanguageName}
             className={cn(
-              // 胶囊形容器：更紧凑的高度32px，圆角16px（完全胶囊）
-              'h-8 rounded-full px-3',
-              // 加粗边框（2px）
-              'border-2 border-border',
-              // 背景：纯白色（悬停时保持纯白）
-              'bg-background hover:bg-background',
-              // 文字与图标：深灰黑
-              'text-[#111827]',
-              // 间距：更紧凑
-              'gap-1.5',
-              // 过渡动画：140ms
-              'duration-[140ms] transition-all ease-in-out',
+              'h-8 gap-1.5 rounded-full px-3',
+              'border border-border',
+              'bg-background hover:bg-muted/60',
+              'text-muted-foreground hover:text-foreground',
+              'transition-colors duration-150 ease-out',
+              'focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background',
             )}
           >
             <Globe
@@ -167,16 +161,10 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
           align='end'
           data-testid='language-dropdown-content'
           className={cn(
-            // 最小宽度180px，上下内边距10-12px
             'min-w-[180px] px-0 py-2.5',
-            // 外圆角10-12px
-            'rounded-xl',
-            // 背景：暖白/浅灰
-            'bg-[#FAFAFA]',
-            // 边框：浅灰1px
-            'border border-[#E5E7EB]',
-            // 双层阴影：柔和投影
-            'shadow-[0_2px_6px_rgba(0,0,0,0.08),0_10px_24px_rgba(0,0,0,0.08)]',
+            'rounded-xl border border-border',
+            'bg-popover text-popover-foreground',
+            'shadow-lg',
           )}
         >
           <DropdownMenuItem
@@ -191,8 +179,8 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 // 列表项：左对齐，行高24-28px，行间距6-8px
                 'flex w-full items-center justify-between px-3.5 py-2',
                 // Vercel 风格：浅灰文字 + 椭圆灰色背景悬停
-                'font-medium text-foreground/70',
-                'dark:hover:bg-white/8 hover:bg-[#F5F5F5] hover:text-foreground',
+                'font-medium text-muted-foreground',
+                'hover:bg-muted hover:text-foreground dark:hover:bg-foreground/10',
                 'rounded-md',
                 // 过渡：120ms
                 'duration-[120ms] transition-all ease-in-out',
@@ -227,8 +215,8 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 // 列表项：左对齐，行高24-28px，行间距6-8px
                 'flex w-full items-center justify-between px-3.5 py-2',
                 // Vercel 风格：浅灰文字 + 椭圆灰色背景悬停
-                'font-medium text-foreground/70',
-                'dark:hover:bg-white/8 hover:bg-[#F5F5F5] hover:text-foreground',
+                'font-medium text-muted-foreground',
+                'hover:bg-muted hover:text-foreground dark:hover:bg-foreground/10',
                 'rounded-md',
                 // 过渡：120ms
                 'duration-[120ms] transition-all ease-in-out',

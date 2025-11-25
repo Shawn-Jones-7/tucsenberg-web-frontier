@@ -3,6 +3,8 @@
 import { useCallback, useRef, useState, useSyncExternalStore } from 'react';
 import { MessageCircle } from 'lucide-react';
 import Draggable from 'react-draggable';
+import { cn } from '@/lib/utils';
+import { WHATSAPP_STYLE_TOKENS } from '@/config/footer-links';
 
 export interface WhatsAppFloatingButtonProps {
   number: string;
@@ -77,6 +79,7 @@ export function WhatsAppFloatingButton({
   label = 'Chat with us on WhatsApp',
   className = '',
 }: WhatsAppFloatingButtonProps) {
+  const tokens = WHATSAPP_STYLE_TOKENS;
   const normalizedNumber = normalizePhoneNumber(number);
   const nodeRef = useRef<HTMLDivElement>(null);
   // 使用 useSyncExternalStore 安全读取 localStorage，避免 SSR/hydration CLS
@@ -139,48 +142,57 @@ export function WhatsAppFloatingButton({
       >
         <a
           aria-label={label}
-          className={`whatsapp-fab group relative flex h-14 w-14 items-center justify-center rounded-full bg-[#25D366] text-white shadow-lg transition-all duration-300 hover:scale-110 hover:shadow-xl focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white ${className}`}
+          className={cn(
+            'group relative flex items-center justify-center',
+            tokens.transition,
+            tokens.focusRing,
+            tokens.light.background,
+            tokens.light.foreground,
+            tokens.light.border,
+            tokens.light.hoverBackground,
+            tokens.light.hoverBorder,
+            tokens.light.hoverForeground,
+            tokens.light.shadow,
+            tokens.dark.background,
+            tokens.dark.foreground,
+            tokens.dark.border,
+            tokens.dark.hoverBackground,
+            tokens.dark.hoverBorder,
+            tokens.dark.hoverForeground,
+            tokens.dark.shadow,
+            className,
+          )}
           href={href}
           rel='noreferrer'
           target='_blank'
           onClick={handleClick}
+          style={{
+            width: `${tokens.sizePx}px`,
+            height: `${tokens.sizePx}px`,
+            borderRadius: `${tokens.borderRadiusPx}px`,
+            borderWidth: tokens.borderWidthPx,
+          }}
         >
           <MessageCircle
-            className='h-6 w-6'
+            className='transition-colors duration-150'
+            style={{
+              width: `${tokens.iconSizePx}px`,
+              height: `${tokens.iconSizePx}px`,
+            }}
             aria-hidden='true'
           />
 
           {/* Tooltip on hover */}
-          <span className='pointer-events-none absolute bottom-full mb-2 w-max rounded-lg bg-gray-900 px-3 py-1.5 text-xs font-medium text-white opacity-0 shadow-lg transition-opacity group-hover:opacity-100'>
+          <span
+            className={cn(
+              'pointer-events-none absolute bottom-full mb-2 w-max rounded-lg px-3 py-1.5 text-xs font-medium opacity-0 shadow-lg transition-opacity group-hover:opacity-100',
+              tokens.tooltip.background,
+              tokens.tooltip.text,
+            )}
+          >
             {label}
           </span>
-
-          {/* Breathing animation rings */}
-          <span className='absolute inset-0 animate-ping rounded-full bg-[#25D366] opacity-20' />
-          <span className='absolute inset-0 animate-pulse rounded-full bg-[#25D366] opacity-30' />
         </a>
-
-        <style jsx>{`
-          @keyframes breathe {
-            0%,
-            100% {
-              transform: scale(1);
-              box-shadow: 0 10px 25px -5px rgba(37, 211, 102, 0.4);
-            }
-            50% {
-              transform: scale(1.05);
-              box-shadow: 0 15px 30px -5px rgba(37, 211, 102, 0.6);
-            }
-          }
-
-          .whatsapp-fab {
-            animation: breathe 3s ease-in-out infinite;
-          }
-
-          .whatsapp-fab:hover {
-            animation: none;
-          }
-        `}</style>
       </div>
     </Draggable>
   );

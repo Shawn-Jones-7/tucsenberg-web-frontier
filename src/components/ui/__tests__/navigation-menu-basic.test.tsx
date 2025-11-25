@@ -238,11 +238,12 @@ describe('NavigationMenu - Basic Components', () => {
       const styles = navigationMenuTriggerStyle();
       expect(styles).toContain('group');
       expect(styles).toContain('inline-flex');
-      expect(styles).toContain('h-9');
-      expect(styles).toContain('w-max');
+      expect(styles).toContain('h-[30px]');
       expect(styles).toContain('items-center');
       expect(styles).toContain('justify-center');
-      expect(styles).toContain('rounded-md');
+      expect(styles).toContain('rounded-full');
+      expect(styles).toContain('duration-100');
+      expect(styles).toContain('ease');
     });
 
     it('accepts variant options', () => {

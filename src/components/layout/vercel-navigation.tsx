@@ -98,11 +98,12 @@ function renderDropdownItem({ item, t, hoverState }: RenderDropdownItemProps) {
     >
       <NavigationMenuTrigger
         className={cn(
-          'relative rounded-xl bg-transparent px-4 py-2.5 text-[15px] font-medium tracking-[0.01em]',
-          'text-foreground/90 hover:text-foreground',
-          'hover:bg-zinc-950/[.03] dark:hover:bg-white/10',
-          'dark:data-[state=open]:bg-white/12 data-[state=open]:bg-zinc-950/[.05]',
-          'outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
+          'relative inline-flex items-center rounded-full px-3 py-2 text-sm font-medium tracking-[0.01em]',
+          'text-muted-foreground hover:text-foreground data-[state=open]:text-foreground',
+          'hover:bg-muted/40 data-[state=open]:bg-muted/60',
+          'dark:hover:bg-foreground/10 dark:data-[state=open]:bg-foreground/15',
+          'shadow-none',
+          'transition-colors duration-150 ease-out',
         )}
         onClick={() => hoverState.handleClick(item.key)}
         aria-expanded={isOpen}
@@ -127,10 +128,12 @@ function renderLinkItem(item: NavigationItem, t: (key: string) => string) {
         <Link
           href={item.href as ValidPathname}
           className={cn(
-            'relative inline-flex h-9 items-center rounded-xl bg-transparent px-4 py-2 text-[15px] font-medium tracking-[0.01em]',
-            'text-foreground/90 hover:text-foreground',
-            'hover:bg-zinc-950/[.03] dark:hover:bg-white/10',
-            'outline-none transition-colors duration-150 focus-visible:ring-[3px] focus-visible:ring-ring/50',
+            'relative inline-flex items-center rounded-full bg-transparent px-3 py-2 text-sm font-medium tracking-[0.01em]',
+            'text-muted-foreground hover:text-foreground',
+            'hover:bg-muted/40 data-[state=open]:bg-muted/60',
+            'dark:hover:bg-foreground/10 dark:data-[state=open]:bg-foreground/15',
+            'shadow-none',
+            'transition-colors duration-150 ease-out',
           )}
         >
           {t(item.translationKey)}

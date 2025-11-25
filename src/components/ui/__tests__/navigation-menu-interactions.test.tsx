@@ -97,10 +97,10 @@ describe('NavigationMenu - Interactions', () => {
       expect(trigger).toHaveClass(
         'group',
         'inline-flex',
-        'h-9',
-        'w-max',
+        'h-[30px]',
         'items-center',
         'justify-center',
+        'rounded-full',
       );
     });
 
@@ -254,11 +254,13 @@ describe('NavigationMenu - Interactions', () => {
 
       const link = screen.getByTestId('nav-link');
       expect(link).toHaveClass(
-        'flex',
-        'flex-col',
-        'gap-1',
-        'rounded-sm',
-        'p-2',
+        'inline-flex',
+        'h-[30px]',
+        'items-center',
+        'rounded-full',
+        'px-3',
+        'py-2',
+        'text-sm',
       );
     });
 

@@ -68,7 +68,13 @@ describe('WhatsAppFloatingButton', () => {
     const button = screen.getByRole('link', {
       name: /chat with us on whatsapp/i,
     });
-    expect(button).toHaveClass('rounded-full', 'bg-[#25D366]');
+    expect(button).toHaveStyle({
+      width: '52px',
+      height: '52px',
+      borderRadius: '16px',
+      borderWidth: '1px',
+    });
+    expect(button).toHaveClass('text-emerald-600');
   });
 
   it('renders MessageCircle icon', () => {

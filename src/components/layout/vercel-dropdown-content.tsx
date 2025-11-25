@@ -16,7 +16,7 @@ export function DropdownContent({
   t: (key: string) => string;
 }) {
   return (
-    <ul className='grid w-[400px] grid-cols-2 gap-2 p-3'>
+    <ul className='grid w-[min(420px,calc(100vw-48px))] grid-cols-2 gap-2 p-3'>
       {items.map((child: NavigationItem) => (
         <li
           key={child.key}
@@ -25,11 +25,11 @@ export function DropdownContent({
           <Link
             href={child.href as ValidPathname}
             className={cn(
-              'inline-flex select-none rounded-xl px-3 py-2 leading-none no-underline outline-none transition-colors',
-              'text-foreground/90 hover:text-foreground',
-              'hover:bg-zinc-950/[.03] dark:hover:bg-white/10',
-              'dark:focus:bg-white/12 focus:bg-zinc-950/[.05]',
-              'font-medium',
+              'inline-flex select-none rounded-lg px-3 py-2 leading-none no-underline outline-none transition-colors',
+              'text-muted-foreground hover:text-foreground',
+              'hover:bg-muted/80 dark:hover:bg-foreground/10',
+              'dark:focus-visible:bg-foreground/12 focus-visible:bg-muted/80',
+              'font-normal',
             )}
           >
             <div className='text-sm leading-none'>
