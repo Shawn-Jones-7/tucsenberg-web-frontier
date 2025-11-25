@@ -1,11 +1,13 @@
 /**
- * Enterprise Footer Component
+ * Enterprise Footer Component (legacy)
  *
- * Modern, responsive footer component based on the reference design.
- * Features clean layout with company logo, navigation sections, and social links.
+ * Modern, responsive footer component based on an early reference design.
  *
- * Converted to a Server Component to reduce client-side JavaScript.
- * Only the interactive ThemeSwitcher remains a Client Component.
+ * @deprecated
+ * This layout-level Footer is kept only for historical tests and conductor templates.
+ * The actual application layout now uses `@/components/footer/Footer` with
+ * configuration-driven columns and design tokens. Do not use this component
+ * for new pages or layouts.
  */
 
 import type { FC } from 'react';
@@ -18,7 +20,10 @@ import {
   type FooterSection,
 } from '@/lib/footer-config';
 import { logger } from '@/lib/logger';
-import { ExternalLinkIcon, SocialIconLink } from '@/components/ui/social-icons';
+import {
+  ExternalLinkIcon,
+  SocialIconMapper,
+} from '@/components/ui/social-icons';
 import { ThemeSwitcher } from '@/components/ui/theme-switcher';
 import { ZERO } from '@/constants';
 import { COUNT_14 } from '@/constants/count';
@@ -116,17 +121,23 @@ const SocialSection: FC = () => {
   return (
     <div
       aria-label='Social links'
-      className='flex items-start justify-start gap-4 md:justify-end md:pr-8 lg:pr-12'
+      className='flex items-center justify-center gap-3 sm:justify-end'
     >
       {socialLinks.map((social) => (
-        <SocialIconLink
+        <a
           key={social.key}
           href={social.href}
-          icon={social.icon}
-          label={social.label}
-          ariaLabel={social.ariaLabel}
-          iconSize={16}
-        />
+          target='_blank'
+          rel='noopener noreferrer'
+          aria-label={social.ariaLabel}
+          className='flex h-10 w-10 items-center justify-center rounded-full border border-border/60 text-muted-foreground transition-colors duration-200 hover:border-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background'
+        >
+          <SocialIconMapper
+            platform={social.icon}
+            size={16}
+          />
+          <span className='sr-only'>{social.label}</span>
+        </a>
       ))}
     </div>
   );
@@ -155,7 +166,12 @@ const CompanyLogo: FC = () => {
   );
 };
 
-// Main Footer Component
+// Main Footer Component (legacy)
+/**
+ * @deprecated Use `@/components/footer/Footer` from `src/components/footer/Footer.tsx`
+ * instead. This server component remains only to support legacy tests and
+ * templates and should not be imported in new layouts.
+ */
 export async function Footer() {
   const { sections } = FOOTER_CONFIG;
   let translator: (key: string) => string;
@@ -175,7 +191,7 @@ export async function Footer() {
   return (
     <footer className='border-t border-border bg-background'>
       <div className='mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8'>
-        <div className='grid grid-cols-1 gap-8 md:grid-cols-5'>
+        <div className='grid grid-cols-1 gap-8 md:grid-cols-4'>
           {/* Company Logo */}
           <div className='md:col-span-1'>
             <CompanyLogo />
@@ -193,21 +209,19 @@ export async function Footer() {
               />
             </div>
           ))}
-
-          {/* Social icons column (bottom-right) */}
-          <div className='flex items-end justify-end self-end md:col-span-1'>
-            <SocialSection />
-          </div>
         </div>
 
-        {/* Copyright and Theme Toggle */}
+        {/* Copyright, socials, and theme */}
         <div className='mt-12 border-t border-border pt-8'>
-          <div className='flex flex-col items-center justify-between gap-4 sm:flex-row'>
-            <p className='text-sm text-muted-foreground'>
+          <div className='flex flex-col items-center gap-6 sm:flex-row sm:items-center sm:justify-between'>
+            <p className='text-center text-sm text-muted-foreground sm:text-left'>
               {getCopyrightText(locale)}
             </p>
-            {/* Theme Switcher */}
-            <ThemeSwitcher data-testid='theme-toggle' />
+            <div className='flex items-center justify-center gap-4 sm:justify-end'>
+              <SocialSection />
+              <div className='hidden h-5 w-px bg-border sm:block' />
+              <ThemeSwitcher data-testid='theme-toggle' />
+            </div>
           </div>
         </div>
       </div>
