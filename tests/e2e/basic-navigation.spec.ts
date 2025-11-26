@@ -1,4 +1,9 @@
 import { expect, test } from '@playwright/test';
+import {
+  removeInterferingElements,
+  waitForLoadWithFallback,
+  waitForStablePage,
+} from './test-environment-setup';
 
 test.describe('Basic Navigation', () => {
   test('should load homepage successfully', async ({ page }) => {
@@ -19,15 +24,24 @@ test.describe('Basic Navigation', () => {
   test('should navigate between pages', async ({ page }) => {
     // localePrefix: 'always' 要求所有路径必须包含语言前缀
     await page.goto('/en');
+    await waitForLoadWithFallback(page, {
+      context: 'basic navigation about link',
+      loadTimeout: 5_000,
+      fallbackDelay: 500,
+    });
+    await removeInterferingElements(page);
+    await waitForStablePage(page);
 
     // Test navigation to different pages - use nav-scoped selector to avoid footer links
     const aboutLink = page.locator('nav a[href*="/about"]').first();
-    if (await aboutLink.isVisible()) {
-      await aboutLink.click();
-      // Wait for navigation to complete with URL change
-      await page.waitForURL('**/about**', { timeout: 10000 });
-      await expect(page.url()).toContain('/about');
-    }
+    await expect(aboutLink).toBeVisible({ timeout: 10_000 });
+
+    // Wait for navigation to complete with URL change
+    await Promise.all([
+      page.waitForURL('**/about**', { timeout: 15_000 }),
+      aboutLink.click(),
+    ]);
+    await expect(page.url()).toContain('/about');
   });
 
   test('should handle language switching', async ({ page }) => {
