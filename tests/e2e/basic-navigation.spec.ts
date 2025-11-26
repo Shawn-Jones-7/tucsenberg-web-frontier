@@ -20,11 +20,12 @@ test.describe('Basic Navigation', () => {
     // localePrefix: 'always' 要求所有路径必须包含语言前缀
     await page.goto('/en');
 
-    // Test navigation to different pages
-    const aboutLink = page.locator('a[href*="/about"]').first();
+    // Test navigation to different pages - use nav-scoped selector to avoid footer links
+    const aboutLink = page.locator('nav a[href*="/about"]').first();
     if (await aboutLink.isVisible()) {
       await aboutLink.click();
-      await page.waitForLoadState('networkidle');
+      // Wait for navigation to complete with URL change
+      await page.waitForURL('**/about**', { timeout: 10000 });
       await expect(page.url()).toContain('/about');
     }
   });

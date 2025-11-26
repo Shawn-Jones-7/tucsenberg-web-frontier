@@ -29,8 +29,9 @@ test.describe('Homepage Core Functionality', () => {
     const heroSection = page.getByTestId('hero-section');
     const sections = page.locator('section');
 
-    // Should have at least 6 sections
-    await expect(sections).toHaveCount(6);
+    // Should have at least 6 sections (page may have more due to dynamic content)
+    const sectionCount = await sections.count();
+    expect(sectionCount).toBeGreaterThanOrEqual(6);
 
     // Verify hero section is visible
     await expect(heroSection).toBeVisible();
