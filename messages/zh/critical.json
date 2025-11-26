@@ -1,4 +1,7 @@
 {
+  "_comment": "⚠️ 此文件仅用于 VITEST 测试 Mock - 请勿在生产代码中使用",
+  "_usage": "由 vi.mock() 在 Vitest 测试中引用。运行时翻译从 messages/[locale]/critical.json 和 messages/[locale]/deferred.json 加载。",
+  "_last_updated": "2025-11-26",
   "common": {
     "loading": "加载中…",
     "error": "发生错误"
@@ -378,6 +381,7 @@
       },
       "resources": {
         "title": "资源",
+        "community": "社区",
         "docs": "文档",
         "guides": "指南",
         "academy": "学院",
@@ -385,31 +389,31 @@
         "integrations": "集成",
         "pricing": "定价",
         "resources": "资源",
-        "solutionPartners": "解决方案伙伴",
-        "startups": "初创计划",
+        "solutionPartners": "解决方案合作伙伴",
+        "startups": "初创企业",
         "templates": "模板",
-        "sdks": "Vercel SDKs"
+        "sdks": "Vercel SDK"
       },
       "company": {
         "title": "公司",
+        "about": "关于",
         "blog": "博客",
         "careers": "招聘",
         "changelog": "更新日志",
         "contact": "联系我们",
-        "customers": "客户案例",
+        "customers": "客户",
         "events": "活动",
         "partners": "合作伙伴",
         "shipped": "已发布",
         "privacy": "隐私政策",
-        "legal": "法律条款"
+        "legal": "法律"
       },
       "social": {
         "title": "社交",
-        "x": "X (Twitter)",
         "github": "GitHub",
-        "youtube": "YouTube",
         "linkedin": "LinkedIn",
-        "discord": "Discord"
+        "twitter": "Twitter",
+        "youtube": "YouTube"
       }
     }
   },
@@ -562,60 +566,6 @@
     "product": {
       "defaultName": "产品",
       "defaultDescription": "产品描述"
-    }
-  },
-  "footer": {
-    "vercel": {
-      "products": {
-        "title": "产品",
-        "ai": "AI",
-        "enterprise": "企业版",
-        "fluidCompute": "弹性算力",
-        "nextjs": "Next.js",
-        "observability": "可观测性",
-        "previews": "预览",
-        "rendering": "渲染",
-        "security": "安全",
-        "turbo": "Turbo",
-        "domains": "域名",
-        "v0": "v0"
-      },
-      "resources": {
-        "title": "资源",
-        "community": "社区",
-        "docs": "文档",
-        "guides": "指南",
-        "academy": "学院",
-        "help": "帮助",
-        "integrations": "集成",
-        "pricing": "定价",
-        "resources": "资源",
-        "solutionPartners": "解决方案伙伴",
-        "startups": "初创计划",
-        "templates": "模板",
-        "sdks": "Vercel SDKs"
-      },
-      "company": {
-        "title": "公司",
-        "about": "关于",
-        "blog": "博客",
-        "careers": "招聘",
-        "changelog": "更新日志",
-        "contact": "联系我们",
-        "customers": "客户案例",
-        "events": "活动",
-        "partners": "合作伙伴",
-        "shipped": "已发布",
-        "privacy": "隐私政策",
-        "legal": "法律条款"
-      },
-      "social": {
-        "title": "社交",
-        "github": "GitHub",
-        "linkedin": "LinkedIn",
-        "twitter": "Twitter",
-        "youtube": "YouTube"
-      }
     }
   }
 }

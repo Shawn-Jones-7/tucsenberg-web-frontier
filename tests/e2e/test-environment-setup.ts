@@ -176,6 +176,7 @@ export async function waitForLoadWithFallback(
 
 /**
  * 安全点击元素（避免干扰）
+ * 使用 .first() 确保只操作第一个匹配的元素，避免 strict mode violation
  */
 export async function safeClick(
   page: Page,
@@ -190,8 +191,11 @@ export async function safeClick(
   // 等待元素可见
   await page.waitForSelector(selector, { state: 'visible', timeout: 5000 });
 
+  // 使用 .first() 确保只操作第一个匹配的元素
+  const targetElement = page.locator(selector).first();
+
   // 滚动到元素位置
-  await page.locator(selector).scrollIntoViewIfNeeded();
+  await targetElement.scrollIntoViewIfNeeded();
 
   // 等待元素稳定
   await page.waitForTimeout(100);
@@ -201,7 +205,7 @@ export async function safeClick(
 
   try {
     // 尝试点击
-    await page.locator(selector).click(options);
+    await targetElement.click(options);
     console.log(`✅ Successfully clicked: ${selector}`);
     return true;
   } catch (error) {
