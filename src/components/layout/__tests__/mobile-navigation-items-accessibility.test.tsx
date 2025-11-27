@@ -81,6 +81,7 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
           'accessibility.closeMenu': 'Close menu',
           'seo.siteName': 'Site Name',
           'seo.description': 'Site Description',
+          'navigation.contactSales': 'Contact Sales',
         };
         return translations[key] || key; // key 来自测试数据，安全
       },
@@ -205,7 +206,13 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
       const links = screen.getAllByRole('link');
       const linkTexts = links.map((link) => link.textContent?.trim());
 
-      expect(linkTexts).toEqual(['Home', 'Products', 'Blog', 'About']);
+      expect(linkTexts).toEqual([
+        'Home',
+        'Products',
+        'Blog',
+        'About',
+        'Contact Sales',
+      ]);
     });
 
     it('applies consistent styling to navigation items', async () => {
@@ -216,8 +223,13 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
 
       const links = screen.getAllByRole('link');
 
-      links.forEach((link) => {
-        // Check for actual classes used in the component
+      // Filter out the CTA button link (which has different styling)
+      const navLinks = links.filter((link) =>
+        link.className.includes('rounded-md px-3 py-2'),
+      );
+
+      navLinks.forEach((link) => {
+        // Check for actual classes used in navigation link items
         expect(link).toHaveClass(
           'flex',
           'items-center',

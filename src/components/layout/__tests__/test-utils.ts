@@ -1,38 +1,30 @@
 /**
  * Test utilities for layout components
+ *
+ * @deprecated This file is deprecated. Please use @/test/utils instead.
+ *
+ * Migration guide:
+ * ```typescript
+ * // Before
+ * import { renderWithProviders, mockMessages } from '@/components/layout/__tests__/test-utils';
+ *
+ * // After
+ * import { renderWithIntl } from '@/test/utils';
+ * import { combinedMessages } from '@/test/constants/mock-messages';
+ * ```
+ *
+ * This file is kept for backward compatibility during the migration period.
+ * It will be removed in a future version.
  */
 import { type ReactElement } from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { vi } from 'vitest';
 
-// Mock messages for testing
-export const mockMessages = {
-  navigation: {
-    home: 'Home',
-    about: 'About',
-    services: 'Services',
-    products: 'Products',
-    blog: 'Blog',
-    contact: 'Contact',
-  },
-  language: {
-    switch: 'Switch language',
-    english: 'English',
-    chinese: 'Chinese',
-    current: 'Current language: {locale}',
-  },
-  theme: {
-    toggle: 'Toggle theme',
-    light: 'Light',
-    dark: 'Dark',
-    system: 'System',
-  },
-  common: {
-    loading: 'Loading...',
-    error: 'Error',
-    success: 'Success',
-  },
-};
+// Re-export centralized mock messages
+export { combinedMessages as mockMessages } from '@/test/constants/mock-messages';
+
+// Re-export renderWithIntl as renderWithProviders for compatibility
+export { renderWithIntl as renderWithProviders } from '@/test/utils';
 
 // Simple render function without complex providers for now
 interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
@@ -40,7 +32,10 @@ interface CustomRenderOptions extends Omit<RenderOptions, 'wrapper'> {
   messages?: Record<string, unknown>;
 }
 
-export function renderWithProviders(
+/**
+ * @deprecated Use renderWithIntl from @/test/utils instead
+ */
+export function customRenderWithProviders(
   ui: ReactElement,
   options: CustomRenderOptions = {},
 ) {

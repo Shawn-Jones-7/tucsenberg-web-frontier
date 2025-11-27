@@ -140,7 +140,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 className={cn(
                   'h-3.5 w-3.5 text-foreground/70',
                   // 箭头旋转：展开180°，收起0°，160ms过渡
-                  'duration-[160ms] transition-transform ease-in-out',
+                  'transition-transform duration-150 ease-in-out',
                   isOpen && 'rotate-180',
                 )}
                 fill='none'
@@ -183,7 +183,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 'hover:bg-muted hover:text-foreground dark:hover:bg-foreground/10',
                 'rounded-md',
                 // 过渡：120ms
-                'duration-[120ms] transition-all ease-in-out',
+                'transition-all duration-150 ease-in-out',
                 'cursor-pointer',
               )}
               onClick={() => handleLanguageSwitch('en')}
@@ -219,7 +219,7 @@ export const LanguageToggle = memo(({ locale }: { locale?: 'en' | 'zh' }) => {
                 'hover:bg-muted hover:text-foreground dark:hover:bg-foreground/10',
                 'rounded-md',
                 // 过渡：120ms
-                'duration-[120ms] transition-all ease-in-out',
+                'transition-all duration-150 ease-in-out',
                 'cursor-pointer',
               )}
               onClick={() => handleLanguageSwitch('zh')}

@@ -210,6 +210,10 @@ export default [
               name: '@jest/globals',
               message: '项目使用 Vitest，禁止引入 jest.* API',
             },
+            {
+              name: '@/components/layout/__tests__/test-utils',
+              message: '🚫 已迁移到集中测试工具，请使用 @/test/utils 替代',
+            },
           ],
           patterns: [
             {

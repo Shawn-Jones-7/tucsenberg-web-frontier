@@ -3,14 +3,18 @@
  *
  * 服务端渲染的头部，交互部件以客户端小岛方式注入，减少首屏 JS 体积。
  */
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/utils';
 import {
   LanguageToggleIsland,
   MobileNavigationIsland,
   NavSwitcherIsland,
 } from '@/components/layout/header-client';
+import { HeaderScrollChrome } from '@/components/layout/header-scroll-chrome';
 import { Logo } from '@/components/layout/logo';
 import { Idle } from '@/components/lazy/idle';
+import { Button } from '@/components/ui/button';
 
 /**
  * Header Component
@@ -27,7 +31,7 @@ interface HeaderProps {
   locale?: 'en' | 'zh';
 }
 
-export function Header({
+export async function Header({
   className,
   variant = 'default',
   sticky = true,
@@ -45,19 +49,24 @@ export function Header({
   const VISIBLE_MARGIN =
     process.env.NEXT_PUBLIC_IDLE_ROOTMARGIN ?? '400px 0px 400px 0px';
 
+  // Get translations for CTA button
+  const t = await getTranslations('navigation');
+
   return (
     <header
       className={cn(
         'w-full bg-background',
         isSticky && 'sticky top-0 z-50',
         isTransparent && 'border-transparent bg-transparent',
-        // 简化：默认透明边框，滚动阴影效果移至客户端小岛或后续优化
+        // Scroll shadow effect via data-scrolled attribute
         isVercelNav
-          ? 'border-b border-transparent transition-all duration-200'
+          ? 'border-b border-border/30 transition-all duration-200 data-[scrolled=true]:border-border/60 data-[scrolled=true]:shadow-sm'
           : !isTransparent && 'border-b border-border',
         className,
       )}
     >
+      {/* Scroll detection client island */}
+      {isVercelNav && <HeaderScrollChrome />}
       <div className='mx-auto max-w-7xl px-4 sm:px-6 lg:px-8'>
         <div className='relative flex h-16 items-center justify-between'>
           {/* Left section: Logo + Mobile Menu */}
@@ -94,6 +103,19 @@ export function Header({
             >
               {locale && <LanguageToggleIsland locale={locale} />}
             </Idle>
+            {/* Desktop CTA Button - Hidden on mobile */}
+            {locale && (
+              <Button
+                variant='default'
+                size='sm'
+                asChild
+                className='hidden md:inline-flex'
+              >
+                <Link href={`/${locale}/contact?source=header_cta`}>
+                  {t('contactSales')}
+                </Link>
+              </Button>
+            )}
           </div>
         </div>
       </div>

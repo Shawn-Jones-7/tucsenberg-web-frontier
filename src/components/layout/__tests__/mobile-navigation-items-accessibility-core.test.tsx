@@ -317,7 +317,7 @@ describe('Mobile Navigation - Core Tests', () => {
 
       // Should still render navigation items
       expect(screen.getByRole('navigation')).toBeInTheDocument();
-      expect(screen.getAllByRole('link')).toHaveLength(4);
+      expect(screen.getAllByRole('link')).toHaveLength(5);
     });
 
     it('should handle translation function errors', async () => {

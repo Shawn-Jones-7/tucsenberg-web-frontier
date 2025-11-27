@@ -463,3 +463,33 @@
   letter-spacing: 0.01em;
   line-height: 1.6;
 }
+
+/**
+ * Vercel Line Design System
+ *
+ * Semantic utility classes for consistent border/divider usage.
+ * Opacity range: /30 ~ /50 for subtle, non-intrusive visual hierarchy.
+ */
+@layer utilities {
+  /* Section divider - horizontal separator between major sections */
+  .section-divider {
+    @apply border-t border-border/30;
+  }
+
+  /* Column divider - vertical separator between columns */
+  .column-divider {
+    @apply divide-x divide-border/30;
+  }
+
+  /* Card border - subtle frame for cards and hero sections */
+  .card-border {
+    @apply rounded-2xl border border-border/40;
+  }
+
+  /* Responsive variants */
+  @media (min-width: 768px) {
+    .md\:section-divider {
+      @apply border-t border-border/30;
+    }
+  }
+}

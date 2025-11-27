@@ -126,6 +126,26 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
                 </Link>
               );
             })}
+
+            {/* Mobile CTA: Contact Sales */}
+            <div className='pt-4'>
+              <Button
+                variant='default'
+                size='sm'
+                asChild
+                className='w-full justify-start'
+              >
+                <Link
+                  href={{
+                    pathname: '/contact',
+                    query: { source: 'mobile_nav_cta' },
+                  }}
+                  onClick={() => setIsOpen(false)}
+                >
+                  {t('navigation.contactSales')}
+                </Link>
+              </Button>
+            </div>
           </nav>
         </SheetContent>
       </Sheet>

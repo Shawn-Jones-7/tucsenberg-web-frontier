@@ -1,12 +1,203 @@
 /**
  * 测试工具函数
  * 提供自定义渲染器和测试辅助函数
+ *
+ * ## 快速开始
+ *
+ * ### 基础使用
+ *
+ * ```typescript
+ * import { renderWithIntl } from '@/test/utils';
+ *
+ * // 使用默认集中 mock 消息渲染组件
+ * renderWithIntl(<MyComponent />);
+ * ```
+ *
+ * ### 覆写消息
+ *
+ * ```typescript
+ * // 覆写特定命名空间的消息
+ * renderWithIntl(<MyComponent />, 'en', {
+ *   navigation: { home: 'Custom Home' }
+ * });
+ *
+ * // 深度合并 - 其他 navigation key 保持默认
+ * renderWithIntl(<MyComponent />, 'en', {
+ *   common: {
+ *     loading: 'Custom Loading...',
+ *     // 其他 common key (error, success 等) 保持默认
+ *   }
+ * });
+ * ```
+ *
+ * ### 使用特定命名空间 mock
+ *
+ * ```typescript
+ * import { navigationMessages, themeMessages } from '@/test/constants/mock-messages';
+ *
+ * // 只使用特定命名空间
+ * renderWithIntl(<MyComponent />, 'en', {
+ *   navigation: navigationMessages,
+ *   theme: themeMessages,
+ * });
+ * ```
+ *
+ * ### 创建 mock 翻译函数
+ *
+ * ```typescript
+ * import { createMockTranslations } from '@/test/utils';
+ *
+ * // 使用默认集中 mock
+ * const t = createMockTranslations();
+ *
+ * // 覆写特定 key (扁平格式)
+ * const t = createMockTranslations({
+ *   'navigation.home': 'Custom Home',
+ *   'common.loading': 'Custom Loading...'
+ * });
+ * ```
+ *
+ * ### 其他测试工具
+ *
+ * ```typescript
+ * import {
+ *   createMockTheme,
+ *   createMockRouter,
+ *   createUserEventMocks,
+ *   createAccessibilityMocks,
+ *   createPerformanceMocks,
+ *   createFetchMock,
+ *   createErrorBoundaryMock,
+ *   waitForNextTick,
+ *   generateTestData,
+ * } from '@/test/utils';
+ *
+ * // 示例: 创建 mock 主题
+ * const theme = createMockTheme('dark');
+ *
+ * // 示例: 创建 mock 路由
+ * const router = createMockRouter({ pathname: '/about' });
+ *
+ * // 示例: 生成测试数据
+ * const user = generateTestData.user({ name: 'Test User' });
+ * ```
+ *
+ * ## 集中 Mock 消息
+ *
+ * 所有默认 mock 消息现在集中管理在 `src/test/constants/mock-messages.ts`。
+ *
+ * ### 可用的命名空间
+ *
+ * - `common`: 通用 UI 文本 (loading, error, success, cancel, etc.)
+ * - `navigation`: 导航链接 (home, about, contact, services, etc.)
+ * - `accessibility`: 无障碍文本 (skipToContent, openMenu, etc.)
+ * - `theme`: 主题相关 (toggle, light, dark, system, etc.)
+ * - `language`: 语言切换 (toggle, selectLanguage, english, chinese, etc.)
+ * - `errorBoundary`: 错误边界 (title, description, tryAgain)
+ * - `seo`: SEO 元数据 (title, description, siteName, pages, etc.)
+ * - `footer`: 页脚内容 (sections, vercel, etc.)
+ * - `underConstruction`: 施工中页面 (title, subtitle, comingSoon, etc.)
+ *
+ * ### 导入特定命名空间
+ *
+ * ```typescript
+ * import {
+ *   commonMessages,
+ *   navigationMessages,
+ *   accessibilityMessages,
+ *   themeMessages,
+ *   languageMessages,
+ *   errorBoundaryMessages,
+ *   seoMessages,
+ *   footerMessages,
+ *   underConstructionMessages,
+ *   combinedMessages, // 全部合并
+ * } from '@/test/constants/mock-messages';
+ * ```
+ *
+ * ## 验证命令
+ *
+ * 测试完成后,运行以下命令验证:
+ *
+ * ```bash
+ * # 运行测试
+ * pnpm test
+ *
+ * # 运行特定测试文件
+ * pnpm vitest run path/to/test.tsx
+ *
+ * # 类型检查
+ * pnpm type-check
+ *
+ * # Lint 检查
+ * pnpm lint
+ *
+ * # 完整验证 (类型 + lint + 测试)
+ * pnpm verify
+ * ```
+ *
+ * ## 迁移指南
+ *
+ * 如果你的测试文件仍在使用旧的 `@/components/layout/__tests__/test-utils`,
+ * 请���以下步骤迁移:
+ *
+ * ### 步骤 1: 更新导入
+ *
+ * ```typescript
+ * // 迁移前
+ * import { renderWithProviders, mockMessages } from '@/components/layout/__tests__/test-utils';
+ *
+ * // 迁移后
+ * import { renderWithIntl } from '@/test/utils';
+ * import { combinedMessages } from '@/test/constants/mock-messages';
+ * ```
+ *
+ * ### 步骤 2: 更新函数调用
+ *
+ * ```typescript
+ * // 迁移前
+ * renderWithProviders(<Component />);
+ *
+ * // 迁移后
+ * renderWithIntl(<Component />);
+ * ```
+ *
+ * ### 步骤 3: 清理内联 mock
+ *
+ * ```typescript
+ * // 迁移前 - 内联 mock 翻译
+ * vi.mock('next-intl', () => ({
+ *   useTranslations: vi.fn(() => (key: string) => {
+ *     const translations: Record<string, string> = {
+ *       'navigation.home': 'Home',
+ *       'navigation.about': 'About',
+ *       // ... 重复定义
+ *     };
+ *     return translations[key] || key;
+ *   }),
+ * }));
+ *
+ * // 迁移后 - 使用集中 mock
+ * import { createMockTranslations } from '@/test/utils';
+ *
+ * vi.mock('next-intl', () => ({
+ *   useTranslations: vi.fn(() => createMockTranslations()),
+ * }));
+ * ```
+ *
+ * ## 更多信息
+ *
+ * 详细的盘点报告和架构说明,请参考:
+ * - `docs/test-mock-inventory.md` - 完整的 mock 现状盘点
+ *
+ * @see src/test/constants/mock-messages.ts - 集中 mock 消息定义
  */
 
 import React from 'react';
 import { render, type RenderOptions } from '@testing-library/react';
 import { NextIntlClientProvider } from 'next-intl';
 import { vi } from 'vitest';
+import { combinedMessages } from '@/test/constants/mock-messages';
 
 // import { ThemeProvider } from 'next-themes';
 
@@ -16,6 +207,42 @@ const HTTP_STATUS = {
   CLIENT_ERROR_MIN: 200,
   CLIENT_ERROR_MAX: 300,
 } as const;
+
+/**
+ * 深度合并两个对象,右侧优先
+ * 用于合并默认 mock 消息和测试特定的覆写消息
+ */
+function deepMerge<T extends Record<string, unknown>>(
+  target: T,
+  source: Partial<T>,
+): T {
+  const output = { ...target };
+
+  for (const key in source) {
+    if (Object.prototype.hasOwnProperty.call(source, key)) {
+      const sourceValue = source[key];
+      const targetValue = output[key];
+
+      if (
+        sourceValue &&
+        typeof sourceValue === 'object' &&
+        !Array.isArray(sourceValue) &&
+        targetValue &&
+        typeof targetValue === 'object' &&
+        !Array.isArray(targetValue)
+      ) {
+        output[key] = deepMerge(
+          targetValue as Record<string, unknown>,
+          sourceValue as Record<string, unknown>,
+        ) as T[Extract<keyof T, string>];
+      } else {
+        output[key] = sourceValue as T[Extract<keyof T, string>];
+      }
+    }
+  }
+
+  return output;
+}
 
 // 国际化Provider Mock
 const MockIntlProvider = ({
@@ -120,11 +347,57 @@ const customRender = (
 };
 
 // 国际化测试工具
+/**
+ * 创建 mock 翻译函数
+ * 现在默认使用集中的 mock 消息,也可以传入自定义翻译覆写
+ *
+ * @param translations - 可选的自定义翻译,会与默认集中 mock 深度合并
+ * @returns Mock 翻译函数
+ *
+ * @example
+ * ```typescript
+ * // 使用默认集中 mock
+ * const t = createMockTranslations();
+ *
+ * // 覆写特定 key
+ * const t = createMockTranslations({
+ *   'navigation.home': 'Custom Home'
+ * });
+ * ```
+ */
 export const createMockTranslations = (
-  translations: Record<string, string>,
+  translations?: Record<string, string>,
 ) => {
+  // 扁平化集中 mock 消息为 key-value 映射
+  const flattenMessages = (
+    obj: Record<string, unknown>,
+    prefix = '',
+  ): Record<string, string> => {
+    const result: Record<string, string> = {};
+
+    for (const [key, value] of Object.entries(obj)) {
+      const fullKey = prefix ? `${prefix}.${key}` : key;
+
+      if (typeof value === 'string') {
+        result[fullKey] = value;
+      } else if (typeof value === 'object' && value !== null) {
+        Object.assign(
+          result,
+          flattenMessages(value as Record<string, unknown>, fullKey),
+        );
+      }
+    }
+
+    return result;
+  };
+
+  const defaultTranslations = flattenMessages(combinedMessages);
+  const mergedTranslations = translations
+    ? { ...defaultTranslations, ...translations }
+    : defaultTranslations;
+
   return vi.fn((key: string) => {
-    const safeTranslations = new Map(Object.entries(translations));
+    const safeTranslations = new Map(Object.entries(mergedTranslations));
     return safeTranslations.get(key) || key;
   });
 };
@@ -302,66 +575,48 @@ export const generateTestData = {
   }),
 };
 
-// 国际化渲染工具 - 用于解决P1任务中的NextIntlClientProvider上下文缺失问题
+/**
+ * 国际化渲染工具 - 用于解决 NextIntlClientProvider 上下文缺失问题
+ *
+ * 现在默认使用集中的 mock 消息 (src/test/constants/mock-messages.ts),
+ * 支持通过 partialMessages 参数进行局部覆写。
+ *
+ * @param ui - 要渲染的 React 元素
+ * @param locale - 语言代码,默认 'en'
+ * @param partialMessages - 可选的局部消息覆写,会与默认集中 mock 深度合并
+ * @returns render 结果
+ *
+ * @example
+ * ```typescript
+ * // 使用默认集中 mock
+ * renderWithIntl(<Component />);
+ *
+ * // 指定语言
+ * renderWithIntl(<Component />, 'zh');
+ *
+ * // 覆写特定命名空间
+ * renderWithIntl(<Component />, 'en', {
+ *   navigation: { home: 'Custom Home' }
+ * });
+ *
+ * // 深度合并覆写
+ * renderWithIntl(<Component />, 'en', {
+ *   common: {
+ *     loading: 'Custom Loading...',
+ *     // 其他 common key 保持默认
+ *   }
+ * });
+ * ```
+ */
 export const renderWithIntl = (
   ui: React.ReactElement,
   locale: string = 'en',
-  customMessages?: Record<string, unknown>,
+  partialMessages?: Record<string, unknown>,
 ) => {
-  // 默认翻译消息，基于项目的messages/en.json结构
-  const defaultMessages = {
-    common: {
-      loading: 'Loading...',
-      error: 'An error occurred',
-      success: 'Success',
-      cancel: 'Cancel',
-      confirm: 'Confirm',
-      save: 'Save',
-      edit: 'Edit',
-      delete: 'Delete',
-      search: 'Search',
-      filter: 'Filter',
-      sort: 'Sort',
-      next: 'Next',
-      previous: 'Previous',
-      close: 'Close',
-      open: 'Open',
-    },
-    navigation: {
-      home: 'Home',
-      about: 'About',
-      contact: 'Contact',
-      services: 'Services',
-      products: 'Products',
-      solutions: 'Solutions',
-      resources: 'Resources',
-      enterprise: 'Enterprise',
-      docs: 'Docs',
-      pricing: 'Pricing',
-      blog: 'Blog',
-      menu: 'Menu',
-      close: 'Close',
-    },
-    accessibility: {
-      skipToContent: 'Skip to main content',
-      openMenu: 'Open navigation menu',
-      closeMenu: 'Close navigation menu',
-      loading: 'Content is loading',
-      error: 'An error has occurred',
-      languageSelector: 'Select language',
-      themeSelector: 'Select theme',
-    },
-    errorBoundary: {
-      title: 'An error occurred',
-      description: 'Something went wrong. Please try refreshing the page.',
-      tryAgain: 'Try Again',
-    },
-  };
-
-  // 合并自定义消息
-  const messages = customMessages
-    ? { ...defaultMessages, ...customMessages }
-    : defaultMessages;
+  // 使用集中的 mock 消息作为默认
+  const messages = partialMessages
+    ? deepMerge(combinedMessages as Record<string, unknown>, partialMessages)
+    : combinedMessages;
 
   return render(
     <NextIntlClientProvider

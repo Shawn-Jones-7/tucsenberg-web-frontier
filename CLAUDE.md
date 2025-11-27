@@ -93,7 +93,7 @@ You may skip Serena only when:
 
 Even in these cases, if you are unsure about existing patterns or conventions, prefer to quickly check with Serena first.
 
-> Note: In Codex, Serena is your **primary** tool for symbol-level code navigation and editing.
+> Note: In Codex, Serena is your **primary** tool for symbol-level code navigation and editing.  
 > Use ACE `search_context` to complement Serena with broad, semantic search across the repository (including non-code assets, docs, and configuration), not as a replacement for Serena’s code-centric tools.
 
 ### 2.1 ACE via Ace-Mcp-Node – Code & Repo Context (MANDATORY)
@@ -441,6 +441,139 @@ You may and should:
 - Write or update tests to cover your changes.
 - Run tests/linters/type-checkers as part of your own verification loop.
 - Avoid destructive operations, data migrations, or dependency installs without explicit user permission.
+
+---
+
+### 4.8 Test Tools & Mock Management (MANDATORY)
+
+Centralized test mock management is **REQUIRED** to prevent duplication, maintenance complexity, and inconsistency.
+
+#### 4.8.1 Mandatory Rules
+
+**❌ PROHIBITED**
+
+1. **Creating new test utility files**:
+   - Do NOT create `test-utils.ts` or similar files in component directories
+   - Do NOT define local `renderWithProviders` functions in test files
+   - Violation: `src/components/**/__tests__/test-utils.ts` ❌
+
+2. **Inline mock message definitions**:
+   ```typescript
+   // ❌ PROHIBITED - Inline translation mock definitions
+   vi.mock('next-intl', () => ({
+     useTranslations: vi.fn(() => (key: string) => {
+       const translations = {
+         'navigation.home': 'Home',
+         'navigation.about': 'About',
+       };
+       return translations[key] || key;
+     }),
+   }));
+   ```
+
+3. **Duplicate message constants**:
+   ```typescript
+   // ❌ PROHIBITED - Message objects in test files
+   const mockMessages = { navigation: { home: 'Home', about: 'About' } };
+   ```
+
+**✅ REQUIRED**
+
+1. **Use centralized test utilities**:
+   ```typescript
+   import { renderWithIntl, createMockTranslations } from '@/test/utils';
+   ```
+
+2. **Use centralized mock messages**:
+   ```typescript
+   import { combinedMessages } from '@/test/constants/mock-messages';
+
+   vi.mock('next-intl', () => ({
+     useTranslations: vi.fn(() => createMockTranslations()),
+   }));
+   ```
+
+3. **Document partial overrides**:
+   ```typescript
+   renderWithIntl(<Component />, 'en', {
+     // Reason: Testing error state with empty messages
+     navigation: {}
+   });
+   ```
+
+#### 4.8.2 Standard Test File Structure
+
+```typescript
+// 1. Import test utilities
+import { renderWithIntl, createMockTranslations } from '@/test/utils';
+import { screen } from '@testing-library/react';
+import { describe, expect, it, vi } from 'vitest';
+
+// 2. Import component under test
+import { MyComponent } from './my-component';
+
+// 3. Mock external dependencies (non-message)
+vi.mock('@/lib/some-utility', () => ({ someFunction: vi.fn() }));
+
+// 4. Mock translations (use centralized tools)
+vi.mock('next-intl', () => ({
+  useTranslations: vi.fn(() => createMockTranslations()),
+}));
+
+// 5. Test suite
+describe('MyComponent', () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  it('renders correctly', () => {
+    renderWithIntl(<MyComponent />);
+    expect(screen.getByText('Home')).toBeInTheDocument();
+  });
+});
+```
+
+#### 4.8.3 Permitted Exceptions
+
+**1. Component Mocks** - Test-specific behavior that cannot be centralized
+```typescript
+vi.mock('@/components/ui/sheet', () => ({
+  Sheet: ({ children, open }: any) => (
+    <div data-testid="sheet" data-open={open}>{children}</div>
+  ),
+}));
+```
+
+**2. Router Mocks** - Route state binds to specific test scenarios
+```typescript
+vi.mock('@/i18n/routing', () => ({
+  useRouter: vi.fn(() => ({ push: vi.fn(), pathname: '/test-path' })),
+}));
+```
+
+**3. Data Mocks** - Variable business data structures are test-specific
+```typescript
+const mockUserData = { id: '123', name: 'Test User', role: 'admin' };
+```
+
+#### 4.8.4 Code Review Checklist
+
+Review test PRs for:
+- [ ] Using `@/test/utils` as entry point?
+- [ ] Using `createMockTranslations()` or `renderWithIntl()` with centralized mocks?
+- [ ] Inline translation mocks present?
+- [ ] New `test-utils.ts` files created?
+- [ ] Partial overrides documented?
+- [ ] Special mocks (component/router/data) commented?
+
+**Violations MUST be corrected before merge.**
+
+#### 4.8.5 AI Assistant Directives
+
+When writing/modifying test files:
+1. Verify available tools in `src/test/utils.tsx`
+2. Check message coverage in `src/test/constants/mock-messages.ts`
+3. Prohibit creating new test utility files outside centralized location
+4. Suggest migration to centralized mocks for duplicates
+5. Reference `src/test/utils.tsx` documentation and explain benefits
 
 ---
 

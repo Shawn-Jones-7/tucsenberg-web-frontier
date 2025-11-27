@@ -1,713 +1,160 @@
 {
   "tasks": [
     {
-      "id": "c3f269df-ab01-44f4-8063-2029e2bd724c",
-      "name": "覆盖率基线与优先级确认",
-      "description": "读取 reports/coverage/coverage-summary.json 与测试配置，形成当前覆盖率基线，列出覆盖率最低的前10个模块，并确定短期覆盖率目标≥55%。",
-      "status": "completed",
+      "id": "63c1cf87-c712-41f4-a048-c1d88c5d0aeb",
+      "name": "盤點測試 mock 現狀與差異",
+      "description": "梳理 test-utils.ts、src/test/utils.tsx 以及各測試文件的本地 mock，列出消息/導航 key 差異與覆蓋情況，確認哪些可以集中化、哪些需保留局部覆寫。輸出盤點清單供後續改造參考。",
+      "status": "pending",
       "dependencies": [],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T06:03:08.000Z",
+      "createdAt": "2025-11-26T13:21:49.556Z",
+      "updatedAt": "2025-11-26T13:21:49.556Z",
       "relatedFiles": [
         {
-          "path": "reports/coverage/coverage-summary.json",
+          "path": "test-utils.ts",
           "type": "REFERENCE",
-          "description": "最新覆盖率摘要"
+          "description": "根目錄簡易 mock 工具"
         },
         {
-          "path": "vitest.config.mts",
+          "path": "src/test/utils.tsx",
           "type": "REFERENCE",
-          "description": "覆盖率阈值与排除项"
+          "description": "完整 renderWithIntl 工具"
+        },
+        {
+          "path": "tests",
+          "type": "REFERENCE",
+          "description": "測試文件內局部 mock 搜索"
         }
       ],
-      "implementationGuide": "分析 coverage-summary.json，统计低覆盖模块（安全/监控/服务），输出文件路径+lines/functions/branches 覆盖率表格，存档到 evidence/ 或任务输出，不改代码。",
-      "verificationCriteria": "生成基线报告，含Top-N低覆盖模块与短期目标(≥55%)，已存档或输出。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
+      "implementationGuide": "1) 搜索 test-utils.ts、src/test/utils.tsx 以及 tests/** 中的自定義 mock；2) 列出 navigation/seo/其他命名空間的 key 列表與重疊/缺失；3) 確認哪些測試需要特殊 mock，標記不可合併；4) 產出盤點文檔或簡表。",
+      "verificationCriteria": "提供盤點結果（文件/表格），包含：集中可合併的命名空間列表、必須保留局部覆蓋的場景、缺失/重疊的 key。",
+      "analysisResult": "集中管理測試 mock，統一 renderWithIntl 等工具的默認消息來源，減少重複和缺漏。"
     },
     {
-      "id": "d6758c9f-e4b3-48dc-a3a9-677463916b70",
-      "name": "安全与输入验证模块测试补齐",
-      "description": "为安全/输入验证模块补单测，优先 security-headers/validation/rate-limit/file-upload/tokens，目标相关文件 lines/functions 覆盖率≥60%。",
-      "status": "completed",
+      "id": "cb832325-6fc4-42d4-917f-5f4ac23076c5",
+      "name": "建立集中 mock 常量",
+      "description": "在 src/test/constants/mock-messages.ts 按命名空間導出 mock（如 navigation、seo 等），並提供合併的 combinedMessages；確保對象可分拆引用以減少載入。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "c3f269df-ab01-44f4-8063-2029e2bd724c"
+          "taskId": "63c1cf87-c712-41f4-a048-c1d88c5d0aeb"
         }
       ],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T07:58:00.000Z",
+      "createdAt": "2025-11-26T13:21:49.556Z",
+      "updatedAt": "2025-11-26T13:21:49.556Z",
       "relatedFiles": [
         {
-          "path": "src/lib/security-headers.ts",
-          "type": "TO_MODIFY",
-          "description": "安全头工具"
-        },
-        {
-          "path": "src/lib/security-validation.ts",
-          "type": "TO_MODIFY",
-          "description": "输入校验工具"
-        },
-        {
-          "path": "src/lib/security-rate-limit.ts",
-          "type": "TO_MODIFY",
-          "description": "速率限制"
-        },
-        {
-          "path": "src/lib/security-file-upload.ts",
-          "type": "TO_MODIFY",
-          "description": "文件上传校验"
-        },
-        {
-          "path": "src/lib/security-tokens.ts",
-          "type": "TO_MODIFY",
-          "description": "令牌生成与验证"
-        },
-        {
-          "path": "tests/unit/security",
+          "path": "src/test/constants/mock-messages.ts",
           "type": "CREATE",
-          "description": "新增安全模块测试目录"
+          "description": "集中 mock 常量文件"
+        },
+        {
+          "path": "messages/en/critical.json",
+          "type": "REFERENCE",
+          "description": "英語消息源參考"
+        },
+        {
+          "path": "messages/zh/critical.json",
+          "type": "REFERENCE",
+          "description": "中文消息源參考"
         }
       ],
-      "implementationGuide": "编写 Vitest 单测覆盖正常/异常/边界输入；rate limit 用 fake timers；禁止真实网络；必要时微调代码以便注入依赖但保持 API 兼容。",
-      "verificationCriteria": "相关模块 lines/functions 覆盖率≥60%，包含非法输入/边界用例，测试使用 Vitest。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
+      "implementationGuide": "1) 新建 src/test/constants/mock-messages.ts；2) 拆分導出各命名空間常量 + 默認合併對象；3) 確保類型對齊 next-intl 消息結構，避免 any；4) 若有導航 mock，一併集中。",
+      "verificationCriteria": "存在集中 mock 文件，包含分命名空間導出與 combinedMessages，類型正確，無 ESLint/TS 錯誤。",
+      "analysisResult": "集中管理測試 mock，統一 renderWithIntl 等工具的默認消息來源，減少重複和缺漏。"
     },
     {
-      "id": "6db8d1ed-65e4-4bd9-b341-acd6300e3ba0",
-      "name": "API 边界与输入校验测试",
-      "description": "为 contact/web-vitals/whatsapp/subscribe/health 等 API 路由补集成/契约测试，覆盖成功与失败路径，目标各路由文件 lines/functions ≥50%。",
-      "status": "completed",
+      "id": "ace45b3a-1629-4a4a-b97b-e10a815ffe3a",
+      "name": "整合測試工具入口到統一 mock",
+      "description": "更新 src/test/utils.tsx 使 renderWithIntl 等默認使用集中 mock，支持 partial 覆寫；調整 createMockTranslations 使用集中源；處理 test-utils.ts（根目錄）為輕量重導或標註棄用。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "c3f269df-ab01-44f4-8063-2029e2bd724c"
+          "taskId": "cb832325-6fc4-42d4-917f-5f4ac23076c5"
         }
       ],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T08:36:38.000Z",
+      "createdAt": "2025-11-26T13:21:49.556Z",
+      "updatedAt": "2025-11-26T13:21:49.556Z",
       "relatedFiles": [
         {
-          "path": "src/app/api/contact/route.ts",
+          "path": "src/test/utils.tsx",
           "type": "TO_MODIFY",
-          "description": "联系表单 API"
+          "description": "測試渲染工具"
         },
         {
-          "path": "src/app/api/verify-turnstile/route.ts",
+          "path": "test-utils.ts",
           "type": "TO_MODIFY",
-          "description": "Turnstile 验证"
-        },
-        {
-          "path": "src/app/api/analytics/web-vitals/route.ts",
-          "type": "TO_MODIFY",
-          "description": "Web Vitals ingestion"
-        },
-        {
-          "path": "src/app/api/whatsapp/send/route.ts",
-          "type": "TO_MODIFY",
-          "description": "WhatsApp 发送"
-        },
-        {
-          "path": "src/app/api/whatsapp/webhook/route.ts",
-          "type": "TO_MODIFY",
-          "description": "WhatsApp Webhook"
-        },
-        {
-          "path": "src/app/api/subscribe/route.ts",
-          "type": "TO_MODIFY",
-          "description": "订阅 API"
-        },
-        {
-          "path": "src/app/api/health/route.ts",
-          "type": "TO_MODIFY",
-          "description": "健康检查"
-        },
-        {
-          "path": "tests/integration/api",
-          "type": "CREATE",
-          "description": "新增 API 集成测试"
+          "description": "根目錄簡易工具需重導/棄用"
         }
       ],
-      "implementationGuide": "用 Vitest 调用 handler 或 supertest；mock Resend/Airtable/Turnstile 等外部依赖；覆盖 4xx/5xx/成功路径，并检查基本头部/状态码。",
-      "verificationCriteria": "每个目标路由覆盖成功+错误输入+异常路径；无真实外部网络；相关文件 lines/functions ≥50%。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
+      "implementationGuide": "1) 在 src/test/utils.tsx 引入集中 mock，默認合併並允許 partialMessages；2) createMockTranslations 從集中源生成；3) 如需深合併，使用現有 util 或添加小型合併函數；4) test-utils.ts 視情況重導至 src/test/utils.tsx 或保留 deprecated 標註。",
+      "verificationCriteria": "renderWithIntl 默認載入集中 mock 並可覆寫；createMockTranslations 依賴集中源；test-utils.ts 已處理重導/棄用；TS/ESLint 通過。",
+      "analysisResult": "集中管理測試 mock，統一 renderWithIntl 等工具的默認消息來源，減少重複和缺漏。"
     },
     {
-      "id": "d0b3b23f-4a7e-48e1-a386-40178863a34f",
-      "name": "业务服务与缓存工具测试",
-      "description": "提升服务层与缓存/存储工具覆盖率（content-parser、content-validation、cache-utils、locale-storage、i18n cache），目标相关文件 lines/functions ≥55%。",
-      "status": "completed",
+      "id": "10039858-e369-454d-9013-045d25e63a35",
+      "name": "遷移測試引用並清理局部 mock",
+      "description": "全局替換測試文件對本地 mock 的引用，改用集中 mock 或其子集；保留確需特別覆寫的場景並記錄；確保路徑更新後測試可運行。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "c3f269df-ab01-44f4-8063-2029e2bd724c"
+          "taskId": "ace45b3a-1629-4a4a-b97b-e10a815ffe3a"
         }
       ],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T08:59:25.000Z",
+      "createdAt": "2025-11-26T13:21:49.556Z",
+      "updatedAt": "2025-11-26T13:21:49.556Z",
       "relatedFiles": [
         {
-          "path": "src/lib/content-parser.ts",
+          "path": "tests",
           "type": "TO_MODIFY",
-          "description": "内容解析"
+          "description": "測試文件需更新導入"
         },
         {
-          "path": "src/lib/content-validation.ts",
-          "type": "TO_MODIFY",
-          "description": "内容校验"
-        },
-        {
-          "path": "src/lib/cache-utils.ts",
-          "type": "TO_MODIFY",
-          "description": "缓存工具"
-        },
-        {
-          "path": "src/lib/locale-storage-*",
-          "type": "TO_MODIFY",
-          "description": "本地存储/历史"
-        },
-        {
-          "path": "src/lib/i18n-cache.ts",
-          "type": "TO_MODIFY",
-          "description": "i18n 缓存"
-        },
-        {
-          "path": "tests/unit/cache",
-          "type": "CREATE",
-          "description": "新增缓存相关测试"
-        },
-        {
-          "path": "evidence/cache-tests-2025-11-24.md",
+          "path": "src/test/constants/mock-messages.ts",
           "type": "REFERENCE",
-          "description": "缓存与存储层单测记录"
+          "description": "集中 mock 來源"
+        },
+        {
+          "path": "src/test/utils.tsx",
+          "type": "REFERENCE",
+          "description": "統一工具入口"
         }
       ],
-      "implementationGuide": "为纯函数/缓存逻辑写单测，使用 fake timers/内存 stub；验证命中/失效/异常路径；如需拆小函数以便测试，保持对外接口不变。",
-      "verificationCriteria": "目标文件 lines/functions ≥55%，覆盖命中/失效/异常路径，测试可重复且无外部 IO。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
+      "implementationGuide": "1) 搜索 tests/** 中對 navigation/messages 等本地 mock 的導入；2) 替換為集中 mock 或從集中 mock 拆分子集；3) 保留特殊覆寫並在文件內註明原因；4) 確認 import 路徑統一。",
+      "verificationCriteria": "測試文件導入統一路徑；僅保留必要的局部覆寫並有說明；抽樣運行關鍵測試無路徑/類型錯誤。",
+      "analysisResult": "集中管理測試 mock，統一 renderWithIntl 等工具的默認消息來源，減少重複和缺漏。"
     },
     {
-      "id": "a0708c22-dcf0-465e-b0c4-8ca85de8dc3e",
-      "name": "核心交互与表单组件测试",
-      "description": "为稳定的 UI 组件（Header/Footer/语言切换/联系表单等）补交互与可访问性测试，目标组件 lines/functions ≥60%。",
-      "status": "completed",
+      "id": "c78a7ae9-5734-4ff4-bf75-3f635b11e47a",
+      "name": "使用說明與驗證",
+      "description": "補充測試工具使用說明（集中 mock 的導入方式、覆寫示例），並列出驗證步驟（lint/type-check/關鍵測試命令）；更新相關 README 或在 src/test/utils.tsx 添加說明。",
+      "status": "pending",
       "dependencies": [
         {
-          "taskId": "c3f269df-ab01-44f4-8063-2029e2bd724c"
+          "taskId": "10039858-e369-454d-9013-045d25e63a35"
         }
       ],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T08:59:25.000Z",
+      "createdAt": "2025-11-26T13:21:49.556Z",
+      "updatedAt": "2025-11-26T13:21:49.556Z",
       "relatedFiles": [
         {
-          "path": "src/components/layout/header.tsx",
-          "type": "TO_MODIFY",
-          "description": "头部"
-        },
-        {
-          "path": "src/components/layout/footer.tsx",
-          "type": "TO_MODIFY",
-          "description": "底部"
-        },
-        {
-          "path": "src/components/language-toggle.tsx",
-          "type": "TO_MODIFY",
-          "description": "语言切换"
-        },
-        {
-          "path": "src/components/forms/contact-form*.tsx",
-          "type": "TO_MODIFY",
-          "description": "联系表单相关"
-        },
-        {
-          "path": "tests/unit/components",
-          "type": "CREATE",
-          "description": "新增组件测试"
-        },
-        {
-          "path": "evidence/footer-tests-2025-11-24.md",
+          "path": "src/test/utils.tsx",
           "type": "REFERENCE",
-          "description": "Footer 组件测试记录"
-        }
-      ],
-      "implementationGuide": "Testing Library + jsdom，覆盖渲染、主要交互、必备 aria；表单含错误/成功提示；避免依赖未来 Cache Components 行为，聚焦现有 UI。",
-      "verificationCriteria": "目标组件 lines/functions ≥60%；交互含键盘/aria；无 Cache Components 依赖。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
-    },
-    {
-      "id": "436deca8-d538-40f1-8144-b550ba932851",
-      "name": "报告与阈值调优",
-      "description": "聚合新增测试后更新覆盖率报告，若个别文件超高阈值阻断，可在不降低总体目标下微调阈值或拆分文件。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "d6758c9f-e4b3-48dc-a3a9-677463916b70"
+          "description": "添加說明/示例"
         },
         {
-          "taskId": "6db8d1ed-65e4-4bd9-b341-acd6300e3ba0"
-        },
-        {
-          "taskId": "d0b3b23f-4a7e-48e1-a386-40178863a34f"
-        },
-        {
-          "taskId": "a0708c22-dcf0-465e-b0c4-8ca85de8dc3e"
-        }
-      ],
-      "createdAt": "2025-11-21T09:19:40.094Z",
-      "updatedAt": "2025-11-23T12:10:14.000Z",
-      "relatedFiles": [
-        {
-          "path": "vitest.config.mts",
-          "type": "TO_MODIFY",
-          "description": "阈值调整"
-        },
-        {
-          "path": "reports/coverage",
+          "path": "src/test/constants/mock-messages.ts",
           "type": "REFERENCE",
-          "description": "覆盖率报告输出"
+          "description": "集中 mock 說明"
         },
         {
-          "path": "evidence/coverage-threshold-2025-11-24.md",
+          "path": "docs",
           "type": "REFERENCE",
-          "description": "覆盖率与阈值调优记录"
+          "description": "若有測試文檔需更新"
         }
       ],
-      "implementationGuide": "运行 pnpm test:coverage，收集 reports/coverage；仅对不合理的阈值下调至现实可达（仍≥55%）；记录调整理由并更新配置。",
-      "verificationCriteria": "全局 lines/functions 覆盖率≥55%；无不合理阈值导致的阻断；阈值调整有记录。",
-      "analysisResult": "全局覆盖率约34.7%（lines），Cache Components PoC 未启用且 next-intl 兼容性阻滞，短期计划不依赖 PoC。设定短期目标：全局 lines/functions 覆盖率提升至≥55%，优先纯逻辑/安全/服务层与稳定 UI 组件。"
-    },
-    {
-      "id": "97d7184c-7b45-467e-a691-ea110021b45a",
-      "name": "审查现有主题/页脚基础",
-      "description": "检查项目中是否已有 footer 组件/布局插槽、主题机制（html class、CSS 变量、Tailwind 配置）、全局 ::selection 定义，确定可复用的 token/容器类。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-11-23T02:28:34.267Z",
-      "updatedAt": "2025-11-23T06:05:28.000Z",
-      "relatedFiles": [
-        {
-          "path": "app/layout.tsx",
-          "type": "REFERENCE",
-          "description": "检查布局/插槽与全局主题处理"
-        },
-        {
-          "path": "src/**/*.css",
-          "type": "REFERENCE",
-          "description": "查找全局样式/主题/selection 定义"
-        },
-        {
-          "path": "tailwind.config.*",
-          "type": "REFERENCE",
-          "description": "确认 Tailwind 颜色/spacing/tokens"
-        }
-      ],
-      "implementationGuide": "读取 app/layout.tsx、全局样式（如 globals.css/tailwind 层）、tailwind 配置；记录现有 footer/底部插槽是否存在，主题 class 应用方式；列出可复用的颜色/spacing/token。",
-      "verificationCriteria": "列出现有 footer/主题相关文件与可复用 token/容器类；确认主题 class/变量应用方式。",
-      "analysisResult": "复刻 Vercel 页脚作为测试：基于已抓取布局/字体/配色/hover/主题切换细节；用 Next.js16+React19+TS+Tailwind4；支持 dark/light；不改导航/正文；需提供组件、数据配置、样式映射、示例集成与验证。"
-    },
-    {
-      "id": "fe1c8205-9a45-4845-a1da-2f80cd90e40a",
-      "name": "定义页脚数据与样式基线",
-      "description": "基于 Vercel 抓取数据，确定页脚列数据结构、颜色/字体/间距 token 映射，dark/light 对照，hover 策略。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "97d7184c-7b45-467e-a691-ea110021b45a"
-        }
-      ],
-      "createdAt": "2025-11-23T02:28:34.267Z",
-      "updatedAt": "2025-11-23T07:22:25.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/config/footer-links.ts",
-          "type": "CREATE",
-          "description": "定义页脚列数据"
-        },
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "REFERENCE",
-          "description": "对照抓取的样式细节"
-        }
-      ],
-      "implementationGuide": "在 config 中定义列数据（4 列）；整理颜色/字体映射到 Tailwind 变量或 CSS vars；约定 hover 方案（亮度提升或下划线），容器宽度/左右留白（max-w≈1080, mx≈184, px≈24）。",
-      "verificationCriteria": "产出列数据结构与颜色/字体/间距对照表；明确 hover/transition 方案；无与现有 token 冲突。",
-      "analysisResult": "复刻 Vercel 页脚作为测试：基于已抓取布局/字体/配色/hover/主题切换细节；用 Next.js16+React19+TS+Tailwind4；支持 dark/light；不改导航/正文；需提供组件、数据配置、样式映射、示例集成与验证。"
-    },
-    {
-      "id": "7f4b2bba-17cd-4b23-bff2-4ae5d91029e6",
-      "name": "实现 Footer 组件",
-      "description": "创建可复用 Footer 组件（含四列导航、状态/主题切换插槽），应用 dark/light 样式、hover 交互，使用已定义 token。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "fe1c8205-9a45-4845-a1da-2f80cd90e40a"
-        }
-      ],
-      "createdAt": "2025-11-23T02:28:34.267Z",
-      "updatedAt": "2025-11-23T07:25:44.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/footer/Footer.tsx",
-          "type": "CREATE",
-          "description": "主组件实现"
-        },
-        {
-          "path": "src/components/footer/index.ts",
-          "type": "CREATE",
-          "description": "导出入口"
-        }
-      ],
-      "implementationGuide": "在 src/components/footer/Footer.tsx 实现：接收 columns、statusSlot、themeToggleSlot、className；使用容器宽度/margin；应用字体/颜色/hover；提供可选主题感知 className（基于 html class 或 data-theme）。",
-      "verificationCriteria": "组件渲染四列数据，样式符合暗/亮两套颜色和字号；hover 有效；支持传入自定义插槽；通过 TS 类型检查。",
-      "analysisResult": "复刻 Vercel 页脚作为测试：基于已抓取布局/字体/配色/hover/主题切换细节；用 Next.js16+React19+TS+Tailwind4；支持 dark/light；不改导航/正文；需提供组件、数据配置、样式映射、示例集成与验证。"
-    },
-    {
-      "id": "222285e4-c5c8-45a7-aa63-7bf88c47f460",
-      "name": "集成与测试示例",
-      "description": "在现有布局或测试路由引入 Footer 组件与数据，确保不影响其他区域；准备主题切换器 UI 插槽（可用占位），验证 dark/light 切换与 hover。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "7f4b2bba-17cd-4b23-bff2-4ae5d91029e6"
-        }
-      ],
-      "createdAt": "2025-11-23T02:28:34.267Z",
-      "updatedAt": "2025-11-23T07:48:53.000Z",
-      "relatedFiles": [
-        {
-          "path": "app/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "集成 Footer 组件"
-        },
-        {
-          "path": "src/app/**/page.tsx",
-          "type": "TO_MODIFY",
-          "description": "测试路由示例"
-        }
-      ],
-      "implementationGuide": "在 app/layout.tsx 或测试页面引入 Footer；传入 config 数据与占位 themeToggle/status；手动切换 html class 或使用现有主题逻辑验证；查看页面在 1512px 下的布局匹配。",
-      "verificationCriteria": "页面渲染新 Footer，不破坏现有布局；暗/亮切换时颜色/选区/hover 正确；CTA/链接可点击，ARIA 语义保留。",
-      "analysisResult": "复刻 Vercel 页脚作为测试：基于已抓取布局/字体/配色/hover/主题切换细节；用 Next.js16+React19+TS+Tailwind4；支持 dark/light；不改导航/正文；需提供组件、数据配置、样式映射、示例集成与验证。"
-    },
-    {
-      "id": "fd1ea446-fcc5-4bf6-9075-792b7eceadc1",
-      "name": "验证与文档补充",
-      "description": "对照截图和抓取记录，检查视觉与交互，更新文档记录集成方式与差异；列出后续改进。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "222285e4-c5c8-45a7-aa63-7bf88c47f460"
-        }
-      ],
-      "createdAt": "2025-11-23T02:28:34.267Z",
-      "updatedAt": "2025-11-23T12:10:14.000Z",
-      "relatedFiles": [
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "TO_MODIFY",
-          "description": "记录对照与差异"
-        },
-        {
-          "path": "evidence/coverage-threshold-2025-11-24.md",
-          "type": "REFERENCE",
-          "description": "覆盖率 & 阈值背景（集成验证时参考）"
-        }
-      ],
-      "implementationGuide": "使用截图/肉眼对照 docs/vercel-* 图；记录任何偏差与原因；在 docs/vercel-style-capture.md 增补实施差异与使用说明；列出后续 TODO。",
-      "verificationCriteria": "形成对照结果与差异列表；文档说明集成点与后续改进；无遗漏关键视觉/交互问题。",
-      "analysisResult": "复刻 Vercel 页脚作为测试：基于已抓取布局/字体/配色/hover/主题切换细节；用 Next.js16+React19+TS+Tailwind4；支持 dark/light；不改导航/正文；需提供组件、数据配置、样式映射、示例集成与验证。"
-    },
-    {
-      "id": "bbd6c9d1-a1b1-41ae-a3a2-75895bfb21a8",
-      "name": "收敛风格基线与复用点",
-      "description": "确认现有 footer/主题机制、容器类、WhatsApp 浮球样式入口；提取本次需要沿用的字体/颜色/spacing token，排除 Web Vitals 浮窗（保留但不改）。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-11-23T13:59:45.450Z",
-      "updatedAt": "2025-11-24T05:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/app/[locale]/layout.tsx",
-          "type": "REFERENCE",
-          "description": "当前 footer/主题集成方式"
-        },
-        {
-          "path": "tailwind.config.*",
-          "type": "REFERENCE",
-          "description": "颜色/spacing/font token"
-        },
-        {
-          "path": "src/app/globals.css",
-          "type": "REFERENCE",
-          "description": "全局样式/selection/主题变量"
-        },
-        {
-          "path": "src/components/whatsapp/",
-          "type": "REFERENCE",
-          "description": "WhatsApp 浮球样式入口"
-        }
-      ],
-      "implementationGuide": "查 app/[locale]/layout.tsx、Tailwind 配置、全局 CSS；记录现有容器宽度/留白类、主题 class/vars，用于统一 footer 与 WhatsApp 样式；列出不可变元素（Web Vitals 浮窗）。",
-      "verificationCriteria": "形成可复用 token/容器类清单；明确 Web Vitals 保留、WhatsApp 需跟随 footer 风格；无遗漏核心样式来源。",
-      "analysisResult": "需借鉴 Vercel 页脚风格（非1:1），采纳差异修正：补全链接与顺序、调整颜色/hover/留白、去掉中线或轻量化、状态行可选；Web Vitals 保留，WhatsApp 需跟随整体风格；统一主题暗/亮两套样式与交互。"
-    },
-    {
-      "id": "43c50a16-9adb-47f4-b64e-3de38d106efe",
-      "name": "定义页脚与 WhatsApp 样式规范",
-      "description": "基于 Vercel 参考和项目 token，固化页脚与 WhatsApp 浮球的颜色/字体/间距/hover 规范（暗/亮两套），并确定容器留白策略。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "bbd6c9d1-a1b1-41ae-a3a2-75895bfb21a8"
-        }
-      ],
-      "createdAt": "2025-11-23T13:59:45.450Z",
-      "updatedAt": "2025-11-24T05:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "REFERENCE",
-          "description": "参考抓取数据"
-        },
-        {
-          "path": "src/config/footer-links.ts",
-          "type": "TO_MODIFY",
-          "description": "调整 token 与列数据"
-        }
-      ],
-      "implementationGuide": "提炼：链接 14/20 400，标题 14/600（或 16/600 若更契合）、暗色基色 #888、hover 更亮/可选下划线，light 基色 #666；容器 max-w≈1080、mx clamp≈184、px≈24；hover 90-100ms；Social 图标线性风格；状态行可移除或轻量化；WhatsApp 边框/背景/大小与 footer 统一。",
-      "verificationCriteria": "输出更新后的样式/颜色/间距/hover 规范文档或注释；WhatsApp 跟随统一规范；容器留白方案明确。",
-      "analysisResult": "需借鉴 Vercel 页脚风格（非1:1），采纳差异修正：补全链接与顺序、调整颜色/hover/留白、去掉中线或轻量化、状态行可选；Web Vitals 保留，WhatsApp 需跟随整体风格；统一主题暗/亮两套样式与交互。"
-    },
-    {
-      "id": "acb79855-88d4-4605-b7bb-32090bb74a58",
-      "name": "更新 Footer 数据与组件",
-      "description": "补全列数据（多链接、外链箭头、顺序）、调整样式以符合新规范，移除不需要的状态行或换成轻量版本；确保暗/亮切换与 hover 生效。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "43c50a16-9adb-47f4-b64e-3de38d106efe"
-        }
-      ],
-      "createdAt": "2025-11-23T13:59:45.450Z",
-      "updatedAt": "2025-11-24T05:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/config/footer-links.ts",
-          "type": "TO_MODIFY",
-          "description": "补全列数据与 token"
-        },
-        {
-          "path": "src/components/footer/Footer.tsx",
-          "type": "TO_MODIFY",
-          "description": "应用样式与交互调整"
-        },
-        {
-          "path": "src/app/[locale]/layout.tsx",
-          "type": "TO_MODIFY",
-          "description": "状态行/插槽更新"
-        }
-      ],
-      "implementationGuide": "在 config 中补足 Products/Resources/Company/Social 链接列表与外链标记；Footer 组件应用新 token（颜色区分明暗、hover、生效的 selection）；调整容器留白/间距；移除中部横线或改轻量分隔；状态行改为可选或禁用；ARIA/heading 层级保持 h2。",
-      "verificationCriteria": "列数据完整、顺序正确；暗/亮颜色/hover 匹配规范；中部横线处理到位；状态行可选且默认不显眼；TS/ESLint 通过。",
-      "analysisResult": "需借鉴 Vercel 页脚风格（非1:1），采纳差异修正：补全链接与顺序、调整颜色/hover/留白、去掉中线或轻量化、状态行可选；Web Vitals 保留，WhatsApp 需跟随整体风格；统一主题暗/亮两套样式与交互。"
-    },
-    {
-      "id": "0e91f2c1-3988-4949-9f7e-43275282b876",
-      "name": "统一 WhatsApp 浮球风格",
-      "description": "调整 WhatsApp 浮球外观使之与页脚风格一致（颜色、边框、圆角、尺寸、阴影/背景），不改位置与功能。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "43c50a16-9adb-47f4-b64e-3de38d106efe"
-        }
-      ],
-      "createdAt": "2025-11-23T13:59:45.450Z",
-      "updatedAt": "2025-11-24T05:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/whatsapp/",
-          "type": "TO_MODIFY",
-          "description": "浮球样式组件"
-        }
-      ],
-      "implementationGuide": "参考 footer token：使用同色板/边框半径；减小按钮直径、透明或轻背景、hover 提升亮度；若需图标颜色与页脚社交一致。",
-      "verificationCriteria": "WhatsApp 浮球视觉与 footer 统一（颜色/圆角/hover），功能不变；暗/亮下对比度合规。",
-      "analysisResult": "需借鉴 Vercel 页脚风格（非1:1），采纳差异修正：补全链接与顺序、调整颜色/hover/留白、去掉中线或轻量化、状态行可选；Web Vitals 保留，WhatsApp 需跟随整体风格；统一主题暗/亮两套样式与交互。"
-    },
-    {
-      "id": "2c542d17-e345-419d-b713-5818a7689438",
-      "name": "验证与文档更新",
-      "description": "对照官方截图与新规范检查视觉/交互，更新 docs/vercel-style-capture.md 记录差异与采用方案，列出残余改进项。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "acb79855-88d4-4605-b7bb-32090bb74a58"
-        },
-        {
-          "taskId": "0e91f2c1-3988-4949-9f7e-43275282b876"
-        }
-      ],
-      "createdAt": "2025-11-23T13:59:45.450Z",
-      "updatedAt": "2025-11-24T05:30:00.000Z",
-      "relatedFiles": [
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "TO_MODIFY",
-          "description": "记录差异与方案"
-        }
-      ],
-      "implementationGuide": "肉眼比对截图与实现；检查主题切换、hover、选区；记录偏差原因；更新文档与待办；可选简短手测清单。",
-      "verificationCriteria": "文档覆盖视觉/交互对照、偏差说明与TODO；暗/亮/hover/选区验证完成；无遗漏核心问题。",
-      "analysisResult": "需借鉴 Vercel 页脚风格（非1:1），采纳差异修正：补全链接与顺序、调整颜色/hover/留白、去掉中线或轻量化、状态行可选；Web Vitals 保留，WhatsApp 需跟随整体风格；统一主题暗/亮两套样式与交互。"
-    },
-    {
-      "id": "0971310c-e1eb-4c67-9e2c-15ff7cb4d832",
-      "name": "审查现有导航与主题基线",
-      "description": "检查当前导航栏实现（布局居中、交互、主题/颜色/字体）、全局 tokens 与禁止硬编码约束，明确可复用配置。",
-      "status": "completed",
-      "dependencies": [],
-      "createdAt": "2025-11-24T00:43:12.762Z",
-      "updatedAt": "2025-11-24T02:12:06.286Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/layout/header.tsx",
-          "type": "REFERENCE",
-          "description": "Server header wrapper, center nav placement, idle islands"
-        },
-        {
-          "path": "src/components/layout/nav-switcher.tsx",
-          "type": "REFERENCE",
-          "description": "Client nav switcher shell and lazy load"
-        },
-        {
-          "path": "src/components/layout/vercel-navigation.tsx",
-          "type": "REFERENCE",
-          "description": "Desktop navigation interaction and styles"
-        },
-        {
-          "path": "src/components/layout/vercel-dropdown-content.tsx",
-          "type": "REFERENCE",
-          "description": "Dropdown grid layout and item styles"
-        },
-        {
-          "path": "src/components/layout/mobile-navigation.tsx",
-          "type": "REFERENCE",
-          "description": "Mobile sheet menu, active states"
-        },
-        {
-          "path": "src/components/layout/header-client.tsx",
-          "type": "REFERENCE",
-          "description": "Client islands for nav/language/mobile"
-        },
-        {
-          "path": "src/app/[locale]/layout.tsx",
-          "type": "REFERENCE",
-          "description": "App layout injecting Header/ThemeProvider"
-        },
-        {
-          "path": "tailwind.config.js",
-          "type": "REFERENCE",
-          "description": "Tailwind theme tokens mapping to CSS vars"
-        },
-        {
-          "path": "src/app/globals.css",
-          "type": "REFERENCE",
-          "description": "CSS variable definitions for light/dark and global focus rules"
-        },
-        {
-          "path": "src/components/ui/navigation-menu.tsx",
-          "type": "REFERENCE",
-          "description": "Base navigation menu primitives styling"
-        },
-        {
-          "path": "src/components/ui/theme-switcher.tsx",
-          "type": "REFERENCE",
-          "description": "Theme toggle implementation and tokens"
-        }
-      ],
-      "implementationGuide": "阅读 Header 组件、layout、Tailwind 配置、全局样式与 i18n，列出颜色/字体/spacing/hover/焦点/分隔线等已用 tokens；确认主题切换、下拉/菜单交互方式；记录不可改的居中布局需求。",
-      "verificationCriteria": "形成现有导航结构与可复用 tokens 清单，确认保留居中布局，记录主题/交互方式。",
-      "analysisResult": "借鉴 Vercel 导航栏风格，保留当前居中布局；对齐颜色/字体/圆角/hover/active/下拉动画等细节，禁止硬编码，使用 tokens/i18n。",
-      "summary": "已梳理导航结构、居中布局与交互延时，整理导航/主题相关 tokens 与现有硬编码点，并记录当前 theme/i18n 上下文。",
-      "completedAt": "2025-11-24T02:12:06.285Z"
-    },
-    {
-      "id": "ea4e5507-f60e-43c7-a0f9-20992dc4d208",
-      "name": "提炼 Vercel 导航风格规范",
-      "description": "基于 Vercel 参考定义可复刻的细节规范（暗/亮色、hover/active、圆角/边框/阴影、下拉/mega menu 动效），结合项目居中布局与 tokens。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "0971310c-e1eb-4c67-9e2c-15ff7cb4d832"
-        }
-      ],
-      "createdAt": "2025-11-24T00:43:12.762Z",
-      "updatedAt": "2025-11-24T02:15:56.755Z",
-      "relatedFiles": [
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "TO_MODIFY",
-          "description": "新增导航风格规范（项目落地）梳理"
-        }
-      ],
-      "implementationGuide": "整理：字号/字体（14/16/18?）、色板暗(#a1a1a1 基准)/亮(#666)；hover 背景/文字变化、圆角 9999、间距(padding 8/12 等)；分隔线/对齐；下拉菜单阴影/边框/动画；保留居中但应用 Vercel 的细节风格。输出规范文档或注释。",
-      "verificationCriteria": "产出导航风格规范（颜色/字号/间距/hover/active/下拉动画），对齐 tokens，说明居中布局保持。",
-      "analysisResult": "借鉴 Vercel 导航栏风格，保留当前居中布局；对齐颜色/字体/圆角/hover/active/下拉动画等细节，禁止硬编码，使用 tokens/i18n。",
-      "summary": "已在 docs/vercel-style-capture.md 补充导航风格规范：保持居中布局与 Header 结构，定义字号/圆角/间距/hover 延时/下拉网格与颜色 token 映射，约束禁用硬编码颜色并统一 focus ring/主题变量。",
-      "completedAt": "2025-11-24T02:15:56.754Z"
-    },
-    {
-      "id": "f6a7e8fb-927e-479d-8d04-4afb18462c02",
-      "name": "更新导航数据与样式实现",
-      "description": "按规范调整导航组件：应用新颜色/圆角/hover/active/焦点，优化下拉/菜单动画，保持居中布局但风格借鉴 Vercel。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "ea4e5507-f60e-43c7-a0f9-20992dc4d208"
-        }
-      ],
-      "createdAt": "2025-11-24T00:43:12.762Z",
-      "updatedAt": "2025-11-24T02:29:48.281Z",
-      "relatedFiles": [
-        {
-          "path": "src/components/layout/vercel-navigation.tsx",
-          "type": "TO_MODIFY",
-          "description": "调整导航项样式、token化颜色与圆角"
-        },
-        {
-          "path": "src/components/layout/vercel-dropdown-content.tsx",
-          "type": "TO_MODIFY",
-          "description": "下拉网格宽度与 hover/focus 颜色 token 化"
-        }
-      ],
-      "implementationGuide": "更新 nav 配置（若需外链标识、分组），调整 Header 样式 class/token，加入 hover/active/焦点态，圆角 9999，动画 90-120ms；下拉菜单阴影/边框/对齐；遵守禁止硬编码，使用 tokens/i18n。",
-      "verificationCriteria": "导航保持居中，细节符合规范：颜色/hover/active/圆角/阴影/对齐，下拉动效正常，TS/ESLint 通过。",
-      "analysisResult": "借鉴 Vercel 导航栏风格，保留当前居中布局；对齐颜色/字体/圆角/hover/active/下拉动画等细节，禁止硬编码，使用 tokens/i18n。",
-      "summary": "导航样式已按规范调整：导航项/链接改用 tokens（text-muted-foreground → hover/active text-foreground，hover 背景 muted/foreground 叠加），圆角统一 rounded-full，过渡改 150ms ease-out，打开态与焦点使用 ring token；下拉网格宽度改为 min(420px,100vw-48px)，item hover/focus 统一 token 背景与文字，无硬编码色。居中布局和交互逻辑保持不变。",
-      "completedAt": "2025-11-24T02:29:48.280Z"
-    },
-    {
-      "id": "bd629c10-18ae-4692-b58f-38f4325d7859",
-      "name": "验证与对照记录",
-      "description": "对比 Vercel 参考与新导航，检查暗/亮、hover/active、下拉动画、对齐，记录差异与取舍，更新文档。",
-      "status": "completed",
-      "dependencies": [
-        {
-          "taskId": "f6a7e8fb-927e-479d-8d04-4afb18462c02"
-        }
-      ],
-      "createdAt": "2025-11-24T00:43:12.762Z",
-      "updatedAt": "2025-11-24T02:40:27.805Z",
-      "relatedFiles": [
-        {
-          "path": "docs/vercel-style-capture.md",
-          "type": "TO_MODIFY",
-          "description": "添加导航验证记录与差异说明"
-        }
-      ],
-      "implementationGuide": "手动对照截图/规范；检查主题切换下的颜色与动效；记录与 Vercel 差异（居中保留）及原因；更新 docs/vercel-style-capture.md 或新 doc 说明。",
-      "verificationCriteria": "文档包含对照结果、差异列表与取舍说明；暗/亮/hover/active/下拉均已验证，无阻碍问题。",
-      "analysisResult": "借鉴 Vercel 导航栏风格，保留当前居中布局；对齐颜色/字体/圆角/hover/active/下拉动画等细节，禁止硬编码，使用 tokens/i18n。",
-      "summary": "已在 docs/vercel-style-capture.md 记录导航验证：确认暗/亮 hover/active、圆角、下拉动画与居中保持，颜色与背景统一 theme tokens，列出与 Vercel 的差异与取舍（保持延时50/80ms、token 背景、保留居中、未加图标动效），并做宽度 clamp 适配移动。",
-      "completedAt": "2025-11-24T02:40:27.804Z"
+      "implementationGuide": "1) 在現有測試說明文件或 utils 頂部添加簡短說明與示例；2) 說明如何按需覆寫 partialMessages；3) 列出推薦驗證命令；4) 如無專門文檔，可在 src/test/README.md 或 utils 頂部註釋補充。",
+      "verificationCriteria": "存在可見的使用說明（文檔或頂部註釋）；示例涵蓋默認使用與覆寫；列出驗證命令；無 lint/TS 錯誤。",
+      "analysisResult": "集中管理測試 mock，統一 renderWithIntl 等工具的默認消息來源，減少重複和缺漏。"
     }
   ]
 }

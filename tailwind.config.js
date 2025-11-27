@@ -27,6 +27,23 @@ module.exports = {
         ],
         mono: ['var(--font-geist-mono)', 'monospace'],
       },
+      fontSize: {
+        // Semantic typography system - Vercel inspired
+        heading: [
+          '2rem',
+          { lineHeight: '1.2', fontWeight: '700', letterSpacing: '-0.02em' },
+        ], // 32px - Hero titles
+        subheading: [
+          '1.5rem',
+          { lineHeight: '1.3', fontWeight: '600', letterSpacing: '-0.01em' },
+        ], // 24px - Section headers
+        body: ['1rem', { lineHeight: '1.6', fontWeight: '400' }], // 16px - Body text
+        nav: [
+          '0.875rem',
+          { lineHeight: '1.5', fontWeight: '500', letterSpacing: '0.01em' },
+        ], // 14px - Navigation
+        caption: ['0.75rem', { lineHeight: '1.4', fontWeight: '400' }], // 12px - Captions, meta
+      },
       colors: {
         border: 'hsl(var(--border))',
         input: 'hsl(var(--input))',

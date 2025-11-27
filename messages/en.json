@@ -80,7 +80,8 @@
     "ecommerceDescription": "Power your online store",
     "docsDescription": "Complete documentation and guides",
     "guidesDescription": "Step-by-step tutorials",
-    "blogDescription": "Latest updates and insights"
+    "blogDescription": "Latest updates and insights",
+    "contactSales": "Contact Sales"
   },
   "theme": {
     "toggle": "Toggle theme",
