@@ -381,7 +381,10 @@ export const createMockTranslations = (
       if (typeof value === 'string') {
         result[fullKey] = value;
       } else if (typeof value === 'object' && value !== null) {
-        Object.assign(result, flattenMessages(value as Record<string, unknown>, fullKey));
+        Object.assign(
+          result,
+          flattenMessages(value as Record<string, unknown>, fullKey),
+        );
       }
     }
 

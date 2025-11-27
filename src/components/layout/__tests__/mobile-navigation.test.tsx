@@ -2,16 +2,17 @@ import React from 'react';
 import { screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { renderWithIntl, createMockTranslations } from '@/test/utils';
 import {
   MobileMenuButton,
   MobileNavigation,
 } from '@/components/layout/mobile-navigation';
+import { createMockTranslations, renderWithIntl } from '@/test/utils';
 
 // Mock next-intl
 // Note: 使用集中的 mock 翻译函数,无需在此定义具体翻译
 vi.mock('next-intl', () => ({
-  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) => children,
+  NextIntlClientProvider: ({ children }: { children: React.ReactNode }) =>
+    children,
   useTranslations: vi.fn(() => createMockTranslations()),
 }));
 

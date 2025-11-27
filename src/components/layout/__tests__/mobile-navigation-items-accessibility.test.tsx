@@ -206,7 +206,13 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
       const links = screen.getAllByRole('link');
       const linkTexts = links.map((link) => link.textContent?.trim());
 
-      expect(linkTexts).toEqual(['Home', 'Products', 'Blog', 'About', 'Contact Sales']);
+      expect(linkTexts).toEqual([
+        'Home',
+        'Products',
+        'Blog',
+        'About',
+        'Contact Sales',
+      ]);
     });
 
     it('applies consistent styling to navigation items', async () => {
@@ -219,7 +225,7 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
 
       // Filter out the CTA button link (which has different styling)
       const navLinks = links.filter((link) =>
-        link.className.includes('rounded-md px-3 py-2')
+        link.className.includes('rounded-md px-3 py-2'),
       );
 
       navLinks.forEach((link) => {

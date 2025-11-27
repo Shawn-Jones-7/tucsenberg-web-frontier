@@ -185,7 +185,8 @@ export const seoMessages = {
   pages: {
     home: {
       title: '图森堡网络前沿 - 现代化B2B企业级平台',
-      description: '使用Next.js 15、React 19、TypeScript构建现代化B2B应用，提供企业级功能。',
+      description:
+        '使用Next.js 15、React 19、TypeScript构建现代化B2B应用，提供企业级功能。',
     },
     about: {
       title: '关于我们 - 图森堡网络前沿',

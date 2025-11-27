@@ -3,18 +3,18 @@
  *
  * 服务端渲染的头部，交互部件以客户端小岛方式注入，减少首屏 JS 体积。
  */
+import Link from 'next/link';
+import { getTranslations } from 'next-intl/server';
 import { cn } from '@/lib/utils';
 import {
   LanguageToggleIsland,
   MobileNavigationIsland,
   NavSwitcherIsland,
 } from '@/components/layout/header-client';
+import { HeaderScrollChrome } from '@/components/layout/header-scroll-chrome';
 import { Logo } from '@/components/layout/logo';
 import { Idle } from '@/components/lazy/idle';
 import { Button } from '@/components/ui/button';
-import Link from 'next/link';
-import { getTranslations } from 'next-intl/server';
-import { HeaderScrollChrome } from '@/components/layout/header-scroll-chrome';
 
 /**
  * Header Component
