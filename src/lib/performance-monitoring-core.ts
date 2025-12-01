@@ -27,12 +27,12 @@ import { ANIMATION_DURATION_VERY_SLOW, SECONDS_PER_MINUTE } from '@/constants';
 // 重新导出所有模块的功能
 export type { ToolConflictResult } from '@/lib/performance-monitoring-core-conflicts';
 export type { PerformanceReport } from '@/lib/performance-monitoring-core-reports';
+export { PerformanceConfigManager } from '@/lib/performance-monitoring-core-config';
 export {
   createConfigManager,
   getDefaultConfig,
-  PerformanceConfigManager,
   validatePerformanceConfig,
-} from '@/lib/performance-monitoring-core-config';
+} from '@/lib/performance-monitoring-config-factory';
 export {
   createConflictChecker,
   PerformanceToolConflictChecker,

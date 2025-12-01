@@ -21,17 +21,31 @@ describe('content-products-wrapper', () => {
 
   const createProductDetail = (
     overrides: Partial<ProductDetail> = {},
-  ): ProductDetail => ({
-    slug: overrides.slug ?? 'sample-product',
-    locale: overrides.locale ?? localeEn,
-    title: overrides.title ?? 'Sample Product',
-    content: overrides.content ?? 'Sample content',
-    filePath: overrides.filePath ?? '/content/products/sample-product.mdx',
-    description: overrides.description,
-    categories: overrides.categories,
-    tags: overrides.tags,
-    seo: overrides.seo,
-  });
+  ): ProductDetail => {
+    const base: ProductDetail = {
+      slug: overrides.slug ?? 'sample-product',
+      locale: overrides.locale ?? localeEn,
+      title: overrides.title ?? 'Sample Product',
+      content: overrides.content ?? 'Sample content',
+      filePath: overrides.filePath ?? '/content/products/sample-product.mdx',
+    };
+
+    // Only assign optional properties when explicitly provided (exactOptionalPropertyTypes)
+    if (overrides.description !== undefined) {
+      base.description = overrides.description;
+    }
+    if (overrides.categories !== undefined) {
+      base.categories = overrides.categories;
+    }
+    if (overrides.tags !== undefined) {
+      base.tags = overrides.tags;
+    }
+    if (overrides.seo !== undefined) {
+      base.seo = overrides.seo;
+    }
+
+    return base;
+  };
 
   describe('getProductListingCached', () => {
     it('should map ProductDetail list to ProductSummary list', async () => {

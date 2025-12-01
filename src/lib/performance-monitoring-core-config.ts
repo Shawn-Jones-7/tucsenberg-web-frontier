@@ -388,9 +388,6 @@ export class PerformanceConfigManager {
   }
 }
 
-// Re-export for backward compatibility
-export {
-  createConfigManager,
-  getDefaultConfig,
-  validatePerformanceConfig,
-} from '@/lib/performance-monitoring-config-factory';
+// Note: createConfigManager, getDefaultConfig, validatePerformanceConfig
+// are exported directly from '@/lib/performance-monitoring-config-factory'
+// to avoid circular dependency. Import from that module instead.
