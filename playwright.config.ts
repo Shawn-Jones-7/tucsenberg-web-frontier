@@ -123,13 +123,16 @@ export default defineConfig({
     : {
         webServer: {
           // 统一使用生产模式运行 E2E 测试,消除开发模式的 Hydration mismatch 警告
+          // 注意：必须使用 NODE_ENV=production 进行构建，否则 React 19 的某些内部 API
+          // （如 captureOwnerStack）在 test 模式下不可用，会导致 sitemap.ts 预渲染失败
           command: 'pnpm build && pnpm start',
           url: 'http://localhost:3000',
           reuseExistingServer: !process.env.CI,
           timeout: 180 * 1000, // 增加到 3 分钟
-          // 将关键测试环境变量直接注入到 Next.js 进程，避免依赖外部 CLI 加载 .env.test
+          // 将关键测试环境变量直接注入到 Next.js 进程
+          // NODE_ENV 必须为 production 以确保 React 19 正常工作
           env: {
-            NODE_ENV: 'test',
+            NODE_ENV: 'production',
             PLAYWRIGHT_TEST: 'true',
             NEXT_PUBLIC_TEST_MODE: 'true',
             NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',

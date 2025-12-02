@@ -975,5 +975,26 @@
       "button": "联系我们"
     }
   },
-  "title": "图森堡网络前沿"
+  "title": "图森堡网络前沿",
+  "trust": {
+    "testimonials": {
+      "title": "客户评价",
+      "subtitle": "受到全球企业的信赖"
+    },
+    "partners": {
+      "title": "合作伙伴",
+      "subtitle": "与行业领导者携手合作"
+    },
+    "certifications": {
+      "title": "资质认证",
+      "subtitle": "值得信赖的品质保证"
+    },
+    "stats": {
+      "title": "数字见证",
+      "yearsInBusiness": "经营年限",
+      "countriesServed": "服务国家",
+      "satisfactionRate": "客户满意度",
+      "projectsCompleted": "交付项目"
+    }
+  }
 }

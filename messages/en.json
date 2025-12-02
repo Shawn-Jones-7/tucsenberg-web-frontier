@@ -975,5 +975,26 @@
       "button": "Contact Us"
     }
   },
-  "title": "Tucsenberg Web Frontier"
+  "title": "Tucsenberg Web Frontier",
+  "trust": {
+    "testimonials": {
+      "title": "What Our Clients Say",
+      "subtitle": "Trusted by businesses worldwide"
+    },
+    "partners": {
+      "title": "Our Partners",
+      "subtitle": "Collaborating with industry leaders"
+    },
+    "certifications": {
+      "title": "Certifications & Standards",
+      "subtitle": "Quality you can trust"
+    },
+    "stats": {
+      "title": "By the Numbers",
+      "yearsInBusiness": "Years in Business",
+      "countriesServed": "Countries Served",
+      "satisfactionRate": "Client Satisfaction",
+      "projectsCompleted": "Projects Delivered"
+    }
+  }
 }
