@@ -180,7 +180,7 @@ function TechStackTabs({
                             target: tech.name,
                           })}
                         >
-                          {t('learnMore')}
+                          {t('learnMoreLabel', { target: tech.name })}
                           <ExternalLink className='h-3 w-3' />
                         </a>
                       </Button>
