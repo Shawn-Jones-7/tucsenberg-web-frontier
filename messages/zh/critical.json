@@ -19,6 +19,8 @@
     "docs": "文档",
     "pricing": "定价",
     "blog": "博客",
+    "faq": "常见问题",
+    "privacy": "隐私政策",
     "login": "登录",
     "logout": "退出",
     "profile": "个人资料",
@@ -363,6 +365,11 @@
       },
       "social": {
         "title": "社交"
+      },
+      "support": {
+        "title": "支持",
+        "faq": "常见问题",
+        "privacy": "隐私政策"
       }
     },
     "vercel": {

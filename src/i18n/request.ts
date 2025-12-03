@@ -74,6 +74,23 @@ function createSuccessResponse({
   loadTime,
   cacheUsed,
 }: SuccessResponseArgs) {
+  if (
+    process.env.I18N_DEBUG_BUILD === '1' &&
+    process.env.NEXT_PHASE === 'phase-production-build'
+  ) {
+    const topLevelKeys = Object.keys(messages);
+    // eslint-disable-next-line no-console
+    console.error('[i18n-debug] createSuccessResponse snapshot', {
+      locale,
+      loadTime,
+      cacheUsed,
+      topLevelKeys,
+      hasProducts: Object.prototype.hasOwnProperty.call(messages, 'products'),
+      hasFaq: Object.prototype.hasOwnProperty.call(messages, 'faq'),
+      hasPrivacy: Object.prototype.hasOwnProperty.call(messages, 'privacy'),
+    });
+  }
+
   return {
     locale,
     messages,
@@ -89,6 +106,17 @@ function createSuccessResponse({
 
 // 辅助函数：创建错误回退响应
 async function createFallbackResponse(locale: string, startTime: number) {
+  if (
+    process.env.I18N_DEBUG_BUILD === '1' &&
+    process.env.NEXT_PHASE === 'phase-production-build'
+  ) {
+    // eslint-disable-next-line no-console
+    console.error('[i18n-debug] createFallbackResponse triggered', {
+      locale,
+      phase: process.env.NEXT_PHASE,
+    });
+  }
+
   return {
     locale,
     messages: (await import(`../../messages/${locale}.json`)).default,

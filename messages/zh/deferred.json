@@ -387,6 +387,7 @@
       "tradeInfo": "贸易信息",
       "certifications": "产品认证",
       "relatedProducts": "相关产品",
+      "downloadPdf": "下载产品 PDF 资料",
       "labels": {
         "moq": "最小起订量",
         "leadTime": "交货周期",
@@ -431,6 +432,42 @@
       "countriesServed": "服务国家",
       "satisfactionRate": "客户满意度",
       "projectsCompleted": "交付项目"
+    }
+  },
+  "faq": {
+    "pageTitle": "常见问题",
+    "pageDescription": "查找关于订购、付款、运输和售后服务的常见问题解答。",
+    "categories": {
+      "ordering": "订购与采购",
+      "payment": "付款与结算",
+      "logistics": "物流与运输",
+      "quality": "质量与售后"
+    },
+    "noResults": "未找到匹配的问题。",
+    "searchPlaceholder": "搜索问题...",
+    "contactCta": {
+      "title": "还有其他问题？",
+      "description": "我们的支持团队随时为您提供帮助。",
+      "button": "联系我们"
+    }
+  },
+  "privacy": {
+    "pageTitle": "隐私政策",
+    "pageDescription": "了解我们如何收集、使用和保护您的个人信息。",
+    "lastUpdated": "最后更新",
+    "effectiveDate": "生效日期",
+    "tableOfContents": "目录",
+    "sections": {
+      "introduction": "引言",
+      "informationCollected": "我们收集的信息",
+      "howWeUse": "我们如何使用您的信息",
+      "sharing": "信息共享",
+      "security": "数据安全",
+      "retention": "数据保留",
+      "rights": "您的隐私权利",
+      "children": "儿童隐私",
+      "changes": "政策变更",
+      "contact": "联系我们"
     }
   }
 }

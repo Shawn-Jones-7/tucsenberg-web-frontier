@@ -220,6 +220,27 @@ export const FOOTER_COLUMNS: FooterColumnConfig[] = [
     ],
   },
   {
+    key: 'support',
+    title: 'Support',
+    translationKey: 'footer.sections.support.title',
+    links: [
+      {
+        key: 'faq',
+        label: 'FAQs',
+        href: '/faq',
+        external: false,
+        translationKey: 'footer.sections.support.faq',
+      },
+      {
+        key: 'privacy',
+        label: 'Privacy Policy',
+        href: '/privacy',
+        external: false,
+        translationKey: 'footer.sections.support.privacy',
+      },
+    ],
+  },
+  {
     key: 'resources',
     title: 'Resources',
     translationKey: 'footer.vercel.resources.title',

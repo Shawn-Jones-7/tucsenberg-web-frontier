@@ -102,8 +102,13 @@ export function parseContentFile<T extends ContentMetadata = ContentMetadata>(
  * Get all content files in a directory
  */
 export function getContentFiles(contentDir: string, locale?: Locale): string[] {
-  // Validate the base content directory
-  const validatedContentDir = validateFilePath(contentDir, CONTENT_DIR);
+  // When a locale is provided, read from the locale-specific subdirectory
+  // (e.g. content/pages/en, content/posts/zh). This matches the actual
+  // content layout under the content/ directory.
+  const baseDir = locale ? path.join(contentDir, locale) : contentDir;
+
+  // Validate the base content directory to guard against path traversal.
+  const validatedContentDir = validateFilePath(baseDir, CONTENT_DIR);
 
   // eslint-disable-next-line security/detect-non-literal-fs-filename -- validatedContentDir已通过validateFilePath安全验证，防止路径遍历攻击
   if (!fs.existsSync(validatedContentDir)) {
@@ -119,11 +124,25 @@ export function getContentFiles(contentDir: string, locale?: Locale): string[] {
     .filter((file) => {
       const ext = path.extname(file);
       const isValidExtension = ['.md', '.mdx'].includes(ext);
-      const matchesLocale =
-        !locale ||
-        file.includes(`.${locale}.`) ||
-        (!file.includes('.en.') && !file.includes('.zh.'));
-      return isValidExtension && matchesLocale;
+      if (!isValidExtension) {
+        return false;
+      }
+
+      // For locale-specific subdirectories, most files will not contain the
+      // locale in the filename (e.g. about.mdx under /en). We still keep the
+      // original safeguard that allows files with an explicit ".<locale>."
+      // suffix and files without any locale suffix.
+      if (!locale) {
+        return true;
+      }
+
+      const normalized = file.toLowerCase();
+      const hasExplicitLocale = normalized.includes(
+        `.${locale.toLowerCase()}.`,
+      );
+      const hasNoLocaleSuffix =
+        !normalized.includes('.en.') && !normalized.includes('.zh.');
+      return hasExplicitLocale || hasNoLocaleSuffix;
     })
     .map((file) => path.join(validatedContentDir, file));
 }

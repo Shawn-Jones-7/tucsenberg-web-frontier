@@ -7,6 +7,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { useTranslations } from 'next-intl';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { mobileNavigation } from '@/lib/navigation';
 import { MobileNavigation } from '@/components/layout/mobile-navigation';
 
 // Mock next-intl
@@ -318,7 +319,9 @@ describe('Mobile Navigation - Core Tests', () => {
 
       // Should still render navigation items
       expect(screen.getByRole('navigation')).toBeInTheDocument();
-      expect(screen.getAllByRole('link')).toHaveLength(5);
+      expect(screen.getAllByRole('link')).toHaveLength(
+        mobileNavigation.length + 1,
+      );
     });
 
     it('should handle translation function errors', async () => {

@@ -19,6 +19,8 @@
     "docs": "Docs",
     "pricing": "Pricing",
     "blog": "Blog",
+    "faq": "FAQ",
+    "privacy": "Privacy Policy",
     "login": "Login",
     "logout": "Logout",
     "profile": "Profile",
@@ -363,6 +365,11 @@
       },
       "social": {
         "title": "Social"
+      },
+      "support": {
+        "title": "Support",
+        "faq": "FAQs",
+        "privacy": "Privacy Policy"
       }
     },
     "vercel": {

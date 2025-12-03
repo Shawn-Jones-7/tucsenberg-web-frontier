@@ -1,6 +1,5 @@
 // Auto-deploy verification test: 2025-10-31T12:34:56Z
 
-import { cacheLife } from 'next/cache';
 import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
 import { loadCriticalMessages } from '@/lib/load-messages';
 import { BelowTheFoldClient } from '@/components/home/below-the-fold.client';
@@ -20,32 +19,20 @@ type TranslationValue = string | Record<string, unknown>;
 type TranslationMessages = Record<string, TranslationValue>;
 
 /**
- * Load the `home.hero` namespace for the homepage using Cache Components.
+ * 加载首页 `home.hero` 文案。
  *
- * Cache semantics:
- * - Data-function level "use cache" + cacheLife('days'), treating hero copy
- *   as marketing content that typically changes at most daily.
- * - Depends only on the explicit `locale` parameter and externalized
- *   translation JSON loaded via `loadCriticalMessages`.
+ * 当前将缓存责任下沉到 `loadCriticalMessages` 内部的 `unstable_cache`，
+ * 这里不再叠加一层 "use cache"，避免在预渲染阶段出现嵌套缓存导致的
+ * `USE_CACHE_TIMEOUT` 问题，同时仍然享受 externalized JSON 带来的性能收益。
  *
- * Constraints:
- * - MUST NOT call headers(), cookies(), requestLocale() or other
- *   request-scoped APIs, so it remains safe to use as a cached data helper.
- * - Serves as the baseline example for other Cache Components data loaders
- *   (e.g. contact copy, blog/product wrappers).
+ * 约束：
+ * - 仅依赖显式的 `locale` 参数和 externalized translation JSON；
+ * - 不调用 headers()/cookies()/requestLocale() 等请求作用域 API，
+ *   保证在预渲染和运行时行为一致、可缓存。
  */
 async function getHomeHeroMessages(
   locale: 'en' | 'zh',
 ): Promise<TranslationMessages> {
-  'use cache';
-
-  // 首页 hero 采用 Cache Components 缓存，视为“每天可能更新一次”的
-  // 营销内容：
-  // - cacheLife('days') => stale: 5min, revalidate: 1 day, expire: 1 week
-  // - 与 loadCriticalMessages 内部基于 unstable_cache 的 1 小时缓存叠加，
-  //   仍然保持可接受的新鲜度，同时减少跨 locale 重复解析 JSON 的开销。
-  cacheLife('days');
-
   const messages = await loadCriticalMessages(locale);
   return extractHeroMessages(messages) as TranslationMessages;
 }

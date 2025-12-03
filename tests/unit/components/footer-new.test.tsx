@@ -40,11 +40,11 @@ describe('Footer (Vercel style)', () => {
       ).toBeInTheDocument();
 
       column.links.forEach((link) => {
-        expect(
-          screen.getByRole('link', {
-            name: link.label,
-          }),
-        ).toBeInTheDocument();
+        const matchingLinks = screen.getAllByRole('link', {
+          name: link.label,
+        });
+
+        expect(matchingLinks.length).toBeGreaterThanOrEqual(1);
       });
     });
   });

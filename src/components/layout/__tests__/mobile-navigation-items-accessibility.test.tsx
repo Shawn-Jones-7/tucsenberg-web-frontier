@@ -76,6 +76,8 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
           'navigation.about': 'About',
           'navigation.products': 'Products',
           'navigation.blog': 'Blog',
+          'navigation.faq': 'FAQ',
+          'navigation.privacy': 'Privacy Policy',
           'navigation.menu': 'Toggle mobile menu',
           'navigation.close': 'Close',
           'accessibility.openMenu': 'Open menu',
@@ -211,7 +213,9 @@ describe('Mobile Navigation - Advanced Integration Tests', () => {
         'Home',
         'Products',
         'Blog',
+        'FAQ',
         'About',
+        'Privacy Policy',
         'Contact Sales',
       ]);
     });

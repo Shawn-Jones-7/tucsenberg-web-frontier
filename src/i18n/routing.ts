@@ -20,10 +20,11 @@ export const routing = defineRouting({
     '/contact': '/contact',
     '/products': '/products',
     '/blog': '/blog',
+    '/faq': '/faq',
+    '/privacy': '/privacy',
     // 以下页面尚未实现，暂时移除以避免 404 错误
     // '/pricing': '/pricing',
     // '/support': '/support',
-    // '/privacy': '/privacy',
     // '/terms': '/terms',
   },
 

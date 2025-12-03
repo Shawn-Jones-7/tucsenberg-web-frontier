@@ -212,10 +212,10 @@ This is test content.`;
       const result = getContentFiles(mockContentDir, 'en');
 
       expect(result).toEqual([
-        '/mock/content/content/blog/post1.mdx',
-        '/mock/content/content/blog/post2.md',
-        '/mock/content/content/blog/post3.en.mdx',
-        '/mock/content/content/blog/draft.mdx',
+        '/mock/content/content/blog/en/post1.mdx',
+        '/mock/content/content/blog/en/post2.md',
+        '/mock/content/content/blog/en/post3.en.mdx',
+        '/mock/content/content/blog/en/draft.mdx',
       ]);
     });
 
@@ -223,10 +223,10 @@ This is test content.`;
       const result = getContentFiles(mockContentDir, 'zh');
 
       expect(result).toEqual([
-        '/mock/content/content/blog/post1.mdx',
-        '/mock/content/content/blog/post2.md',
-        '/mock/content/content/blog/post4.zh.mdx',
-        '/mock/content/content/blog/draft.mdx',
+        '/mock/content/content/blog/zh/post1.mdx',
+        '/mock/content/content/blog/zh/post2.md',
+        '/mock/content/content/blog/zh/post4.zh.mdx',
+        '/mock/content/content/blog/zh/draft.mdx',
       ]);
     });
 

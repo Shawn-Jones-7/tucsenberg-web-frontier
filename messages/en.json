@@ -902,6 +902,7 @@
       "tradeInfo": "Trade Information",
       "certifications": "Certifications",
       "relatedProducts": "Related Products",
+      "downloadPdf": "Download product PDF",
       "labels": {
         "moq": "Minimum Order",
         "leadTime": "Lead Time",
@@ -995,6 +996,42 @@
       "countriesServed": "Countries Served",
       "satisfactionRate": "Client Satisfaction",
       "projectsCompleted": "Projects Delivered"
+    }
+  },
+  "faq": {
+    "pageTitle": "Frequently Asked Questions",
+    "pageDescription": "Find answers to common questions about ordering, payment, shipping, and after-sales service.",
+    "categories": {
+      "ordering": "Ordering & Purchasing",
+      "payment": "Payment & Settlement",
+      "logistics": "Logistics & Shipping",
+      "quality": "Quality & After-Sales"
+    },
+    "noResults": "No questions found matching your search.",
+    "searchPlaceholder": "Search questions...",
+    "contactCta": {
+      "title": "Still have questions?",
+      "description": "Our support team is here to help you.",
+      "button": "Contact Us"
+    }
+  },
+  "privacy": {
+    "pageTitle": "Privacy Policy",
+    "pageDescription": "Learn how we collect, use, and protect your personal information.",
+    "lastUpdated": "Last Updated",
+    "effectiveDate": "Effective Date",
+    "tableOfContents": "Table of Contents",
+    "sections": {
+      "introduction": "Introduction",
+      "informationCollected": "Information We Collect",
+      "howWeUse": "How We Use Your Information",
+      "sharing": "Information Sharing",
+      "security": "Data Security",
+      "retention": "Data Retention",
+      "rights": "Your Privacy Rights",
+      "children": "Children's Privacy",
+      "changes": "Changes to This Policy",
+      "contact": "Contact Us"
     }
   }
 }

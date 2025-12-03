@@ -7,7 +7,15 @@ import { routing } from '@/i18n/routing';
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? 'https://example.com';
 
 // Static pages that exist in all locales
-const STATIC_PAGES = ['', '/about', '/contact', '/products', '/blog'] as const;
+const STATIC_PAGES = [
+  '',
+  '/about',
+  '/contact',
+  '/products',
+  '/blog',
+  '/faq',
+  '/privacy',
+] as const;
 
 // Change frequency mapping for different page types
 type ChangeFrequency =
@@ -31,6 +39,8 @@ const PAGE_CONFIG_MAP = new Map<string, PageConfig>([
   ['/contact', { changeFrequency: 'monthly', priority: 0.8 }],
   ['/products', { changeFrequency: 'weekly', priority: 0.9 }],
   ['/blog', { changeFrequency: 'weekly', priority: 0.7 }],
+  ['/faq', { changeFrequency: 'monthly', priority: 0.6 }],
+  ['/privacy', { changeFrequency: 'monthly', priority: 0.7 }],
   ['product', { changeFrequency: 'weekly', priority: 0.8 }],
 ]);
 

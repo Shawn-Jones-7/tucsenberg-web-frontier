@@ -1,0 +1,245 @@
+---
+locale: 'en'
+title: 'Quality Control Best Practices for B2B Manufacturing'
+slug: 'quality-control-best-practices'
+description: 'Learn proven quality control strategies for B2B manufacturing. From incoming inspection to final audit, discover how to ensure consistent product quality in your supply chain.'
+publishedAt: '2024-02-28'
+updatedAt: '2024-04-05'
+author: 'Quality Engineering Team'
+tags:
+  - 'Quality Control'
+  - 'Manufacturing'
+  - 'QC Inspection'
+  - 'Supply Chain'
+  - 'B2B'
+categories:
+  - 'Manufacturing'
+  - 'Quality Assurance'
+featured: true
+draft: false
+readingTime: 10
+coverImage: '/images/blog/quality-control-cover.jpg'
+seo:
+  title: 'B2B Quality Control Guide | Manufacturing QC Best Practices'
+  description: 'Comprehensive guide to quality control in B2B manufacturing. Learn inspection methods, AQL standards, and supplier quality management strategies.'
+  keywords:
+    - 'quality control'
+    - 'QC inspection'
+    - 'manufacturing quality'
+    - 'AQL standards'
+    - 'supplier quality'
+---
+
+## Introduction
+
+In B2B manufacturing, quality isn't just a feature—it's the foundation of lasting business relationships. Poor quality leads to returns, damaged reputation, and lost customers. This guide presents proven quality control practices that leading manufacturers use to ensure consistent product excellence.
+
+## The Quality Control Framework
+
+Effective QC operates at multiple stages throughout the production process:
+
+```
+Incoming → In-Process → Final → Pre-Shipment
+Inspection   Inspection   Inspection   Inspection
+```
+
+Each stage serves a specific purpose in preventing defects from reaching your customers.
+
+## 1. Incoming Material Inspection
+
+### Why It Matters
+
+Defective raw materials inevitably produce defective products. Catching issues at this stage is the most cost-effective form of quality control.
+
+### Key Activities
+
+- **Visual inspection** of packaging and labeling
+- **Dimensional verification** against specifications
+- **Material testing** (hardness, composition, etc.)
+- **Documentation review** (certificates, test reports)
+
+### Sampling Strategy
+
+For incoming inspection, use statistical sampling based on lot size:
+
+| Lot Size | Sample Size (Normal) | Accept/Reject |
+|----------|---------------------|---------------|
+| 2-8 | 2 | 0/1 |
+| 9-15 | 3 | 0/1 |
+| 16-25 | 5 | 0/1 |
+| 26-50 | 8 | 0/1 |
+| 51-90 | 13 | 1/2 |
+| 91-150 | 20 | 1/2 |
+
+> **Pro Tip:** Establish clear acceptance criteria before inspection begins. Ambiguity leads to inconsistent decisions.
+
+## 2. In-Process Quality Control
+
+### First Article Inspection (FAI)
+
+Before full production begins, thoroughly inspect the first completed unit:
+
+- Verify all dimensions match drawings
+- Confirm material specifications
+- Test functional requirements
+- Document any deviations
+
+### Statistical Process Control (SPC)
+
+Monitor critical parameters during production:
+
+1. **Control Charts**: Track process variation over time
+2. **Cp/Cpk Analysis**: Measure process capability
+3. **Trend Analysis**: Identify drift before it causes defects
+
+### Common SPC Metrics
+
+- **Cp**: Process capability (specification width / process width)
+- **Cpk**: Process capability considering centering
+- **Target**: Cpk ≥ 1.33 for critical dimensions
+
+## 3. Final Product Inspection
+
+### Visual Inspection Criteria
+
+Define clear standards for appearance:
+
+| Classification | Criteria | Action |
+|---------------|----------|--------|
+| Critical | Safety or functional failure | Reject, notify supplier |
+| Major | Likely to affect usability | Reject |
+| Minor | Cosmetic, unlikely to affect function | Accept up to AQL limit |
+
+### Functional Testing
+
+Every product should undergo functional verification:
+
+- **Operational test**: Does it perform its intended function?
+- **Performance test**: Does it meet specified parameters?
+- **Safety test**: Does it pass required safety standards?
+
+### Dimensional Verification
+
+For mechanical parts, verify critical dimensions:
+
+- Use calibrated instruments (calipers, micrometers, CMM)
+- Follow defined measurement procedures
+- Record results for traceability
+
+## 4. Pre-Shipment Inspection (PSI)
+
+### The Final Gate
+
+Pre-shipment inspection is your last opportunity to catch issues before products leave the factory.
+
+### AQL Sampling Standards
+
+The Acceptable Quality Level (AQL) defines the maximum defect rate considered acceptable:
+
+| AQL Level | Typical Use | Defects per 100 units |
+|-----------|-------------|----------------------|
+| 0.065 | Critical defects | 0.065 |
+| 0.65 | Major defects | 0.65 |
+| 1.0 | Minor defects (strict) | 1.0 |
+| 2.5 | Minor defects (normal) | 2.5 |
+| 4.0 | Minor defects (relaxed) | 4.0 |
+
+### PSI Checklist
+
+1. ☐ Quantity verification
+2. ☐ Product specifications match PO
+3. ☐ Packaging meets requirements
+4. ☐ Labeling correct and complete
+5. ☐ Shipping marks applied
+6. ☐ Required documents prepared
+7. ☐ Random sample testing passed
+
+## 5. Documentation and Traceability
+
+### Essential Records
+
+Maintain comprehensive quality records:
+
+- **Inspection reports** with pass/fail data
+- **Test certificates** for materials and products
+- **Calibration records** for measuring equipment
+- **Nonconformance reports** (NCRs)
+- **Corrective action records** (CARs)
+
+### Traceability Matrix
+
+Link finished products back to:
+
+- Raw material batches
+- Production dates and shifts
+- Operator identification
+- Inspection results
+
+## 6. Supplier Quality Management
+
+### Qualification Process
+
+Before adding a new supplier:
+
+1. **Factory audit**: Assess production capability
+2. **Sample evaluation**: Test product quality
+3. **Documentation review**: Verify certifications
+4. **Trial order**: Small quantity test run
+
+### Ongoing Monitoring
+
+Track supplier performance with key metrics:
+
+- **Defect rate** (PPM - parts per million)
+- **On-time delivery rate**
+- **Response time to quality issues**
+- **Corrective action effectiveness**
+
+### Supplier Scorecard Example
+
+| Metric | Weight | Target | Score |
+|--------|--------|--------|-------|
+| Quality (PPM) | 40% | <500 | 85 |
+| Delivery | 30% | >95% | 90 |
+| Responsiveness | 15% | <24hr | 80 |
+| Documentation | 15% | Complete | 95 |
+| **Total** | 100% | | **87** |
+
+## 7. Continuous Improvement
+
+### Root Cause Analysis
+
+When defects occur, use structured problem-solving:
+
+**5 Whys Method:**
+- Why did this defect occur? → Machine setting incorrect
+- Why was the setting incorrect? → Operator error
+- Why did operator err? → Insufficient training
+- Why insufficient training? → No standard procedure
+- Why no procedure? → Process not documented
+
+**Root Cause:** Lack of documented work instructions
+
+### PDCA Cycle
+
+Implement improvements systematically:
+
+1. **Plan**: Identify improvement opportunity
+2. **Do**: Implement on small scale
+3. **Check**: Measure results
+4. **Act**: Standardize if successful, adjust if not
+
+## Conclusion
+
+Quality control is not a single activity but a comprehensive system spanning the entire production process. By implementing these best practices, you can:
+
+- Reduce defect rates significantly
+- Lower quality costs (prevention < inspection < failure)
+- Build customer confidence and loyalty
+- Create competitive differentiation
+
+Start with the fundamentals—incoming inspection and final inspection—then progressively build a complete quality management system.
+
+---
+
+*Need help implementing quality control in your supply chain? Our team can assist with supplier audits, inspection protocols, and quality system development.*

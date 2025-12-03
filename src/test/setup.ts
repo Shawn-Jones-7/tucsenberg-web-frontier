@@ -280,6 +280,7 @@ if (process.env.BROWSER_TEST !== 'true') {
       Smartphone: MockIcon,
       Mail: MockIcon,
       MessageCircle: MockIcon,
+      MessageSquare: MockIcon,
       Phone: MockIcon,
       ExternalLink: MockIcon,
       Github: MockIcon,
@@ -1381,6 +1382,15 @@ vi.mock('@/i18n/routing', () => ({
   routing: {
     locales: ['en', 'zh'],
     defaultLocale: 'en',
+    pathnames: {
+      '/': '/',
+      '/about': '/about',
+      '/contact': '/contact',
+      '/products': '/products',
+      '/blog': '/blog',
+      '/faq': '/faq',
+      '/privacy': '/privacy',
+    },
   },
   Link: ({ children, href, ...props }: any) =>
     React.createElement('a', { href, ...props }, children),
