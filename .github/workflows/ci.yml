@@ -343,6 +343,9 @@ jobs:
       - name: i18n 形状等价检查
         run: pnpm i18n:shape:check
 
+      - name: MDX slug 对齐校验
+        run: pnpm content:slug-check
+
       - name: 上传 i18n 形状报告
         if: always()
         uses: actions/upload-artifact@v4
