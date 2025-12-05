@@ -12,12 +12,12 @@ vi.unmock('zod');
 describe('contact form configuration builder', () => {
   it('返回字段顺序并响应特性开关', () => {
     const fields = buildFormFieldsFromConfig(CONTACT_FORM_CONFIG);
+    // phone field is disabled per Lead Pipeline requirements
     expect(fields.map((field) => field.key)).toEqual([
       'firstName',
       'lastName',
       'email',
       'company',
-      'phone',
       'subject',
       'message',
       'acceptPrivacy',

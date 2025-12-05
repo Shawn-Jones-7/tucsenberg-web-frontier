@@ -9,9 +9,14 @@ import type {
   AirtableQueryOptions,
   AirtableRecord,
   ContactFormData,
+  ContactLeadData,
   ContactStatus,
+  LeadSource,
+  NewsletterLeadData,
+  ProductLeadData,
 } from '@/lib/airtable/types';
 import { env } from '@/lib/env';
+import { LEAD_TYPES, type LeadType } from '@/lib/lead-pipeline/lead-schema';
 import { logger } from '@/lib/logger';
 import { airtableRecordSchema, validationHelpers } from '@/lib/validations';
 import {
@@ -208,6 +213,144 @@ export class AirtableService {
         email: formData.email,
       });
       throw new Error('Failed to create contact record');
+    }
+  }
+
+  /**
+   * Get lead source string based on lead type
+   */
+  private getLeadSource(type: LeadType): LeadSource {
+    switch (type) {
+      case LEAD_TYPES.CONTACT:
+        return 'Website Contact Form';
+      case LEAD_TYPES.PRODUCT:
+        return 'Product Inquiry';
+      case LEAD_TYPES.NEWSLETTER:
+        return 'Newsletter Subscription';
+      default:
+        return 'Website Contact Form';
+    }
+  }
+
+  /**
+   * Create a unified lead record in Airtable
+   * Supports contact, product inquiry, and newsletter leads
+   */
+  // eslint-disable-next-line complexity, max-statements -- field mapping logic requires branching
+  public async createLead(
+    type: LeadType,
+    data: ContactLeadData | ProductLeadData | NewsletterLeadData,
+  ): Promise<AirtableRecord> {
+    await this.ensureReady();
+    if (!this.isReady()) {
+      throw new Error('Airtable service is not configured');
+    }
+
+    try {
+      const source = this.getLeadSource(type);
+      const now = new Date().toISOString();
+
+      // Build base record fields using airtable-compatible typing
+      type AirtableFieldValue = string | number | boolean;
+      const baseFields: Record<string, AirtableFieldValue> = {
+        'Email': data.email.toLowerCase().trim(),
+        'Submitted At': now,
+        'Status': 'New',
+        'Source': source,
+      };
+
+      // Add reference ID if provided
+      if (data.referenceId) {
+        baseFields['Reference ID'] = data.referenceId;
+      }
+
+      // Add type-specific fields
+      if (type === LEAD_TYPES.CONTACT) {
+        const contactData = data as ContactLeadData;
+        baseFields['First Name'] = validationHelpers.sanitizeInput(
+          contactData.firstName,
+        );
+        baseFields['Last Name'] = validationHelpers.sanitizeInput(
+          contactData.lastName,
+        );
+        baseFields['Company'] = contactData.company
+          ? validationHelpers.sanitizeInput(contactData.company)
+          : '';
+        baseFields['Subject'] = contactData.subject || '';
+        baseFields['Message'] = validationHelpers.sanitizeInput(
+          contactData.message,
+        );
+        baseFields['Marketing Consent'] = contactData.marketingConsent || false;
+      } else if (type === LEAD_TYPES.PRODUCT) {
+        const productData = data as ProductLeadData;
+        baseFields['First Name'] = validationHelpers.sanitizeInput(
+          productData.firstName,
+        );
+        baseFields['Last Name'] = validationHelpers.sanitizeInput(
+          productData.lastName,
+        );
+        baseFields['Company'] = productData.company
+          ? validationHelpers.sanitizeInput(productData.company)
+          : '';
+        baseFields['Message'] = validationHelpers.sanitizeInput(
+          productData.message,
+        );
+        baseFields['Product Name'] = productData.productName;
+        baseFields['Product Slug'] = productData.productSlug;
+        baseFields['Quantity'] =
+          typeof productData.quantity === 'number'
+            ? productData.quantity.toString()
+            : productData.quantity;
+        if (productData.requirements) {
+          baseFields['Requirements'] = validationHelpers.sanitizeInput(
+            productData.requirements,
+          );
+        }
+        baseFields['Marketing Consent'] = productData.marketingConsent || false;
+      } else if (type === LEAD_TYPES.NEWSLETTER) {
+        // Newsletter only needs email which is already in baseFields
+        baseFields['First Name'] = '';
+        baseFields['Last Name'] = '';
+        baseFields['Company'] = '';
+        baseFields['Message'] = 'Newsletter subscription';
+      }
+
+      // Create record
+      const recordsResult = await this.base!.table(this.tableName).create([
+        {
+          fields: baseFields,
+        },
+      ]);
+
+      // Handle both array and single record returns
+      const createdRecord = Array.isArray(recordsResult)
+        ? recordsResult[0]
+        : recordsResult;
+
+      if (!createdRecord) {
+        throw new Error('Failed to create lead record');
+      }
+
+      logger.info('Lead record created successfully', {
+        recordId: createdRecord.id,
+        type,
+        source,
+        email: data.email,
+        referenceId: data.referenceId,
+      });
+
+      return {
+        id: createdRecord.id,
+        fields: createdRecord.fields as AirtableRecord['fields'],
+        createdTime: createdRecord.get('Created Time') as string,
+      };
+    } catch (error) {
+      logger.error('Failed to create lead record', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        type,
+        email: data.email,
+      });
+      throw new Error('Failed to create lead record');
     }
   }
 

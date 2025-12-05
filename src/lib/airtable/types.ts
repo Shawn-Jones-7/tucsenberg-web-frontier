@@ -26,3 +26,45 @@ export interface AirtableStatistics {
 
 // 联系人状态类型
 export type ContactStatus = 'New' | 'In Progress' | 'Completed' | 'Archived';
+
+// Lead source type for CRM tracking
+export type LeadSource =
+  | 'Website Contact Form'
+  | 'Product Inquiry'
+  | 'Newsletter Subscription';
+
+// Base lead data for CRM
+export interface BaseLeadData {
+  email: string;
+  referenceId?: string;
+}
+
+// Contact lead data
+export interface ContactLeadData extends BaseLeadData {
+  firstName: string;
+  lastName: string;
+  company?: string;
+  subject?: string;
+  message: string;
+  marketingConsent?: boolean;
+}
+
+// Product inquiry lead data
+export interface ProductLeadData extends BaseLeadData {
+  firstName: string;
+  lastName: string;
+  company?: string;
+  message: string;
+  productSlug: string;
+  productName: string;
+  quantity: string | number;
+  requirements?: string;
+  marketingConsent?: boolean;
+}
+
+// Newsletter subscription lead data
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type -- intentionally minimal, only email from BaseLeadData
+export interface NewsletterLeadData extends BaseLeadData {}
+
+// Union type for all lead data
+export type LeadData = ContactLeadData | ProductLeadData | NewsletterLeadData;

@@ -1,19 +1,19 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { z } from 'zod';
 import { safeParseJson as safeParseJsonHelper } from '@/lib/api/safe-parse-json';
 import { withIdempotency } from '@/lib/idempotency';
+import { processLead, type LeadResult } from '@/lib/lead-pipeline';
+import { LEAD_TYPES } from '@/lib/lead-pipeline/lead-schema';
 import { logger } from '@/lib/logger';
 import {
-  COUNT_FIVE,
-  HTTP_BAD_REQUEST_CONST,
-  PERCENTAGE_FULL,
-} from '@/constants';
+  checkRateLimit,
+  getClientIP,
+  verifyTurnstile,
+} from '@/app/api/contact/contact-api-utils';
+import { COUNT_TEN, HTTP_BAD_REQUEST_CONST } from '@/constants';
 
-// 邮件订阅请求验证模式
-const subscribeSchema = z.object({
-  email: z.string().email('Invalid email address'),
-  pageType: z.enum(['products', 'blog', 'about', 'contact']).optional(),
-});
+// HTTP status codes as named constants
+const HTTP_INTERNAL_ERROR = 500;
+const HTTP_TOO_MANY_REQUESTS = 429;
 
 type SafeParseSuccess<T> = { ok: true; data: T };
 type SafeParseFailure = { ok: false; error: string };
@@ -25,12 +25,64 @@ function safeParseJson<T>(
   return safeParseJsonHelper<T>(req, { route: '/api/subscribe' });
 }
 
+/**
+ * Create success response for newsletter subscription
+ */
+function createSuccessResponse(result: LeadResult, email: string): object {
+  logger.info('Newsletter subscription successful', {
+    referenceId: result.referenceId,
+    email,
+  });
+
+  return {
+    success: true,
+    message: 'Successfully subscribed to notifications',
+    email,
+    referenceId: result.referenceId,
+  };
+}
+
+/**
+ * Create error response for failed subscription
+ */
+function createErrorResponse(result: LeadResult): NextResponse {
+  logger.warn('Newsletter subscription failed', { error: result.error });
+
+  const isValidationError = result.error === 'VALIDATION_ERROR';
+  return NextResponse.json(
+    {
+      success: false,
+      message: isValidationError
+        ? 'Invalid email address'
+        : 'An error occurred. Please try again.',
+    },
+    {
+      status: isValidationError ? HTTP_BAD_REQUEST_CONST : HTTP_INTERNAL_ERROR,
+    },
+  );
+}
+
 export function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (10 requests per minute for newsletter)
+  if (!checkRateLimit(clientIP, COUNT_TEN)) {
+    logger.warn('Newsletter rate limit exceeded', { ip: clientIP });
+    return NextResponse.json(
+      {
+        success: false,
+        message: 'Too many requests. Please try again later.',
+      },
+      { status: HTTP_TOO_MANY_REQUESTS },
+    );
+  }
+
   // 使用幂等键中间件包装处理逻辑
   return withIdempotency(request, async () => {
     const parsedBody = await safeParseJson<{
       email?: string;
       pageType?: string;
+      turnstileToken?: string;
     }>(request);
 
     if (!parsedBody.ok) {
@@ -43,60 +95,57 @@ export function POST(request: NextRequest) {
       );
     }
 
-    try {
-      const { email, pageType } = subscribeSchema.parse(parsedBody.data);
+    const email = parsedBody.data?.email;
+    const turnstileToken = parsedBody.data?.turnstileToken;
 
-      // TODO: 集成实际的邮件服务 (Resend)
-      // 这里可以添加以下功能：
-      // 1. 将邮箱地址保存到数据库
-      // 2. 发送确认邮件
-      // 3. 添加到邮件列表
-
-      // 记录订阅信息
-      logger.info('新的邮件订阅', {
-        email,
-        pageType,
-        timestamp: new Date().toISOString(),
-      });
-
-      // 模拟处理延迟
-      const SIMULATED_DELAY_MS = PERCENTAGE_FULL * COUNT_FIVE; // 500ms
-      await new Promise((resolve) => setTimeout(resolve, SIMULATED_DELAY_MS));
-
-      // 返回成功结果（会被 withIdempotency 缓存）
-      return {
-        success: true,
-        message: 'Successfully subscribed to notifications',
-        email,
-      };
-    } catch (_error) {
-      // 忽略错误变量
-      logger.error(
-        '邮件订阅错误',
-        {},
-        _error instanceof Error ? _error : new Error(String(_error)),
-      );
-
-      if (_error instanceof z.ZodError) {
-        return NextResponse.json(
-          {
-            success: false,
-            message: 'Invalid email address',
-            errors: _error.issues,
-          },
-          { status: HTTP_BAD_REQUEST_CONST },
-        );
-      }
-
-      const HTTP_INTERNAL_SERVER_ERROR = PERCENTAGE_FULL * COUNT_FIVE; // 500
+    if (email === undefined || email === '') {
       return NextResponse.json(
         {
           success: false,
-          message: 'Internal server _error',
+          message: 'Email is required',
         },
-        { status: HTTP_INTERNAL_SERVER_ERROR },
+        { status: HTTP_BAD_REQUEST_CONST },
       );
     }
+
+    // Verify Turnstile token
+    if (!turnstileToken) {
+      logger.warn('Newsletter subscription missing Turnstile token', {
+        ip: clientIP,
+      });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Security verification required',
+        },
+        { status: HTTP_BAD_REQUEST_CONST },
+      );
+    }
+
+    const isValidTurnstile = await verifyTurnstile(turnstileToken, clientIP);
+    if (!isValidTurnstile) {
+      logger.warn('Newsletter Turnstile verification failed', { ip: clientIP });
+      return NextResponse.json(
+        {
+          success: false,
+          message: 'Security verification failed. Please try again.',
+        },
+        { status: HTTP_BAD_REQUEST_CONST },
+      );
+    }
+
+    // Prepare lead input for newsletter subscription
+    const leadInput = {
+      type: LEAD_TYPES.NEWSLETTER,
+      email,
+    };
+
+    // Process via unified Lead Pipeline
+    const result = await processLead(leadInput);
+
+    return result.success
+      ? createSuccessResponse(result, email)
+      : createErrorResponse(result);
   });
 }
 

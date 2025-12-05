@@ -1,6 +1,7 @@
 'use client';
 
-import { useActionState, useState } from 'react';
+import { useActionState, useCallback, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
 import { CheckCircle, Loader2, MessageSquare, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
@@ -15,6 +16,21 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+
+// Lazy load Turnstile for performance
+const TurnstileWidget = dynamic(
+  () =>
+    import('@/components/security/turnstile').then((m) => m.TurnstileWidget),
+  {
+    ssr: false,
+    loading: () => (
+      <div
+        className='h-[65px] w-full animate-pulse rounded-md bg-muted'
+        aria-hidden='true'
+      />
+    ),
+  },
+);
 
 export interface ProductInquiryFormProps {
   /** Product name to display in the form */
@@ -80,18 +96,20 @@ interface SubmitButtonProps {
   isSubmitting: boolean;
   submitLabel: string;
   submittingLabel: string;
+  disabled?: boolean;
 }
 
 function SubmitButton({
   isSubmitting,
   submitLabel,
   submittingLabel,
+  disabled,
 }: SubmitButtonProps) {
   return (
     <Button
       type='submit'
       className='w-full'
-      disabled={isSubmitting}
+      disabled={isSubmitting || disabled}
     >
       {isSubmitting ? (
         <>
@@ -238,11 +256,58 @@ function RequirementsField({
   );
 }
 
+// Extract form data from FormData object
+function extractFormData(formData: FormData) {
+  const fullName = String(formData.get('name') ?? '').trim();
+  const email = String(formData.get('email') ?? '').trim();
+  const company = String(formData.get('company') ?? '').trim();
+  const quantity = String(formData.get('quantity') ?? '').trim();
+  const targetPrice = String(formData.get('targetPrice') ?? '').trim();
+  const requirementsRaw = String(formData.get('requirements') ?? '').trim();
+  const requirements =
+    targetPrice !== ''
+      ? `${requirementsRaw}\n\nTarget Price: ${targetPrice}`.trim()
+      : requirementsRaw;
+  return { fullName, email, company, quantity, requirements };
+}
+
+// Submit inquiry to API
+interface SubmitInquiryParams {
+  data: ReturnType<typeof extractFormData>;
+  productSlug: string;
+  productName: string;
+  token: string;
+}
+
+async function submitInquiry({
+  data,
+  productSlug,
+  productName,
+  token,
+}: SubmitInquiryParams): Promise<{ ok: boolean; error?: string }> {
+  const requestBody = {
+    type: 'product',
+    fullName: data.fullName,
+    email: data.email,
+    productSlug,
+    productName,
+    quantity: data.quantity,
+    turnstileToken: token,
+    ...(data.company !== '' && { company: data.company }),
+    ...(data.requirements !== '' && { requirements: data.requirements }),
+  };
+
+  const response = await fetch('/api/inquiry', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(requestBody),
+  });
+  const result = await response.json();
+  return { ok: response.ok && result.success === true, error: result.error };
+}
+
 /**
  * Product inquiry form for B2B product pages.
- *
- * A simplified inquiry form designed for foreign trade scenarios.
- * Collects basic contact info and inquiry details.
  */
 export function ProductInquiryForm({
   productName,
@@ -253,32 +318,37 @@ export function ProductInquiryForm({
   const t = useTranslations('products.inquiry');
   const tContact = useTranslations('contact.form');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
+  const turnstileTokenRef = useRef<string | null>(null);
 
-  // Simple form action - in production, this would connect to a server action
+  const handleTurnstileSuccess = useCallback((token: string) => {
+    turnstileTokenRef.current = token;
+    setTurnstileToken(token);
+  }, []);
+
+  const handleTurnstileReset = useCallback(() => {
+    turnstileTokenRef.current = null;
+    setTurnstileToken(null);
+  }, []);
+
   async function handleSubmit(
     _prevState: FormState,
     formData: FormData,
   ): Promise<FormState> {
     setIsSubmitting(true);
-
     try {
-      // Simulate API call - in production, replace with actual server action
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      const token = turnstileTokenRef.current;
+      if (!token) return { success: false, error: t('turnstileRequired') };
 
-      // Log the inquiry for demo purposes
-      const inquiryData = {
+      const data = extractFormData(formData);
+      const result = await submitInquiry({
+        data,
         productSlug,
         productName,
-        name: formData.get('name'),
-        email: formData.get('email'),
-        company: formData.get('company'),
-        quantity: formData.get('quantity'),
-        targetPrice: formData.get('targetPrice'),
-        requirements: formData.get('requirements'),
-      };
-
-      // eslint-disable-next-line no-console
-      console.log('Product inquiry submitted:', inquiryData);
+        token,
+      });
+      if (!result.ok)
+        return { success: false, error: result.error ?? t('error') };
 
       onSuccess?.();
       return { success: true, error: undefined };
@@ -320,7 +390,6 @@ export function ProductInquiryForm({
             name='productName'
             value={productName}
           />
-
           <ProductDisplay
             label={t('productName')}
             productName={productName}
@@ -345,13 +414,20 @@ export function ProductInquiryForm({
             label={t('requirements')}
             placeholder={t('requirementsPlaceholder')}
           />
-
+          <TurnstileWidget
+            onSuccess={handleTurnstileSuccess}
+            onError={handleTurnstileReset}
+            onExpire={handleTurnstileReset}
+            action='product_inquiry'
+            size='compact'
+            theme='auto'
+          />
           {state.error !== undefined && <ErrorMessage error={state.error} />}
-
           <SubmitButton
             isSubmitting={isSubmitting}
             submitLabel={t('submit')}
             submittingLabel={t('submitting')}
+            disabled={!turnstileToken}
           />
         </form>
       </CardContent>

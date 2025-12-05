@@ -66,21 +66,50 @@ export function isAllowedTurnstileHostname(hostname?: string | null): boolean {
   return getAllowedTurnstileHosts().includes(normalized);
 }
 
+/**
+ * Default allowed actions for Turnstile verification.
+ * Can be extended via TURNSTILE_ALLOWED_ACTIONS env variable (comma-separated).
+ */
+const DEFAULT_ALLOWED_ACTIONS = [
+  'contact_form',
+  'newsletter_subscribe',
+  'product_inquiry',
+];
+
+const allowedActionsMemo = (() => {
+  const envActions = process.env.TURNSTILE_ALLOWED_ACTIONS;
+  if (envActions) {
+    return envActions
+      .split(',')
+      .map((a: string) => a.trim())
+      .filter(Boolean);
+  }
+  return DEFAULT_ALLOWED_ACTIONS;
+})();
+
 const expectedActionMemo = (
   (env.TURNSTILE_EXPECTED_ACTION as string | undefined) || 'contact_form'
 ).trim();
 
 /**
- * Return the expected Turnstile action identifier.
+ * Return the expected Turnstile action identifier (primary action).
  */
 export function getExpectedTurnstileAction(): string {
   return expectedActionMemo;
 }
 
 /**
+ * Return all allowed Turnstile action identifiers.
+ */
+export function getAllowedTurnstileActions(): string[] {
+  return allowedActionsMemo;
+}
+
+/**
  * Determine whether the verification response action matches expectations.
+ * Supports multiple allowed actions for different form types.
  */
 export function isAllowedTurnstileAction(action?: string | null): boolean {
   if (!action) return false;
-  return action === getExpectedTurnstileAction();
+  return getAllowedTurnstileActions().includes(action);
 }

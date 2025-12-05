@@ -6,3 +6,7 @@ export {
   type PostCardSkeletonProps,
   type PostGridSkeletonProps,
 } from '@/components/blog/post-card-skeleton';
+export {
+  BlogNewsletter,
+  type BlogNewsletterProps,
+} from '@/components/blog/blog-newsletter';

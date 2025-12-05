@@ -64,13 +64,11 @@ Read these **only when relevant** to your current task:
 
 ---
 
-## Recommended Tools
+## Codebase Exploration
 
-When exploring codebase or querying docs:
+Use **ace `search_context`** for semantic/exploratory queries before attempting multiple Grep searches. Built-in tools (Grep, Glob, Read) suffice for precise symbol lookups.
 
-- **ACE `search_context`**: Semantic code search
-- **Serena**: Symbol-level navigation and structured edits
-- **Next.js DevTools `nextjs_docs`**: Official Next.js docs query
+For Next.js specifics: `nextjs_docs` MCP tool.
 
 ---
 

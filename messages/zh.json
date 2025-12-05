@@ -938,7 +938,16 @@
     "pageTitle": "博客",
     "pageDescription": "来自我们团队的最新消息、见解和更新。",
     "readingTime": "阅读时间 {minutes} 分钟",
-    "emptyState": "暂无文章，请稍后再来查看。"
+    "emptyState": "暂无文章，请稍后再来查看。",
+    "newsletter": {
+      "title": "订阅我们的通讯",
+      "description": "获取最新的行业洞察、产品更新和贸易技巧。",
+      "placeholder": "请输入您的邮箱地址",
+      "submit": "订阅",
+      "submitting": "订阅中...",
+      "success": "感谢您的订阅！您将收到我们的最新动态。",
+      "error": "发生错误，请重试。"
+    }
   },
   "about": {
     "pageTitle": "关于我们",

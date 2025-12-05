@@ -1,14 +1,16 @@
 /**
  * 联系表单API验证和数据处理
  * Contact form API validation and data processing
+ *
+ * This module handles validation and delegates to the unified processLead pipeline
  */
 
 import { z } from 'zod';
 import { airtableService } from '@/lib/airtable';
 import { contactFieldValidators } from '@/lib/form-schema/contact-field-validators';
-import { type ContactFormData } from '@/lib/form-schema/contact-form-schema';
+import { processLead } from '@/lib/lead-pipeline';
+import { CONTACT_SUBJECTS, LEAD_TYPES } from '@/lib/lead-pipeline/lead-schema';
 import { logger } from '@/lib/logger';
-import { resendService } from '@/lib/resend';
 import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
 import { mapZodIssueToErrorKey } from '@/app/api/contact/contact-form-error-utils';
 import {
@@ -115,107 +117,63 @@ export async function validateFormData(body: unknown, clientIP: string) {
 }
 
 /**
- * 处理表单提交
- * Process form submission
+ * Map legacy subject string to contact subject enum
  */
-export async function processFormSubmission(
-  formData: ContactFormData & { turnstileToken: string; submittedAt: string },
-) {
-  const emailData = {
-    firstName: formData.firstName,
-    lastName: formData.lastName,
+function mapSubjectToEnum(
+  subject: string | undefined,
+): (typeof CONTACT_SUBJECTS)[keyof typeof CONTACT_SUBJECTS] {
+  if (!subject) return CONTACT_SUBJECTS.OTHER;
+
+  const subjectLower = subject.toLowerCase();
+  if (subjectLower.includes('product')) return CONTACT_SUBJECTS.PRODUCT_INQUIRY;
+  if (subjectLower.includes('distributor')) return CONTACT_SUBJECTS.DISTRIBUTOR;
+  if (subjectLower.includes('oem') || subjectLower.includes('odm')) {
+    return CONTACT_SUBJECTS.OEM_ODM;
+  }
+  return CONTACT_SUBJECTS.OTHER;
+}
+
+/**
+ * 处理表单提交 - 委托给统一的 processLead pipeline
+ * Process form submission - delegates to unified processLead pipeline
+ */
+export async function processFormSubmission(formData: ContactFormWithToken) {
+  // 将旧格式映射到新的 Lead Pipeline 格式
+  // Map legacy format to new Lead Pipeline format
+  const fullName = [formData.firstName, formData.lastName]
+    .filter(Boolean)
+    .join(' ')
+    .trim();
+
+  const leadInput = {
+    type: LEAD_TYPES.CONTACT,
+    fullName: fullName || formData.firstName || 'Unknown',
     email: formData.email,
     company: formData.company,
-    phone: formData.phone,
-    subject: formData.subject,
+    subject: mapSubjectToEnum(formData.subject),
     message: formData.message,
+    turnstileToken: formData.turnstileToken,
     submittedAt: formData.submittedAt,
-    marketingConsent: formData.marketingConsent,
+    marketingConsent: formData.marketingConsent ?? false,
   };
 
-  // 并行处理邮件发送和数据存储
-  const [emailResult, airtableResult] = await Promise.allSettled([
-    resendService.sendContactFormEmail(emailData),
-    (() => {
-      const payload = {
-        firstName: formData.firstName,
-        lastName: formData.lastName,
-        email: formData.email,
-        company: formData.company,
-        phone: formData.phone ?? '',
-        subject: formData.subject ?? '',
-        message: formData.message,
-        acceptPrivacy: true,
-        marketingConsent: formData.marketingConsent ?? false,
-        website: formData.website ?? '',
-      } satisfies ContactFormFieldValues;
-      return airtableService.createContact(payload);
-    })(),
-  ]);
+  // 调用统一的 Lead Pipeline
+  const result = await processLead(leadInput);
 
-  // 检查结果
-  const emailSuccess = emailResult.status === 'fulfilled';
-  const airtableSuccess = airtableResult.status === 'fulfilled';
-
-  if (!emailSuccess) {
-    logger.error('Email sending failed', {
-      error: emailResult.reason,
-      formData: {
-        email: formData.email,
-        subject: formData.subject,
-      },
-    });
-  }
-
-  if (!airtableSuccess) {
-    logger.error('Airtable record creation failed', {
-      error: airtableResult.reason,
-      formData: {
-        email: formData.email,
-        subject: formData.subject,
-      },
-    });
-  }
-
-  // 提取结果数据
-  const emailMessageId =
-    emailSuccess && emailResult.status === 'fulfilled'
-      ? emailResult.value
-      : null;
-  const airtableRecordId =
-    airtableSuccess && airtableResult.status === 'fulfilled'
-      ? airtableResult.value?.id
-      : null;
-
-  // 至少一个服务成功就认为提交成功
-  if (emailSuccess || airtableSuccess) {
-    logger.info('Contact form submitted successfully', {
-      email: formData.email,
-      subject: formData.subject,
-      emailSuccess,
-      airtableSuccess,
-      emailMessageId,
-      airtableRecordId,
-    });
-
+  if (result.success) {
     return {
       success: true,
-      emailSent: emailSuccess,
-      recordCreated: airtableSuccess,
-      emailMessageId,
-      airtableRecordId,
+      emailSent: result.emailSent,
+      recordCreated: result.recordCreated,
+      emailMessageId: result.referenceId,
+      airtableRecordId: result.referenceId,
     };
   }
 
-  // 两个服务都失败
-  logger.error('Contact form submission failed completely', {
-    emailError: emailResult.status === 'rejected' ? emailResult.reason : null,
-    airtableError:
-      airtableResult.status === 'rejected' ? airtableResult.reason : null,
-    formData: {
-      email: formData.email,
-      subject: formData.subject,
-    },
+  // 处理失败情况
+  logger.error('Contact form submission failed via processLead', {
+    error: result.error,
+    email: formData.email,
   });
 
   throw new Error('Failed to process form submission');

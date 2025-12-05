@@ -13,6 +13,15 @@ import React from 'react';
 // 扩展 Vitest 的 expect 断言
 import type { TestingLibraryMatchers } from '@testing-library/jest-dom/matchers';
 
+// Mock next/font/local for local font loading (P2-1 Phase 3: Geist Sans Latin subset)
+vi.mock('next/font/local', () => ({
+  default: vi.fn(() => ({
+    variable: '--font-geist-sans',
+    className: 'geist-sans-subset',
+    style: { fontFamily: 'Geist Sans Latin' },
+  })),
+}));
+
 // Mock geist/font/mono and geist/font/sans to avoid next/font/local directory import issues
 // This is a test-only stub and has no effect on production builds
 vi.mock('geist/font/mono', () => ({
@@ -1150,6 +1159,7 @@ const createMockZodString = () => {
   const mockString = {
     min: vi.fn(() => mockString),
     max: vi.fn(() => mockString),
+    trim: vi.fn(() => mockString),
     email: vi.fn(() => mockString),
     url: vi.fn(() => mockString),
     regex: vi.fn(() => mockString),
@@ -1248,7 +1258,8 @@ vi.mock('zod', () => ({
     date: vi.fn(() => createMockZodString()),
     array: vi.fn(() => createMockZodArray()),
     object: vi.fn(() => createMockZodObject()),
-    union: vi.fn(() => createMockZodString()),
+    union: vi.fn(() => createMockZodObject()),
+    discriminatedUnion: vi.fn(() => createMockZodObject()),
     intersection: vi.fn(() => createMockZodString()),
     tuple: vi.fn(() => createMockZodArray()),
     record: vi.fn(() => createMockZodObject()),

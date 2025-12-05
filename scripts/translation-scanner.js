@@ -512,21 +512,83 @@ function recordKeyUsage(key, filePath, location) {
 }
 
 /**
+ * 深度合并两个对象
+ */
+function deepMerge(target, source) {
+  const result = { ...target };
+  for (const [key, value] of Object.entries(source)) {
+    if (
+      typeof value === 'object' &&
+      value !== null &&
+      !Array.isArray(value) &&
+      typeof result[key] === 'object' &&
+      result[key] !== null &&
+      !Array.isArray(result[key])
+    ) {
+      result[key] = deepMerge(result[key], value);
+    } else {
+      result[key] = value;
+    }
+  }
+  return result;
+}
+
+/**
  * 加载现有翻译文件
+ * 支持 messages/{locale}/critical.json + deferred.json 结构
  */
 function loadExistingTranslations() {
   const translations = {};
 
   for (const locale of CONFIG.LOCALES) {
-    const filePath = path.join(CONFIG.MESSAGES_DIR, `${locale}.json`);
-    try {
-      const content = fs.readFileSync(filePath, 'utf8');
-      translations[locale] = JSON.parse(content);
-      console.log(`📖 加载翻译文件: ${locale}.json`);
-    } catch (error) {
-      console.warn(`⚠️  无法加载翻译文件: ${locale}.json - ${error.message}`);
-      translations[locale] = {};
+    let merged = {};
+
+    // Try loading from subdirectory structure (critical.json + deferred.json)
+    const localeDir = path.join(CONFIG.MESSAGES_DIR, locale);
+    const criticalPath = path.join(localeDir, 'critical.json');
+    const deferredPath = path.join(localeDir, 'deferred.json');
+
+    let loadedFromSubdir = false;
+
+    if (fs.existsSync(criticalPath)) {
+      try {
+        const content = fs.readFileSync(criticalPath, 'utf8');
+        merged = deepMerge(merged, JSON.parse(content));
+        console.log(`📖 加载翻译文件: ${locale}/critical.json`);
+        loadedFromSubdir = true;
+      } catch (error) {
+        console.warn(
+          `⚠️  无法加载翻译文件: ${locale}/critical.json - ${error.message}`,
+        );
+      }
     }
+
+    if (fs.existsSync(deferredPath)) {
+      try {
+        const content = fs.readFileSync(deferredPath, 'utf8');
+        merged = deepMerge(merged, JSON.parse(content));
+        console.log(`📖 加载翻译文件: ${locale}/deferred.json`);
+        loadedFromSubdir = true;
+      } catch (error) {
+        console.warn(
+          `⚠️  无法加载翻译文件: ${locale}/deferred.json - ${error.message}`,
+        );
+      }
+    }
+
+    // Fallback to flat file structure (messages/{locale}.json)
+    if (!loadedFromSubdir) {
+      const flatPath = path.join(CONFIG.MESSAGES_DIR, `${locale}.json`);
+      try {
+        const content = fs.readFileSync(flatPath, 'utf8');
+        merged = JSON.parse(content);
+        console.log(`📖 加载翻译文件: ${locale}.json`);
+      } catch (error) {
+        console.warn(`⚠️  无法加载翻译文件: ${locale}.json - ${error.message}`);
+      }
+    }
+
+    translations[locale] = merged;
   }
 
   return translations;

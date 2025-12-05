@@ -324,7 +324,17 @@
     "pageTitle": "博客",
     "pageDescription": "探索我们关于技术、设计和企业解决方案的最新文章、见解和更新。",
     "readingTime": "分钟阅读",
-    "emptyState": "暂无文章发布，敬请期待！"
+    "emptyState": "暂无文章发布，敬请期待！",
+    "newsletter": {
+      "title": "订阅我们的通讯",
+      "description": "获取最新的行业洞察、产品更新和贸易技巧。",
+      "placeholder": "请输入您的邮箱地址",
+      "submit": "订阅",
+      "submitting": "订阅中...",
+      "success": "感谢您的订阅！您将收到我们的最新动态。",
+      "error": "发生错误，请重试。",
+      "turnstileRequired": "请完成安全验证。"
+    }
   },
   "about": {
     "pageTitle": "关于我们",
@@ -409,7 +419,8 @@
       "submit": "发送询价",
       "submitting": "发送中...",
       "success": "询价已成功发送！我们将在 24 小时内回复您。",
-      "error": "询价发送失败，请稍后重试。"
+      "error": "询价发送失败，请稍后重试。",
+      "turnstileRequired": "请完成安全验证。"
     }
   },
   "title": "图森堡网络前沿",

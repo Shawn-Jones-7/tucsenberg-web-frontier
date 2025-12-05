@@ -938,7 +938,16 @@
     "pageTitle": "Blog",
     "pageDescription": "Latest news, insights, and updates from our team.",
     "readingTime": "{minutes} min read",
-    "emptyState": "No posts available. Please check back later."
+    "emptyState": "No posts available. Please check back later.",
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "description": "Get the latest industry insights, product updates, and trade tips delivered to your inbox.",
+      "placeholder": "Enter your email address",
+      "submit": "Subscribe",
+      "submitting": "Subscribing...",
+      "success": "Thank you for subscribing! You will receive our latest updates.",
+      "error": "An error occurred. Please try again."
+    }
   },
   "about": {
     "pageTitle": "About Us",

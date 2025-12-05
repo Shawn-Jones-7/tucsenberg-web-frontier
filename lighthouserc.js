@@ -12,11 +12,11 @@
  *
  * 阶段性阈值规划（详见 docs/p2-1-lighthouse-thresholds-and-perf-plan.md）：
  * - Phase 0: Performance 0.68, LCP 5200ms, TBT 800ms (已完成)
- * - Phase 1: Performance 0.85, LCP 4500ms, TBT 200ms (当前)
- * - Phase 2: Performance 0.90, LCP 3500ms, TBT 150ms
- * - Phase 3: Performance 0.95, LCP 2500ms, TBT 100ms
+ * - Phase 1: Performance 0.85, LCP 4500ms, TBT 200ms (已完成)
+ * - Phase 2: total-byte-weight 512KB→515KB 字体减重 (已完成)
+ * - Phase 3: total-byte-weight 480KB 字体子集化 (当前)
  *
- * 更新时间：2025-12-04 (Phase 1 实施)
+ * 更新时间：2025-12-04 (Phase 3 实施)
  */
 
 // 关键URL优先策略：CI_DAILY=true时运行全部URL，否则仅运行关键3个URL
@@ -63,7 +63,7 @@ module.exports = {
         'first-contentful-paint': ['error', { maxNumericValue: 2000 }],
         // Phase 1: LCP ≤4500ms（实测 2429-4331ms，有安全余量）
         'largest-contentful-paint': ['error', { maxNumericValue: 4500 }],
-        // 调整CLS阈值为0，对齐GPT-5性能目标（CLS=0）
+        // CLS ≤0.15（实测接近 0，符合 Good CWV 标准；Phase 3 可考虑收紧）
         'cumulative-layout-shift': ['error', { maxNumericValue: 0.15 }],
         // Phase 1: TBT ≤200ms（实测仅 13-54ms，有充足安全余量）
         'total-blocking-time': ['error', { maxNumericValue: 200 }],
@@ -73,8 +73,8 @@ module.exports = {
         'interactive': ['error', { maxNumericValue: 6000 }],
 
         // ==================== Bundle 大小监控（替代 size-limit）====================
-        // 总传输大小：500KB 阈值（包括 HTML、CSS、JS、图片等）
-        'total-byte-weight': ['warn', { maxNumericValue: 512000 }],
+        // Phase 3：总传输大小收紧至 490KB（允许正常波动，实测中位数 ~474-486KB）
+        'total-byte-weight': ['warn', { maxNumericValue: 490000 }],
 
         // JavaScript 启动时间：4s 阈值（解析、编译、执行时间）
         'bootup-time': ['warn', { maxNumericValue: 4000 }],

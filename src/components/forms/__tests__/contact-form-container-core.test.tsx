@@ -166,6 +166,7 @@ const renderContactForm = async () => {
 };
 
 // 填写有效表单的辅助函数
+// Note: phone field is disabled per Lead Pipeline requirements
 const _fillValidForm = async (excludeFields: string[] = []) => {
   await act(async () => {
     if (!excludeFields.includes('firstName')) {
@@ -189,12 +190,6 @@ const _fillValidForm = async (excludeFields: string[] = []) => {
     if (!excludeFields.includes('company')) {
       fireEvent.change(screen.getByLabelText(/company/i), {
         target: { value: 'Test Company' },
-      });
-    }
-
-    if (!excludeFields.includes('phone')) {
-      fireEvent.change(screen.getByLabelText(/phone/i), {
-        target: { value: '+1234567890' },
       });
     }
 
@@ -305,11 +300,11 @@ describe('ContactFormContainer - 核心功能', () => {
       await renderContactForm();
 
       // 检查所有字段是否存在
+      // Note: phone field is disabled per Lead Pipeline requirements
       expect(screen.getByLabelText(/first name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/last name/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/company/i)).toBeInTheDocument();
-      expect(screen.getByLabelText(/phone/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/subject/i)).toBeInTheDocument();
       expect(screen.getByLabelText(/message/i)).toBeInTheDocument();
     });

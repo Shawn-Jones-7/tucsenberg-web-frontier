@@ -324,7 +324,17 @@
     "pageTitle": "Blog",
     "pageDescription": "Explore our latest articles, insights, and updates on technology, design, and enterprise solutions.",
     "readingTime": "min read",
-    "emptyState": "No articles published yet. Check back soon!"
+    "emptyState": "No articles published yet. Check back soon!",
+    "newsletter": {
+      "title": "Subscribe to Our Newsletter",
+      "description": "Get the latest industry insights, product updates, and trade tips delivered to your inbox.",
+      "placeholder": "Enter your email address",
+      "submit": "Subscribe",
+      "submitting": "Subscribing...",
+      "success": "Thank you for subscribing! You will receive our latest updates.",
+      "error": "An error occurred. Please try again.",
+      "turnstileRequired": "Please complete the security verification."
+    }
   },
   "about": {
     "pageTitle": "About Us",
@@ -409,7 +419,8 @@
       "submit": "Send Inquiry",
       "submitting": "Sending...",
       "success": "Your inquiry has been sent successfully! We will get back to you within 24 hours.",
-      "error": "Failed to send inquiry. Please try again later."
+      "error": "Failed to send inquiry. Please try again later.",
+      "turnstileRequired": "Please complete the security verification."
     }
   },
   "title": "Tucsenberg Web Frontier",

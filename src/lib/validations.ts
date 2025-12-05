@@ -84,6 +84,25 @@ export const emailTemplateDataSchema = z.object({
 export type EmailTemplateData = z.infer<typeof emailTemplateDataSchema>;
 
 /**
+ * Product inquiry email data validation schema
+ */
+export const productInquiryEmailDataSchema = z.object({
+  firstName: z.string(),
+  lastName: z.string(),
+  email: z.string().email(),
+  company: z.string().optional(),
+  productName: z.string(),
+  productSlug: z.string(),
+  quantity: z.union([z.string(), z.number()]),
+  requirements: z.string().optional(),
+  marketingConsent: z.boolean().optional(),
+});
+
+export type ProductInquiryEmailData = z.infer<
+  typeof productInquiryEmailDataSchema
+>;
+
+/**
  * 表单验证错误类型
  * Form validation error types
  */

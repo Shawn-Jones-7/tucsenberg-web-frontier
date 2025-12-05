@@ -125,8 +125,8 @@ function validateTurnstileActionResponse(
  */
 export function checkRateLimit(
   ip: string,
-  maxRequests = RATE_LIMIT_CONFIG.MAX_REQUESTS,
-  windowMs = RATE_LIMIT_CONFIG.WINDOW_MS,
+  maxRequests: number = RATE_LIMIT_CONFIG.MAX_REQUESTS,
+  windowMs: number = RATE_LIMIT_CONFIG.WINDOW_MS,
 ): boolean {
   const now = Date.now();
   const key = ip;

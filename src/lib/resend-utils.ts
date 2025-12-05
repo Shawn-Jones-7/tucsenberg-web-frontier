@@ -5,8 +5,10 @@
 
 import {
   emailTemplateDataSchema,
+  productInquiryEmailDataSchema,
   validationHelpers,
   type EmailTemplateData,
+  type ProductInquiryEmailData,
 } from '@/lib/validations';
 
 /**
@@ -100,5 +102,58 @@ export class ResendUtils {
    */
   static formatDateTime(date: Date | string): string {
     return new Date(date).toLocaleString();
+  }
+
+  /**
+   * Validate product inquiry email data
+   */
+  static validateProductInquiryData(
+    data: ProductInquiryEmailData,
+  ): ProductInquiryEmailData {
+    return productInquiryEmailDataSchema.parse(data);
+  }
+
+  /**
+   * Sanitize product inquiry email data
+   */
+  static sanitizeProductInquiryData(
+    data: ProductInquiryEmailData,
+  ): ProductInquiryEmailData {
+    return {
+      firstName: validationHelpers.sanitizeInput(data.firstName),
+      lastName: validationHelpers.sanitizeInput(data.lastName),
+      email: data.email.toLowerCase().trim(),
+      company: data.company
+        ? validationHelpers.sanitizeInput(data.company)
+        : undefined,
+      productName: validationHelpers.sanitizeInput(data.productName),
+      productSlug: data.productSlug.trim(),
+      quantity: data.quantity,
+      requirements: data.requirements
+        ? validationHelpers.sanitizeInput(data.requirements)
+        : undefined,
+      marketingConsent: data.marketingConsent,
+    };
+  }
+
+  /**
+   * Generate product inquiry email subject
+   */
+  static generateProductInquirySubject(data: ProductInquiryEmailData): string {
+    const quantity =
+      typeof data.quantity === 'number'
+        ? data.quantity.toString()
+        : data.quantity;
+    return `Product Inquiry: ${data.productName} (Qty: ${quantity})`;
+  }
+
+  /**
+   * Get product inquiry email tags
+   */
+  static getProductInquiryTags(): Array<{ name: string; value: string }> {
+    return [
+      { name: 'type', value: 'product-inquiry' },
+      { name: 'source', value: 'website' },
+    ];
   }
 }

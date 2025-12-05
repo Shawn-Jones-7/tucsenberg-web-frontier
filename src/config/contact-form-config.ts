@@ -150,7 +150,7 @@ const DEFAULT_FIELD_CONFIGS: Record<
   },
   phone: {
     key: 'phone',
-    enabled: true,
+    enabled: false, // Disabled per Lead Pipeline requirements - simplify form
     required: false,
     type: 'tel',
     order: 5,

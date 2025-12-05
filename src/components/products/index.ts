@@ -30,3 +30,11 @@ export {
   ProductInquiryForm,
   type ProductInquiryFormProps,
 } from '@/components/products/product-inquiry-form';
+export {
+  InquiryDrawer,
+  type InquiryDrawerProps,
+} from '@/components/products/inquiry-drawer';
+export {
+  ProductActions,
+  type ProductActionsProps,
+} from '@/components/products/product-actions';

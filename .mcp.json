@@ -1,14 +1,8 @@
 {
   "mcpServers": {
-    "shrimp-task-manager": {
-      "command": "npx",
-      "args": ["-y", "mcp-shrimp-task-manager"],
-      "env": {
-        "DATA_DIR": "/Users/Data/Tool/ShrimpData",
-        "ENABLE_GUI": "true",
-        "WEB_PORT": "3001",
-        "PROMPT_LANGUAGE": "en"
-      }
+    "CC-tucsenberg": {
+      "type": "http",
+      "url": "http://localhost:8000/mcp/CC-tucsenberg"
     }
   }
 }

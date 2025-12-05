@@ -8,7 +8,10 @@ import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
 import { ResendTemplates } from '@/lib/resend-templates';
 import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
-import type { EmailTemplateData } from '@/lib/validations';
+import type {
+  EmailTemplateData,
+  ProductInquiryEmailData,
+} from '@/lib/validations';
 import { ZERO } from '@/constants';
 
 /**
@@ -166,6 +169,60 @@ export class ResendService {
         email: data.email,
       });
       throw new Error('Failed to send confirmation email');
+    }
+  }
+
+  /**
+   * Send product inquiry email to admin
+   */
+  public async sendProductInquiryEmail(
+    data: ProductInquiryEmailData,
+  ): Promise<string> {
+    if (!this.isReady()) {
+      throw new Error('Resend service is not configured');
+    }
+
+    try {
+      const validatedData = ResendUtils.validateProductInquiryData(data);
+      const sanitizedData =
+        ResendUtils.sanitizeProductInquiryData(validatedData);
+
+      const subject = ResendUtils.generateProductInquirySubject(sanitizedData);
+      const htmlContent =
+        ResendTemplates.generateProductInquiryEmailHtml(sanitizedData);
+      const textContent =
+        ResendTemplates.generateProductInquiryEmailText(sanitizedData);
+
+      const result = await this.resend!.emails.send({
+        from: this.emailConfig.from,
+        to: [this.emailConfig.replyTo],
+        replyTo: sanitizedData.email,
+        subject,
+        html: htmlContent,
+        text: textContent,
+        tags: ResendUtils.getProductInquiryTags(),
+      });
+
+      if (result.error) {
+        throw new Error(`Resend API error: ${result.error.message}`);
+      }
+
+      logger.info('Product inquiry email sent successfully', {
+        messageId: result.data?.id,
+        to: this.emailConfig.replyTo,
+        from: sanitizedData.email,
+        product: sanitizedData.productName,
+        quantity: sanitizedData.quantity,
+      });
+
+      return result.data?.id || 'unknown';
+    } catch (error) {
+      logger.error('Failed to send product inquiry email', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        email: data.email,
+        product: data.productName,
+      });
+      throw new Error('Failed to send product inquiry email');
     }
   }
 
