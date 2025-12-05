@@ -931,7 +931,8 @@
       "submit": "发送询价",
       "submitting": "发送中...",
       "success": "询价已成功发送！我们将在24小时内与您联系。",
-      "error": "发送询价失败，请稍后重试。"
+      "error": "发送询价失败，请稍后重试。",
+      "turnstileRequired": "请完成安全验证。"
     }
   },
   "blog": {
@@ -946,7 +947,8 @@
       "submit": "订阅",
       "submitting": "订阅中...",
       "success": "感谢您的订阅！您将收到我们的最新动态。",
-      "error": "发生错误，请重试。"
+      "error": "发生错误，请重试。",
+      "turnstileRequired": "请完成安全验证。"
     }
   },
   "about": {

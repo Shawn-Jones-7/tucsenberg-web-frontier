@@ -931,7 +931,8 @@
       "submit": "Send Inquiry",
       "submitting": "Sending...",
       "success": "Your inquiry has been sent successfully! We will get back to you within 24 hours.",
-      "error": "Failed to send inquiry. Please try again later."
+      "error": "Failed to send inquiry. Please try again later.",
+      "turnstileRequired": "Please complete the security verification."
     }
   },
   "blog": {
@@ -946,7 +947,8 @@
       "submit": "Subscribe",
       "submitting": "Subscribing...",
       "success": "Thank you for subscribing! You will receive our latest updates.",
-      "error": "An error occurred. Please try again."
+      "error": "An error occurred. Please try again.",
+      "turnstileRequired": "Please complete the security verification."
     }
   },
   "about": {
