@@ -37,6 +37,11 @@ type ConsentListener = () => void;
 let consentListeners: ConsentListener[] = [];
 let cachedConsent: CookieConsent = DEFAULT_CONSENT;
 let cachedHasConsented = false;
+// Cached snapshot object to maintain referential stability for useSyncExternalStore
+let cachedSnapshot = {
+  consent: cachedConsent,
+  hasConsented: cachedHasConsented,
+};
 
 function emitChange() {
   for (const listener of consentListeners) {
@@ -55,14 +60,23 @@ function getConsentSnapshot(): {
   consent: CookieConsent;
   hasConsented: boolean;
 } {
-  return { consent: cachedConsent, hasConsented: cachedHasConsented };
+  return cachedSnapshot;
 }
+
+// Server snapshot is constant - prevents hydration mismatches
+const SERVER_SNAPSHOT: {
+  consent: CookieConsent;
+  hasConsented: boolean;
+} = {
+  consent: DEFAULT_CONSENT,
+  hasConsented: false,
+};
 
 function getServerSnapshot(): {
   consent: CookieConsent;
   hasConsented: boolean;
 } {
-  return { consent: DEFAULT_CONSENT, hasConsented: false };
+  return SERVER_SNAPSHOT;
 }
 
 // Initialize from localStorage (client-side only)
@@ -71,6 +85,10 @@ if (typeof window !== 'undefined') {
   if (stored) {
     cachedConsent = stored.consent;
     cachedHasConsented = true;
+    cachedSnapshot = {
+      consent: cachedConsent,
+      hasConsented: cachedHasConsented,
+    };
   }
 }
 
@@ -80,6 +98,10 @@ function updateConsentStore(
 ) {
   cachedConsent = newConsent;
   cachedHasConsented = newHasConsented;
+  cachedSnapshot = {
+    consent: cachedConsent,
+    hasConsented: cachedHasConsented,
+  };
   emitChange();
 }
 
