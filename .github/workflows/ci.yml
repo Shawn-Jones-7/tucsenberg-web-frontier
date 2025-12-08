@@ -186,6 +186,11 @@ jobs:
       - name: 安装Playwright浏览器
         run: pnpm exec playwright install --with-deps
 
+      - name: 预构建应用
+        run: pnpm build
+        env:
+          NODE_ENV: production
+
       - name: 运行E2E测试
         run: pnpm test:e2e
 
