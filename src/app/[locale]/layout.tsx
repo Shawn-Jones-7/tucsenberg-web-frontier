@@ -1,3 +1,4 @@
+import { getFontClassNames } from '@/app/[locale]/layout-fonts';
 import { generateLocaleMetadata } from '@/app/[locale]/layout-metadata';
 import { generatePageStructuredData } from '@/app/[locale]/layout-structured-data';
 import '@/app/globals.css';
@@ -199,14 +200,28 @@ export default async function LocaleLayout({
   const isDevelopment = process.env.NODE_ENV === 'development';
   const typedLocale = locale as 'en' | 'zh';
 
+  // Render <html> and <body> here (instead of root layout) so that:
+  // 1. The lang attribute is set from route params (static, Cache Components compatible)
+  // 2. Dynamic APIs like headers()/cookies() are scoped to Suspense boundaries
   return (
-    <Suspense fallback={null}>
-      <AsyncLocaleLayoutContent
-        locale={typedLocale}
-        isDevelopment={isDevelopment}
+    <html
+      lang={typedLocale}
+      className={getFontClassNames()}
+      suppressHydrationWarning
+    >
+      <body
+        className='flex min-h-screen flex-col antialiased'
+        suppressHydrationWarning
       >
-        {children}
-      </AsyncLocaleLayoutContent>
-    </Suspense>
+        <Suspense fallback={null}>
+          <AsyncLocaleLayoutContent
+            locale={typedLocale}
+            isDevelopment={isDevelopment}
+          >
+            {children}
+          </AsyncLocaleLayoutContent>
+        </Suspense>
+      </body>
+    </html>
   );
 }

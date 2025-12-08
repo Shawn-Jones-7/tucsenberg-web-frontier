@@ -10,6 +10,7 @@
  * - intentionally do NOT use request-scoped APIs (headers, cookies, etc.)
  */
 
+import { cacheLife } from 'next/cache';
 import type {
   GetAllProductsCachedFn,
   GetProductBySlugCachedFn,
@@ -54,6 +55,9 @@ function mapProductDetailToSummary(product: ProductDetail): ProductSummary {
  * Get all products as ProductSummary list for a given locale.
  */
 export const getAllProductsCached: GetAllProductsCachedFn = async (locale, options = {}) => {
+  'use cache';
+  cacheLife('days');
+
   const products = await Promise.resolve(getProductListing(locale, options.category));
 
   let filtered = products;
@@ -88,6 +92,9 @@ export const getAllProductsCached: GetAllProductsCachedFn = async (locale, optio
  * Get a single product by slug as a ProductDetail model.
  */
 export const getProductBySlugCached: GetProductBySlugCachedFn = async (locale, slug) => {
+  'use cache';
+  cacheLife('days');
+
   const product = await Promise.resolve(getProductDetail(locale, slug));
   return product;
 };
@@ -96,6 +103,9 @@ export const getProductBySlugCached: GetProductBySlugCachedFn = async (locale, s
  * Get all unique product categories for a locale.
  */
 export const getProductCategoriesCached: GetProductCategoriesCachedFn = async (locale) => {
+  'use cache';
+  cacheLife('days');
+
   const categories = await Promise.resolve(getProductCategories(locale));
   return categories;
 };
@@ -107,6 +117,9 @@ export async function getFeaturedProductsCached(
   locale: Locale,
   limit?: number,
 ): Promise<ProductSummary[]> {
+  'use cache';
+  cacheLife('days');
+
   const products = await Promise.resolve(getFeaturedProducts(locale, limit));
   return products.map((product) => mapProductDetailToSummary(product));
 }

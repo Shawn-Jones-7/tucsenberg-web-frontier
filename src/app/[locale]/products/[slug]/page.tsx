@@ -201,12 +201,13 @@ function buildTradeInfoProps(product: ProductDetail): Record<string, string> {
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
-  const { locale, slug } = await params;
+  const { locale: localeParam, slug } = await params;
+  const locale = localeParam as Locale;
   const t = await getTranslations({ locale, namespace: 'products' });
 
   let product: ProductDetail;
   try {
-    product = await getProductBySlugCached(locale as Locale, slug);
+    product = await getProductBySlugCached(locale, slug);
   } catch {
     notFound();
   }
