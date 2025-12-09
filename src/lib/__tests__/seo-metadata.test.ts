@@ -7,19 +7,42 @@ import {
 } from '../seo-metadata';
 
 // Use vi.hoisted to ensure proper mock setup
-const {
-  mockGetTranslations,
-  mockGenerateCanonicalURL,
-  mockGenerateLanguageAlternates,
-} = vi.hoisted(() => ({
-  mockGetTranslations: vi.fn(),
-  mockGenerateCanonicalURL: vi.fn(),
-  mockGenerateLanguageAlternates: vi.fn(),
+const { mockGenerateCanonicalURL, mockGenerateLanguageAlternates } = vi.hoisted(
+  () => ({
+    mockGenerateCanonicalURL: vi.fn(),
+    mockGenerateLanguageAlternates: vi.fn(),
+  }),
+);
+
+// Mock static JSON imports for SEO translations
+vi.mock('@messages/en/critical.json', () => ({
+  default: {
+    seo: {
+      title: 'English Title',
+      description: 'English Description',
+      siteName: 'Test Site EN',
+      keywords: 'test,site,en',
+      pages: {
+        home: { title: 'Home EN', description: 'Home Description EN' },
+        about: { title: 'About EN', description: 'About Description EN' },
+      },
+    },
+  },
 }));
 
-// Mock dependencies
-vi.mock('next-intl/server', () => ({
-  getTranslations: mockGetTranslations,
+vi.mock('@messages/zh/critical.json', () => ({
+  default: {
+    seo: {
+      title: 'Chinese Title',
+      description: 'Chinese Description',
+      siteName: 'Test Site ZH',
+      keywords: 'test,site,zh',
+      pages: {
+        home: { title: 'Home ZH', description: 'Home Description ZH' },
+        about: { title: 'About ZH', description: 'About Description ZH' },
+      },
+    },
+  },
 }));
 
 vi.mock('@/config/paths', () => ({
@@ -42,18 +65,6 @@ describe('SEO Metadata', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock translation function
-    const mockT = vi.fn((key: string, options?: { defaultValue?: string }) => {
-      const translations: Record<string, string> = {
-        title: options?.defaultValue || 'Translated Title',
-        description: options?.defaultValue || 'Translated Description',
-        siteName: options?.defaultValue || 'Translated Site Name',
-      };
-      const safeTranslations = new Map(Object.entries(translations));
-      return safeTranslations.get(key) || options?.defaultValue || key;
-    });
-
-    mockGetTranslations.mockResolvedValue(mockT);
     mockGenerateCanonicalURL.mockReturnValue('https://example.com/canonical');
     mockGenerateLanguageAlternates.mockReturnValue({
       en: 'https://example.com/en',
@@ -72,57 +83,37 @@ describe('SEO Metadata', () => {
   });
 
   describe('generateLocalizedMetadata', () => {
-    it('should generate basic metadata with default values', async () => {
-      const metadata = await generateLocalizedMetadata('en', 'home');
+    it('should generate basic metadata from static translations', () => {
+      const metadata = generateLocalizedMetadata('en', 'home');
 
-      expect(metadata).toEqual({
-        title: 'Default Title',
-        description: 'Default Description',
-        keywords: undefined,
-        openGraph: {
-          title: 'Default Title',
-          description: 'Default Description',
-          siteName: 'Test Site',
-          locale: 'en',
-          type: 'website',
-          images: undefined,
-          publishedTime: undefined,
-          modifiedTime: undefined,
-          authors: undefined,
-          section: undefined,
+      // Title and description come from mocked JSON translations
+      expect(metadata.title).toBe('Home EN');
+      expect(metadata.description).toBe('Home Description EN');
+      expect(metadata.openGraph?.title).toBe('Home EN');
+      expect(metadata.openGraph?.description).toBe('Home Description EN');
+      expect(metadata.openGraph?.siteName).toBe('Test Site EN');
+      expect(metadata.openGraph?.locale).toBe('en');
+      expect(metadata.alternates?.canonical).toBe(
+        'https://example.com/canonical',
+      );
+      expect(metadata.robots).toEqual({
+        index: true,
+        follow: true,
+        googleBot: {
+          'index': true,
+          'follow': true,
+          'max-video-preview': -1,
+          'max-image-preview': 'large',
+          'max-snippet': -1,
         },
-        twitter: {
-          card: 'summary_large_image',
-          title: 'Default Title',
-          description: 'Default Description',
-          images: undefined,
-        },
-        alternates: {
-          canonical: 'https://example.com/canonical',
-          languages: {
-            en: 'https://example.com/en',
-            zh: 'https://example.com/zh',
-          },
-        },
-        robots: {
-          index: true,
-          follow: true,
-          googleBot: {
-            'index': true,
-            'follow': true,
-            'max-video-preview': -1,
-            'max-image-preview': 'large',
-            'max-snippet': -1,
-          },
-        },
-        verification: {
-          google: 'google-verification-code',
-          yandex: 'yandex-verification-code',
-        },
+      });
+      expect(metadata.verification).toEqual({
+        google: 'google-verification-code',
+        yandex: 'yandex-verification-code',
       });
     });
 
-    it('should generate metadata with custom config', async () => {
+    it('should generate metadata with custom config override', () => {
       const config = {
         title: 'Custom Title',
         description: 'Custom Description',
@@ -135,7 +126,7 @@ describe('SEO Metadata', () => {
         section: 'Technology',
       };
 
-      const metadata = await generateLocalizedMetadata('zh', 'blog', config);
+      const metadata = generateLocalizedMetadata('zh', 'blog', config);
 
       expect(metadata.title).toBe('Custom Title');
       expect(metadata.description).toBe('Custom Description');
@@ -154,36 +145,35 @@ describe('SEO Metadata', () => {
       expect(metadata.twitter?.images).toEqual(['/custom-image.jpg']);
     });
 
-    it('should handle product type correctly', async () => {
+    it('should handle product type correctly', () => {
       const config = {
         type: 'product' as const,
       };
 
-      const metadata = await generateLocalizedMetadata(
-        'en',
-        'products',
-        config,
-      );
+      const metadata = generateLocalizedMetadata('en', 'products', config);
 
       // Product type should be converted to website for OpenGraph
       expect((metadata.openGraph as any)?.type).toBe('website');
     });
 
-    it('should handle different locales', async () => {
-      const metadata = await generateLocalizedMetadata('zh', 'about');
+    it('should handle different locales with static translations', () => {
+      const metadataZh = generateLocalizedMetadata('zh', 'about');
+      const metadataEn = generateLocalizedMetadata('en', 'about');
 
-      expect(metadata.openGraph?.locale).toBe('zh');
-      expect(mockGetTranslations).toHaveBeenCalledWith({
-        locale: 'zh',
-        namespace: 'seo',
-      });
+      expect(metadataZh.openGraph?.locale).toBe('zh');
+      expect(metadataZh.title).toBe('About ZH');
+      expect(metadataZh.openGraph?.siteName).toBe('Test Site ZH');
+
+      expect(metadataEn.openGraph?.locale).toBe('en');
+      expect(metadataEn.title).toBe('About EN');
+      expect(metadataEn.openGraph?.siteName).toBe('Test Site EN');
     });
 
-    it('should handle missing environment variables', async () => {
+    it('should handle missing environment variables', () => {
       delete process.env.GOOGLE_SITE_VERIFICATION;
       delete process.env.YANDEX_VERIFICATION;
 
-      const metadata = await generateLocalizedMetadata('en', 'home');
+      const metadata = generateLocalizedMetadata('en', 'home');
 
       expect(metadata.verification).toEqual({
         google: undefined,
@@ -191,28 +181,20 @@ describe('SEO Metadata', () => {
       });
     });
 
-    it('should call URL generation functions with correct parameters', async () => {
-      await generateLocalizedMetadata('en', 'contact');
+    it('should call URL generation functions with correct parameters', () => {
+      generateLocalizedMetadata('en', 'contact');
 
       expect(mockGenerateCanonicalURL).toHaveBeenCalledWith('contact', 'en');
       expect(mockGenerateLanguageAlternates).toHaveBeenCalledWith('contact');
     });
 
-    it('should handle translation function errors gracefully', async () => {
-      const mockT = vi.fn(
-        (key: string, options?: { defaultValue?: string }) => {
-          if (key === 'title') {
-            throw new Error('Translation error');
-          }
-          return options?.defaultValue || key;
-        },
-      );
+    it('should fall back to default values for unknown pages', () => {
+      // Pages not in mock JSON should use default values from SITE_CONFIG
+      const metadata = generateLocalizedMetadata('en', 'pricing');
 
-      mockGetTranslations.mockResolvedValue(mockT);
-
-      await expect(generateLocalizedMetadata('en', 'home')).rejects.toThrow(
-        'Translation error',
-      );
+      // Falls back to root-level title from mock or SITE_CONFIG default
+      expect(metadata.title).toBe('English Title');
+      expect(metadata.description).toBe('English Description');
     });
   });
 
@@ -353,22 +335,12 @@ describe('SEO Metadata', () => {
   });
 
   describe('edge cases and error handling', () => {
-    it('should handle getTranslations rejection', async () => {
-      mockGetTranslations.mockRejectedValue(
-        new Error('Translation service error'),
-      );
-
-      await expect(generateLocalizedMetadata('en', 'home')).rejects.toThrow(
-        'Translation service error',
-      );
-    });
-
-    it('should handle URL generation errors', async () => {
+    it('should handle URL generation errors synchronously', () => {
       mockGenerateCanonicalURL.mockImplementation(() => {
         throw new Error('URL generation error');
       });
 
-      await expect(generateLocalizedMetadata('en', 'home')).rejects.toThrow(
+      expect(() => generateLocalizedMetadata('en', 'home')).toThrow(
         'URL generation error',
       );
     });

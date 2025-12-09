@@ -83,12 +83,22 @@ export function MobileNavigation({ className }: MobileNavigationProps) {
           className='w-[300px] sm:w-[350px]'
           id='mobile-navigation'
           aria-label={NAVIGATION_ARIA.mobileMenu}
+          data-testid='mobile-menu-content'
           onEscapeKeyDown={() => setIsOpen(false)}
         >
           <SheetHeader className='text-left'>
-            <SheetTitle className='text-lg font-semibold'>
-              {t('seo.siteName')}
+            {/* SheetTitle provides accessible name for the dialog via aria-labelledby.
+                Use sr-only so screen readers announce "Mobile navigation menu" while
+                visually displaying the site name below. */}
+            <SheetTitle className='sr-only'>
+              {NAVIGATION_ARIA.mobileMenu}
             </SheetTitle>
+            <div
+              className='text-lg font-semibold'
+              aria-hidden='true'
+            >
+              {t('seo.siteName')}
+            </div>
             <SheetDescription className='text-sm text-muted-foreground'>
               {t('seo.description')}
             </SheetDescription>

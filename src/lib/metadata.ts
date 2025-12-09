@@ -7,7 +7,7 @@ import {
 } from '@/lib/seo-metadata';
 
 /**
- * 生成页面元数据的便捷函数
+ * 生成页面元数据的便捷函数（同步版本）
  * 这是一个包装函数，用于简化页面元数据的生成
  */
 export function generatePageMetadata({
@@ -18,7 +18,7 @@ export function generatePageMetadata({
   locale: Locale;
   page: PageType;
   customConfig?: Record<string, string | number | boolean>;
-}): Promise<Metadata> {
+}): Metadata {
   const seoConfig = createPageSEOConfig(page, customConfig);
   return generateLocalizedMetadata(locale, page, seoConfig);
 }

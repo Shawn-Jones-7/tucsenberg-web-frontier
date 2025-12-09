@@ -1,5 +1,6 @@
 import type { Metadata } from 'next';
-import { getTranslations } from 'next-intl/server';
+import enCritical from '@messages/en/critical.json';
+import zhCritical from '@messages/zh/critical.json';
 import { SITE_CONFIG, type Locale, type PageType } from '@/config/paths';
 import { ONE } from '@/constants';
 import {
@@ -20,6 +21,94 @@ interface SEOConfig {
   modifiedTime?: string;
   authors?: string[];
   section?: string;
+}
+
+// SEO 翻译类型定义
+type SEOPagesTranslations = Partial<
+  Record<PageType, { title?: string; description?: string }>
+>;
+
+interface SEOMessages {
+  title?: string;
+  description?: string;
+  siteName?: string;
+  keywords?: string;
+  pages?: SEOPagesTranslations;
+}
+
+const FALLBACK_LOCALE: Locale = 'en';
+
+// 静态 SEO 翻译映射（同步访问，避免 async getTranslations）
+const SEO_TRANSLATIONS: Record<Locale, SEOMessages> = {
+  en: ((enCritical as { seo?: SEOMessages })?.seo ?? {}) as SEOMessages,
+  zh: ((zhCritical as { seo?: SEOMessages })?.seo ?? {}) as SEOMessages,
+};
+
+function resolveLocale(locale: Locale): Locale {
+  return locale === 'zh' ? 'zh' : FALLBACK_LOCALE;
+}
+
+interface TranslationFieldOptions {
+  translations: SEOMessages;
+  pageType: PageType;
+  key: 'title' | 'description';
+  defaultValue: string;
+  override?: string | undefined;
+}
+
+function getPageDataByType(
+  pages: SEOPagesTranslations,
+  pageType: PageType,
+): { title?: string; description?: string } | undefined {
+  switch (pageType) {
+    case 'home':
+      return pages.home;
+    case 'about':
+      return pages.about;
+    case 'contact':
+      return pages.contact;
+    case 'blog':
+      return pages.blog;
+    case 'products':
+      return pages.products;
+    case 'services':
+      return pages.services;
+    case 'pricing':
+      return pages.pricing;
+    case 'support':
+      return pages.support;
+    case 'privacy':
+      return pages.privacy;
+    case 'terms':
+      return pages.terms;
+    default:
+      return undefined;
+  }
+}
+
+function getPageTranslation(
+  pages: SEOPagesTranslations | undefined,
+  pageType: PageType,
+  key: 'title' | 'description',
+): string | undefined {
+  if (!pages) return undefined;
+  const pageData = getPageDataByType(pages, pageType);
+  if (!pageData) return undefined;
+  return key === 'title' ? pageData.title : pageData.description;
+}
+
+function pickTranslatedField(options: TranslationFieldOptions): string {
+  const { translations, pageType, key, defaultValue, override } = options;
+
+  const pageValue = getPageTranslation(translations.pages, pageType, key);
+  const rootValue =
+    key === 'title' ? translations.title : translations.description;
+
+  const candidate = override ?? pageValue ?? rootValue ?? defaultValue;
+
+  return typeof candidate === 'string' && candidate.trim().length > 0
+    ? candidate
+    : defaultValue;
 }
 
 /**
@@ -69,36 +158,58 @@ function mergeSEOConfig(
 }
 
 /**
- * 生成本地化元数据
+ * 生成本地化元数据（同步版本）
+ * 直接从静态 JSON 读取翻译，确保 metadata 嵌入初始 HTML
  */
-export async function generateLocalizedMetadata(
+function getTranslationsForLocale(locale: Locale): SEOMessages {
+  return locale === 'zh' ? SEO_TRANSLATIONS.zh : SEO_TRANSLATIONS.en;
+}
+
+export function generateLocalizedMetadata(
   locale: Locale,
   pageType: PageType,
   config: SEOConfig = {},
-): Promise<Metadata> {
-  // 使用原始的getTranslations，缓存已在底层实现
-  const t = await getTranslations({ locale, namespace: 'seo' });
+): Metadata {
+  const safeLocale = resolveLocale(locale);
+  const translations = getTranslationsForLocale(safeLocale);
 
-  const title =
-    config.title || t('title', { defaultValue: SITE_CONFIG.seo.defaultTitle });
-  const description =
-    config.description ||
-    t('description', {
-      defaultValue: SITE_CONFIG.seo.defaultDescription,
-    });
-  const siteName = t('siteName', { defaultValue: SITE_CONFIG.name });
+  const title = pickTranslatedField({
+    translations,
+    pageType,
+    key: 'title',
+    defaultValue: SITE_CONFIG.seo.defaultTitle,
+    override: config.title,
+  });
+  const description = pickTranslatedField({
+    translations,
+    pageType,
+    key: 'description',
+    defaultValue: SITE_CONFIG.seo.defaultDescription,
+    override: config.description,
+  });
+  const siteName =
+    (translations.siteName?.trim()?.length ?? 0) > 0
+      ? translations.siteName
+      : SITE_CONFIG.name;
 
   const metadata: Metadata = {
     title,
     description,
-    keywords: config.keywords,
+    keywords:
+      config.keywords ??
+      (translations.keywords
+        ? translations.keywords
+            .split(',')
+            .map((keyword) => keyword.trim())
+            .filter(Boolean)
+        : undefined),
 
     // Open Graph本地化
     openGraph: {
       title,
       description,
       siteName,
-      locale,
+      locale: safeLocale,
       type: (config.type === 'product' ? 'website' : config.type) || 'website',
       images: config.image ? [{ url: config.image }] : undefined,
       publishedTime: config.publishedTime,
@@ -117,7 +228,7 @@ export async function generateLocalizedMetadata(
 
     // hreflang和canonical链接
     alternates: {
-      canonical: generateCanonicalURL(pageType, locale),
+      canonical: generateCanonicalURL(pageType, safeLocale),
       languages: generateLanguageAlternates(pageType),
     },
 

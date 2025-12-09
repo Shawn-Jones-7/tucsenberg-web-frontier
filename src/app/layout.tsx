@@ -1,8 +1,10 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import { getFontClassNames } from '@/app/[locale]/layout-fonts';
 
 interface RootLayoutProps {
   children: ReactNode;
+  params: Promise<{ locale?: string }>;
 }
 
 // 基础 metadata 配置
@@ -16,9 +18,27 @@ export const metadata: Metadata = {
   description: 'Modern B2B Enterprise Web Platform with Next.js 15',
 };
 
-// Root layout is a minimal wrapper.
-// The <html> and <body> tags are rendered in [locale]/layout.tsx
-// to properly set the lang attribute from route params (Cache Components compatible).
-export default function RootLayout({ children }: RootLayoutProps) {
-  return children;
+// Root layout renders the document shell so that metadata can be injected into <head>.
+// The lang attribute defaults to 'en' here and is overridden by locale layout's generateMetadata.
+export default async function RootLayout({
+  children,
+  params,
+}: RootLayoutProps) {
+  const { locale } = await params;
+  const lang = locale ?? 'en';
+
+  return (
+    <html
+      lang={lang}
+      className={getFontClassNames()}
+      suppressHydrationWarning
+    >
+      <body
+        className='flex min-h-screen flex-col antialiased'
+        suppressHydrationWarning
+      >
+        {children}
+      </body>
+    </html>
+  );
 }
