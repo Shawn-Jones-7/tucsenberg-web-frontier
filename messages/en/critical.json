@@ -4,7 +4,16 @@
   "_last_updated": "2025-11-26",
   "common": {
     "loading": "Loading...",
-    "error": "An error occurred"
+    "error": "An error occurred",
+    "close": "Close",
+    "whatsapp": {
+      "greeting": "Need help?",
+      "responseTime": "Team typically replies within 5 minutes.",
+      "placeholder": "Type your message...",
+      "startChat": "Start WhatsApp Chat",
+      "defaultMessage": "Hi! I'm interested in your products.",
+      "buttonLabel": "Chat with us on WhatsApp"
+    }
   },
   "navigation": {
     "home": "Home",

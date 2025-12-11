@@ -148,6 +148,20 @@ export function checkRateLimit(
 }
 
 /**
+ * Check if Turnstile verification should be bypassed (development mode only)
+ */
+function shouldBypassTurnstile(ip: string): boolean {
+  const isDevelopment = env.NODE_ENV === 'development';
+  const isBypassEnabled = process.env.TURNSTILE_BYPASS === 'true';
+
+  if (isDevelopment && isBypassEnabled) {
+    logger.warn('[DEV] Turnstile verification bypassed', { ip });
+    return true;
+  }
+  return false;
+}
+
+/**
  * 验证Turnstile token
  * Verify Turnstile token
  */
@@ -156,6 +170,10 @@ export async function verifyTurnstile(
   ip: string,
 ): Promise<boolean> {
   try {
+    if (shouldBypassTurnstile(ip)) {
+      return true;
+    }
+
     const secretKey = env.TURNSTILE_SECRET_KEY;
 
     if (!secretKey) {

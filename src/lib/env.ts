@@ -174,6 +174,10 @@ export const env = createEnv({
     // Bot Protection (Cloudflare Turnstile Public Key)
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: z.string().optional(),
     NEXT_PUBLIC_TURNSTILE_ACTION: z.string().optional(),
+    NEXT_PUBLIC_TURNSTILE_BYPASS: z
+      .string()
+      .default('false')
+      .transform((val) => val === 'true'),
 
     // Feature Flags
     NEXT_PUBLIC_ENABLE_ANALYTICS: z
@@ -329,6 +333,7 @@ export const env = createEnv({
     NEXT_PUBLIC_GA_MEASUREMENT_ID: process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID,
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY,
     NEXT_PUBLIC_TURNSTILE_ACTION: process.env.NEXT_PUBLIC_TURNSTILE_ACTION,
+    NEXT_PUBLIC_TURNSTILE_BYPASS: process.env.NEXT_PUBLIC_TURNSTILE_BYPASS,
     NEXT_PUBLIC_ENABLE_ANALYTICS: process.env.NEXT_PUBLIC_ENABLE_ANALYTICS,
     NEXT_PUBLIC_ENABLE_ERROR_REPORTING:
       process.env.NEXT_PUBLIC_ENABLE_ERROR_REPORTING,

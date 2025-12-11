@@ -32,10 +32,10 @@ import { routing } from '@/i18n/routing';
 // 重新导出元数据生成函数
 export const generateMetadata = generateLocaleMetadata;
 
-const LazyWhatsAppFloatingButton = nextDynamic(
+const LazyWhatsAppButtonWithTranslations = nextDynamic(
   () =>
-    import('@/components/whatsapp/whatsapp-floating-button').then(
-      (mod) => mod.WhatsAppFloatingButton,
+    import('@/components/whatsapp/whatsapp-button-with-translations').then(
+      (mod) => mod.WhatsAppButtonWithTranslations,
     ),
   {
     loading: () => null,
@@ -160,7 +160,7 @@ async function AsyncLocaleLayoutContent({
 
             {showWhatsAppButton && (
               <Suspense fallback={null}>
-                <LazyWhatsAppFloatingButton
+                <LazyWhatsAppButtonWithTranslations
                   number={SITE_CONFIG.contact.whatsappNumber}
                 />
               </Suspense>

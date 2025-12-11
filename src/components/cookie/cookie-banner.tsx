@@ -8,8 +8,9 @@
  * - Manage preferences panel
  * - Smooth slide-in animation
  * - Responsive design (bottom bar on mobile, floating on desktop)
+ * - CSS variable coordination with floating elements (--cookie-banner-height)
  */
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { X } from 'lucide-react';
 import { useTranslations } from 'next-intl';
@@ -17,8 +18,27 @@ import { useCookieConsent } from '@/lib/cookie-consent';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 
+const CSS_VAR_BANNER_HEIGHT = '--cookie-banner-height';
+
 interface CookieBannerProps {
   className?: string;
+}
+
+/**
+ * Update --cookie-banner-height CSS variable on document root
+ */
+function setCookieBannerHeight(height: number): void {
+  document.documentElement.style.setProperty(
+    CSS_VAR_BANNER_HEIGHT,
+    `${height}px`,
+  );
+}
+
+/**
+ * Reset --cookie-banner-height to 0 when banner is dismissed
+ */
+function resetCookieBannerHeight(): void {
+  document.documentElement.style.setProperty(CSS_VAR_BANNER_HEIGHT, '0px');
 }
 
 export function CookieBanner({ className }: CookieBannerProps) {
@@ -28,6 +48,33 @@ export function CookieBanner({ className }: CookieBannerProps) {
   const [showPreferences, setShowPreferences] = useState(false);
   const [analytics, setAnalytics] = useState(false);
   const [marketing, setMarketing] = useState(false);
+  const bannerRef = useRef<HTMLDivElement>(null);
+
+  // Update CSS variable when banner size changes
+  useEffect(() => {
+    const banner = bannerRef.current;
+    if (!banner || hasConsented) {
+      resetCookieBannerHeight();
+      return undefined;
+    }
+
+    const updateHeight = () => {
+      const { height } = banner.getBoundingClientRect();
+      setCookieBannerHeight(height);
+    };
+
+    // Initial measurement
+    updateHeight();
+
+    // Observe size changes (e.g., preferences panel toggle)
+    const observer = new ResizeObserver(updateHeight);
+    observer.observe(banner);
+
+    return () => {
+      observer.disconnect();
+      resetCookieBannerHeight();
+    };
+  }, [hasConsented]);
 
   const handleSavePreferences = useCallback(() => {
     savePreferences({ analytics, marketing });
@@ -49,6 +96,7 @@ export function CookieBanner({ className }: CookieBannerProps) {
 
   return (
     <div
+      ref={bannerRef}
       role='dialog'
       aria-modal='false'
       aria-label={t('title')}

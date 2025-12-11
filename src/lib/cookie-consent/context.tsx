@@ -42,6 +42,8 @@ let cachedSnapshot = {
   consent: cachedConsent,
   hasConsented: cachedHasConsented,
 };
+// Track if client-side initialization has occurred (for hydration safety)
+let isClientInitialized = false;
 
 function emitChange() {
   for (const listener of consentListeners) {
@@ -50,6 +52,21 @@ function emitChange() {
 }
 
 function subscribeToConsent(listener: ConsentListener): () => void {
+  // Lazy initialization on first subscription (after hydration)
+  if (typeof window !== 'undefined' && !isClientInitialized) {
+    isClientInitialized = true;
+    const stored = loadConsent();
+    if (stored) {
+      cachedConsent = stored.consent;
+      cachedHasConsented = true;
+      cachedSnapshot = {
+        consent: cachedConsent,
+        hasConsented: cachedHasConsented,
+      };
+      // Defer emit to next tick to avoid state update during render
+      queueMicrotask(emitChange);
+    }
+  }
   consentListeners = [...consentListeners, listener];
   return () => {
     consentListeners = consentListeners.filter((l) => l !== listener);
@@ -77,19 +94,6 @@ function getServerSnapshot(): {
   hasConsented: boolean;
 } {
   return SERVER_SNAPSHOT;
-}
-
-// Initialize from localStorage (client-side only)
-if (typeof window !== 'undefined') {
-  const stored = loadConsent();
-  if (stored) {
-    cachedConsent = stored.consent;
-    cachedHasConsented = true;
-    cachedSnapshot = {
-      consent: cachedConsent,
-      hasConsented: cachedHasConsented,
-    };
-  }
 }
 
 function updateConsentStore(

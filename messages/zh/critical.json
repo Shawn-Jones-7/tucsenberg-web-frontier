@@ -4,7 +4,16 @@
   "_last_updated": "2025-11-26",
   "common": {
     "loading": "加载中…",
-    "error": "发生错误"
+    "error": "发生错误",
+    "close": "关闭",
+    "whatsapp": {
+      "greeting": "需要帮助？",
+      "responseTime": "团队通常在5分钟内回复。",
+      "placeholder": "输入您的消息...",
+      "startChat": "开始 WhatsApp 聊天",
+      "defaultMessage": "您好！我对贵公司的产品感兴趣。",
+      "buttonLabel": "通过 WhatsApp 联系我们"
+    }
   },
   "navigation": {
     "home": "首页",

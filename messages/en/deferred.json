@@ -11,7 +11,6 @@
     "sort": "Sort",
     "next": "Next",
     "previous": "Previous",
-    "close": "Close",
     "open": "Open",
     "toast": {
       "form": {
@@ -325,6 +324,15 @@
     "pageDescription": "Explore our latest articles, insights, and updates on technology, design, and enterprise solutions.",
     "readingTime": "min read",
     "emptyState": "No articles published yet. Check back soon!",
+    "backToList": "Back to Blog",
+    "publishedOn": "Published on",
+    "updatedOn": "Updated on",
+    "author": "By",
+    "tags": "Tags",
+    "categories": "Categories",
+    "relatedArticles": "Related Articles",
+    "shareArticle": "Share this article",
+    "articleNotFound": "Article not found",
     "newsletter": {
       "title": "Subscribe to Our Newsletter",
       "description": "Get the latest industry insights, product updates, and trade tips delivered to your inbox.",

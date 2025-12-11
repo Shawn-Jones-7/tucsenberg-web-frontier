@@ -11,7 +11,6 @@
     "sort": "排序",
     "next": "下一页",
     "previous": "上一页",
-    "close": "关闭",
     "open": "打开",
     "toast": {
       "form": {
@@ -325,6 +324,15 @@
     "pageDescription": "探索我们关于技术、设计和企业解决方案的最新文章、见解和更新。",
     "readingTime": "分钟阅读",
     "emptyState": "暂无文章发布，敬请期待！",
+    "backToList": "返回博客列表",
+    "publishedOn": "发布于",
+    "updatedOn": "更新于",
+    "author": "作者",
+    "tags": "标签",
+    "categories": "分类",
+    "relatedArticles": "相关文章",
+    "shareArticle": "分享文章",
+    "articleNotFound": "文章未找到",
     "newsletter": {
       "title": "订阅我们的通讯",
       "description": "获取最新的行业洞察、产品更新和贸易技巧。",

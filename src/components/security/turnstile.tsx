@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Turnstile } from '@marsidev/react-turnstile';
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
@@ -58,6 +58,36 @@ export function TurnstileWidget({
   cData,
 }: TurnstileProps) {
   const siteKey = env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+  // Bypass ONLY works in development mode AND when flag is set
+  const isBypassMode =
+    process.env.NODE_ENV === 'development' && env.NEXT_PUBLIC_TURNSTILE_BYPASS;
+  const bypassTriggeredRef = useRef(false);
+
+  // Development bypass mode - auto-verify with mock token (via useEffect to avoid StrictMode double-invoke)
+  useEffect(() => {
+    if (!isBypassMode || bypassTriggeredRef.current) return;
+    bypassTriggeredRef.current = true;
+    logger.warn('[DEV] Turnstile bypass mode enabled');
+    const handler = onSuccess ?? onVerify;
+    if (handler) {
+      handler('TURNSTILE_BYPASS_TOKEN');
+    }
+  }, [isBypassMode, onSuccess, onVerify]);
+
+  if (isBypassMode) {
+    return (
+      <div
+        className={`turnstile-bypass ${className ?? ''}`}
+        data-testid='turnstile-bypass'
+        role='status'
+        aria-live='polite'
+      >
+        <div className='rounded-md border border-amber-300 bg-amber-50 p-3 text-sm text-amber-800 dark:border-amber-700 dark:bg-amber-950 dark:text-amber-200'>
+          <strong>Dev Mode:</strong> Turnstile verification bypassed
+        </div>
+      </div>
+    );
+  }
 
   // Don't render if no site key is configured
   if (!siteKey) {
@@ -69,7 +99,7 @@ export function TurnstileWidget({
     }
     return (
       <div
-        className={`turnstile-fallback ${className || ''}`}
+        className={`turnstile-fallback ${className ?? ''}`}
         role='status'
         aria-live='polite'
       >
@@ -84,7 +114,7 @@ export function TurnstileWidget({
   if (env.NEXT_PUBLIC_TEST_MODE) {
     return (
       <div
-        className={`turnstile-mock ${className || ''}`}
+        className={`turnstile-mock ${className ?? ''}`}
         data-testid='turnstile-mock'
       >
         <div className='text-sm text-muted-foreground'>
