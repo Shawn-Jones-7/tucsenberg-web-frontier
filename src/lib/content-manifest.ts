@@ -53,7 +53,3 @@ export function getStaticParamsForType(
       slug: entry.slug,
     }));
 }
-
-export function getManifestGeneratedAt(): string {
-  return CONTENT_MANIFEST.generatedAt;
-}
