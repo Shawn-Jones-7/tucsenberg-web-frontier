@@ -1,4 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { contactFieldValidators } from '@/lib/form-schema/contact-field-validators';
+import {
+  CONTACT_FORM_CONFIG,
+  createContactFormSchemaFromConfig,
+} from '@/config/contact-form-config';
 import {
   airtableRecordSchema,
   apiResponseSchema,
@@ -15,6 +20,7 @@ import {
 vi.unmock('../validations');
 vi.unmock('@/lib/validations');
 vi.unmock('zod');
+vi.unmock('@/config/contact-form-config');
 
 describe('validations - Schema Validation', () => {
   describe('contactFormSchema', () => {
@@ -110,21 +116,52 @@ describe('validations - Schema Validation', () => {
       }
     });
 
-    // Note: phone field is disabled in CONTACT_FORM_CONFIG per Lead Pipeline requirements
-    // Phone validation tests are skipped as the field is not part of the schema
-    it.skip('should validate optional phone number', () => {
+    it('should handle phone field based on config (disabled by default)', () => {
+      // Default config has phone.enabled = false, so phone should be excluded from schema
+      const defaultSchema = createContactFormSchemaFromConfig(
+        CONTACT_FORM_CONFIG,
+        contactFieldValidators,
+      );
+
+      // Phone field should NOT be in schema when disabled
       const dataWithPhone = { ...validFormData, phone: '+1234567890' };
-      const result = contactFormSchema.safeParse(dataWithPhone);
+      const result = defaultSchema.safeParse(dataWithPhone);
+
+      // Should still succeed, phone is just ignored (not validated)
       expect(result.success).toBe(true);
+      if (result.success) {
+        // Phone should not be in parsed data since it's not in schema
+        expect(result.data).not.toHaveProperty('phone');
+      }
     });
 
-    it.skip('should reject invalid phone number format', () => {
+    it('should validate phone when enabled in config', () => {
+      // Create config with phone enabled
+      const configWithPhone = {
+        ...CONTACT_FORM_CONFIG,
+        fields: {
+          ...CONTACT_FORM_CONFIG.fields,
+          phone: {
+            ...CONTACT_FORM_CONFIG.fields.phone,
+            enabled: true,
+          },
+        },
+      };
+
+      const schemaWithPhone = createContactFormSchemaFromConfig(
+        configWithPhone,
+        contactFieldValidators,
+      );
+
+      // Valid phone should pass
+      const validData = { ...validFormData, phone: '+1234567890' };
+      const validResult = schemaWithPhone.safeParse(validData);
+      expect(validResult.success).toBe(true);
+
+      // Invalid phone should fail
       const invalidData = { ...validFormData, phone: 'invalid-phone' };
-      const result = contactFormSchema.safeParse(invalidData);
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error.issues[0]?.message).toContain('valid phone number');
-      }
+      const invalidResult = schemaWithPhone.safeParse(invalidData);
+      expect(invalidResult.success).toBe(false);
     });
 
     it('should validate optional subject', () => {

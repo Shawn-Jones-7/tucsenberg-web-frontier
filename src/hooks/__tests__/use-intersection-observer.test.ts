@@ -397,27 +397,32 @@ describe('useIntersectionObserver', () => {
       expect(result.current.hasBeenVisible).toBe(true);
     });
 
-    it.skip('should handle server-side rendering', () => {
-      // 跳过原因：React 19 + Testing Library SSR兼容性问题
+    it('should handle server-side rendering', () => {
+      // SSR-safe test: This hook is marked 'use client' and includes typeof window check
+      // During actual SSR (react-dom/server), useEffect never runs, so:
+      // 1. No window access occurs during SSR phase
+      // 2. Initial render returns safe fallback: {isVisible: false, hasBeenVisible: false}
+      // 3. IntersectionObserver only initializes during client-side hydration
       //
-      // 技术限制：
-      // 1. React 19的并发渲染机制依赖window.event来确定更新优先级
-      // 2. 当window为undefined时，React DOM内部的resolveUpdatePriority函数报错
-      // 3. Testing Library在SSR环境模拟方面存在已知限制
-      //
-      // 替代验证：
-      // 1. Hook内部已有完整的SSR兼容性检查 (typeof window === 'undefined')
-      // 2. 生产环境SSR功能已通过Next.js验证正常工作
-      // 3. 可通过E2E测试验证实际SSR行为
-      //
-      // 参考：React 19官方推荐避免深度Mock React内部机制
-      // 详见：https://react.dev/blog/2024/04/25/react-19-upgrade-guide
-      // 原测试逻辑（已验证Hook具备SSR兼容性）：
-      // const { result } = renderHook(() => useIntersectionObserver());
-      // const mockElement = document.createElement('div');
-      // act(() => { result.current.ref(mockElement); });
-      // expect(result.current.isVisible).toBe(true);
-      // expect(result.current.hasBeenVisible).toBe(true);
+      // This test verifies the fallback path works when IntersectionObserver is unavailable
+      // (which covers the SSR scenario where window APIs don't exist)
+
+      // Mock IntersectionObserver as undefined (simulates SSR environment)
+      const originalIO = global.IntersectionObserver;
+      (global as any).IntersectionObserver = undefined;
+
+      const { result } = renderHook(() => useIntersectionObserver());
+      const mockElement = document.createElement('div');
+      act(() => {
+        result.current.ref(mockElement);
+      });
+
+      // In SSR/fallback mode, elements are always visible (no progressive enhancement)
+      expect(result.current.isVisible).toBe(true);
+      expect(result.current.hasBeenVisible).toBe(true);
+
+      // Restore
+      global.IntersectionObserver = originalIO;
     });
   });
 
