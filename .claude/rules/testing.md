@@ -215,3 +215,177 @@ pnpm vitest related src/path/to/file.tsx --run
 
 # The pre-commit hook runs this automatically for staged source files
 ```
+
+## Skipped Tests Policy
+
+### Zero Tolerance Goal
+
+**Target: 0 permanently skipped tests**
+
+Every skip must have:
+1. Clear technical/business reason
+2. Issue tracking link
+3. Owner assignment
+4. Time-to-live (TTL) or removal date
+5. Alternative verification path
+
+### Allowed Skip Patterns
+
+#### ✅ Acceptable (Temporary)
+
+```typescript
+it('should handle edge case', () => {
+  // SKIP REASON: React 19 SSR limitation (客户端渲染器无法模拟真实 SSR)
+  // ISSUE: https://github.com/org/repo/issues/456
+  // OWNER: @username
+  // TTL: 2025-Q2 (待 React 19.1 修复)
+  // ALTERNATIVE: E2E 测试覆盖 SSR 行为
+
+  test.skip('requires react-dom/server environment');
+});
+```
+
+#### ✅ Better: Use test.todo
+
+```typescript
+// For features not yet implemented
+test.todo('should support advanced caching strategy');
+```
+
+#### ❌ Forbidden
+
+```typescript
+// ❌ No documentation
+it.skip('some test', () => { ... });
+
+// ❌ Vague reason
+it.skip('broken test', () => { ... });
+
+// ❌ Permanent skip for deprecated feature
+it.skip('should validate removed field', () => { ... });
+// → Should DELETE test or refactor to test config contract
+```
+
+### Skip Test Refactoring Guide
+
+When encountering skipped tests:
+
+| Scenario | Action |
+|----------|--------|
+| **Feature removed** | DELETE test entirely |
+| **Feature flag-controlled** | Test config-driven behavior (enabled/disabled) |
+| **Wrong test layer** | Move to appropriate layer (unit → integration → E2E) |
+| **Testing method issue** | Fix testing approach (mock browser APIs, not React internals) |
+| **External limitation** | Add issue link, TTL, ensure alternative coverage exists |
+
+### Testing SSR-Safe Hooks
+
+For `'use client'` hooks that include SSR safety checks:
+
+```typescript
+// ❌ Wrong: Delete window to simulate SSR
+delete global.window;  // Triggers React internal errors
+
+// ✅ Correct: Mock unavailable browser API
+const originalIO = global.IntersectionObserver;
+(global as any).IntersectionObserver = undefined;
+
+// Test fallback behavior
+const { result } = renderHook(() => useIntersectionObserver());
+expect(result.current.isVisible).toBe(true); // Fallback mode
+
+// Restore
+global.IntersectionObserver = originalIO;
+```
+
+**Rationale**: `'use client'` hooks don't execute `useEffect` during SSR. Test the **fallback path** when browser APIs are unavailable, not SSR itself.
+
+### Testing Config-Driven Features
+
+For features controlled by configuration:
+
+```typescript
+// ❌ Wrong: Skip when feature disabled
+it.skip('should validate phone number', () => {
+  // Phone is disabled in default config
+});
+
+// ✅ Correct: Test config-driven behavior
+it('should exclude phone when disabled in config', () => {
+  const schema = createContactFormSchemaFromConfig(DEFAULT_CONFIG, validators);
+  const result = schema.safeParse({ ...data, phone: '+1234567890' });
+
+  expect(result.success).toBe(true);
+  expect(result.data).not.toHaveProperty('phone'); // Excluded
+});
+
+it('should validate phone when enabled in config', () => {
+  const config = {
+    ...DEFAULT_CONFIG,
+    fields: { ...DEFAULT_CONFIG.fields, phone: { ...phone, enabled: true } }
+  };
+  const schema = createContactFormSchemaFromConfig(config, validators);
+
+  // Now phone validation is active
+  expect(schema.safeParse({ ...data, phone: 'invalid' }).success).toBe(false);
+});
+```
+
+### CI Enforcement (Optional)
+
+Add to `scripts/quality-gate.js`:
+
+```javascript
+// Maximum allowed skipped tests
+const MAX_SKIPPED_TESTS = 5;
+
+// Check for increase in skip count
+const skipCount = countSkippedTests();
+if (skipCount > MAX_SKIPPED_TESTS) {
+  console.error(`Too many skipped tests: ${skipCount} (max: ${MAX_SKIPPED_TESTS})`);
+  process.exit(1);
+}
+```
+
+### Case Studies
+
+#### Case Study 1: SSR Hook Test (Fixed 2025-12)
+
+**Original:**
+```typescript
+it.skip('should handle server-side rendering', () => {
+  // Skipped: React 19 + Testing Library SSR incompatibility
+});
+```
+
+**Problem**: Testing methodology error (not actual limitation)
+
+**Fix**: Mock `IntersectionObserver` as undefined to test fallback path
+
+**Lesson**: Don't skip due to "framework limitation" without deep analysis
+
+---
+
+#### Case Study 2: Phone Validation (Fixed 2025-12)
+
+**Original:**
+```typescript
+it.skip('should validate phone', () => {
+  // Skipped: phone field disabled in config
+});
+```
+
+**Problem**: Testing wrong contract (implementation vs config)
+
+**Fix**: Test config-driven schema generation (enabled=true/false)
+
+**Lesson**: Refactor deprecated feature tests to test configuration behavior
+
+---
+
+### Summary
+
+- **Current Status**: 0/9001 tests skipped (100% execution rate)
+- **Policy**: All skips require documentation, tracking, and exit strategy
+- **Preferred**: Fix testing approach or delete test rather than skip
+- **Enforcement**: Code review + optional CI gate
