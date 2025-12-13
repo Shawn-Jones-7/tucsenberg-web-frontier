@@ -124,13 +124,24 @@ jobs:
           # GitHub Actions 环境偶发 IPv6 连接问题时，优先使用 IPv4
           export NODE_OPTIONS="--dns-result-order=ipv4first"
 
+          echo "预构建产物检查 (.vercel/output):"
+          if [ -d .vercel/output ]; then
+            ls -la .vercel/output || true
+            du -sh .vercel/output || true
+            find .vercel/output -type f | wc -l || true
+          else
+            echo "❌ .vercel/output 不存在（vercel build 可能未产出 Build Output API 目录）"
+            exit 1
+          fi
+
           # 有限重试：仅失败时等待，不影响正常路径耗时
           attempt=1
           max_attempts=3
           while true; do
             echo "Vercel deploy attempt ${attempt}/${max_attempts}"
             set +e
-            DEPLOY_URL=$(vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }} --yes --debug)
+            # 预构建部署建议使用 --archive=tgz 以减少文件上传数量，降低 upload/missing_files 类错误概率
+            DEPLOY_URL=$(vercel deploy --prebuilt --archive=tgz --token=${{ secrets.VERCEL_TOKEN }} --yes --debug)
             status=$?
             set -e
             if [ $status -eq 0 ] && [ -n "${DEPLOY_URL}" ]; then
@@ -241,12 +252,22 @@ jobs:
           set -euo pipefail
           export NODE_OPTIONS="--dns-result-order=ipv4first"
 
+          echo "预构建产物检查 (.vercel/output):"
+          if [ -d .vercel/output ]; then
+            ls -la .vercel/output || true
+            du -sh .vercel/output || true
+            find .vercel/output -type f | wc -l || true
+          else
+            echo "❌ .vercel/output 不存在（vercel build 可能未产出 Build Output API 目录）"
+            exit 1
+          fi
+
           attempt=1
           max_attempts=3
           while true; do
             echo "Vercel prod deploy attempt ${attempt}/${max_attempts}"
             set +e
-            DEPLOY_URL=$(vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --debug)
+            DEPLOY_URL=$(vercel deploy --prebuilt --archive=tgz --prod --token=${{ secrets.VERCEL_TOKEN }} --yes --debug)
             status=$?
             set -e
             if [ $status -eq 0 ] && [ -n "${DEPLOY_URL}" ]; then
