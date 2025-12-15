@@ -21,6 +21,8 @@ export const RATE_LIMIT_PRESETS = {
   contact: { maxRequests: COUNT_FIVE, windowMs: MINUTE_MS },
   inquiry: { maxRequests: COUNT_TEN, windowMs: MINUTE_MS },
   subscribe: { maxRequests: COUNT_THREE, windowMs: MINUTE_MS },
+  whatsapp: { maxRequests: COUNT_FIVE, windowMs: MINUTE_MS },
+  analytics: { maxRequests: 100, windowMs: MINUTE_MS },
 } as const;
 
 export type RateLimitPreset = keyof typeof RATE_LIMIT_PRESETS;
@@ -333,6 +335,10 @@ function getRateLimitConfig(preset: RateLimitPreset): {
       return RATE_LIMIT_PRESETS.inquiry;
     case 'subscribe':
       return RATE_LIMIT_PRESETS.subscribe;
+    case 'whatsapp':
+      return RATE_LIMIT_PRESETS.whatsapp;
+    case 'analytics':
+      return RATE_LIMIT_PRESETS.analytics;
     default: {
       // Exhaustive check - TypeScript will error if a case is missing
       const exhaustiveCheck: never = preset;

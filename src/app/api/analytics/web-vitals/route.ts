@@ -2,10 +2,16 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createCachedResponse } from '@/lib/api-cache-utils';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { logger } from '@/lib/logger';
+import {
+  checkDistributedRateLimit,
+  createRateLimitHeaders,
+} from '@/lib/security/distributed-rate-limit';
+import { getClientIP } from '@/app/api/contact/contact-api-utils';
 
 // HTTP 状态码常量
 const HTTP_STATUS = {
   BAD_REQUEST: 400,
+  TOO_MANY_REQUESTS: 429,
   INTERNAL_SERVER_ERROR: 500,
 } as const;
 
@@ -180,6 +186,29 @@ function buildErrorResponse(
 
 // 处理 Web Vitals 数据收集
 export async function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('Web Vitals rate limit exceeded', {
+      ip: clientIP,
+      retryAfter: rateLimitResult.retryAfter,
+    });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Too many requests',
+        message: 'Rate limit exceeded. Please try again later.',
+      },
+      { status: HTTP_STATUS.TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const parsedBody = await safeParseJson<unknown>(request, {
       route: '/api/analytics/web-vitals',
@@ -225,7 +254,23 @@ export async function POST(request: NextRequest) {
 }
 
 // 获取 Web Vitals 统计信息
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('Web Vitals GET rate limit exceeded', { ip: clientIP });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      { success: false, error: 'Too many requests' },
+      { status: HTTP_STATUS.TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get('timeRange') || '24h';
@@ -352,7 +397,23 @@ export function GET(request: NextRequest) {
 }
 
 // 删除 Web Vitals 数据（管理功能）
-export function DELETE(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('Web Vitals DELETE rate limit exceeded', { ip: clientIP });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      { success: false, error: 'Too many requests' },
+      { status: HTTP_STATUS.TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const timeRange = searchParams.get('timeRange');

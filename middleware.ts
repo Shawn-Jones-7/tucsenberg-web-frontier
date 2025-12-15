@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import createMiddleware from 'next-intl/middleware';
 import { generateNonce, getSecurityHeaders } from '@/config/security';
-import { routing } from '@/i18n/routing';
+// Use routing-config instead of routing to avoid importing React Server Component code
+// which is not compatible with Edge Runtime
+import { routing } from '@/i18n/routing-config';
 
 // 创建 next-intl 中间件
 const intlMiddleware = createMiddleware(routing);
@@ -94,7 +96,7 @@ function tryHandleInvalidLocalePrefix(
   return resp;
 }
 
-export default function proxy(request: NextRequest) {
+export default function middleware(request: NextRequest) {
   const nonce = generateNonce();
   const invalidLocaleHandled = tryHandleInvalidLocalePrefix(request, nonce);
   if (invalidLocaleHandled) return invalidLocaleHandled;

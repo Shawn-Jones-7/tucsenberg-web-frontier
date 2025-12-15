@@ -7,9 +7,16 @@ import {
   verifyTurnstileDetailed,
 } from '@/app/api/contact/contact-api-utils';
 
+/**
+ * Request body interface for Turnstile verification.
+ *
+ * SECURITY NOTE: Client IP is intentionally NOT accepted from request body.
+ * The server MUST derive the client IP from trusted request headers
+ * (X-Forwarded-For, X-Real-IP) to prevent IP spoofing attacks that could
+ * bypass Turnstile's risk analysis.
+ */
 interface TurnstileVerificationRequest {
   token: string;
-  remoteip?: string;
 }
 
 /**
@@ -112,9 +119,9 @@ export async function POST(request: NextRequest) {
       return validationError;
     }
 
-    // Get client IP chain (prefer remoteip from body if provided)
-    // Use full IP chain for Turnstile verification
-    const clientIP = body.remoteip || getFullClientIPChain(request);
+    // SECURITY: Always use server-derived IP - never trust client-provided IP
+    // This prevents attackers from spoofing their IP to bypass Turnstile risk analysis
+    const clientIP = getFullClientIPChain(request);
 
     // Use shared verifyTurnstile function with detailed result
     let verificationResult: { success: boolean; errorCodes?: string[] };

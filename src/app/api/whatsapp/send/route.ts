@@ -4,15 +4,67 @@ import type { SendMessageRequest, TemplateComponent } from '@/types/whatsapp';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { logger } from '@/lib/logger';
 import {
+  checkDistributedRateLimit,
+  createRateLimitHeaders,
+} from '@/lib/security/distributed-rate-limit';
+import {
   getClientEnvironmentInfo,
   sendWhatsAppMessage,
 } from '@/lib/whatsapp-service';
+import { getClientIP } from '@/app/api/contact/contact-api-utils';
 import { COUNT_THREE } from '@/constants/count';
 import {
   FIVE_SECONDS_MS,
   ONE_SECOND_MS,
   TWO_SECONDS_MS,
 } from '@/constants/time';
+
+// HTTP status codes
+const HTTP_UNAUTHORIZED = 401;
+const HTTP_TOO_MANY_REQUESTS = 429;
+
+/**
+ * Validate API key authentication when WHATSAPP_API_KEY is configured.
+ * Returns null if validation passes, or NextResponse if it fails.
+ */
+function validateApiKey(request: NextRequest): NextResponse | null {
+  const configuredApiKey = process.env.WHATSAPP_API_KEY;
+
+  // If no API key is configured, skip authentication (rate limiting still applies)
+  if (!configuredApiKey) {
+    return null;
+  }
+
+  const authHeader = request.headers.get('Authorization');
+  if (!authHeader) {
+    logger.warn('WhatsApp API: Missing Authorization header');
+    return NextResponse.json(
+      { error: 'Authentication required' },
+      { status: HTTP_UNAUTHORIZED },
+    );
+  }
+
+  // Extract Bearer token
+  const bearerMatch = authHeader.match(/^Bearer\s+(.+)$/i);
+  if (!bearerMatch) {
+    logger.warn('WhatsApp API: Invalid Authorization header format');
+    return NextResponse.json(
+      { error: 'Invalid authentication format' },
+      { status: HTTP_UNAUTHORIZED },
+    );
+  }
+
+  const providedKey = bearerMatch[1];
+  if (providedKey !== configuredApiKey) {
+    logger.warn('WhatsApp API: Invalid API key provided');
+    return NextResponse.json(
+      { error: 'Invalid credentials' },
+      { status: HTTP_UNAUTHORIZED },
+    );
+  }
+
+  return null;
+}
 
 /**
  * WhatsApp Send Message API Endpoint
@@ -282,6 +334,28 @@ async function sendMessageWithRetry(
 }
 
 export async function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (5 requests per minute for WhatsApp API)
+  const rateLimitResult = await checkDistributedRateLimit(clientIP, 'whatsapp');
+  if (!rateLimitResult.allowed) {
+    logger.warn('WhatsApp API rate limit exceeded', {
+      ip: clientIP,
+      retryAfter: rateLimitResult.retryAfter,
+    });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      { error: 'Too many requests. Please try again later.' },
+      { status: HTTP_TOO_MANY_REQUESTS, headers },
+    );
+  }
+
+  // Check optional API key authentication
+  const authError = validateApiKey(request);
+  if (authError) {
+    return authError;
+  }
+
   try {
     const parsed = await parseSendMessageRequest(request);
     if (parsed.error) {

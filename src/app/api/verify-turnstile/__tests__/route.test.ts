@@ -247,7 +247,9 @@ describe('Verify Turnstile API Route', () => {
       expect(formDataString).toContain('remoteip=192.168.1.1%2C+10.0.0.1'); // URL encoded "192.168.1.1, 10.0.0.1"
     });
 
-    it('应该使用提供的remoteip参数', async () => {
+    it('应该忽略客户端提供的remoteip参数（安全措施）', async () => {
+      // SECURITY: Client-provided remoteip is intentionally ignored to prevent IP spoofing
+      // The server MUST use server-derived IP from request headers
       mockFetch.mockResolvedValue({
         ok: true,
         json: () =>
@@ -260,7 +262,7 @@ describe('Verify Turnstile API Route', () => {
 
       const requestWithRemoteIp = {
         token: 'test-token',
-        remoteip: '203.0.113.1',
+        remoteip: '203.0.113.1', // This should be ignored
       };
 
       const request = new NextRequest(
@@ -277,11 +279,12 @@ describe('Verify Turnstile API Route', () => {
 
       await POST(request);
 
-      // 验证使用了提供的remoteip而不是从headers提取的IP
+      // 验证使用了服务端派生的IP而不是客户端提供的IP（安全措施）
       const fetchCall = mockFetch.mock.calls[0];
       const formData = fetchCall?.[1]?.body;
       const formDataString = formData?.toString();
-      expect(formDataString).toContain('remoteip=203.0.113.1'); // 使用提供的remoteip参数
+      expect(formDataString).toContain('remoteip=192.168.1.1'); // 使用服务端派生的IP
+      expect(formDataString).not.toContain('203.0.113.1'); // 客户端提供的IP被忽略
     });
   });
 

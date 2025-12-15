@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
+import Script from 'next/script';
 import { getFontClassNames } from '@/app/[locale]/layout-fonts';
 import { routing } from '@/i18n/routing';
 
@@ -34,6 +35,20 @@ export default function RootLayout({ children }: RootLayoutProps) {
         suppressHydrationWarning
       >
         {children}
+
+        {/* React Grab: AI 上下文提取工具 (仅开发环境) */}
+        {process.env.NODE_ENV === 'development' && (
+          <>
+            <Script
+              src='https://unpkg.com/react-grab/dist/index.global.js'
+              strategy='afterInteractive'
+            />
+            <Script
+              src='https://unpkg.com/@react-grab/claude-code/dist/client.global.js'
+              strategy='lazyOnload'
+            />
+          </>
+        )}
       </body>
     </html>
   );

@@ -4,6 +4,7 @@ import { GET, POST } from '../route';
 
 // Mock dependencies
 const mockSendWhatsAppMessage = vi.hoisted(() => vi.fn());
+const mockCheckDistributedRateLimit = vi.hoisted(() => vi.fn());
 
 vi.mock('@/lib/whatsapp-service', () => ({
   sendWhatsAppMessage: mockSendWhatsAppMessage,
@@ -21,6 +22,17 @@ vi.mock('@/lib/logger', () => ({
     warn: vi.fn(),
     debug: vi.fn(),
   },
+}));
+
+// Mock rate limiting to always allow requests in tests
+vi.mock('@/lib/security/distributed-rate-limit', () => ({
+  checkDistributedRateLimit: mockCheckDistributedRateLimit,
+  createRateLimitHeaders: vi.fn(() => new Headers()),
+}));
+
+// Mock getClientIP
+vi.mock('@/app/api/contact/contact-api-utils', () => ({
+  getClientIP: vi.fn(() => '127.0.0.1'),
 }));
 
 function createMockRequest(
@@ -43,6 +55,13 @@ function createMockRequest(
 describe('WhatsApp Send Route', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    // Mock rate limiter to always allow requests
+    mockCheckDistributedRateLimit.mockResolvedValue({
+      allowed: true,
+      remaining: 4,
+      resetTime: Date.now() + 60000,
+      retryAfter: null,
+    });
     mockSendWhatsAppMessage.mockResolvedValue({
       success: true,
       data: {

@@ -2,6 +2,14 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createCachedResponse } from '@/lib/api-cache-utils';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { logger } from '@/lib/logger';
+import {
+  checkDistributedRateLimit,
+  createRateLimitHeaders,
+} from '@/lib/security/distributed-rate-limit';
+import { getClientIP } from '@/app/api/contact/contact-api-utils';
+
+// HTTP status codes
+const HTTP_TOO_MANY_REQUESTS = 429;
 
 /**
  * i18n分析数据类型定义
@@ -94,6 +102,29 @@ function validateI18nAnalyticsData(data: unknown): data is I18nAnalyticsData {
  * 收集国际化相关的分析数据
  */
 export async function POST(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('i18n analytics rate limit exceeded', {
+      ip: clientIP,
+      retryAfter: rateLimitResult.retryAfter,
+    });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Too many requests',
+        message: 'Rate limit exceeded. Please try again later.',
+      },
+      { status: HTTP_TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const parsedBody = await safeParseJson<unknown>(request, {
       route: '/api/analytics/i18n',
@@ -165,7 +196,23 @@ export async function POST(request: NextRequest) {
  * GET /api/analytics/i18n
  * 获取i18n分析统计信息
  */
-export function GET(request: NextRequest) {
+export async function GET(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('i18n analytics GET rate limit exceeded', { ip: clientIP });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      { success: false, error: 'Too many requests' },
+      { status: HTTP_TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get('locale');
@@ -285,7 +332,23 @@ export function GET(request: NextRequest) {
  * DELETE /api/analytics/i18n
  * 删除i18n分析数据（管理功能）
  */
-export function DELETE(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
+  const clientIP = getClientIP(request);
+
+  // Check rate limit (100 requests per minute for analytics)
+  const rateLimitResult = await checkDistributedRateLimit(
+    clientIP,
+    'analytics',
+  );
+  if (!rateLimitResult.allowed) {
+    logger.warn('i18n analytics DELETE rate limit exceeded', { ip: clientIP });
+    const headers = createRateLimitHeaders(rateLimitResult);
+    return NextResponse.json(
+      { success: false, error: 'Too many requests' },
+      { status: HTTP_TOO_MANY_REQUESTS, headers },
+    );
+  }
+
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get('locale');
