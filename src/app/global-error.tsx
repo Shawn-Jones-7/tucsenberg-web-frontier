@@ -3,6 +3,7 @@
 import { useEffect } from 'react';
 import * as Sentry from '@/lib/sentry-client';
 import { Button } from '@/components/ui/button';
+import { routing } from '@/i18n/routing-config';
 
 interface GlobalErrorProps {
   error: Error & { digest?: string };
@@ -16,7 +17,7 @@ export default function GlobalError({ error, reset }: GlobalErrorProps) {
   }, [error]);
 
   return (
-    <html>
+    <html lang={routing.defaultLocale}>
       <body>
         <div className='flex min-h-screen flex-col items-center justify-center bg-background px-4'>
           <div className='mx-auto max-w-md text-center'>

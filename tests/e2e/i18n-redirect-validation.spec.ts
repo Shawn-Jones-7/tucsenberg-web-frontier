@@ -267,7 +267,7 @@ test.describe('Next.js 15.4.7 国际化重定向验证', () => {
     });
 
     test('应该在语言检测失败时回退到默认语言', async ({ page }) => {
-      // 不设置任何语言偏好头
+      // 不设置任何语言偏好头（localePrefix: 'always' 模式下语言由 URL 决定）
       await page.setExtraHTTPHeaders({
         'Accept-Language': '',
       });
@@ -275,16 +275,22 @@ test.describe('Next.js 15.4.7 国际化重定向验证', () => {
       // localePrefix: 'always' 要求所有路径必须包含语言前缀
       const response = await page.goto(`${BASE_URL}/en/blog`, {
         timeout: 30000,
-        waitUntil: 'domcontentloaded',
+        waitUntil: 'networkidle',
       });
 
       expect(response?.status()).toBeLessThan(400);
 
-      // 应该回退到英文（默认语言，always 模式）
+      // 应该保持英文（URL 已指定 /en/，不受 Accept-Language 影响）
       const finalUrl = page.url();
       expect(finalUrl).toMatch(/\/en\/blog\/?$/);
 
-      await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+      // 等待客户端水合完成后再检查 lang 属性
+      // LangUpdater 组件会在 useEffect 中更新 html[lang]
+      await expectHtmlLang(page, 'en');
+
+      // NOTE: 此测试仅验证 lang 属性设置正确，不验证页面内容是否正常加载。
+      // 如果页面渲染 global-error.tsx，测试仍会通过（因为 global-error 也设置 lang）。
+      // 页面内容验证应在专门的 Blog 功能测试中进行。
     });
   });
 

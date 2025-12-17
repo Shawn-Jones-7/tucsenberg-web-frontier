@@ -9,6 +9,7 @@
 import { logger } from '@/lib/logger';
 import {
   COUNT_FIVE,
+  COUNT_PAIR,
   COUNT_TEN,
   COUNT_THREE,
   MINUTE_MS,
@@ -23,6 +24,12 @@ export const RATE_LIMIT_PRESETS = {
   subscribe: { maxRequests: COUNT_THREE, windowMs: MINUTE_MS },
   whatsapp: { maxRequests: COUNT_FIVE, windowMs: MINUTE_MS },
   analytics: { maxRequests: 100, windowMs: MINUTE_MS },
+  cacheInvalidate: { maxRequests: COUNT_TEN, windowMs: MINUTE_MS },
+  // Pre-auth rate limit for brute force protection (more aggressive)
+  cacheInvalidatePreAuth: {
+    maxRequests: COUNT_TEN * COUNT_PAIR,
+    windowMs: MINUTE_MS,
+  },
 } as const;
 
 export type RateLimitPreset = keyof typeof RATE_LIMIT_PRESETS;
@@ -341,6 +348,10 @@ function getRateLimitConfig(preset: RateLimitPreset): {
       return RATE_LIMIT_PRESETS.whatsapp;
     case 'analytics':
       return RATE_LIMIT_PRESETS.analytics;
+    case 'cacheInvalidate':
+      return RATE_LIMIT_PRESETS.cacheInvalidate;
+    case 'cacheInvalidatePreAuth':
+      return RATE_LIMIT_PRESETS.cacheInvalidatePreAuth;
     default: {
       // Exhaustive check - TypeScript will error if a case is missing
       const exhaustiveCheck: never = preset;

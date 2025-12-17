@@ -75,7 +75,7 @@ test.describe('Contact Form - Smoke Tests (Staging)', () => {
     });
 
     // 等待页面主要内容加载
-    await page.waitForLoadState('networkidle').catch(() => {});
+    await page.waitForLoadState('load', { timeout: 10_000 }).catch(() => {});
 
     // 检查是否存在表单
     const formCount = await page.locator('form').count();

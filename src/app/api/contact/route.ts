@@ -5,6 +5,7 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 import { createCorsPreflightResponse } from '@/lib/api/cors-utils';
+import { getApiMessages } from '@/lib/api/get-request-locale';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { logger } from '@/lib/logger';
 import {
@@ -26,6 +27,7 @@ import {
 async function checkRateLimitOrFail(
   clientIP: string,
   preset: RateLimitPreset,
+  rateLimitMessage: string,
 ): Promise<{
   rateLimitResult: Awaited<ReturnType<typeof checkDistributedRateLimit>>;
   errorResponse?: NextResponse;
@@ -40,7 +42,7 @@ async function checkRateLimitOrFail(
     return {
       rateLimitResult,
       errorResponse: NextResponse.json(
-        { success: false, error: 'Too many requests. Please try again later.' },
+        { success: false, error: rateLimitMessage },
         { status: 429, headers },
       ),
     };
@@ -56,11 +58,13 @@ async function checkRateLimitOrFail(
 export async function POST(request: NextRequest) {
   const startTime = Date.now();
   const clientIP = getClientIP(request);
+  const messages = getApiMessages(request);
 
   try {
     const { rateLimitResult, errorResponse } = await checkRateLimitOrFail(
       clientIP,
       'contact',
+      messages.rateLimit,
     );
     if (errorResponse) return errorResponse;
 
@@ -94,7 +98,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: true,
-        message: 'Thank you for your message. We will get back to you soon.',
+        message: messages.contact.success,
         messageId: submissionResult.emailMessageId,
         recordId: submissionResult.airtableRecordId,
       },
@@ -111,7 +115,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json(
       {
         success: false,
-        error: 'An unexpected error occurred. Please try again later.',
+        error: messages.serverError,
       },
       { status: 500 },
     );
@@ -124,6 +128,8 @@ export async function POST(request: NextRequest) {
  * Get contact form statistics (admin only)
  */
 export async function GET(request: NextRequest) {
+  const messages = getApiMessages(request);
+
   try {
     // 验证管理员权限
     const authHeader = request.headers.get('authorization');
@@ -131,7 +137,7 @@ export async function GET(request: NextRequest) {
     if (!validateAdminAccess(authHeader)) {
       logger.warn('Unauthorized access attempt to contact statistics');
       return NextResponse.json(
-        { success: false, error: 'Unauthorized' },
+        { success: false, error: messages.unauthorized },
         { status: 401 },
       );
     }
@@ -146,7 +152,7 @@ export async function GET(request: NextRequest) {
     });
 
     return NextResponse.json(
-      { success: false, error: 'Failed to fetch statistics' },
+      { success: false, error: messages.contact.statsError },
       { status: 500 },
     );
   }

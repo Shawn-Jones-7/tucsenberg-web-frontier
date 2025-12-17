@@ -2,29 +2,29 @@
  * 语言检测历史统计和分析
  * Locale Detection History Statistics and Analysis
  *
- * 负责历史记录的统计分析、趋势分析和洞察生成
+ * 负责历史记录的统计分析和洞察生成
  */
 
 'use client';
 
 import { getDetectionHistory } from '@/lib/locale-storage-history-core';
 import {
+  getDetectionTrends,
+  type DetectionTrends,
+} from '@/lib/locale-storage-history-trends';
+import {
   ANGLE_90_DEG,
   ANIMATION_DURATION_VERY_SLOW,
   COUNT_FIVE,
   COUNT_PAIR,
   COUNT_TEN,
-  COUNT_TRIPLE,
-  DAYS_PER_MONTH,
   HOURS_PER_DAY,
   ONE,
   PERCENTAGE_FULL,
   SECONDS_PER_MINUTE,
   ZERO,
 } from '@/constants';
-import { MAGIC_6 } from '@/constants/count';
-import { MAGIC_0_1, MAGIC_0_5, MAGIC_0_8 } from '@/constants/decimal';
-import { DAYS_PER_WEEK } from '@/constants/time';
+import { MAGIC_0_5, MAGIC_0_8 } from '@/constants/decimal';
 import type {} from '@/lib/locale-storage-types';
 import type { Locale } from '@/types/i18n';
 import {
@@ -32,11 +32,13 @@ import {
   getSourceGroupStats,
 } from '@/lib/locale-storage-history-query';
 
+// Re-export for backwards compatibility
+export { getDetectionTrends, type DetectionTrends };
+
 // ==================== 基础统计功能 ====================
 
 /**
  * 获取检测统计信息
- * Get detection statistics
  */
 export function getDetectionStats(): {
   totalDetections: number;
@@ -45,11 +47,11 @@ export function getDetectionStats(): {
   averageConfidence: number;
   mostDetectedLocale: { locale: Locale; count: number } | null;
   mostUsedSource: { source: string; count: number } | null;
-  detectionFrequency: number; // detections per day
+  detectionFrequency: number;
   confidenceDistribution: {
-    high: number; // > 0.8
-    medium: number; // 0.5 - 0.8
-    low: number; // < 0.5
+    high: number;
+    medium: number;
+    low: number;
   };
   timeSpan: {
     oldest: number;
@@ -177,210 +179,10 @@ function computeTimeSpan(records: Array<{ timestamp: number }>) {
   return { oldest, newest, spanDays };
 }
 
-// ==================== 趋势分析功能 ====================
-
-/**
- * 获取检测趋势
- * Get detection trends
- */
-export function getDetectionTrends(days: number = DAYS_PER_WEEK): {
-  dailyDetections: Array<{
-    date: string;
-    count: number;
-    avgConfidence: number;
-  }>;
-  weeklyGrowth: number;
-  monthlyGrowth: number;
-  trendDirection: 'increasing' | 'decreasing' | 'stable';
-  predictions: Array<{ date: string; predictedCount: number }>;
-} {
-  const historyResult = getDetectionHistory();
-
-  if (!historyResult.success || !historyResult.data) {
-    return {
-      dailyDetections: [],
-      weeklyGrowth: ZERO,
-      monthlyGrowth: ZERO,
-      trendDirection: 'stable',
-      predictions: [],
-    };
-  }
-
-  const records = historyResult.data.history;
-  const now = Date.now();
-  const startTime =
-    now -
-    days *
-      HOURS_PER_DAY *
-      SECONDS_PER_MINUTE *
-      SECONDS_PER_MINUTE *
-      ANIMATION_DURATION_VERY_SLOW;
-
-  // 过滤指定时间范围内的记录
-  const recentRecords = records.filter(
-    (record) => record.timestamp >= startTime,
-  );
-
-  // 按天分组
-  const dailyData = new Map<
-    string,
-    { count: number; totalConfidence: number }
-  >();
-
-  // 初始化所有日期
-  for (let i = ZERO; i < days; i++) {
-    const date = new Date(
-      now -
-        i *
-          HOURS_PER_DAY *
-          SECONDS_PER_MINUTE *
-          SECONDS_PER_MINUTE *
-          ANIMATION_DURATION_VERY_SLOW,
-    );
-    const dateStr =
-      date.toISOString().split('T').at(ZERO) || date.toISOString();
-    dailyData.set(dateStr, { count: ZERO, totalConfidence: ZERO });
-  }
-
-  // 填充实际数据
-  recentRecords.forEach((record) => {
-    const date = new Date(record.timestamp);
-    const dateStr =
-      date.toISOString().split('T').at(ZERO) || date.toISOString();
-    const existing = dailyData.get(dateStr);
-
-    if (existing) {
-      existing.count += ONE;
-      existing.totalConfidence += record.confidence;
-    }
-  });
-
-  // 转换为数组并排序
-  const dailyDetections = Array.from(dailyData.entries())
-    .map(([date, data]) => ({
-      date,
-      count: data.count,
-      avgConfidence:
-        data.count > ZERO ? data.totalConfidence / data.count : ZERO,
-    }))
-    .sort((a, b) => a.date.localeCompare(b.date));
-
-  // 计算增长率
-  const weeklyGrowth = calculateGrowthRate(dailyDetections, DAYS_PER_WEEK);
-  const monthlyGrowth = calculateGrowthRate(dailyDetections, DAYS_PER_MONTH);
-
-  // 确定趋势方向
-  const trendDirection = determineTrendDirection(dailyDetections);
-
-  // 生成预测
-  const predictions = generatePredictions(dailyDetections, COUNT_TRIPLE);
-
-  return {
-    dailyDetections,
-    weeklyGrowth,
-    monthlyGrowth,
-    trendDirection,
-    predictions,
-  };
-}
-
-/**
- * 计算增长率
- * Calculate growth rate
- */
-function calculateGrowthRate(
-  dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
-  period: number,
-): number {
-  if (dailyData.length < period) return ZERO;
-
-  const recent = dailyData.slice(-period);
-  const previous = dailyData.slice(-period * COUNT_PAIR, -period);
-
-  if (previous.length === ZERO) return ZERO;
-
-  const recentAvg =
-    recent.reduce((sum, day) => sum + day.count, ZERO) / recent.length;
-  const previousAvg =
-    previous.reduce((sum, day) => sum + day.count, ZERO) / previous.length;
-
-  return previousAvg > ZERO
-    ? ((recentAvg - previousAvg) / previousAvg) * PERCENTAGE_FULL
-    : ZERO;
-}
-
-/**
- * 确定趋势方向
- * Determine trend direction
- */
-function determineTrendDirection(
-  dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
-): 'increasing' | 'decreasing' | 'stable' {
-  if (dailyData.length < COUNT_TRIPLE) return 'stable';
-
-  const recent = dailyData.slice(-COUNT_TRIPLE);
-  const counts = recent.map((d) => d.count);
-
-  // 简单的线性回归斜率
-  const n = counts.length;
-  const sumX = (n * (n - ONE)) / COUNT_PAIR;
-  const sumY = counts.reduce((sum, count) => sum + count, ZERO);
-  const sumXY = counts.reduce((sum, count, index) => sum + index * count, ZERO);
-  const sumX2 = (n * (n - ONE) * (COUNT_PAIR * n - ONE)) / MAGIC_6;
-
-  const slope = (n * sumXY - sumX * sumY) / (n * sumX2 - sumX * sumX);
-
-  if (slope > MAGIC_0_1) return 'increasing';
-  if (slope < -MAGIC_0_1) return 'decreasing';
-  return 'stable';
-}
-
-/**
- * 生成预测
- * Generate predictions
- */
-function generatePredictions(
-  dailyData: Array<{ date: string; count: number; avgConfidence: number }>,
-  futureDays: number,
-): Array<{ date: string; predictedCount: number }> {
-  if (dailyData.length < COUNT_TRIPLE) return [];
-
-  // 使用最近7天的数据进行预测
-  const recent = dailyData.slice(-Math.min(DAYS_PER_WEEK, dailyData.length));
-  const avgCount =
-    recent.reduce((sum, day) => sum + day.count, ZERO) / recent.length;
-
-  // 简单的趋势预测
-  const trend =
-    recent.length > ONE
-      ? ((recent.at(-ONE)?.count ?? ZERO) - (recent.at(ZERO)?.count ?? ZERO)) /
-        (recent.length - ONE)
-      : ZERO;
-
-  const predictions: Array<{ date: string; predictedCount: number }> = [];
-
-  for (let i = ONE; i <= futureDays; i++) {
-    const futureDate = new Date();
-    futureDate.setDate(futureDate.getDate() + i);
-    const dateStr =
-      futureDate.toISOString().split('T').at(ZERO) || futureDate.toISOString();
-
-    const predictedCount = Math.max(ZERO, Math.round(avgCount + trend * i));
-
-    predictions.push({
-      date: dateStr,
-      predictedCount,
-    });
-  }
-
-  return predictions;
-}
-
 // ==================== 洞察生成功能 ====================
 
 /**
  * 生成历史洞察
- * Generate history insights
  */
 export function generateHistoryInsights(): {
   insights: string[];
@@ -468,7 +270,7 @@ function addConfidenceInsights(
 }
 
 function addTrendInsights(
-  trends: ReturnType<typeof getDetectionTrends>,
+  trends: DetectionTrends,
   insights: string[],
   recommendations: string[],
 ) {
@@ -509,9 +311,10 @@ function addQualityChecks(
   }
 }
 
+// ==================== 性能指标功能 ====================
+
 /**
  * 获取性能指标
- * Get performance metrics
  */
 export function getPerformanceMetrics(): {
   averageConfidence: number;

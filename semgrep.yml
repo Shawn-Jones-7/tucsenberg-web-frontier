@@ -70,6 +70,8 @@ rules:
         - "**/scripts/**"
         - "**/tests/**"
         - "**/content/**"
+        # Mock client - only used for dev/test, not security-sensitive
+        - "**/src/lib/whatsapp/mock-client.ts"
     message: '避免使用不安全的随机数生成方法，使用crypto.randomBytes()或crypto.getRandomValues()'
     languages: [typescript, javascript]
     severity: WARNING
@@ -250,6 +252,19 @@ rules:
         - "**/src/app/api/inquiry/route.ts"
         - "**/src/components/products/product-inquiry-form.tsx"
         - "**/src/lib/lead-pipeline/lead-schema.ts"
+        # API routes - spread operators used with internal result objects only:
+        # - cache/invalidate: conditional errors array from internal InvalidationResult
+        # - verify-turnstile: conditional errorCodes from Cloudflare API response
+        - "**/src/app/api/cache/invalidate/route.ts"
+        - "**/src/app/api/verify-turnstile/route.ts"
+        # Cookie consent - client-side state management with localStorage + hardcoded defaults
+        - "**/src/lib/cookie-consent/context.tsx"
+        - "**/src/lib/cookie-consent/storage.ts"
+        # Lead pipeline internal metrics/logging - data from Zod-validated inputs
+        - "**/src/lib/lead-pipeline/metrics.ts"
+        - "**/src/lib/lead-pipeline/process-lead.ts"
+        # Rate limiting - fetch config object construction (body from internal data)
+        - "**/src/lib/security/distributed-rate-limit.ts"
     message: '检测到潜在的对象注入：使用扩展运算符或Object.assign时需验证输入对象的安全性'
     languages: [typescript, javascript]
     severity: WARNING
@@ -284,6 +299,8 @@ rules:
         - "**/__tests__/**"
         - "**/*.test.*"
         - "**/*.spec.*"
+        # Cookie consent - category key is from ConsentCategory enum type, not user input
+        - "**/src/lib/cookie-consent/context.tsx"
     metadata:
       category: security
       technology: [nodejs, react, nextjs]
@@ -300,6 +317,13 @@ rules:
     message: '检测到for-in循环中的对象注入：遍历对象属性时需要验证属性键的安全性'
     languages: [typescript, javascript]
     severity: WARNING
+    paths:
+      exclude:
+        - "**/__tests__/**"
+        - "**/*.test.*"
+        - "**/*.spec.*"
+        # Tech tabs - category comes from Object.keys() of hardcoded categories object, not user input
+        - "**/src/components/blocks/tech/tech-tabs-block.tsx"
     metadata:
       category: security
       technology: [nodejs, react, nextjs]

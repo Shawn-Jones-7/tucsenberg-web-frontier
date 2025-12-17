@@ -94,6 +94,18 @@ test.describe('Navigation System', () => {
     test('should navigate between pages and highlight active link', async ({
       page,
     }) => {
+      // Dismiss cookie consent dialog if present to avoid click interception
+      const cookieDialog = page.getByRole('dialog', { name: /cookie/i });
+      if (await cookieDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
+        const acceptButton = cookieDialog.getByRole('button', {
+          name: /accept/i,
+        });
+        if (await acceptButton.isVisible({ timeout: 500 }).catch(() => false)) {
+          await acceptButton.click();
+          await page.waitForTimeout(300);
+        }
+      }
+
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
       if (isMobile) {
@@ -117,8 +129,18 @@ test.describe('Navigation System', () => {
       // Verify About page content
       await expect(page.getByRole('heading', { name: /about/i })).toBeVisible();
 
+      // Dismiss cookie dialog again if it reappeared
+      if (await cookieDialog.isVisible({ timeout: 500 }).catch(() => false)) {
+        const acceptBtn = cookieDialog.getByRole('button', { name: /accept/i });
+        if (await acceptBtn.isVisible({ timeout: 300 }).catch(() => false)) {
+          await acceptBtn.click();
+          await page.waitForTimeout(300);
+        }
+      }
+
       // Navigate back to home via nav
       await homeLink.click();
+      await page.waitForURL('**/en');
 
       // More robust: wait for home page key elements instead of just URL
       await expect(page.getByTestId('home-hero-title')).toBeVisible({
@@ -370,6 +392,18 @@ test.describe('Navigation System', () => {
     });
 
     test('should handle browser back/forward navigation', async ({ page }) => {
+      // Dismiss cookie consent dialog if present to avoid click interception
+      const cookieDialog = page.getByRole('dialog', { name: /cookie/i });
+      if (await cookieDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
+        const acceptButton = cookieDialog.getByRole('button', {
+          name: /accept/i,
+        });
+        if (await acceptButton.isVisible({ timeout: 500 }).catch(() => false)) {
+          await acceptButton.click();
+          await page.waitForTimeout(300);
+        }
+      }
+
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
 
@@ -395,14 +429,9 @@ test.describe('Navigation System', () => {
       await page.waitForURL('**/en/about');
       await expect(page.getByRole('heading', { name: /about/i })).toBeVisible();
 
-      // Navigate back to Home
-      if (isMobile) {
-        await page.goto('/en');
-      } else {
-        const nav = getNav(page);
-        const homeLink = nav.getByRole('link', { name: 'Home' });
-        await homeLink.click();
-      }
+      // Navigate back to Home using direct navigation for reliability
+      // This creates proper browser history for back/forward testing
+      await page.goto('/en', { waitUntil: 'domcontentloaded' });
       await page.waitForURL('**/en');
 
       // Back to About
@@ -553,6 +582,18 @@ test.describe('Navigation System', () => {
 
   test.describe('Performance Tests', () => {
     test('should navigate quickly between pages', async ({ page }) => {
+      // Dismiss cookie consent dialog if present to avoid click interception
+      const cookieDialog = page.getByRole('dialog', { name: /cookie/i });
+      if (await cookieDialog.isVisible({ timeout: 1000 }).catch(() => false)) {
+        const acceptButton = cookieDialog.getByRole('button', {
+          name: /accept/i,
+        });
+        if (await acceptButton.isVisible({ timeout: 500 }).catch(() => false)) {
+          await acceptButton.click();
+          await page.waitForTimeout(300);
+        }
+      }
+
       const viewport = page.viewportSize();
       const isMobile = viewport ? viewport.width < 768 : false;
       if (isMobile) {

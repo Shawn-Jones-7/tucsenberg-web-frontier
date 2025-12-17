@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { getApiMessages, type ApiMessages } from '@/lib/api/get-request-locale';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { env } from '@/lib/env';
 import { logger } from '@/lib/logger';
@@ -22,13 +23,16 @@ interface TurnstileVerificationRequest {
 /**
  * Validate request body
  */
-function validateRequestBody(body: TurnstileVerificationRequest) {
+function validateRequestBody(
+  body: TurnstileVerificationRequest,
+  messages: ApiMessages,
+) {
   if (!body.token) {
     return NextResponse.json(
       {
         success: false,
         error: 'Missing token',
-        message: 'Turnstile token is required',
+        message: messages.turnstile.missingToken,
       },
       { status: 400 },
     );
@@ -39,15 +43,18 @@ function validateRequestBody(body: TurnstileVerificationRequest) {
 /**
  * Create verification error response
  */
-function createVerificationErrorResponse(verificationResult: {
-  success: boolean;
-  errorCodes?: string[];
-}) {
+function createVerificationErrorResponse(
+  verificationResult: {
+    success: boolean;
+    errorCodes?: string[];
+  },
+  messages: ApiMessages,
+) {
   return NextResponse.json(
     {
       success: false,
       error: 'Verification failed',
-      message: 'Bot protection challenge failed',
+      message: messages.turnstile.verificationFailed,
       ...(verificationResult.errorCodes
         ? { errorCodes: verificationResult.errorCodes }
         : {}),
@@ -59,7 +66,11 @@ function createVerificationErrorResponse(verificationResult: {
 /**
  * Create network error response
  */
-function createNetworkErrorResponse(verifyError: Error, clientIP: string) {
+function createNetworkErrorResponse(
+  verifyError: Error,
+  clientIP: string,
+  messages: ApiMessages,
+) {
   logger.error('Turnstile verification request failed', {
     error: verifyError,
     clientIP,
@@ -68,10 +79,27 @@ function createNetworkErrorResponse(verifyError: Error, clientIP: string) {
     {
       success: false,
       error: 'Verification request failed',
-      message: 'Failed to communicate with bot protection service',
+      message: messages.turnstile.networkError,
     },
     { status: 500 },
   );
+}
+
+/**
+ * Check if Turnstile is configured
+ */
+function checkTurnstileConfigured(messages: ApiMessages): NextResponse | null {
+  if (!env.TURNSTILE_SECRET_KEY) {
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'Turnstile not configured',
+        message: messages.turnstile.notConfigured,
+      },
+      { status: 500 },
+    );
+  }
+  return null;
 }
 
 /**
@@ -82,75 +110,58 @@ function createNetworkErrorResponse(verifyError: Error, clientIP: string) {
  * Uses the shared verifyTurnstile function for consistency.
  */
 export async function POST(request: NextRequest) {
-  try {
-    // Check if Turnstile is configured
-    if (!env.TURNSTILE_SECRET_KEY) {
-      return NextResponse.json(
-        {
-          success: false,
-          error: 'Turnstile not configured',
-          message: 'Bot protection is not properly configured on the server',
-        },
-        { status: 500 },
-      );
-    }
+  const messages = getApiMessages(request);
 
-    // Parse request body (safe JSON parse)
+  try {
+    const configError = checkTurnstileConfigured(messages);
+    if (configError) return configError;
+
     const parsedBody = await safeParseJson<TurnstileVerificationRequest>(
       request,
-      {
-        route: '/api/verify-turnstile',
-      },
+      { route: '/api/verify-turnstile' },
     );
     if (!parsedBody.ok) {
       return NextResponse.json(
-        {
-          success: false,
-          error: parsedBody.error,
-        },
+        { success: false, error: parsedBody.error },
         { status: 400 },
       );
     }
-    const body = parsedBody.data;
 
-    // Validate request body
-    const validationError = validateRequestBody(body);
-    if (validationError) {
-      return validationError;
-    }
+    const validationError = validateRequestBody(parsedBody.data, messages);
+    if (validationError) return validationError;
 
     // SECURITY: Always use server-derived IP - never trust client-provided IP
-    // This prevents attackers from spoofing their IP to bypass Turnstile risk analysis
     const clientIP = getFullClientIPChain(request);
 
-    // Use shared verifyTurnstile function with detailed result
     let verificationResult: { success: boolean; errorCodes?: string[] };
     try {
-      verificationResult = await verifyTurnstileDetailed(body.token, clientIP);
+      verificationResult = await verifyTurnstileDetailed(
+        parsedBody.data.token,
+        clientIP,
+      );
     } catch (verifyError) {
-      return createNetworkErrorResponse(verifyError as Error, clientIP);
+      return createNetworkErrorResponse(
+        verifyError as Error,
+        clientIP,
+        messages,
+      );
     }
 
     if (!verificationResult.success) {
-      return createVerificationErrorResponse(verificationResult);
+      return createVerificationErrorResponse(verificationResult, messages);
     }
 
-    // Verification successful
     return NextResponse.json(
-      {
-        success: true,
-        message: 'Verification successful',
-      },
+      { success: true, message: messages.turnstile.success },
       { status: 200 },
     );
   } catch (error) {
     logger.error('Error verifying Turnstile token', { error: error as Error });
-
     return NextResponse.json(
       {
         success: false,
         error: 'Internal server error',
-        message: 'An error occurred while verifying the token',
+        message: messages.serverError,
       },
       { status: 500 },
     );
