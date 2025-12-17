@@ -177,10 +177,11 @@ export function WhatsAppFloatingButton({
         ref={nodeRef}
         role='complementary'
         aria-label='Support chat'
-        className='fixed right-6 z-[1100] transition-[bottom] duration-300 ease-out'
+        className='fixed right-6 z-[1100]'
         style={{
           cursor: isDragging ? 'grabbing' : 'grab',
-          bottom: 'calc(24px + var(--cookie-banner-height, 0px))',
+          bottom: '24px',
+          translate: '0 calc(-1 * var(--cookie-banner-height, 0px))',
         }}
       >
         {/* Chat Window */}

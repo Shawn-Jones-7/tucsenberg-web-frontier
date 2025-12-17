@@ -317,6 +317,11 @@ export default defineConfig({
         find: '@/app/globals.css',
         replacement: resolve(__dirname, './src/test/css-stub.ts'),
       },
+      // Stub MDX imports so `vitest related` can analyze graphs without an MDX plugin.
+      {
+        find: /\.mdx$/,
+        replacement: resolve(__dirname, './src/test/mdx-stub.ts'),
+      },
       // Fix directory import resolution in Vitest for packages that import "next/font/local"
       { find: 'next/font/local', replacement: 'next/font/local/index.js' },
       // Content path alias (must match tsconfig.json paths for consistency)

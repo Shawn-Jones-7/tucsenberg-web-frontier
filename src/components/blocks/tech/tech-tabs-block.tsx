@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react';
 import { ExternalLink } from 'lucide-react';
 import { useTranslations } from 'next-intl';
+import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -30,6 +31,7 @@ export interface TechTabsBlockProps {
   categories?: Record<string, string>;
   defaultCategory?: string;
   i18nNamespace?: string;
+  enableContentVisibility?: boolean;
 }
 
 type TFunc = (
@@ -332,6 +334,7 @@ export function TechTabsBlock({
   categories = DEFAULT_CATEGORIES,
   defaultCategory = 'core',
   i18nNamespace = 'home.techStack',
+  enableContentVisibility = true,
 }: TechTabsBlockProps = {}) {
   const t = useTranslations(i18nNamespace);
   const [selectedCategory, setSelectedCategory] = useState(defaultCategory);
@@ -362,7 +365,7 @@ export function TechTabsBlock({
   return (
     <section
       id='tech-stack'
-      className='cv-800 py-20'
+      className={cn(enableContentVisibility && 'cv-800', 'py-20')}
     >
       <div className='container mx-auto px-4'>
         <div className='mx-auto max-w-6xl'>

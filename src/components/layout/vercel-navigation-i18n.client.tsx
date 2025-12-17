@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { ClientI18nProvider } from '@/components/i18n/client-i18n-provider';
 
 const VercelNavigation = dynamic(
   () =>
@@ -11,10 +10,6 @@ const VercelNavigation = dynamic(
   { ssr: false },
 );
 
-export function VercelNavigationI18n({ locale }: { locale?: 'en' | 'zh' }) {
-  return (
-    <ClientI18nProvider locale={locale}>
-      <VercelNavigation />
-    </ClientI18nProvider>
-  );
+export function VercelNavigationI18n() {
+  return <VercelNavigation />;
 }

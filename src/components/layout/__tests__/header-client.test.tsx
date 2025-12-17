@@ -55,50 +55,9 @@ vi.mock('@/components/language-toggle', () => ({
   ),
 }));
 
-// Mock ClientI18nProvider
-vi.mock('@/components/i18n/client-i18n-provider', () => ({
-  ClientI18nProvider: ({
-    children,
-    locale,
-  }: {
-    children: React.ReactNode;
-    locale: string;
-  }) => (
-    <div
-      data-testid='i18n-provider'
-      data-locale={locale}
-    >
-      {children}
-    </div>
-  ),
-}));
-
 describe('MobileNavigationIsland', () => {
-  it('renders with en locale', () => {
-    render(<MobileNavigationIsland locale='en' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    expect(provider).toHaveAttribute('data-locale', 'en');
-  });
-
-  it('renders with zh locale', () => {
-    render(<MobileNavigationIsland locale='zh' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    expect(provider).toHaveAttribute('data-locale', 'zh');
-  });
-
-  it('wraps MobileNavigation in ClientI18nProvider', () => {
-    render(<MobileNavigationIsland locale='en' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    const dynamicComponent = screen.getByTestId('dynamic-component');
-
-    expect(provider).toContainElement(dynamicComponent);
-  });
-
   it('renders dynamic component with ssr false', () => {
-    render(<MobileNavigationIsland locale='en' />);
+    render(<MobileNavigationIsland />);
 
     const dynamicComponent = screen.getByTestId('dynamic-component');
     expect(dynamicComponent).toHaveAttribute('data-ssr', 'false');
@@ -106,31 +65,8 @@ describe('MobileNavigationIsland', () => {
 });
 
 describe('NavSwitcherIsland', () => {
-  it('renders with en locale', () => {
-    render(<NavSwitcherIsland locale='en' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    expect(provider).toHaveAttribute('data-locale', 'en');
-  });
-
-  it('renders with zh locale', () => {
-    render(<NavSwitcherIsland locale='zh' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    expect(provider).toHaveAttribute('data-locale', 'zh');
-  });
-
-  it('wraps NavSwitcher in ClientI18nProvider', () => {
-    render(<NavSwitcherIsland locale='en' />);
-
-    const provider = screen.getByTestId('i18n-provider');
-    const dynamicComponent = screen.getByTestId('dynamic-component');
-
-    expect(provider).toContainElement(dynamicComponent);
-  });
-
   it('renders dynamic component with ssr false', () => {
-    render(<NavSwitcherIsland locale='en' />);
+    render(<NavSwitcherIsland />);
 
     const dynamicComponent = screen.getByTestId('dynamic-component');
     expect(dynamicComponent).toHaveAttribute('data-ssr', 'false');
@@ -172,16 +108,11 @@ describe('Island components integration', () => {
   it('all islands can render together', () => {
     const { container } = render(
       <>
-        <MobileNavigationIsland locale='en' />
-        <NavSwitcherIsland locale='en' />
+        <MobileNavigationIsland />
+        <NavSwitcherIsland />
         <LanguageToggleIsland locale='en' />
       </>,
     );
-
-    const providers = container.querySelectorAll(
-      '[data-testid="i18n-provider"]',
-    );
-    expect(providers.length).toBe(2); // MobileNav and NavSwitcher have providers
 
     const dynamicComponents = container.querySelectorAll(
       '[data-testid="dynamic-component"]',
@@ -192,15 +123,10 @@ describe('Island components integration', () => {
   it('all islands accept zh locale', () => {
     render(
       <>
-        <MobileNavigationIsland locale='zh' />
-        <NavSwitcherIsland locale='zh' />
+        <MobileNavigationIsland />
+        <NavSwitcherIsland />
         <LanguageToggleIsland locale='zh' />
       </>,
     );
-
-    const providers = screen.getAllByTestId('i18n-provider');
-    providers.forEach((provider) => {
-      expect(provider).toHaveAttribute('data-locale', 'zh');
-    });
   });
 });

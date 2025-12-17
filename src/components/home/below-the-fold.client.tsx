@@ -1,9 +1,6 @@
 'use client';
 
-import { Suspense } from 'react';
 import dynamic from 'next/dynamic';
-import { BelowTheFoldSkeleton } from '@/components/home/below-the-fold-skeleton';
-import { ClientI18nProvider } from '@/components/i18n/client-i18n-provider';
 
 // Dynamic imports use leaf module paths directly to ensure optimal code splitting
 // Importing from barrel (@/components/blocks) risks chunk size bloat
@@ -28,15 +25,13 @@ const CallToAction = dynamic(() =>
   ),
 );
 
-export function BelowTheFoldClient({ locale }: { locale: 'en' | 'zh' }) {
+export function BelowTheFoldClient() {
   return (
-    <Suspense fallback={<BelowTheFoldSkeleton />}>
-      <ClientI18nProvider locale={locale}>
-        <TechStackSection />
-        <ComponentShowcase />
-        <ProjectOverview />
-        <CallToAction />
-      </ClientI18nProvider>
-    </Suspense>
+    <>
+      <TechStackSection enableContentVisibility={false} />
+      <ComponentShowcase />
+      <ProjectOverview />
+      <CallToAction />
+    </>
   );
 }

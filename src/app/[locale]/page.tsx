@@ -57,8 +57,8 @@ export default async function Home({ params }: HomePageProps) {
       {/* LCP-critical: render statically from compile-time messages */}
       <HeroSectionStatic messages={heroNs} />
 
-      {/* Below-the-fold: client boundary with scoped i18n to keep vendors slim */}
-      <BelowTheFoldClient locale={locale} />
+      {/* Below-the-fold: client boundary for interactive sections */}
+      <BelowTheFoldClient />
     </div>
   );
 }

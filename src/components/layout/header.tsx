@@ -74,13 +74,17 @@ export async function Header({
             className='flex items-center gap-4'
             {...(!locale ? { 'data-testid': 'mobile-navigation' } : {})}
           >
-            {/* 客户端：移动端导航按钮（可见性触发加载） */}
-            <Idle
-              strategy='visible'
-              rootMargin={VISIBLE_MARGIN}
-            >
-              {locale && <MobileNavigationIsland locale={locale} />}
-            </Idle>
+            {/* 客户端：移动端导航按钮（可见性触发加载）；预留空间避免 CLS */}
+            {locale ? (
+              <div className='h-10 w-10'>
+                <Idle
+                  strategy='visible'
+                  rootMargin={VISIBLE_MARGIN}
+                >
+                  <MobileNavigationIsland />
+                </Idle>
+              </div>
+            ) : null}
             <Logo />
           </div>
 
@@ -96,13 +100,17 @@ export async function Header({
             className='flex items-center gap-2'
             {...(!locale ? { 'data-testid': 'language-toggle-button' } : {})}
           >
-            {/* 客户端：语言切换（可见性触发加载） */}
-            <Idle
-              strategy='visible'
-              rootMargin={VISIBLE_MARGIN}
-            >
-              {locale && <LanguageToggleIsland locale={locale} />}
-            </Idle>
+            {/* 客户端：语言切换（可见性触发加载）；预留空间避免 CLS */}
+            {locale ? (
+              <div className='h-10 w-10'>
+                <Idle
+                  strategy='visible'
+                  rootMargin={VISIBLE_MARGIN}
+                >
+                  <LanguageToggleIsland locale={locale} />
+                </Idle>
+              </div>
+            ) : null}
             {/* Desktop CTA Button - Hidden on mobile */}
             {locale && (
               <Button
@@ -143,7 +151,7 @@ function CenterNav({
         strategy='visible'
         rootMargin={VISIBLE_MARGIN}
       >
-        {locale && <NavSwitcherIsland locale={locale} />}
+        {locale ? <NavSwitcherIsland /> : null}
       </Idle>
     </div>
   );

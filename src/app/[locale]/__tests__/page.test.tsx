@@ -69,16 +69,9 @@ describe('Home Page', () => {
       ),
     );
 
-    mockBelowTheFoldClient.mockImplementation(
-      ({ locale }: { locale: string }) => (
-        <div
-          data-testid='below-the-fold'
-          data-locale={locale}
-        >
-          Below The Fold
-        </div>
-      ),
-    );
+    mockBelowTheFoldClient.mockImplementation(() => (
+      <div data-testid='below-the-fold'>Below The Fold</div>
+    ));
   });
 
   describe('generateStaticParams', () => {
@@ -108,17 +101,6 @@ describe('Home Page', () => {
       render(HomeComponent);
 
       expect(screen.getByTestId('below-the-fold')).toBeInTheDocument();
-    });
-
-    it('should pass locale to BelowTheFoldClient', async () => {
-      const HomeComponent = await Home({
-        params: Promise.resolve({ locale: 'zh' }),
-      });
-
-      render(HomeComponent);
-
-      const belowTheFold = screen.getByTestId('below-the-fold');
-      expect(belowTheFold).toHaveAttribute('data-locale', 'zh');
     });
 
     it('should pass hero messages to HeroSectionStatic', async () => {

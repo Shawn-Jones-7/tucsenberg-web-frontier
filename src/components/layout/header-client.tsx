@@ -1,7 +1,6 @@
 'use client';
 
 import dynamic from 'next/dynamic';
-import { ClientI18nProvider } from '@/components/i18n/client-i18n-provider';
 
 const MobileNavigation = dynamic(
   () =>
@@ -21,21 +20,12 @@ const LanguageToggle = dynamic(
   { ssr: false },
 );
 
-export function MobileNavigationIsland({ locale }: { locale: 'en' | 'zh' }) {
-  // Provide i18n only for the mobile menu island
-  return (
-    <ClientI18nProvider locale={locale}>
-      <MobileNavigation />
-    </ClientI18nProvider>
-  );
+export function MobileNavigationIsland() {
+  return <MobileNavigation />;
 }
 
-export function NavSwitcherIsland({ locale }: { locale: 'en' | 'zh' }) {
-  return (
-    <ClientI18nProvider locale={locale}>
-      <NavSwitcher />
-    </ClientI18nProvider>
-  );
+export function NavSwitcherIsland() {
+  return <NavSwitcher />;
 }
 
 export function LanguageToggleIsland({ locale }: { locale: 'en' | 'zh' }) {

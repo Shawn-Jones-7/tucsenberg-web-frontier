@@ -24,7 +24,11 @@
  * but cache tags are not actually invalidated since there's no persistent cache.
  */
 
-const [, , domain = 'i18n', locale] = process.argv;
+const args = process.argv.slice(2);
+const strict =
+  args.includes('--strict') || process.env.CACHE_INVALIDATION_STRICT === '1';
+const filteredArgs = args.filter((arg) => arg !== '--strict');
+const [domain = 'i18n', locale] = filteredArgs;
 
 const VALID_DOMAINS = ['i18n', 'content', 'product', 'all'];
 const VALID_LOCALES = ['en', 'zh'];
@@ -64,6 +68,7 @@ if (isBuildTime) {
 const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
 const apiUrl = `${baseUrl}/api/cache/invalidate`;
 const secret = process.env.CACHE_INVALIDATION_SECRET;
+const hasExplicitBaseUrl = Boolean(process.env.NEXT_PUBLIC_BASE_URL);
 
 const requestBody = {
   domain,
@@ -73,7 +78,20 @@ const requestBody = {
 console.log(`📍 API Endpoint: ${apiUrl}`);
 console.log(`📦 Payload: ${JSON.stringify(requestBody)}`);
 console.log(`🔐 Authentication: ${secret ? 'Configured' : 'Not configured'}`);
+console.log(`🧷 Strict mode: ${strict ? 'Enabled' : 'Disabled'}`);
 console.log();
+
+// Default behavior should be best-effort unless explicitly configured.
+// Pre-commit hooks run without a dev server, so failing here blocks commits.
+if (!hasExplicitBaseUrl && !secret && !strict) {
+  console.log('ℹ️  No explicit NEXT_PUBLIC_BASE_URL and no secret configured.');
+  console.log('   Skipping invalidation API call (best-effort mode).');
+  console.log(
+    `   Would invalidate: domain=${domain}${locale ? `, locale=${locale}` : ''}`,
+  );
+  console.log('\n✅ Cache invalidation skipped.\n');
+  process.exit(0);
+}
 
 // In development without a running server, log and exit
 if (isDevelopment && !process.env.NEXT_PUBLIC_BASE_URL) {
@@ -110,9 +128,16 @@ async function invalidateCache() {
     const data = await response.json();
 
     if (!response.ok) {
-      console.error(`❌ API Error: ${response.status} ${response.statusText}`);
-      console.error(`   Response: ${JSON.stringify(data)}`);
-      process.exit(1);
+      const message = `❌ API Error: ${response.status} ${response.statusText}`;
+      if (strict || secret) {
+        console.error(message);
+        console.error(`   Response: ${JSON.stringify(data)}`);
+        process.exit(1);
+      }
+      console.warn(message);
+      console.warn(`   Response: ${JSON.stringify(data)}`);
+      console.log('\n✅ Cache invalidation treated as best-effort.\n');
+      process.exit(0);
     }
 
     console.log('✅ Cache invalidation successful!');
@@ -127,13 +152,20 @@ async function invalidateCache() {
 
     console.log();
   } catch (error) {
+    const maybeCode = error?.code ?? error?.cause?.code;
+    const isNetworkFailure =
+      maybeCode === 'ECONNREFUSED' ||
+      maybeCode === 'ENOTFOUND' ||
+      maybeCode === 'EAI_AGAIN' ||
+      error?.message === 'fetch failed';
+
     // If server is not running, handle gracefully
-    if (error.code === 'ECONNREFUSED') {
+    if (isNetworkFailure && !strict) {
       console.log('ℹ️  Server not running or not reachable.');
       console.log(
         `   Would invalidate: domain=${domain}${locale ? `, locale=${locale}` : ''}`,
       );
-      console.log('\n✅ Cache invalidation logged (server not running).\n');
+      console.log('\n✅ Cache invalidation treated as best-effort.\n');
       process.exit(0);
     }
 
