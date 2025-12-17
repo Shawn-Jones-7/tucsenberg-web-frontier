@@ -15,33 +15,9 @@ vi.mock('@/hooks/use-intersection-observer', () => ({
   useIntersectionObserver: mockUseIntersectionObserver,
 }));
 
-// Mock site config
-vi.mock('@/lib/site-config', () => ({
-  PROJECT_STATS: {
-    performance: {
-      grade: 'A+',
-      securityScore: '95%',
-      languages: 2,
-    },
-  },
-  TECH_ARCHITECTURE: {
-    frontend: {
-      title: 'Frontend',
-      technologies: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS'],
-      color: 'blue',
-    },
-    ui: {
-      title: 'UI System',
-      technologies: ['shadcn/ui', 'Radix UI', 'Lucide Icons', 'CSS Variables'],
-      color: 'green',
-    },
-    tooling: {
-      title: 'Development',
-      technologies: ['ESLint', 'Prettier', 'Husky', 'Jest'],
-      color: 'purple',
-    },
-  },
-}));
+// Note: FeaturesGridBlock no longer imports from site-config
+// It uses embedded defaults instead. This mock is kept for compatibility
+// but the test assertions should match FeaturesGridBlock's DEFAULT_FEATURES.
 
 // Mock UI components
 vi.mock('@/components/ui/badge', () => ({
@@ -240,9 +216,10 @@ describe('ProjectOverview', () => {
       const badges = screen.getAllByTestId('badge');
       expect(badges.length).toBeGreaterThan(0);
 
-      // Check for specific badge content
+      // Check for specific badge content from FeaturesGridBlock DEFAULT_FEATURES
+      // Badges: 'A+', '100%', '2', 'Multiple', 'TS 5.8', 'Vercel'
       expect(screen.getByText('A+')).toBeInTheDocument();
-      expect(screen.getByText('95%')).toBeInTheDocument();
+      expect(screen.getByText('100%')).toBeInTheDocument();
     });
   });
 

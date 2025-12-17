@@ -41,33 +41,9 @@ vi.mock('lucide-react', () => ({
   ExternalLink: () => <div data-testid='external-link-icon'>ExternalLink</div>,
 }));
 
-// Mock tech stack data
-vi.mock('@/lib/tech-stack-data', () => ({
-  techStackCategories: {
-    core: 'Core Technologies',
-    frontend: 'Frontend',
-    backend: 'Backend',
-    tools: 'Development Tools',
-  },
-  techStackData: [
-    {
-      id: 'nextjs',
-      name: 'Next.js',
-      category: 'core',
-      description: 'React framework',
-      url: 'https://nextjs.org',
-      icon: 'nextjs',
-    },
-    {
-      id: 'react',
-      name: 'React',
-      category: 'frontend',
-      description: 'UI library',
-      url: 'https://react.dev',
-      icon: 'react',
-    },
-  ],
-}));
+// Note: TechTabsBlock no longer imports from tech-stack-data.
+// It uses embedded DEFAULT_TECH_DATA (14 items) and DEFAULT_CATEGORIES (7 categories).
+// The test mocks React hooks to control behavior.
 
 // Mock UI components
 vi.mock('@/components/ui/badge', () => ({
@@ -322,9 +298,9 @@ describe('TechStackSection', () => {
     it('应该渲染统计信息', () => {
       render(<TechStackSection />);
 
-      // 验证统计数据
-      expect(screen.getByText('2')).toBeInTheDocument(); // techStackData.length
-      expect(screen.getByText('4')).toBeInTheDocument(); // categories count
+      // 验证统计数据 - TechTabsBlock has 14 default items and 7 categories
+      expect(screen.getByText('14')).toBeInTheDocument(); // DEFAULT_TECH_DATA.length
+      expect(screen.getByText('7')).toBeInTheDocument(); // DEFAULT_CATEGORIES count
       expect(screen.getByText('100%')).toBeInTheDocument();
       expect(screen.getByText('A+')).toBeInTheDocument();
 
@@ -528,7 +504,11 @@ describe('TechStackSection', () => {
       render(<TechStackSection />);
 
       // 验证useMemo被调用用于数据分类
-      expect(mockUseMemo).toHaveBeenCalledWith(expect.any(Function), []);
+      // TechTabsBlock passes [techData, categories] as dependencies
+      expect(mockUseMemo).toHaveBeenCalledWith(
+        expect.any(Function),
+        expect.arrayContaining([expect.any(Array), expect.any(Object)]),
+      );
     });
 
     it('应该正确设置intersection observer配置', () => {

@@ -1,17 +1,18 @@
 import { Suspense } from 'react';
 import nextDynamic from 'next/dynamic';
 import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
-import { HeroSectionStatic } from '@/components/home/hero-section';
+import { HeroSplitBlockStatic } from '@/components/blocks/hero/hero-split-block';
 import TranslationsBoundary from '@/components/i18n/translations-boundary';
 
 // Types aligned with page.tsx
 type TranslationValue = string | Record<string, unknown>;
 type TranslationMessages = Record<string, TranslationValue>;
 
-// Defer below-the-fold sections to separate chunks (same as page.tsx)
+// Dynamic imports use leaf module paths directly to ensure optimal code splitting
+// Importing from barrel (@/components/blocks) risks chunk size bloat
 const TechStackSection = nextDynamic(() =>
-  import('@/components/home/tech-stack-section').then(
-    (m) => m.TechStackSection,
+  import('@/components/blocks/tech/tech-tabs-block').then(
+    (m) => m.TechTabsBlock,
   ),
 );
 const ComponentShowcase = nextDynamic(() =>
@@ -20,10 +21,14 @@ const ComponentShowcase = nextDynamic(() =>
   ),
 );
 const ProjectOverview = nextDynamic(() =>
-  import('@/components/home/project-overview').then((m) => m.ProjectOverview),
+  import('@/components/blocks/features/features-grid-block').then(
+    (m) => m.FeaturesGridBlock,
+  ),
 );
 const CallToAction = nextDynamic(() =>
-  import('@/components/home/call-to-action').then((m) => m.CallToAction),
+  import('@/components/blocks/cta/cta-banner-block').then(
+    (m) => m.CTABannerBlock,
+  ),
 );
 
 export function HomeStatic({
@@ -47,7 +52,7 @@ export function HomeStatic({
       data-fast-lcp-zh={zhFast ? '1' : undefined}
     >
       {/* LCP-critical: render statically from provided messages */}
-      <HeroSectionStatic messages={heroNs} />
+      <HeroSplitBlockStatic messages={heroNs} />
 
       {/* Below-the-fold: wrap with intl provider inside Suspense to avoid blocking LCP */}
       <Suspense fallback={null}>

@@ -261,13 +261,12 @@ describe('CallToAction Component - Basic Tests', () => {
       const githubIcons = screen.getAllByTestId('github-icon');
       expect(githubIcons.length).toBeGreaterThanOrEqual(1);
 
-      // 其他图标
-      expect(
-        screen.queryByTestId('book-open-icon') ||
-          screen.queryByTestId('download-icon'),
-      ).toBeInTheDocument();
-      expect(screen.queryByTestId('message-circle-icon')).toBeInTheDocument();
-      expect(screen.queryByTestId('star-icon')).toBeInTheDocument();
+      // Action card icons - CTABannerBlock uses Star and MessageCircle
+      const starIcons = screen.getAllByTestId('star-icon');
+      expect(starIcons.length).toBeGreaterThan(0);
+      const messageCircleIcons = screen.getAllByTestId('message-circle-icon');
+      expect(messageCircleIcons.length).toBeGreaterThan(0);
+
       const externalLinkIcons = screen.getAllByTestId('external-link-icon');
       expect(externalLinkIcons.length).toBeGreaterThan(0);
 

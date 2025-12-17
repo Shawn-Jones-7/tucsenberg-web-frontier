@@ -7,9 +7,9 @@ const testMessages = {
   home: enMessages.home,
 };
 
-// Mock home page components
-vi.mock('@/components/home/call-to-action', () => ({
-  CallToAction: () => (
+// Mock block components (new paths after refactoring)
+vi.mock('@/components/blocks/cta/cta-banner-block', () => ({
+  CTABannerBlock: () => (
     <section data-testid='call-to-action'>Call to Action Section</section>
   ),
 }));
@@ -22,21 +22,23 @@ vi.mock('@/components/home/component-showcase', () => ({
   ),
 }));
 
-vi.mock('@/components/home/hero-section', () => ({
-  HeroSection: () => <section data-testid='hero-section'>Hero Section</section>,
-  HeroSectionStatic: () => (
+vi.mock('@/components/blocks/hero/hero-split-block', () => ({
+  HeroSplitBlock: () => (
+    <section data-testid='hero-section'>Hero Section</section>
+  ),
+  HeroSplitBlockStatic: () => (
     <section data-testid='hero-section'>Hero Section</section>
   ),
 }));
 
-vi.mock('@/components/home/project-overview', () => ({
-  ProjectOverview: () => (
+vi.mock('@/components/blocks/features/features-grid-block', () => ({
+  FeaturesGridBlock: () => (
     <section data-testid='project-overview'>Project Overview Section</section>
   ),
 }));
 
-vi.mock('@/components/home/tech-stack-section', () => ({
-  TechStackSection: () => (
+vi.mock('@/components/blocks/tech/tech-tabs-block', () => ({
+  TechTabsBlock: () => (
     <section data-testid='tech-stack-section'>Tech Stack Section</section>
   ),
 }));

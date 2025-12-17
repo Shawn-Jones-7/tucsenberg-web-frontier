@@ -5,11 +5,11 @@ import dynamic from 'next/dynamic';
 import { BelowTheFoldSkeleton } from '@/components/home/below-the-fold-skeleton';
 import { ClientI18nProvider } from '@/components/i18n/client-i18n-provider';
 
-// 移除 ssr: false 配置以启用服务端渲染，减少 CLS (Cumulative Layout Shift)
-// SSR 可以确保首屏内容完整，避免客户端水合时的布局跳动
+// Dynamic imports use leaf module paths directly to ensure optimal code splitting
+// Importing from barrel (@/components/blocks) risks chunk size bloat
 const TechStackSection = dynamic(() =>
-  import('@/components/home/tech-stack-section').then(
-    (m) => m.TechStackSection,
+  import('@/components/blocks/tech/tech-tabs-block').then(
+    (m) => m.TechTabsBlock,
   ),
 );
 const ComponentShowcase = dynamic(() =>
@@ -18,10 +18,14 @@ const ComponentShowcase = dynamic(() =>
   ),
 );
 const ProjectOverview = dynamic(() =>
-  import('@/components/home/project-overview').then((m) => m.ProjectOverview),
+  import('@/components/blocks/features/features-grid-block').then(
+    (m) => m.FeaturesGridBlock,
+  ),
 );
 const CallToAction = dynamic(() =>
-  import('@/components/home/call-to-action').then((m) => m.CallToAction),
+  import('@/components/blocks/cta/cta-banner-block').then(
+    (m) => m.CTABannerBlock,
+  ),
 );
 
 export function BelowTheFoldClient({ locale }: { locale: 'en' | 'zh' }) {

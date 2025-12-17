@@ -173,9 +173,13 @@ describe('CallToAction Component - Integration Tests', () => {
       render(<CallToAction />);
 
       // 验证主要图标存在
+      // CTABannerBlock has 2 github icons (primary button and action card)
       expect(screen.getAllByTestId('github-icon')).toHaveLength(2);
-      expect(screen.getByTestId('book-open-icon')).toBeInTheDocument();
-      expect(screen.getByTestId('message-circle-icon')).toBeInTheDocument();
+      // CTABannerBlock uses Star and MessageCircle icons instead of BookOpen/Download
+      const starIcons = screen.getAllByTestId('star-icon');
+      expect(starIcons.length).toBeGreaterThan(0);
+      const messageCircleIcons = screen.getAllByTestId('message-circle-icon');
+      expect(messageCircleIcons.length).toBeGreaterThan(0);
     });
 
     it('应该正确集成翻译系统', () => {
