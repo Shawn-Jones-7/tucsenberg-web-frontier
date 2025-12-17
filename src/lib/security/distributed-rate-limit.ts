@@ -37,6 +37,8 @@ interface RateLimitResult {
   remaining: number;
   resetTime: number;
   retryAfter: number | null;
+  /** Indicates storage failure triggered fail-open behavior */
+  degraded?: boolean;
 }
 
 interface RateLimitStore {
@@ -371,12 +373,15 @@ export async function checkDistributedRateLimit(
       retryAfter: allowed ? null : Math.ceil((resetTime - now) / 1000),
     };
   } catch (error) {
-    logger.error('[Rate Limit] Check failed, allowing request', { error });
+    logger.error('[Rate Limit] Check failed, allowing request (fail-open)', {
+      error,
+    });
     return {
       allowed: true,
       remaining: config.maxRequests - ONE,
       resetTime: Date.now() + config.windowMs,
       retryAfter: null,
+      degraded: true,
     };
   }
 }
@@ -415,12 +420,13 @@ export async function getRateLimitStatus(
       retryAfter: allowed ? null : Math.ceil((entry.resetTime - now) / 1000),
     };
   } catch (error) {
-    logger.error('[Rate Limit] Status check failed', { error });
+    logger.error('[Rate Limit] Status check failed (fail-open)', { error });
     return {
       allowed: true,
       remaining: config.maxRequests,
       resetTime: Date.now() + config.windowMs,
       retryAfter: null,
+      degraded: true,
     };
   }
 }

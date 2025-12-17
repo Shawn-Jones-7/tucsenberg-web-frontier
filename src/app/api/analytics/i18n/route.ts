@@ -1,15 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCachedResponse } from '@/lib/api-cache-utils';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
-import { logger } from '@/lib/logger';
 import {
-  checkDistributedRateLimit,
-  createRateLimitHeaders,
-} from '@/lib/security/distributed-rate-limit';
-import { getClientIP } from '@/app/api/contact/contact-api-utils';
-
-// HTTP status codes
-const HTTP_TOO_MANY_REQUESTS = 429;
+  withRateLimit,
+  type RateLimitContext,
+} from '@/lib/api/with-rate-limit';
+import { logger } from '@/lib/logger';
 
 /**
  * i18n分析数据类型定义
@@ -98,33 +94,12 @@ function validateI18nAnalyticsData(data: unknown): data is I18nAnalyticsData {
 }
 
 /**
- * POST /api/analytics/i18n
- * 收集国际化相关的分析数据
+ * POST handler implementation
  */
-export async function POST(request: NextRequest) {
-  const clientIP = getClientIP(request);
-
-  // Check rate limit (100 requests per minute for analytics)
-  const rateLimitResult = await checkDistributedRateLimit(
-    clientIP,
-    'analytics',
-  );
-  if (!rateLimitResult.allowed) {
-    logger.warn('i18n analytics rate limit exceeded', {
-      ip: clientIP,
-      retryAfter: rateLimitResult.retryAfter,
-    });
-    const headers = createRateLimitHeaders(rateLimitResult);
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'Too many requests',
-        message: 'Rate limit exceeded. Please try again later.',
-      },
-      { status: HTTP_TOO_MANY_REQUESTS, headers },
-    );
-  }
-
+async function handlePost(
+  request: NextRequest,
+  _ctx: RateLimitContext,
+): Promise<NextResponse> {
   try {
     const parsedBody = await safeParseJson<unknown>(request, {
       route: '/api/analytics/i18n',
@@ -141,7 +116,6 @@ export async function POST(request: NextRequest) {
     }
     const body = parsedBody.data;
 
-    // 验证请求数据
     if (!validateI18nAnalyticsData(body)) {
       return NextResponse.json(
         {
@@ -154,16 +128,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // 记录i18n分析数据
     logger.info('i18n analytics data received', {
       locale: body.locale,
       event: body.event,
       timestamp: body.timestamp,
       metadata: body.metadata || {},
     });
-
-    // 在实际应用中，这里会将数据存储到数据库或发送到分析服务
-    // 目前只是记录日志
 
     return NextResponse.json({
       success: true,
@@ -175,7 +145,6 @@ export async function POST(request: NextRequest) {
       },
     });
   } catch (_error) {
-    // 忽略错误变量
     logger.error('Failed to process i18n analytics data', {
       _error: _error instanceof Error ? _error.message : String(_error),
       stack: _error instanceof Error ? _error.stack : undefined,
@@ -193,56 +162,45 @@ export async function POST(request: NextRequest) {
 }
 
 /**
- * GET /api/analytics/i18n
- * 获取i18n分析统计信息
+ * Build locale distribution for filtered response
  */
-export async function GET(request: NextRequest) {
-  const clientIP = getClientIP(request);
-
-  // Check rate limit (100 requests per minute for analytics)
-  const rateLimitResult = await checkDistributedRateLimit(
-    clientIP,
-    'analytics',
-  );
-  if (!rateLimitResult.allowed) {
-    logger.warn('i18n analytics GET rate limit exceeded', { ip: clientIP });
-    const headers = createRateLimitHeaders(rateLimitResult);
-    return NextResponse.json(
-      { success: false, error: 'Too many requests' },
-      { status: HTTP_TOO_MANY_REQUESTS, headers },
-    );
+function buildLocaleDistribution(
+  safeLocale: 'en' | 'zh' | 'ja' | 'other',
+  distribution: { en: number; zh: number; ja: number; other: number },
+): { en: number } | { zh: number } | { ja: number } | { other: number } {
+  switch (safeLocale) {
+    case 'en':
+      return { en: distribution.en };
+    case 'zh':
+      return { zh: distribution.zh };
+    case 'ja':
+      return { ja: distribution.ja };
+    default:
+      return { other: distribution.other };
   }
+}
 
+/**
+ * GET handler implementation
+ */
+function handleGet(request: NextRequest, _ctx: RateLimitContext): NextResponse {
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get('locale');
     const timeRange = searchParams.get('timeRange') || '24h';
 
-    // 模拟统计数据（在实际应用中会从数据库查询）
     const mockStats = {
       timeRange,
       locale: locale || 'all',
       events: {
-        localeSwitch: {
-          count: 150,
-          topTargetLocales: ['en', 'zh', 'ja'],
-        },
+        localeSwitch: { count: 150, topTargetLocales: ['en', 'zh', 'ja'] },
         translationMissing: {
           count: 12,
           topMissingKeys: ['common.newFeature', '_error.validation'],
         },
-        translationLoad: {
-          count: 1250,
-          averageLoadTime: 45,
-          p95LoadTime: 120,
-        },
+        translationLoad: { count: 1250, averageLoadTime: 45, p95LoadTime: 120 },
       },
-      localeDistribution: {
-        en: 0.65,
-        zh: 0.25,
-        ja: 0.08,
-        other: 0.02,
-      },
+      localeDistribution: { en: 0.65, zh: 0.25, ja: 0.08, other: 0.02 },
       summary: {
         totalEvents: 1412,
         uniqueUsers: 890,
@@ -251,43 +209,23 @@ export async function GET(request: NextRequest) {
       },
     };
 
-    // 如果指定了特定语言，过滤数据
     if (locale && locale !== 'all') {
-      const allowedLocales = ['en', 'zh', 'ja', 'other'] as Array<
-        keyof typeof mockStats.localeDistribution
-      >;
+      const allowedLocales = ['en', 'zh', 'ja', 'other'] as const;
+      type AllowedLocale = (typeof allowedLocales)[number];
 
-      if (!allowedLocales.includes(locale as (typeof allowedLocales)[number])) {
+      if (!allowedLocales.includes(locale as AllowedLocale)) {
         return NextResponse.json(
-          {
-            success: false,
-            error: 'Invalid locale parameter',
-          },
+          { success: false, error: 'Invalid locale parameter' },
           { status: 400 },
         );
       }
 
-      const safeLocale = locale as keyof typeof mockStats.localeDistribution;
-      let localeDistribution:
-        | { en: number }
-        | { zh: number }
-        | { ja: number }
-        | { other: number };
+      const safeLocale = locale as AllowedLocale;
+      const localeDistribution = buildLocaleDistribution(
+        safeLocale,
+        mockStats.localeDistribution,
+      );
 
-      switch (safeLocale) {
-        case 'en':
-          localeDistribution = { en: mockStats.localeDistribution.en };
-          break;
-        case 'zh':
-          localeDistribution = { zh: mockStats.localeDistribution.zh };
-          break;
-        case 'ja':
-          localeDistribution = { ja: mockStats.localeDistribution.ja };
-          break;
-        default:
-          localeDistribution = { other: mockStats.localeDistribution.other };
-          break;
-      }
       return createCachedResponse(
         {
           success: true,
@@ -304,14 +242,10 @@ export async function GET(request: NextRequest) {
     }
 
     return createCachedResponse(
-      {
-        success: true,
-        data: mockStats,
-      },
+      { success: true, data: mockStats },
       { maxAge: 300 },
     );
   } catch (_error) {
-    // 忽略错误变量
     logger.error('Failed to get i18n analytics statistics', {
       _error: _error instanceof Error ? _error.message : String(_error),
       stack: _error instanceof Error ? _error.stack : undefined,
@@ -329,26 +263,12 @@ export async function GET(request: NextRequest) {
 }
 
 /**
- * DELETE /api/analytics/i18n
- * 删除i18n分析数据（管理功能）
+ * DELETE handler implementation
  */
-export async function DELETE(request: NextRequest) {
-  const clientIP = getClientIP(request);
-
-  // Check rate limit (100 requests per minute for analytics)
-  const rateLimitResult = await checkDistributedRateLimit(
-    clientIP,
-    'analytics',
-  );
-  if (!rateLimitResult.allowed) {
-    logger.warn('i18n analytics DELETE rate limit exceeded', { ip: clientIP });
-    const headers = createRateLimitHeaders(rateLimitResult);
-    return NextResponse.json(
-      { success: false, error: 'Too many requests' },
-      { status: HTTP_TOO_MANY_REQUESTS, headers },
-    );
-  }
-
+function handleDelete(
+  request: NextRequest,
+  _ctx: RateLimitContext,
+): NextResponse {
   try {
     const { searchParams } = new URL(request.url);
     const locale = searchParams.get('locale');
@@ -366,7 +286,6 @@ export async function DELETE(request: NextRequest) {
       );
     }
 
-    // 在实际应用中，这里会删除指定的i18n分析数据
     logger.info('i18n analytics data deletion requested', {
       locale: locale || 'all',
       timeRange: timeRange || 'all',
@@ -379,7 +298,6 @@ export async function DELETE(request: NextRequest) {
       deletedAt: new Date().toISOString(),
     });
   } catch (_error) {
-    // 忽略错误变量
     logger.error('Failed to delete i18n analytics data', {
       _error: _error instanceof Error ? _error.message : String(_error),
       stack: _error instanceof Error ? _error.stack : undefined,
@@ -395,3 +313,21 @@ export async function DELETE(request: NextRequest) {
     );
   }
 }
+
+/**
+ * POST /api/analytics/i18n
+ * 收集国际化相关的分析数据
+ */
+export const POST = withRateLimit('analytics', handlePost);
+
+/**
+ * GET /api/analytics/i18n
+ * 获取i18n分析统计信息
+ */
+export const GET = withRateLimit('analytics', handleGet);
+
+/**
+ * DELETE /api/analytics/i18n
+ * 删除i18n分析数据（管理功能）
+ */
+export const DELETE = withRateLimit('analytics', handleDelete);

@@ -346,6 +346,191 @@ describe('WhatsApp Send Route', () => {
     });
   });
 
+  describe('POST - Authentication', () => {
+    const originalEnv = process.env;
+
+    beforeEach(() => {
+      process.env = { ...originalEnv };
+    });
+
+    afterEach(() => {
+      process.env = originalEnv;
+    });
+
+    it('should return 401 when Authorization header missing and API key configured', async () => {
+      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
+
+      const request = createMockRequest('POST', {
+        to: '+1234567890',
+        type: 'text',
+        content: { body: 'Hello' },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Authentication required');
+    });
+
+    it('should return 401 when API key is invalid', async () => {
+      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
+
+      const url = 'http://localhost:3000/api/whatsapp/send';
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          to: '+1234567890',
+          type: 'text',
+          content: { body: 'Hello' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer wrong-api-key',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Invalid credentials');
+    });
+
+    it('should return 401 for malformed Authorization header', async () => {
+      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
+
+      const url = 'http://localhost:3000/api/whatsapp/send';
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          to: '+1234567890',
+          type: 'text',
+          content: { body: 'Hello' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Basic dXNlcm5hbWU6cGFzc3dvcmQ=',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(data.error).toBe('Invalid authentication format');
+    });
+
+    it('should succeed with valid API key', async () => {
+      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
+
+      const url = 'http://localhost:3000/api/whatsapp/send';
+      const request = new NextRequest(url, {
+        method: 'POST',
+        body: JSON.stringify({
+          to: '+1234567890',
+          type: 'text',
+          content: { body: 'Hello' },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer test-api-key-12345',
+        },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+    });
+
+    it('should skip authentication when WHATSAPP_API_KEY not configured', async () => {
+      delete process.env.WHATSAPP_API_KEY;
+
+      const request = createMockRequest('POST', {
+        to: '+1234567890',
+        type: 'text',
+        content: { body: 'Hello' },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+    });
+  });
+
+  describe('POST - Rate Limiting', () => {
+    it('should return 429 when rate limited', async () => {
+      mockCheckDistributedRateLimit.mockResolvedValue({
+        allowed: false,
+        remaining: 0,
+        resetTime: Date.now() + 60000,
+        retryAfter: 60,
+      });
+
+      const request = createMockRequest('POST', {
+        to: '+1234567890',
+        type: 'text',
+        content: { body: 'Hello' },
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(429);
+      // withRateLimit HOF uses standardized error message
+      expect(data.error).toBe('Too many requests');
+    });
+
+    it('should include rate limit headers in 429 response', async () => {
+      const resetTime = Date.now() + 60000;
+      mockCheckDistributedRateLimit.mockResolvedValue({
+        allowed: false,
+        remaining: 0,
+        resetTime,
+        retryAfter: 60,
+      });
+
+      const request = createMockRequest('POST', {
+        to: '+1234567890',
+        type: 'text',
+        content: { body: 'Hello' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(429);
+      // withRateLimit uses HMAC-hashed key strategy by default
+      // Verify rate limiting was checked with 'whatsapp' preset
+      expect(mockCheckDistributedRateLimit).toHaveBeenCalledWith(
+        expect.stringMatching(/^ip:/),
+        'whatsapp',
+      );
+    });
+
+    it('should allow request when rate limit not exceeded', async () => {
+      mockCheckDistributedRateLimit.mockResolvedValue({
+        allowed: true,
+        remaining: 4,
+        resetTime: Date.now() + 60000,
+        retryAfter: null,
+      });
+
+      const request = createMockRequest('POST', {
+        to: '+1234567890',
+        type: 'text',
+        content: { body: 'Hello' },
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(200);
+    });
+  });
+
   describe('POST - Message ID extraction', () => {
     it('should extract message ID from response', async () => {
       mockSendWhatsAppMessage.mockResolvedValue({

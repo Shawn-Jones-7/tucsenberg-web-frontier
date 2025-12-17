@@ -2,16 +2,15 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import type { SendMessageRequest, TemplateComponent } from '@/types/whatsapp';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
-import { logger } from '@/lib/logger';
 import {
-  checkDistributedRateLimit,
-  createRateLimitHeaders,
-} from '@/lib/security/distributed-rate-limit';
+  withRateLimit,
+  type RateLimitContext,
+} from '@/lib/api/with-rate-limit';
+import { logger } from '@/lib/logger';
 import {
   getClientEnvironmentInfo,
   sendWhatsAppMessage,
 } from '@/lib/whatsapp-service';
-import { getClientIP } from '@/app/api/contact/contact-api-utils';
 import { COUNT_THREE } from '@/constants/count';
 import {
   FIVE_SECONDS_MS,
@@ -21,7 +20,6 @@ import {
 
 // HTTP status codes
 const HTTP_UNAUTHORIZED = 401;
-const HTTP_TOO_MANY_REQUESTS = 429;
 
 /**
  * Validate API key authentication when WHATSAPP_API_KEY is configured.
@@ -333,23 +331,60 @@ async function sendMessageWithRetry(
   throw lastError;
 }
 
-export async function POST(request: NextRequest) {
-  const clientIP = getClientIP(request);
+/**
+ * Build success response with message ID and environment info
+ */
+function buildSuccessResponse(
+  result: Awaited<ReturnType<typeof sendWhatsAppMessage>>,
+) {
+  const messageId = extractMessageId(result);
+  const clientInfo = getClientEnvironmentInfo();
 
-  // Check rate limit (5 requests per minute for WhatsApp API)
-  const rateLimitResult = await checkDistributedRateLimit(clientIP, 'whatsapp');
-  if (!rateLimitResult.allowed) {
-    logger.warn('WhatsApp API rate limit exceeded', {
-      ip: clientIP,
-      retryAfter: rateLimitResult.retryAfter,
-    });
-    const headers = createRateLimitHeaders(rateLimitResult);
+  return NextResponse.json(
+    {
+      success: true,
+      messageId,
+      data: result,
+      environment: clientInfo.environment,
+      clientType: clientInfo.clientType,
+    },
+    { status: 200 },
+  );
+}
+
+/**
+ * Handle WhatsApp service errors
+ */
+function handleServiceError(error: unknown): NextResponse {
+  logger.error(
+    'WhatsApp send message error',
+    {},
+    error instanceof Error ? error : new Error(String(error)),
+  );
+
+  if (
+    error instanceof Error &&
+    error.message.includes('WHATSAPP_ACCESS_TOKEN')
+  ) {
     return NextResponse.json(
-      { error: 'Too many requests. Please try again later.' },
-      { status: HTTP_TOO_MANY_REQUESTS, headers },
+      { error: 'WhatsApp service not configured' },
+      { status: 503 },
     );
   }
 
+  return NextResponse.json(
+    { error: 'Failed to send message' },
+    { status: 500 },
+  );
+}
+
+/**
+ * POST handler implementation
+ */
+async function handlePost(
+  request: NextRequest,
+  _ctx: RateLimitContext,
+): Promise<NextResponse> {
   // Check optional API key authentication
   const authError = validateApiKey(request);
   if (authError) {
@@ -370,41 +405,17 @@ export async function POST(request: NextRequest) {
       throw new Error(result.error || 'Failed to send message');
     }
 
-    const messageId = extractMessageId(result);
-    const clientInfo = getClientEnvironmentInfo();
-
-    return NextResponse.json(
-      {
-        success: true,
-        messageId,
-        data: result,
-        environment: clientInfo.environment,
-        clientType: clientInfo.clientType,
-      },
-      { status: 200 },
-    );
+    return buildSuccessResponse(result);
   } catch (error) {
-    logger.error(
-      'WhatsApp send message error',
-      {},
-      error instanceof Error ? error : new Error(String(error)),
-    );
-
-    if (error instanceof Error) {
-      if (error.message.includes('WHATSAPP_ACCESS_TOKEN')) {
-        return NextResponse.json(
-          { error: 'WhatsApp service not configured' },
-          { status: 503 },
-        );
-      }
-    }
-
-    return NextResponse.json(
-      { error: 'Failed to send message' },
-      { status: 500 },
-    );
+    return handleServiceError(error);
   }
 }
+
+/**
+ * POST /api/whatsapp/send
+ * Send WhatsApp message with retry logic
+ */
+export const POST = withRateLimit('whatsapp', handlePost);
 
 // GET: Return API usage info
 export function GET() {
