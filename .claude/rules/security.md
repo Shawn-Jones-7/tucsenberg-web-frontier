@@ -7,6 +7,12 @@
 - **Secure by Default**: Security enabled out of the box
 - **Zero Trust**: Verify everything, trust no input
 
+## Threat Modeling（新增/变更入口必做）
+
+当你在“加新门/改门锁”（新增 API route、webhook、cache invalidation、外部服务调用）时，光靠代码规范容易漏掉“攻击路径”。本项目要求在这些变更上先做轻量 threat model（STRIDE + 可验收安全要求 + 控制措施映射）：
+- 规则与模板：`/.claude/rules/threat-modeling.md`
+- 可用 agent：`/.claude/agents/threat-modeler-frontier.md`
+
 ## Server Code Protection
 
 - Add `import "server-only"` at top of sensitive server files
@@ -108,3 +114,4 @@ Rate limit utility: `src/lib/security/security-rate-limit.ts`
 - [ ] Server-only code uses `import "server-only"`
 - [ ] Logs are sanitized
 - [ ] Dependencies regularly updated
+- [ ] New/changed public API/webhook has a threat model (STRIDE + mitigations)

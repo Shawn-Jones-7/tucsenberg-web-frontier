@@ -132,3 +132,6 @@ backups/
 evidence/
 docs/analysis-report/交接文档-*.md
 docs/known-issues/vitest-4-upgrade.md
+
+# Claude Code vendored marketplaces (local-only by default)
+.claude/vendor/
