@@ -102,7 +102,7 @@ export async function Header({
           >
             {/* 客户端：语言切换（可见性触发加载）；预留空间避免 CLS */}
             {locale ? (
-              <div className='h-10 w-10'>
+              <div className='flex h-10 w-28 items-center justify-end'>
                 <Idle
                   strategy='visible'
                   rootMargin={VISIBLE_MARGIN}

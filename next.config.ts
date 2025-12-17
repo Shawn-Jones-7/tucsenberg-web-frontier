@@ -84,8 +84,9 @@ const nextConfig: NextConfig = {
     // Next.js 16 已移除 testProxy 配置 - 使用 next/experimental/testing/server 替代
     // 旧配置: testProxy: process.env.CI === 'true',
     // 新方式: 在测试文件中使用 unstable_doesProxyMatch() 和相关 API
-    // 内联关键CSS，消除渲染阻塞的<link rel="stylesheet">请求，提升首屏渲染（LCP）
-    inlineCss: true,
+    // 内联关键CSS（experimental.inlineCss）在当前构建链路下会引入 FOUC，导致首屏 CLS/Performance 显著劣化
+    // 先禁用以稳定 CI 的 Lighthouse 质量门禁（后续可在 Next.js/Turbopack 修复后再评估开启）
+    inlineCss: false,
     // PPR 需要 Next.js canary 版本，暂时禁用
     // ppr: 'incremental',
   },

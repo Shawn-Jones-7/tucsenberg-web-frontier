@@ -11,7 +11,7 @@
  * TechStack Section Skeleton
  * 估算高度: ~900-1200px
  */
-function TechStackSkeleton() {
+export function TechStackSkeleton() {
   return (
     <section
       id='tech-stack'
@@ -77,7 +77,7 @@ function TechStackSkeleton() {
  * Component Showcase Skeleton
  * 估算高度: ~800-1000px
  */
-function ComponentShowcaseSkeleton() {
+export function ComponentShowcaseSkeleton() {
   return (
     <section
       id='demo'
@@ -125,7 +125,7 @@ function ComponentShowcaseSkeleton() {
  * Project Overview Skeleton
  * 估算高度: ~1200-1500px
  */
-function ProjectOverviewSkeleton() {
+export function ProjectOverviewSkeleton() {
   return (
     <section className='cv-1000 py-20'>
       <div className='container mx-auto px-4'>
@@ -218,7 +218,7 @@ function ProjectOverviewSkeleton() {
  * Call to Action Skeleton
  * 估算高度: ~600-800px
  */
-function CallToActionSkeleton() {
+export function CallToActionSkeleton() {
   return (
     <section className='cv-600 bg-gradient-to-br from-primary/5 via-background to-secondary/5 py-20'>
       <div className='container mx-auto px-4'>

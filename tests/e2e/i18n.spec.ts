@@ -8,6 +8,7 @@ import {
 import {
   removeInterferingElements,
   safeClick,
+  waitForLoadWithFallback,
   waitForStablePage,
 } from './test-environment-setup';
 
@@ -36,7 +37,7 @@ test.describe('Internationalization (i18n)', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto('/');
     await page.waitForURL('**/en');
-    await page.waitForLoadState('networkidle');
+    await waitForLoadWithFallback(page);
     await removeInterferingElements(page);
     await waitForStablePage(page);
   });
@@ -102,7 +103,7 @@ test.describe('Internationalization (i18n)', () => {
 
       // Wait for navigation to Chinese locale
       await page.waitForURL('**/zh');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
       await waitForStablePage(page);
 
       // Prefer semantic verification with fallback for cross-browser timing
@@ -269,7 +270,7 @@ test.describe('Internationalization (i18n)', () => {
       // Wait for the click to complete
       await clickPromise;
       await page.waitForURL('**/zh');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
 
       // Prefer semantic verification with fallback due to mobile timing windows
       const htmlLang = await page.locator('html').getAttribute('lang');
@@ -331,7 +332,7 @@ test.describe('Internationalization (i18n)', () => {
 
       // Should navigate to Chinese version of the same page
       await page.waitForURL('**/zh/about');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
 
       // Verify we're on the Chinese About page with fallback
       try {
@@ -549,7 +550,7 @@ test.describe('Internationalization (i18n)', () => {
 
       if (await diagnosticsLink.isVisible()) {
         await diagnosticsLink.click();
-        await page.waitForLoadState('networkidle');
+        await waitForLoadWithFallback(page);
 
         // Switch to Chinese
         const languageToggleButton = page.getByTestId('language-toggle-button');
@@ -611,7 +612,7 @@ test.describe('Internationalization (i18n)', () => {
       }
 
       await page.waitForURL('**/zh');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
       await waitForStablePage(page);
       // Wait for hydration to update html[lang] (PPR mode requires client-side correction)
       await waitForHtmlLang(page, 'zh');
@@ -790,7 +791,7 @@ test.describe('Internationalization (i18n)', () => {
     }) => {
       // Direct navigation to Chinese homepage
       await page.goto('/zh');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
       await waitForStablePage(page);
 
       // Verify Chinese content (wait for hydration to update html[lang])
@@ -800,7 +801,7 @@ test.describe('Internationalization (i18n)', () => {
 
       // Direct navigation to Chinese About page
       await page.goto('/zh/about');
-      await page.waitForLoadState('networkidle');
+      await waitForLoadWithFallback(page);
       await waitForHtmlLang(page, 'zh');
 
       expect(page.url()).toContain('/zh/about');
