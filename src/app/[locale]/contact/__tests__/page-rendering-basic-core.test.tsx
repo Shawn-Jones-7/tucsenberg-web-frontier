@@ -150,8 +150,8 @@ describe('Contact Page Rendering - Core Basic Tests', () => {
 
       expect(screen.getByText('Email')).toBeInTheDocument();
       expect(screen.getByText('Phone')).toBeInTheDocument();
-      expect(screen.getByText('contact@tucsenberg.com')).toBeInTheDocument();
-      expect(screen.getByText('+1-555-0123')).toBeInTheDocument();
+      expect(screen.getByText('sales@example.com')).toBeInTheDocument();
+      expect(screen.getByText('+86-xxx-xxxx-xxxx')).toBeInTheDocument();
     });
 
     it('应该渲染营业时间信息', async () => {

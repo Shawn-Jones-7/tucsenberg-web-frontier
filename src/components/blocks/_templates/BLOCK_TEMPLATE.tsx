@@ -19,8 +19,7 @@
 
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
-import { Container } from '@/components/ui/container';
-import { Section } from '@/components/ui/section';
+import { Container, Section } from '@/components/primitives';
 import { siteFacts } from '@/config/site-facts';
 import { COUNT_700 } from '@/constants/count';
 import { MAGIC_0_2 } from '@/constants/decimal';

@@ -25,10 +25,17 @@ export function DropdownContent({
           <Link
             href={child.href as ValidPathname}
             className={cn(
-              'inline-flex rounded-lg px-3 py-2 leading-none no-underline transition-colors outline-none select-none',
-              'text-muted-foreground hover:text-foreground',
-              'hover:bg-muted/80 dark:hover:bg-foreground/10',
-              'focus-visible:bg-muted/80 dark:focus-visible:bg-foreground/12',
+              'inline-flex rounded-lg px-3 py-2 leading-none no-underline select-none',
+              // Default state - Vercel exact colors (reuse nav variables)
+              'text-vercel-nav-light-default dark:text-vercel-nav-dark-default',
+              // Hover state - Vercel exact colors (no background change)
+              'hover:text-vercel-nav-light-hover dark:hover:text-vercel-nav-dark-hover',
+              // Focus ring - dual layer (inner + outer), disable default ring
+              '!focus-visible:ring-0 !focus-visible:ring-offset-0',
+              'focus-visible:outline-none',
+              'focus-visible:shadow-[0_0_0_2px_var(--color-vercel-nav-focus-inner),0_0_0_4px_var(--color-vercel-nav-focus-outer)]',
+              // Vercel timing: 90ms with ease
+              'transition-colors duration-[90ms] ease-[ease]',
               'font-normal',
             )}
           >

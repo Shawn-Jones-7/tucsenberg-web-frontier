@@ -14,11 +14,14 @@ import {
 /**
  * 邮件配置常量
  * Email configuration constants
+ *
+ * Uses environment variables with template placeholders as fallback.
+ * Configure in .env: EMAIL_FROM, EMAIL_REPLY_TO, EMAIL_SUPPORT
  */
 export const EMAIL_CONFIG = {
-  from: 'noreply@tucsenberg.com',
-  replyTo: 'contact@tucsenberg.com',
-  supportEmail: 'support@tucsenberg.com',
+  from: process.env['EMAIL_FROM'] ?? 'noreply@example.com',
+  replyTo: process.env['EMAIL_REPLY_TO'] ?? 'contact@example.com',
+  supportEmail: process.env['EMAIL_SUPPORT'] ?? 'support@example.com',
 } as const;
 
 /**
@@ -66,8 +69,8 @@ export class ResendUtils {
    * 生成确认邮件主题
    * Generate confirmation email subject
    */
-  static generateConfirmationSubject(): string {
-    return 'Thank you for contacting us - Tucsenberg';
+  static generateConfirmationSubject(companyName = 'Company'): string {
+    return `Thank you for contacting us - ${companyName}`;
   }
 
   /**

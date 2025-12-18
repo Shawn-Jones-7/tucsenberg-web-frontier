@@ -2,9 +2,10 @@
 User-agent: *
 Allow: /
 
-# Host
-Host: https://tucsenberg.com
+# Host - Configure via NEXT_PUBLIC_SITE_URL environment variable
+# Replace example.com with your actual domain
+Host: https://example.com
 
-# Sitemaps
-Sitemap: https://tucsenberg.com/sitemap.xml
-Sitemap: https://tucsenberg.com/server-sitemap.xml
+# Sitemaps - Replace with actual domain
+Sitemap: https://example.com/sitemap.xml
+Sitemap: https://example.com/server-sitemap.xml

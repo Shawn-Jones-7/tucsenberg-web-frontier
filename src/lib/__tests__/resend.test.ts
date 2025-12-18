@@ -277,7 +277,7 @@ describe('resend - Confirmation and Validation', () => {
           from: 'test@example.com',
           to: ['john.doe@example.com'],
           replyTo: 'reply@example.com',
-          subject: 'Thank you for contacting us - Tucsenberg',
+          subject: 'Thank you for contacting us - Company',
           html: expect.any(String),
           text: expect.any(String),
           tags: expect.arrayContaining([

@@ -63,12 +63,12 @@ describe('Container', () => {
     expect(screen.getByTestId('container')).toHaveClass('max-w-full');
   });
 
-  it('applies uniform px-4 padding', () => {
+  it('applies responsive padding', () => {
     render(<Container data-testid='container'>Content</Container>);
     const container = screen.getByTestId('container');
     expect(container).toHaveClass('px-4');
-    expect(container).not.toHaveClass('md:px-6');
-    expect(container).not.toHaveClass('lg:px-8');
+    expect(container).toHaveClass('md:px-6');
+    expect(container).toHaveClass('lg:px-8');
   });
 
   it('accepts className for overrides', () => {

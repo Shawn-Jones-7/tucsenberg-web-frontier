@@ -19,7 +19,7 @@
         },
         {
           "key": "X-Powered-By",
-          "value": "Tucsenberg Web Frontier"
+          "value": "Next.js"
         }
       ]
     },
@@ -28,7 +28,7 @@
       "headers": [
         {
           "key": "Access-Control-Allow-Origin",
-          "value": "https://tucsenberg.com"
+          "value": "*"
         },
         {
           "key": "Access-Control-Allow-Methods",

@@ -1,36 +1,45 @@
 /**
  * 站点配置
+ *
+ * Template placeholders: Replace 'Company Name' and 'example.com' with actual values.
+ * Business data should use siteFacts from '@/config/site-facts'.
  */
+
+import { siteFacts } from '@/config/site-facts';
 
 // 站点配置
 export const SITE_CONFIG = {
   baseUrl:
     process.env['NEXT_PUBLIC_BASE_URL'] ||
     process.env['NEXT_PUBLIC_SITE_URL'] ||
-    'https://tucsenberg.com',
-  name: 'Tucsenberg Web Frontier',
-  description: 'Modern B2B Enterprise Web Platform with Next.js 15',
+    'https://example.com',
+  name: siteFacts.company.name,
+  description: 'Modern B2B Enterprise Web Platform',
 
   // SEO配置
   seo: {
-    titleTemplate: '%s | Tucsenberg Web Frontier',
-    defaultTitle: 'Tucsenberg Web Frontier',
-    defaultDescription: 'Modern B2B Enterprise Web Platform with Next.js 15',
+    titleTemplate: `%s | ${siteFacts.company.name}`,
+    defaultTitle: siteFacts.company.name,
+    defaultDescription: 'Modern B2B Enterprise Web Platform',
     keywords: ['Next.js', 'React', 'TypeScript', 'B2B', 'Enterprise'],
   },
 
-  // 社交媒体链接
+  // 社交媒体链接 - use siteFacts.social with fallback placeholders
   social: {
-    twitter: 'https://twitter.com/tucsenberg',
-    linkedin: 'https://linkedin.com/company/tucsenberg',
-    github: 'https://github.com/tucsenberg',
+    twitter: siteFacts.social.twitter ?? 'https://twitter.com/company',
+    linkedin:
+      siteFacts.social.linkedin ?? 'https://linkedin.com/company/example',
+    github: 'https://github.com/company',
   },
 
-  // 联系信息
+  // 联系信息 - use siteFacts.contact
   contact: {
-    phone: '+1-555-0123',
-    email: 'contact@tucsenberg.com',
-    whatsappNumber: process.env['NEXT_PUBLIC_WHATSAPP_NUMBER'] ?? '+1-555-0123',
+    phone: siteFacts.contact.phone,
+    email: siteFacts.contact.email,
+    whatsappNumber:
+      process.env['NEXT_PUBLIC_WHATSAPP_NUMBER'] ??
+      siteFacts.contact.whatsapp ??
+      '+1-555-0123',
   },
 } as const;
 

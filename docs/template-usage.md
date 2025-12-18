@@ -85,8 +85,7 @@ cp src/components/blocks/_templates/BLOCK_TEMPLATE.tsx \
 All blocks must use these primitives:
 
 ```tsx
-import { Container } from '@/components/ui/container';
-import { Section } from '@/components/ui/section';
+import { Container, Section } from '@/components/primitives';
 import { siteFacts } from '@/config/site-facts';
 
 export function MyBlock({ i18nNamespace = 'myBlock' }) {
@@ -127,6 +126,11 @@ export function MyBlock({ i18nNamespace = 'myBlock' }) {
 | `lg` | 1024px | Standard pages |
 | `xl` | 1280px | Wide layouts |
 | `2xl` | 1536px | Full-width |
+
+**Responsive Padding**: Container automatically adjusts horizontal padding:
+- Mobile: 16px (`px-4`)
+- Tablet: 24px (`md:px-6`)
+- Desktop: 32px (`lg:px-8`)
 
 ## i18n Integration
 
@@ -175,15 +179,21 @@ pnpm ci:local:quick
 ## Directory Structure
 
 ```
-src/components/blocks/
-├── _templates/
-│   └── BLOCK_TEMPLATE.tsx   # Copy this to create new blocks
-├── hero/
-│   └── hero-split-block.tsx
-├── features/
-│   └── features-grid-block.tsx
-├── tech/
-│   └── tech-tabs-block.tsx
-└── cta/
-    └── cta-banner-block.tsx
+src/components/
+├── primitives/                 # Layout foundation (Container, Section)
+│   ├── index.ts
+│   ├── Container.tsx
+│   └── Section.tsx
+├── blocks/                     # Reusable page blocks
+│   ├── _templates/
+│   │   └── BLOCK_TEMPLATE.tsx  # Copy this to create new blocks
+│   ├── hero/
+│   │   └── hero-split-block.tsx
+│   ├── features/
+│   │   └── features-grid-block.tsx
+│   ├── tech/
+│   │   └── tech-tabs-block.tsx
+│   └── cta/
+│       └── cta-banner-block.tsx
+└── ui/                         # Interactive UI components (buttons, forms, etc.)
 ```

@@ -49,6 +49,22 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Vercel Navigation Colors - Extracted from vercel.com */
+  --color-vercel-nav-light-default: rgb(102, 102, 102);
+  --color-vercel-nav-light-hover: rgb(23, 23, 23);
+  --color-vercel-nav-light-bg-hover: rgb(235, 235, 235);
+  --color-vercel-nav-dark-default: rgb(161, 161, 161);
+  --color-vercel-nav-dark-hover: rgb(237, 237, 237);
+  --color-vercel-nav-dark-bg-hover: rgb(31, 31, 31);
+  --color-vercel-nav-focus-inner: rgb(10, 10, 10);
+  --color-vercel-nav-focus-outer: rgb(82, 168, 255);
+
+  /* Vercel Dropdown Container Colors - Extracted from vercel.com */
+  --color-vercel-dropdown-light-bg: rgb(255, 255, 255);
+  --color-vercel-dropdown-light-border: rgb(23, 23, 23);
+  --color-vercel-dropdown-dark-bg: rgb(0, 0, 0);
+  --color-vercel-dropdown-dark-border: rgb(46, 46, 46);
 }
 
 :root {
@@ -309,6 +325,30 @@
   *:focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
+  }
+
+  /* High contrast mode support for navigation focus rings */
+  @media (forced-colors: active) {
+    [data-slot='navigation-menu-trigger']:focus-visible,
+    [data-slot='navigation-menu-link']:focus-visible,
+    [data-slot='navigation-menu-viewport'] a:focus-visible {
+      outline: 2px solid Highlight !important;
+      outline-offset: 2px !important;
+      box-shadow: none !important;
+    }
+  }
+
+  /* Vercel Dropdown Container Styles - Override viewport appearance */
+  [data-slot='navigation-menu-viewport'] {
+    background-color: var(--color-vercel-dropdown-light-bg) !important;
+    border: 1px solid var(--color-vercel-dropdown-light-border) !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  .dark [data-slot='navigation-menu-viewport'] {
+    background-color: var(--color-vercel-dropdown-dark-bg) !important;
+    border-color: var(--color-vercel-dropdown-dark-border) !important;
   }
 
   /* 跳过链接 */

@@ -542,8 +542,9 @@ class QualityGate {
             this.config.gates.coverage.diffWarningThreshold;
 
           // 新增文件：强制 90% 覆盖率（阻断）
+          // 排除无可测代码的文件（如 barrel/index 文件，0/0 行）
           const lowAddedFiles = diffCoverage.added.fileMetrics.filter(
-            (f) => f.pct < threshold,
+            (f) => f.total > 0 && f.pct < threshold,
           );
           if (lowAddedFiles.length > 0) {
             gate.status = gate.blocking ? 'failed' : 'warning';
@@ -563,8 +564,9 @@ class QualityGate {
           }
 
           // 修改文件：仅警告，不阻断（避免历史债务阻断）
+          // 排除无可测代码的文件（如 barrel/index 文件，0/0 行）
           const lowModifiedFiles = diffCoverage.modified.fileMetrics.filter(
-            (f) => f.pct < threshold,
+            (f) => f.total > 0 && f.pct < threshold,
           );
           if (lowModifiedFiles.length > 0) {
             gate.status = gate.status === 'passed' ? 'warning' : gate.status;

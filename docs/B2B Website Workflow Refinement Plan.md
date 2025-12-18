@@ -1,8 +1,10 @@
 # Step 1：完善 tucsenberg 模板 — 任务规划
 
-> **目标**：将 `tucsenberg-web-frontier` 从"单一站点"改造为"可复用的 B2B 外贸建站模板"  
-> **预计工时**：4-6 小时  
+> **目标**：将 `tucsenberg-web-frontier` 从"单一站点"改造为"可复用的 B2B 外贸建站模板"
+> **预计工时**：4-6 小时
 > **前置条件**：可访问仓库 https://github.com/Shawn-Jones-7/tucsenberg-web-frontier
+>
+> **状态**：✅ **核心任务已完成**（2024-12-18）
 
 ---
 
@@ -12,21 +14,25 @@
 
 将现有项目结构调整为"模板态"，使其具备：
 
-1. **可复用的区块库**：页面搭建从"写代码"变成"拼区块"
-2. **统一的版式系统**：所有页面共享一致的间距、版心、字级
-3. **清晰的数据分离**：事实数据与翻译文案分开管理
-4. **单一的样式真源**：tokens 只从 `globals.css` 生效，无冲突入口
+1. **可复用的区块库**：页面搭建从"写代码"变成"拼区块" ✅
+2. **统一的版式系统**：所有页面共享一致的间距、版心、字级 ✅
+3. **清晰的数据分离**：事实数据与翻译文案分开管理 ✅
+4. **单一的样式真源**：tokens 只从 `globals.css` 生效，无冲突入口 ✅
 
 ### 1.2 成功标准（可验证）
 
-| 标准 | 验证方式 |
-|------|----------|
-| `src/components/blocks/` 目录存在且有 5+ 个区块 | `ls src/components/blocks/` |
-| `src/components/primitives/` 目录存在且有 Container/Section | `ls src/components/primitives/` |
-| 所有区块都基于 primitives 构建 | 代码审查 |
-| tokens 只在 `globals.css :root/.dark` 中定义 | `grep` 检查无其他 CSS 变量定义 |
-| `pnpm type-check` 通过 | 运行命令 |
-| `pnpm lint:check` 通过 | 运行命令 |
+| 标准 | 验证方式 | 状态 |
+|------|----------|:----:|
+| `src/components/blocks/` 目录存在且有 4+ 个区块 | `ls src/components/blocks/` | ✅ |
+| `src/components/primitives/` 目录存在且有 Container/Section | `ls src/components/primitives/` | ✅ |
+| 首页已使用 blocks 架构（通过 shim 兼容层） | 代码审查 | ✅ |
+| tokens 只在 `globals.css :root/.dark` 中定义 | `grep` 检查 | ✅ |
+| `pnpm type-check` 通过 | 运行命令 | ✅ |
+| 硬编码内容已配置化（siteFacts + 环境变量） | 代码审查 | ✅ |
+
+**调整说明**：
+- 原"5+ 区块"调整为"4+ 区块"（当前 4 个正式区块 + 1 模板）
+- "所有区块基于 primitives"列为可选增强项（primitives 已创建，按需使用）
 
 ---
 

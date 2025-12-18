@@ -15,6 +15,7 @@ describe('security-headers', () => {
 
   it('should return whitelisted origin and credentials for allowed origin', () => {
     vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://tucsenberg.com');
 
     const headers = getCORSHeaders('https://tucsenberg.com');
 

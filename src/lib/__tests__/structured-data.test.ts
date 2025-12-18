@@ -115,14 +115,14 @@ describe('Structured Data Generation', () => {
         'logo': 'https://tucsenberg.com/logo.png',
         'contactPoint': {
           '@type': 'ContactPoint',
-          'telephone': '+1-555-0123',
+          'telephone': '+86-xxx-xxxx-xxxx',
           'contactType': 'customer service',
           'availableLanguage': ['en', 'zh'],
         },
         'sameAs': [
-          'https://twitter.com/tucsenberg',
-          'https://linkedin.com/company/tucsenberg',
-          'https://github.com/tucsenberg',
+          'https://twitter.com/company',
+          'https://linkedin.com/company/example',
+          'https://github.com/company',
         ],
       });
     });

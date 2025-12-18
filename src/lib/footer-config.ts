@@ -6,6 +6,7 @@
  */
 
 import type { Locale } from '@/types/i18n';
+import { siteFacts } from '@/config/site-facts';
 
 // Footer link interface
 export interface FooterLink {
@@ -54,20 +55,20 @@ export interface FooterConfig {
   socialLinks: SocialLink[];
 }
 
-// Company information
+// Company information - uses siteFacts for business data
 export const COMPANY_INFO: CompanyInfo = {
-  name: 'Tucsenberg',
+  name: siteFacts.company.name,
   description:
     'Modern B2B enterprise web solutions with cutting-edge technology.',
   address: {
     street: '123 Innovation Drive',
-    city: 'Tech Valley',
-    country: 'Global',
+    city: siteFacts.company.location.city,
+    country: siteFacts.company.location.country,
     postalCode: '12345',
   },
   contact: {
-    email: 'hello@tucsenberg.com',
-    phone: '+1 (555) 123-4567',
+    email: siteFacts.contact.email,
+    phone: siteFacts.contact.phone,
   },
 };
 
@@ -136,7 +137,7 @@ export const FOOTER_SECTIONS: FooterSection[] = [
       },
       {
         key: 'community',
-        href: 'https://community.tucsenberg.com',
+        href: process.env['NEXT_PUBLIC_COMMUNITY_URL'] ?? '#',
         external: true,
         translationKey: 'footer.sections.resources.community',
       },

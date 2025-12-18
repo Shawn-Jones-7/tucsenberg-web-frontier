@@ -77,16 +77,16 @@ describe('footer-config', () => {
       const { address } = COMPANY_INFO;
       expect(address).toBeDefined();
       expect(address!.street).toBe('123 Innovation Drive');
-      expect(address!.city).toBe('Tech Valley');
-      expect(address!.country).toBe('Global');
+      expect(address!.city).toBe('Shenzhen');
+      expect(address!.country).toBe('China');
       expect(address!.postalCode).toBe('12345');
     });
 
     it('should have valid contact information', () => {
       const { contact } = COMPANY_INFO;
       expect(contact).toBeDefined();
-      expect(contact!.email).toBe('hello@tucsenberg.com');
-      expect(contact!.phone).toBe('+1 (555) 123-4567');
+      expect(contact!.email).toBe('sales@example.com');
+      expect(contact!.phone).toBe('+86-xxx-xxxx-xxxx');
     });
   });
 
@@ -114,8 +114,8 @@ describe('footer-config', () => {
           expect(link.href).toBeTruthy();
           expect(link.translationKey).toBeTruthy();
 
-          // Check href format
-          expect(link.href).toMatch(/^(\/|https?:\/\/)/);
+          // Check href format (allows /, http://, https://, or # for placeholder)
+          expect(link.href).toMatch(/^(\/|https?:\/\/|#)/);
 
           // External links should have external flag
           if (link.href.startsWith('http')) {

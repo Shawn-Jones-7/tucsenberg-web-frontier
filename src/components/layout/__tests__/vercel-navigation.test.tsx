@@ -17,7 +17,7 @@ vi.mock('next-intl', () => ({
   useTranslations: mockUseTranslations,
 }));
 
-// Mock i18n Link
+// Mock i18n Link and usePathname
 vi.mock('@/i18n/routing', () => ({
   Link: ({
     href,
@@ -36,6 +36,7 @@ vi.mock('@/i18n/routing', () => ({
       {children}
     </a>
   ),
+  usePathname: () => '/',
   routing: {
     pathnames: {
       '/': '/',
@@ -83,6 +84,8 @@ vi.mock('@/lib/navigation', () => ({
     mainNav: 'Main navigation',
     mobileMenuButton: 'Toggle mobile menu',
   },
+  isActivePath: (currentPath: string, itemPath: string) =>
+    currentPath === itemPath,
 }));
 
 // Mock NavigationMenu components
