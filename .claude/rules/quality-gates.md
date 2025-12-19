@@ -105,6 +105,30 @@ Lighthouse CI enforces progressive thresholds:
 
 **Note**: CI thresholds are relaxed for cold-start variance. Production targets align with Google's "Good" CWV standards.
 
+## Responsive Breakpoint Changes
+
+When modifying Tailwind CSS responsive breakpoints (`sm`, `md`, `lg`, `xl`, `2xl`), E2E tests with specific viewport sizes may fail silently in CI.
+
+**Pre-commit checklist for breakpoint changes**:
+
+1. Identify affected viewport ranges (e.g., `md` → `lg` affects 768px–1023px)
+2. Search for E2E tests using those viewport dimensions:
+   ```bash
+   grep -rn "setViewportSize.*768\|width: 768\|tablet" tests/e2e/
+   grep -rn "setViewportSize.*1024\|width: 1024" tests/e2e/
+   ```
+3. Update test assertions to match new responsive behavior
+4. Run E2E tests locally before push: `pnpm test:e2e`
+
+**Common breakpoint values**:
+| Breakpoint | Width | Use Case |
+|------------|-------|----------|
+| `sm` | 640px | Mobile landscape |
+| `md` | 768px | Tablet portrait |
+| `lg` | 1024px | Tablet landscape / small desktop |
+| `xl` | 1280px | Desktop |
+| `2xl` | 1536px | Large desktop |
+
 ## Failure Policy
 
 - Any gate failure stops pipeline immediately

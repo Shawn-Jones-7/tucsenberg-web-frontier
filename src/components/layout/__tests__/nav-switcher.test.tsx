@@ -156,7 +156,7 @@ describe('NavSkeleton', () => {
     // The skeleton should render these elements
     const SkeletonMock = () => (
       <div
-        className='hidden items-center space-x-1 md:flex'
+        className='hidden items-center space-x-1 lg:flex'
         aria-hidden='true'
       >
         <div className='h-9 w-16 animate-pulse rounded-xl bg-muted' />
@@ -175,7 +175,7 @@ describe('NavSkeleton', () => {
   it('skeleton is hidden on mobile', () => {
     const SkeletonMock = () => (
       <div
-        className='hidden items-center space-x-1 md:flex'
+        className='hidden items-center space-x-1 lg:flex'
         aria-hidden='true'
         data-testid='skeleton-container'
       >
@@ -187,13 +187,13 @@ describe('NavSkeleton', () => {
 
     const container = screen.getByTestId('skeleton-container');
     expect(container).toHaveClass('hidden');
-    expect(container).toHaveClass('md:flex');
+    expect(container).toHaveClass('lg:flex');
   });
 
   it('skeleton has aria-hidden for accessibility', () => {
     const SkeletonMock = () => (
       <div
-        className='hidden items-center space-x-1 md:flex'
+        className='hidden items-center space-x-1 lg:flex'
         aria-hidden='true'
         data-testid='skeleton-container'
       >
@@ -210,7 +210,7 @@ describe('NavSkeleton', () => {
   it('skeleton items have correct dimensions', () => {
     const SkeletonMock = () => (
       <div
-        className='hidden items-center space-x-1 md:flex'
+        className='hidden items-center space-x-1 lg:flex'
         aria-hidden='true'
       >
         <div

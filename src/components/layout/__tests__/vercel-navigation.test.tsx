@@ -228,12 +228,12 @@ describe('VercelNavigation', () => {
       expect(items.length).toBe(3); // home, products (dropdown), blog
     });
 
-    it('has hidden md:flex classes for responsive display', () => {
+    it('has hidden lg:flex classes for responsive display', () => {
       render(<VercelNavigation />);
 
       const nav = screen.getByRole('navigation');
       expect(nav).toHaveClass('hidden');
-      expect(nav).toHaveClass('md:flex');
+      expect(nav).toHaveClass('lg:flex');
     });
   });
 
@@ -392,7 +392,7 @@ describe('VercelNavigation', () => {
 
       const nav = screen.getByRole('navigation');
       expect(nav).toHaveClass('hidden');
-      expect(nav).toHaveClass('md:flex');
+      expect(nav).toHaveClass('lg:flex');
       expect(nav).toHaveClass('my-custom');
     });
   });

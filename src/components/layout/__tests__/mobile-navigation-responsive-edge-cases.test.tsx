@@ -112,9 +112,9 @@ describe('Mobile Navigation - Integration Tests', () => {
 
       const trigger = screen.getByRole('button');
       expect(trigger).toBeInTheDocument();
-      // md:hidden 类在外层 div 上，不在 button 上
+      // lg:hidden 类在外层 div 上，不在 button 上
       const container = trigger.closest('div');
-      expect(container).toHaveClass('md:hidden');
+      expect(container).toHaveClass('lg:hidden');
     });
 
     it('supports basic responsive behavior', () => {

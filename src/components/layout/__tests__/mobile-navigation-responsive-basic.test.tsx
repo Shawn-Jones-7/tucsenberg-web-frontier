@@ -114,9 +114,9 @@ describe('Mobile Navigation Responsive - Basic Tests', () => {
     it('is hidden on desktop screens', () => {
       render(<MobileNavigation />);
 
-      // The md:hidden class is on the container div, not the button
+      // The lg:hidden class is on the container div, not the button
       const container = screen.getByRole('button').closest('div');
-      expect(container).toHaveClass('md:hidden');
+      expect(container).toHaveClass('lg:hidden');
     });
 
     it('adapts to different screen sizes', () => {

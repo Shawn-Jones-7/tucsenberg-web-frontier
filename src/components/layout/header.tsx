@@ -71,7 +71,7 @@ export async function Header({
         <div className='relative flex h-16 items-center justify-between'>
           {/* Left section: Logo + Mobile Menu */}
           <div
-            className='flex items-center gap-4'
+            className='flex shrink-0 items-center gap-4'
             {...(!locale ? { 'data-testid': 'mobile-navigation' } : {})}
           >
             {/* 客户端：移动端导航按钮（可见性触发加载）；预留空间避免 CLS */}
@@ -97,7 +97,7 @@ export async function Header({
 
           {/* Right section: Utility Controls */}
           <div
-            className='flex items-center gap-2'
+            className='flex shrink-0 items-center gap-2'
             {...(!locale ? { 'data-testid': 'language-toggle-button' } : {})}
           >
             {/* 客户端：语言切换（可见性触发加载）；预留空间避免 CLS */}
@@ -117,7 +117,7 @@ export async function Header({
                 variant='default'
                 size='sm'
                 asChild
-                className='hidden md:inline-flex'
+                className='hidden lg:inline-flex'
               >
                 <Link href={`/${locale}/contact?source=header_cta`}>
                   {t('contactSales')}
@@ -143,7 +143,7 @@ function CenterNav({
   if (isMinimal) return null;
   return (
     <div
-      className='absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2'
+      className='flex min-w-0 flex-1 items-center justify-center'
       {...(!locale ? { 'data-testid': 'nav-switcher' } : {})}
     >
       {/* 客户端：导航切换器（更晚加载，避免首屏竞争） */}
