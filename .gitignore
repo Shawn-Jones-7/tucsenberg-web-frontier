@@ -124,6 +124,9 @@ reports/**/*.xml
 reports/**/*.html
 # Project data and reports (local only)
 reports/
+# Allow committed code-review reports
+!docs/code-review/reports/
+!docs/code-review/reports/**
 
 backups/
 .lighthouseci/
