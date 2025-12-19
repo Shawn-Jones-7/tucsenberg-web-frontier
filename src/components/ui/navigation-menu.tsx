@@ -128,7 +128,7 @@ function NavigationMenuLink({
     <NavigationMenuPrimitive.Link
       data-slot='navigation-menu-link'
       className={cn(
-        'ease inline-flex h-[30px] items-center rounded-full px-3 py-2 text-sm font-normal text-muted-foreground transition-colors duration-100 outline-none focus-visible:ring-[3px] focus-visible:ring-ring/50 focus-visible:ring-offset-0',
+        'ease inline-flex h-[30px] items-center rounded-full px-3 py-2 text-sm font-normal text-muted-foreground transition-colors duration-100 outline-none',
         className,
       )}
       {...props}

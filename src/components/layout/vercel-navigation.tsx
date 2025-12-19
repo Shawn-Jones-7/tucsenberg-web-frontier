@@ -92,7 +92,6 @@ function useHoverDelay() {
 interface RenderDropdownItemProps {
   item: NavigationItem;
   t: (key: string) => string;
-  isActive: boolean;
   hoverState: {
     openItem: string | null;
     handleMouseEnter: (key: string) => void;
@@ -101,12 +100,7 @@ interface RenderDropdownItemProps {
   };
 }
 
-function renderDropdownItem({
-  item,
-  t,
-  isActive,
-  hoverState,
-}: RenderDropdownItemProps) {
+function renderDropdownItem({ item, t, hoverState }: RenderDropdownItemProps) {
   const isOpen = hoverState.openItem === item.key;
 
   return (
@@ -120,18 +114,14 @@ function renderDropdownItem({
           'relative inline-flex items-center rounded-full px-3 py-2 text-sm font-medium tracking-[0.01em]',
           // Default state - Vercel exact colors
           'text-vercel-nav-light-default dark:text-vercel-nav-dark-default',
-          // Active state - same as hover (Vercel behavior for current page)
-          isActive &&
-            'bg-vercel-nav-light-bg-hover text-vercel-nav-light-hover dark:bg-vercel-nav-dark-bg-hover dark:text-vercel-nav-dark-hover',
           // Hover state - Vercel exact colors
           'hover:bg-vercel-nav-light-bg-hover hover:text-vercel-nav-light-hover',
           'dark:hover:bg-vercel-nav-dark-bg-hover dark:hover:text-vercel-nav-dark-hover',
           // Open state - same as hover (Vercel behavior)
           'data-[state=open]:bg-vercel-nav-light-bg-hover data-[state=open]:text-vercel-nav-light-hover',
           'dark:data-[state=open]:bg-vercel-nav-dark-bg-hover dark:data-[state=open]:text-vercel-nav-dark-hover',
-          // Keyboard focus ring - dual layer (inner + outer), disable default ring
-          '!focus-visible:ring-0 !focus-visible:ring-offset-0',
-          'focus-visible:shadow-[0_0_0_2px_var(--color-vercel-nav-focus-inner),0_0_0_4px_var(--color-vercel-nav-focus-outer)]',
+          // Keyboard focus - single layer blue ring (2px)
+          'focus-visible:ring-2 focus-visible:ring-[rgb(82,168,255)] focus-visible:outline-hidden',
           // Vercel timing: 90ms with ease (not ease-out)
           'transition-[color,background-color] duration-[90ms]',
         )}
@@ -166,15 +156,11 @@ function renderLinkItem(
             'relative inline-flex items-center rounded-full bg-transparent px-3 py-2 text-sm font-medium tracking-[0.01em]',
             // Default state - Vercel exact colors
             'text-vercel-nav-light-default dark:text-vercel-nav-dark-default',
-            // Active state - same as hover (Vercel behavior for current page)
-            isActive &&
-              'bg-vercel-nav-light-bg-hover text-vercel-nav-light-hover dark:bg-vercel-nav-dark-bg-hover dark:text-vercel-nav-dark-hover',
             // Hover state - Vercel exact colors
             'hover:bg-vercel-nav-light-bg-hover hover:text-vercel-nav-light-hover',
             'dark:hover:bg-vercel-nav-dark-bg-hover dark:hover:text-vercel-nav-dark-hover',
-            // Keyboard focus ring - dual layer (inner + outer), disable default ring
-            '!focus-visible:ring-0 !focus-visible:ring-offset-0',
-            'focus-visible:shadow-[0_0_0_2px_var(--color-vercel-nav-focus-inner),0_0_0_4px_var(--color-vercel-nav-focus-outer)]',
+            // Keyboard focus - single layer blue ring (2px)
+            'focus-visible:ring-2 focus-visible:ring-[rgb(82,168,255)] focus-visible:outline-hidden',
             // Vercel timing: 90ms with ease (not ease-out)
             'transition-[color,background-color] duration-[90ms]',
           )}
@@ -199,15 +185,10 @@ export function VercelNavigation({ className }: VercelNavigationProps) {
       <NavigationMenu>
         <NavigationMenuList>
           {mainNavigation.map((item) => {
-            const itemIsActive = isActivePath(pathname, item.href);
             if (item.children && item.children.length > 0) {
-              return renderDropdownItem({
-                item,
-                t,
-                hoverState,
-                isActive: itemIsActive,
-              });
+              return renderDropdownItem({ item, t, hoverState });
             }
+            const itemIsActive = isActivePath(pathname, item.href);
             return renderLinkItem(item, t, itemIsActive);
           })}
         </NavigationMenuList>

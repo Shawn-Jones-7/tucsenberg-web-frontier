@@ -125,6 +125,11 @@ content/{posts,pages,products}/{locale}/ # MDX content files
 messages/[locale]/         # i18n JSON (critical.json + deferred.json)
 ```
 
+**Node Version**: This project requires Node.js 20.x. Use fnm to switch before running commands:
+```bash
+eval "$(fnm env)" && fnm use 20
+```
+
 **Commands**:
 ```bash
 pnpm dev          # Start dev server (Turbopack)
