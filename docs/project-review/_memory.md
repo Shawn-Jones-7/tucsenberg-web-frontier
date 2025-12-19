@@ -1,1 +1,2 @@
 - 新增 AGENTS.override.md，规定云端/CI 环境的执行覆盖、默认变更范围和验证策略。
+- 完成 Phase 02 API 路由审查，记录 P0 风险：monitoring/dashboard 无鉴权与限流，verify-turnstile 与 csp-report 缺少限流/一致的验证；多数路由未用 Zod 校验需补齐清单要求。
