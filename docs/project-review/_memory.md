@@ -1,3 +1,10 @@
 - 新增 AGENTS.override.md，规定云端/CI 环境的执行覆盖、默认变更范围和验证策略。
 - 完成 Phase 01 安全部件审计，报告与 P1 问题记录于 docs/code-review/。
 - 完成 Phase 02 API 路由审查，记录 P0 风险：monitoring/dashboard 无鉴权与限流，verify-turnstile 与 csp-report 缺少限流/一致的验证；多数路由未用 Zod 校验需补齐清单要求。
+- 2025-12-19: Added infrastructure config review report at docs/code-review/reports/04-infrastructure.md; noted pnpm audit/outdated blocked by registry 403 and logged follow-up issues in docs/code-review/issues/.
+- Phase 05 content/MDX review completed; report stored at docs/code-review/reports/05-content-mdx.md with P0/P1 findings.
+- P0: product locale path traversal risk documented in docs/code-review/issues/p0-product-path-traversal.md.
+- P1: frontmatter validation not enforced documented in docs/code-review/issues/p1-frontmatter-validation.md.
+- Completed Phase 08 hooks/state review with report in docs/code-review/reports/08-hooks-state.md; fixed `useDeferredContent` cleanup leak and logged follow-up refactor issue for `useBreakpoint` stability.
+- Phase 06 i18n review documented in docs/code-review/reports/06-i18n-system.md; noted hardcoded locale demo/layout strings and oversized critical.json with follow-up issues in docs/code-review/issues/.
+- Phase 10 test review (P2): full Vitest run/coverage attempts terminated due to suite size (>400 files); coverage baseline not captured. Recorded findings and issues under docs/code-review/.

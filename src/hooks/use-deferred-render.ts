@@ -58,35 +58,39 @@ export function useDeferredContent(
 
   useEffect(() => {
     let didSet = false;
+    let intersectionObserver: IntersectionObserver | null = null;
 
     // 进入视口时渲染
     const el = elementRef.current;
     if (typeof IntersectionObserver !== 'undefined' && el) {
-      const io = new IntersectionObserver(
+      intersectionObserver = new IntersectionObserver(
         (entries) => {
           for (const entry of entries) {
             if (entry.isIntersecting && !didSet) {
               didSet = true;
               setShowContent(true);
-              io.disconnect();
+              intersectionObserver?.disconnect();
               break;
             }
           }
         },
         { rootMargin },
       );
-      io.observe(el);
+      intersectionObserver.observe(el);
     }
 
     // 空闲时兜底渲染
-    const cleanup = requestIdleCallback(
+    const cleanupIdleCallback = requestIdleCallback(
       () => {
         if (!didSet) setShowContent(true);
       },
       { timeout },
     );
 
-    return cleanup;
+    return () => {
+      cleanupIdleCallback?.();
+      intersectionObserver?.disconnect();
+    };
   }, [elementRef, rootMargin, timeout]);
 
   return showContent;
