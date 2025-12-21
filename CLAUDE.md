@@ -101,6 +101,47 @@ This matrix defines **mandatory** resource dispatch strategies per phase. Claude
 | **3B** | Backend / Logic | **Codex** | Unified Diff Patch | sandbox=read-only |
 | **4** | Implementation | **Claude (Self)** + **Context7** | Production Code | Proactively query official docs |
 | **5** | Audit & QA | **Codex** + **Gemini** | Review Comments | Trigger immediately after changes |
+| **Image** | Visual Asset Generation | **Gemini** + **nanobanana** | PNG/JPEG files | Context-aware prompt construction |
+
+---
+
+## 2.1 Image Generation (Context-Aware)
+
+**Trigger Keywords**: 生成 Logo / 生成图标 / 生成 UI 图 / 生成图表 / 生成封面 / create image / generate icon
+
+**Workflow**:
+
+1. **Context Collection**: Gather project metadata via `~/.claude/skills/context-image-gen/scripts/collect_context.py`
+   - `package.json`: name, description, keywords
+   - Tailwind config: color palette
+   - Existing assets: `public/`, `assets/`
+
+2. **Prompt Engineering**: Construct detailed prompt with:
+   ```
+   [Subject] + [Style] + [Colors] + [Mood] + [Format] + [Constraints]
+   ```
+
+3. **Delegation**: Call Gemini + nanobanana via:
+   ```bash
+   python ~/.claude/skills/collaborating-with-gemini/scripts/gemini_bridge.py \
+     --cd "[project-path]" \
+     --PROMPT "/generate [constructed-prompt]"
+   ```
+
+4. **Output**: Images saved to `~/.gemini/extensions/nanobanana/mcp-server/nanobanana-output/`
+
+**Available Commands**:
+
+| Command | Use Case |
+|---------|----------|
+| `/generate` | Text-to-image |
+| `/icon` | App icons, favicons |
+| `/pattern` | Seamless textures |
+| `/diagram` | Technical diagrams |
+| `/story` | Multi-frame sequences |
+| `/edit` | Modify existing images |
+
+**Model**: `gemini-3-pro-image-preview` via cliproxy (`http://127.0.0.1:8317`)
 
 ---
 
