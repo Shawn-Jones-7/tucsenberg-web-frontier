@@ -11,9 +11,12 @@ import {
   CONFIG_DIR,
   CONTENT_DIR,
   getContentConfig,
+  getValidationConfig,
   PAGES_DIR,
   POSTS_DIR,
+  shouldFilterDraft,
   validateFilePath,
+  warnIfDraftsInProduction,
 } from '../content-utils';
 
 // Mock dependencies
@@ -381,6 +384,205 @@ describe('Content Utils', () => {
       expect(config.postsPerPage).toBe(TEST_COUNT_CONSTANTS.MEDIUM);
       expect(config.enableSearch).toBe(true); // Should keep default
       expect(config.enableComments).toBe(false); // Should keep default
+    });
+  });
+
+  describe('shouldFilterDraft', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return false when content is not a draft', () => {
+      mockFs.existsSync.mockReturnValue(false);
+
+      expect(shouldFilterDraft(false)).toBe(false);
+      expect(shouldFilterDraft(undefined)).toBe(false);
+    });
+
+    it('should return true when draft and drafts disabled', () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(
+        JSON.stringify({ enableDrafts: false }),
+      );
+
+      const originalEnv = process.env.NODE_ENV;
+      const originalDraftsEnv = process.env.CONTENT_ENABLE_DRAFTS;
+      process.env.NODE_ENV = 'production';
+      delete process.env.CONTENT_ENABLE_DRAFTS;
+
+      try {
+        expect(shouldFilterDraft(true)).toBe(true);
+      } finally {
+        process.env.NODE_ENV = originalEnv;
+        if (originalDraftsEnv !== undefined) {
+          process.env.CONTENT_ENABLE_DRAFTS = originalDraftsEnv;
+        }
+      }
+    });
+
+    it('should return false when draft but drafts enabled', () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(
+        JSON.stringify({ enableDrafts: true }),
+      );
+
+      const originalEnv = process.env.CONTENT_ENABLE_DRAFTS;
+      process.env.CONTENT_ENABLE_DRAFTS = 'true';
+
+      try {
+        expect(shouldFilterDraft(true)).toBe(false);
+      } finally {
+        if (originalEnv !== undefined) {
+          process.env.CONTENT_ENABLE_DRAFTS = originalEnv;
+        } else {
+          delete process.env.CONTENT_ENABLE_DRAFTS;
+        }
+      }
+    });
+  });
+
+  describe('warnIfDraftsInProduction', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should log warning when drafts enabled in production', async () => {
+      const { logger } = await import('@/lib/logger');
+
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify({}));
+
+      const originalNodeEnv = process.env.NODE_ENV;
+      const originalDraftsEnv = process.env.CONTENT_ENABLE_DRAFTS;
+      process.env.NODE_ENV = 'production';
+      process.env.CONTENT_ENABLE_DRAFTS = 'true';
+
+      try {
+        warnIfDraftsInProduction();
+        expect(logger.warn).toHaveBeenCalledWith(
+          expect.stringContaining('CONTENT_WARNING'),
+        );
+      } finally {
+        process.env.NODE_ENV = originalNodeEnv;
+        if (originalDraftsEnv !== undefined) {
+          process.env.CONTENT_ENABLE_DRAFTS = originalDraftsEnv;
+        } else {
+          delete process.env.CONTENT_ENABLE_DRAFTS;
+        }
+      }
+    });
+
+    it('should not log warning when drafts disabled in production', async () => {
+      const { logger } = await import('@/lib/logger');
+
+      mockFs.existsSync.mockReturnValue(false);
+
+      const originalNodeEnv = process.env.NODE_ENV;
+      const originalDraftsEnv = process.env.CONTENT_ENABLE_DRAFTS;
+      process.env.NODE_ENV = 'production';
+      delete process.env.CONTENT_ENABLE_DRAFTS;
+
+      try {
+        warnIfDraftsInProduction();
+        expect(logger.warn).not.toHaveBeenCalledWith(
+          expect.stringContaining('CONTENT_WARNING'),
+        );
+      } finally {
+        process.env.NODE_ENV = originalNodeEnv;
+        if (originalDraftsEnv !== undefined) {
+          process.env.CONTENT_ENABLE_DRAFTS = originalDraftsEnv;
+        }
+      }
+    });
+  });
+
+  describe('getValidationConfig', () => {
+    beforeEach(() => {
+      vi.clearAllMocks();
+    });
+
+    it('should return default validation config when file does not exist', () => {
+      mockFs.existsSync.mockReturnValue(false);
+
+      const config = getValidationConfig();
+
+      expect(config).toEqual({
+        strictMode: false,
+        requireSlug: true,
+        requireLocale: false,
+        requireAuthor: false,
+        requireDescription: false,
+        requireTags: false,
+        requireCategories: false,
+      });
+    });
+
+    it('should return default config when no validation section exists', () => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify({ postsPerPage: 20 }));
+
+      const config = getValidationConfig();
+
+      expect(config.strictMode).toBe(false);
+      expect(config.requireSlug).toBe(true);
+    });
+
+    it('should load validation config from content.json', () => {
+      const validationConfig = {
+        validation: {
+          strictMode: true,
+          requireAuthor: true,
+          maxTitleLength: 100,
+          maxDescriptionLength: 200,
+          maxExcerptLength: 300,
+          products: ['product-a', 'product-b'],
+        },
+      };
+
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify(validationConfig));
+
+      const config = getValidationConfig();
+
+      expect(config.strictMode).toBe(true);
+      expect(config.requireAuthor).toBe(true);
+      expect(config.maxTitleLength).toBe(100);
+      expect(config.maxDescriptionLength).toBe(200);
+      expect(config.maxExcerptLength).toBe(300);
+      expect(config.products).toEqual(['product-a', 'product-b']);
+    });
+
+    it('should handle errors gracefully and return defaults', async () => {
+      const { logger } = await import('@/lib/logger');
+
+      mockFs.existsSync.mockImplementation(() => {
+        throw new Error('Read error');
+      });
+
+      const config = getValidationConfig();
+
+      expect(config.strictMode).toBe(false);
+      expect(logger.warn).toHaveBeenCalledWith(
+        'Failed to load validation config, using defaults',
+        { error: expect.any(Error) },
+      );
+    });
+
+    it('should handle partial validation config', () => {
+      const partialValidation = {
+        validation: {
+          requireDescription: true,
+        },
+      };
+
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(JSON.stringify(partialValidation));
+
+      const config = getValidationConfig();
+
+      expect(config.requireDescription).toBe(true);
+      expect(config.strictMode).toBe(false);
+      expect(config.requireSlug).toBe(true);
     });
   });
 });

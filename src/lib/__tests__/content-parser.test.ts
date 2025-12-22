@@ -1,8 +1,16 @@
 import fs from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContentError, type ContentType } from '@/types/content';
-import { getContentFiles, parseContentFile } from '@/lib/content-parser';
+import {
+  ContentError,
+  ContentValidationError,
+  type ContentType,
+} from '@/types/content';
+import {
+  getContentFiles,
+  parseContentFile,
+  parseContentFileWithDraftFilter,
+} from '@/lib/content-parser';
 import { logger } from '@/lib/logger';
 import { CONTENT_LIMITS } from '@/constants/app-constants';
 
@@ -291,6 +299,143 @@ This is test content.`;
       expect(() => getContentFiles('../invalid/path')).toThrow(
         'Invalid file path',
       );
+    });
+  });
+
+  describe('parseContentFileWithDraftFilter', () => {
+    const mockFilePath = 'draft-post.mdx';
+    const mockContentType: ContentType = 'posts';
+    const mockDraftContent = `---
+title: Draft Post
+draft: true
+---
+
+Draft content.`;
+
+    beforeEach(() => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(mockDraftContent);
+    });
+
+    it('should return parsed content when not a draft', async () => {
+      const { shouldFilterDraft } = vi.mocked(
+        await import('@/lib/content-utils'),
+      );
+      shouldFilterDraft.mockReturnValue(false);
+
+      const result = parseContentFileWithDraftFilter(
+        mockFilePath,
+        mockContentType,
+      );
+
+      expect(result).not.toBeNull();
+      expect(result?.slug).toBe('draft-post');
+    });
+
+    it('should return null when content is filtered as draft', async () => {
+      const { shouldFilterDraft } = vi.mocked(
+        await import('@/lib/content-utils'),
+      );
+      shouldFilterDraft.mockReturnValue(true);
+
+      const result = parseContentFileWithDraftFilter(
+        mockFilePath,
+        mockContentType,
+      );
+
+      expect(result).toBeNull();
+      expect(mockLogger.info).toHaveBeenCalledWith('Filtering draft content', {
+        file: mockFilePath,
+        slug: 'draft-post',
+      });
+    });
+  });
+
+  describe('parseContentFile - validation logging', () => {
+    const mockFilePath = 'test.mdx';
+    const mockContentType: ContentType = 'posts';
+    const mockFileContent = `---
+title: Test
+---
+
+Content`;
+
+    beforeEach(() => {
+      mockFs.existsSync.mockReturnValue(true);
+      mockFs.readFileSync.mockReturnValue(mockFileContent);
+    });
+
+    it('should log errors in strict mode when validation fails', async () => {
+      const { validateContentMetadata } = vi.mocked(
+        await import('@/lib/content-validation'),
+      );
+      validateContentMetadata.mockReturnValue({
+        isValid: false,
+        errors: ['Missing required field'],
+        warnings: [],
+      });
+
+      expect(() =>
+        parseContentFile(mockFilePath, mockContentType, { strictMode: true }),
+      ).toThrow(ContentValidationError);
+      expect(mockLogger.error).toHaveBeenCalledWith(
+        'Content validation failed',
+        {
+          file: mockFilePath,
+          errors: ['Missing required field'],
+          warnings: [],
+        },
+      );
+    });
+
+    it('should log info for warnings when validation passes', async () => {
+      const { validateContentMetadata } = vi.mocked(
+        await import('@/lib/content-validation'),
+      );
+      validateContentMetadata.mockReturnValue({
+        isValid: true,
+        errors: [],
+        warnings: ['Field is deprecated'],
+      });
+
+      parseContentFile(mockFilePath, mockContentType);
+
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Content validation warnings',
+        {
+          file: mockFilePath,
+          warnings: ['Field is deprecated'],
+        },
+      );
+    });
+
+    it('should throw ContentValidationError in strict mode', async () => {
+      const { validateContentMetadata } = vi.mocked(
+        await import('@/lib/content-validation'),
+      );
+      validateContentMetadata.mockReturnValue({
+        isValid: false,
+        errors: ['Title too long'],
+        warnings: [],
+      });
+
+      expect(() =>
+        parseContentFile(mockFilePath, mockContentType, { strictMode: true }),
+      ).toThrow(ContentValidationError);
+    });
+
+    it('should use slug from frontmatter if provided', () => {
+      const contentWithSlug = `---
+title: Test
+slug: custom-slug
+---
+
+Content`;
+      mockFs.readFileSync.mockReturnValue(contentWithSlug);
+
+      const result = parseContentFile(mockFilePath, mockContentType);
+
+      expect(result.slug).toBe('custom-slug');
     });
   });
 });
