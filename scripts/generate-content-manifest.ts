@@ -73,14 +73,18 @@ function scanDirectory(
 
     const slug = path.basename(file, ext);
     const filePath = path.join(dirPath, file);
-    const relativePath = path.relative(process.cwd(), filePath);
+    const relativePath = path
+      .relative(process.cwd(), filePath)
+      .split(path.sep)
+      .join('/');
+    const stableFilePath = `/${relativePath}`;
 
     entries.push({
       type: contentType,
       locale,
       slug,
       extension: ext,
-      filePath,
+      filePath: stableFilePath,
       relativePath,
     });
   }

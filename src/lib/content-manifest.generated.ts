@@ -30,7 +30,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "choosing-reliable-suppliers",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/choosing-reliable-suppliers.mdx",
+    "filePath": "/content/posts/en/choosing-reliable-suppliers.mdx",
     "relativePath": "content/posts/en/choosing-reliable-suppliers.mdx"
   },
   {
@@ -38,7 +38,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "export-documentation-checklist",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/export-documentation-checklist.mdx",
+    "filePath": "/content/posts/en/export-documentation-checklist.mdx",
     "relativePath": "content/posts/en/export-documentation-checklist.mdx"
   },
   {
@@ -46,7 +46,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "guide-to-international-trade-terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/guide-to-international-trade-terms.mdx",
+    "filePath": "/content/posts/en/guide-to-international-trade-terms.mdx",
     "relativePath": "content/posts/en/guide-to-international-trade-terms.mdx"
   },
   {
@@ -54,7 +54,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "quality-control-best-practices",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/quality-control-best-practices.mdx",
+    "filePath": "/content/posts/en/quality-control-best-practices.mdx",
     "relativePath": "content/posts/en/quality-control-best-practices.mdx"
   },
   {
@@ -62,7 +62,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "welcome-to-tucsenberg",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/welcome-to-tucsenberg.mdx",
+    "filePath": "/content/posts/en/welcome-to-tucsenberg.mdx",
     "relativePath": "content/posts/en/welcome-to-tucsenberg.mdx"
   },
   {
@@ -70,7 +70,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "choosing-reliable-suppliers",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/choosing-reliable-suppliers.mdx",
+    "filePath": "/content/posts/zh/choosing-reliable-suppliers.mdx",
     "relativePath": "content/posts/zh/choosing-reliable-suppliers.mdx"
   },
   {
@@ -78,7 +78,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "export-documentation-checklist",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/export-documentation-checklist.mdx",
+    "filePath": "/content/posts/zh/export-documentation-checklist.mdx",
     "relativePath": "content/posts/zh/export-documentation-checklist.mdx"
   },
   {
@@ -86,7 +86,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "guide-to-international-trade-terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/guide-to-international-trade-terms.mdx",
+    "filePath": "/content/posts/zh/guide-to-international-trade-terms.mdx",
     "relativePath": "content/posts/zh/guide-to-international-trade-terms.mdx"
   },
   {
@@ -94,7 +94,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "quality-control-best-practices",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/quality-control-best-practices.mdx",
+    "filePath": "/content/posts/zh/quality-control-best-practices.mdx",
     "relativePath": "content/posts/zh/quality-control-best-practices.mdx"
   },
   {
@@ -102,7 +102,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "welcome-to-tucsenberg",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/welcome-to-tucsenberg.mdx",
+    "filePath": "/content/posts/zh/welcome-to-tucsenberg.mdx",
     "relativePath": "content/posts/zh/welcome-to-tucsenberg.mdx"
   },
   {
@@ -110,7 +110,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "about",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/about.mdx",
+    "filePath": "/content/pages/en/about.mdx",
     "relativePath": "content/pages/en/about.mdx"
   },
   {
@@ -118,7 +118,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "faq",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/faq.mdx",
+    "filePath": "/content/pages/en/faq.mdx",
     "relativePath": "content/pages/en/faq.mdx"
   },
   {
@@ -126,7 +126,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "privacy",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/privacy.mdx",
+    "filePath": "/content/pages/en/privacy.mdx",
     "relativePath": "content/pages/en/privacy.mdx"
   },
   {
@@ -134,7 +134,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/terms.mdx",
+    "filePath": "/content/pages/en/terms.mdx",
     "relativePath": "content/pages/en/terms.mdx"
   },
   {
@@ -142,7 +142,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "about",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/about.mdx",
+    "filePath": "/content/pages/zh/about.mdx",
     "relativePath": "content/pages/zh/about.mdx"
   },
   {
@@ -150,7 +150,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "faq",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/faq.mdx",
+    "filePath": "/content/pages/zh/faq.mdx",
     "relativePath": "content/pages/zh/faq.mdx"
   },
   {
@@ -158,7 +158,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "privacy",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/privacy.mdx",
+    "filePath": "/content/pages/zh/privacy.mdx",
     "relativePath": "content/pages/zh/privacy.mdx"
   },
   {
@@ -166,7 +166,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/terms.mdx",
+    "filePath": "/content/pages/zh/terms.mdx",
     "relativePath": "content/pages/zh/terms.mdx"
   },
   {
@@ -174,7 +174,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "hydraulic-pump-station",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/hydraulic-pump-station.mdx",
+    "filePath": "/content/products/en/hydraulic-pump-station.mdx",
     "relativePath": "content/products/en/hydraulic-pump-station.mdx"
   },
   {
@@ -182,7 +182,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "industrial-control-panel",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/industrial-control-panel.mdx",
+    "filePath": "/content/products/en/industrial-control-panel.mdx",
     "relativePath": "content/products/en/industrial-control-panel.mdx"
   },
   {
@@ -190,7 +190,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "industrial-valve-set",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/industrial-valve-set.mdx",
+    "filePath": "/content/products/en/industrial-valve-set.mdx",
     "relativePath": "content/products/en/industrial-valve-set.mdx"
   },
   {
@@ -198,7 +198,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "led-industrial-lighting",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/led-industrial-lighting.mdx",
+    "filePath": "/content/products/en/led-industrial-lighting.mdx",
     "relativePath": "content/products/en/led-industrial-lighting.mdx"
   },
   {
@@ -206,7 +206,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "pneumatic-cylinder",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/pneumatic-cylinder.mdx",
+    "filePath": "/content/products/en/pneumatic-cylinder.mdx",
     "relativePath": "content/products/en/pneumatic-cylinder.mdx"
   },
   {
@@ -214,7 +214,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "smart-sensor-module",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/smart-sensor-module.mdx",
+    "filePath": "/content/products/en/smart-sensor-module.mdx",
     "relativePath": "content/products/en/smart-sensor-module.mdx"
   },
   {
@@ -222,7 +222,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "stainless-steel-fasteners",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/stainless-steel-fasteners.mdx",
+    "filePath": "/content/products/en/stainless-steel-fasteners.mdx",
     "relativePath": "content/products/en/stainless-steel-fasteners.mdx"
   },
   {
@@ -230,7 +230,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "variable-frequency-drive",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/variable-frequency-drive.mdx",
+    "filePath": "/content/products/en/variable-frequency-drive.mdx",
     "relativePath": "content/products/en/variable-frequency-drive.mdx"
   },
   {
@@ -238,7 +238,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "hydraulic-pump-station",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/hydraulic-pump-station.mdx",
+    "filePath": "/content/products/zh/hydraulic-pump-station.mdx",
     "relativePath": "content/products/zh/hydraulic-pump-station.mdx"
   },
   {
@@ -246,7 +246,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "industrial-control-panel",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/industrial-control-panel.mdx",
+    "filePath": "/content/products/zh/industrial-control-panel.mdx",
     "relativePath": "content/products/zh/industrial-control-panel.mdx"
   },
   {
@@ -254,7 +254,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "industrial-valve-set",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/industrial-valve-set.mdx",
+    "filePath": "/content/products/zh/industrial-valve-set.mdx",
     "relativePath": "content/products/zh/industrial-valve-set.mdx"
   },
   {
@@ -262,7 +262,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "led-industrial-lighting",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/led-industrial-lighting.mdx",
+    "filePath": "/content/products/zh/led-industrial-lighting.mdx",
     "relativePath": "content/products/zh/led-industrial-lighting.mdx"
   },
   {
@@ -270,7 +270,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "pneumatic-cylinder",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/pneumatic-cylinder.mdx",
+    "filePath": "/content/products/zh/pneumatic-cylinder.mdx",
     "relativePath": "content/products/zh/pneumatic-cylinder.mdx"
   },
   {
@@ -278,7 +278,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "smart-sensor-module",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/smart-sensor-module.mdx",
+    "filePath": "/content/products/zh/smart-sensor-module.mdx",
     "relativePath": "content/products/zh/smart-sensor-module.mdx"
   },
   {
@@ -286,7 +286,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "stainless-steel-fasteners",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/stainless-steel-fasteners.mdx",
+    "filePath": "/content/products/zh/stainless-steel-fasteners.mdx",
     "relativePath": "content/products/zh/stainless-steel-fasteners.mdx"
   },
   {
@@ -294,7 +294,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "variable-frequency-drive",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/variable-frequency-drive.mdx",
+    "filePath": "/content/products/zh/variable-frequency-drive.mdx",
     "relativePath": "content/products/zh/variable-frequency-drive.mdx"
   }
 ],
@@ -304,7 +304,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "choosing-reliable-suppliers",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/choosing-reliable-suppliers.mdx",
+    "filePath": "/content/posts/en/choosing-reliable-suppliers.mdx",
     "relativePath": "content/posts/en/choosing-reliable-suppliers.mdx"
   },
   "posts/en/export-documentation-checklist": {
@@ -312,7 +312,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "export-documentation-checklist",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/export-documentation-checklist.mdx",
+    "filePath": "/content/posts/en/export-documentation-checklist.mdx",
     "relativePath": "content/posts/en/export-documentation-checklist.mdx"
   },
   "posts/en/guide-to-international-trade-terms": {
@@ -320,7 +320,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "guide-to-international-trade-terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/guide-to-international-trade-terms.mdx",
+    "filePath": "/content/posts/en/guide-to-international-trade-terms.mdx",
     "relativePath": "content/posts/en/guide-to-international-trade-terms.mdx"
   },
   "posts/en/quality-control-best-practices": {
@@ -328,7 +328,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "quality-control-best-practices",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/quality-control-best-practices.mdx",
+    "filePath": "/content/posts/en/quality-control-best-practices.mdx",
     "relativePath": "content/posts/en/quality-control-best-practices.mdx"
   },
   "posts/en/welcome-to-tucsenberg": {
@@ -336,7 +336,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "welcome-to-tucsenberg",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/en/welcome-to-tucsenberg.mdx",
+    "filePath": "/content/posts/en/welcome-to-tucsenberg.mdx",
     "relativePath": "content/posts/en/welcome-to-tucsenberg.mdx"
   },
   "posts/zh/choosing-reliable-suppliers": {
@@ -344,7 +344,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "choosing-reliable-suppliers",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/choosing-reliable-suppliers.mdx",
+    "filePath": "/content/posts/zh/choosing-reliable-suppliers.mdx",
     "relativePath": "content/posts/zh/choosing-reliable-suppliers.mdx"
   },
   "posts/zh/export-documentation-checklist": {
@@ -352,7 +352,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "export-documentation-checklist",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/export-documentation-checklist.mdx",
+    "filePath": "/content/posts/zh/export-documentation-checklist.mdx",
     "relativePath": "content/posts/zh/export-documentation-checklist.mdx"
   },
   "posts/zh/guide-to-international-trade-terms": {
@@ -360,7 +360,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "guide-to-international-trade-terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/guide-to-international-trade-terms.mdx",
+    "filePath": "/content/posts/zh/guide-to-international-trade-terms.mdx",
     "relativePath": "content/posts/zh/guide-to-international-trade-terms.mdx"
   },
   "posts/zh/quality-control-best-practices": {
@@ -368,7 +368,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "quality-control-best-practices",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/quality-control-best-practices.mdx",
+    "filePath": "/content/posts/zh/quality-control-best-practices.mdx",
     "relativePath": "content/posts/zh/quality-control-best-practices.mdx"
   },
   "posts/zh/welcome-to-tucsenberg": {
@@ -376,7 +376,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "welcome-to-tucsenberg",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/posts/zh/welcome-to-tucsenberg.mdx",
+    "filePath": "/content/posts/zh/welcome-to-tucsenberg.mdx",
     "relativePath": "content/posts/zh/welcome-to-tucsenberg.mdx"
   },
   "pages/en/about": {
@@ -384,7 +384,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "about",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/about.mdx",
+    "filePath": "/content/pages/en/about.mdx",
     "relativePath": "content/pages/en/about.mdx"
   },
   "pages/en/faq": {
@@ -392,7 +392,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "faq",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/faq.mdx",
+    "filePath": "/content/pages/en/faq.mdx",
     "relativePath": "content/pages/en/faq.mdx"
   },
   "pages/en/privacy": {
@@ -400,7 +400,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "privacy",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/privacy.mdx",
+    "filePath": "/content/pages/en/privacy.mdx",
     "relativePath": "content/pages/en/privacy.mdx"
   },
   "pages/en/terms": {
@@ -408,7 +408,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/en/terms.mdx",
+    "filePath": "/content/pages/en/terms.mdx",
     "relativePath": "content/pages/en/terms.mdx"
   },
   "pages/zh/about": {
@@ -416,7 +416,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "about",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/about.mdx",
+    "filePath": "/content/pages/zh/about.mdx",
     "relativePath": "content/pages/zh/about.mdx"
   },
   "pages/zh/faq": {
@@ -424,7 +424,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "faq",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/faq.mdx",
+    "filePath": "/content/pages/zh/faq.mdx",
     "relativePath": "content/pages/zh/faq.mdx"
   },
   "pages/zh/privacy": {
@@ -432,7 +432,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "privacy",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/privacy.mdx",
+    "filePath": "/content/pages/zh/privacy.mdx",
     "relativePath": "content/pages/zh/privacy.mdx"
   },
   "pages/zh/terms": {
@@ -440,7 +440,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "terms",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/pages/zh/terms.mdx",
+    "filePath": "/content/pages/zh/terms.mdx",
     "relativePath": "content/pages/zh/terms.mdx"
   },
   "products/en/hydraulic-pump-station": {
@@ -448,7 +448,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "hydraulic-pump-station",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/hydraulic-pump-station.mdx",
+    "filePath": "/content/products/en/hydraulic-pump-station.mdx",
     "relativePath": "content/products/en/hydraulic-pump-station.mdx"
   },
   "products/en/industrial-control-panel": {
@@ -456,7 +456,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "industrial-control-panel",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/industrial-control-panel.mdx",
+    "filePath": "/content/products/en/industrial-control-panel.mdx",
     "relativePath": "content/products/en/industrial-control-panel.mdx"
   },
   "products/en/industrial-valve-set": {
@@ -464,7 +464,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "industrial-valve-set",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/industrial-valve-set.mdx",
+    "filePath": "/content/products/en/industrial-valve-set.mdx",
     "relativePath": "content/products/en/industrial-valve-set.mdx"
   },
   "products/en/led-industrial-lighting": {
@@ -472,7 +472,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "led-industrial-lighting",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/led-industrial-lighting.mdx",
+    "filePath": "/content/products/en/led-industrial-lighting.mdx",
     "relativePath": "content/products/en/led-industrial-lighting.mdx"
   },
   "products/en/pneumatic-cylinder": {
@@ -480,7 +480,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "pneumatic-cylinder",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/pneumatic-cylinder.mdx",
+    "filePath": "/content/products/en/pneumatic-cylinder.mdx",
     "relativePath": "content/products/en/pneumatic-cylinder.mdx"
   },
   "products/en/smart-sensor-module": {
@@ -488,7 +488,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "smart-sensor-module",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/smart-sensor-module.mdx",
+    "filePath": "/content/products/en/smart-sensor-module.mdx",
     "relativePath": "content/products/en/smart-sensor-module.mdx"
   },
   "products/en/stainless-steel-fasteners": {
@@ -496,7 +496,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "stainless-steel-fasteners",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/stainless-steel-fasteners.mdx",
+    "filePath": "/content/products/en/stainless-steel-fasteners.mdx",
     "relativePath": "content/products/en/stainless-steel-fasteners.mdx"
   },
   "products/en/variable-frequency-drive": {
@@ -504,7 +504,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "en",
     "slug": "variable-frequency-drive",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/en/variable-frequency-drive.mdx",
+    "filePath": "/content/products/en/variable-frequency-drive.mdx",
     "relativePath": "content/products/en/variable-frequency-drive.mdx"
   },
   "products/zh/hydraulic-pump-station": {
@@ -512,7 +512,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "hydraulic-pump-station",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/hydraulic-pump-station.mdx",
+    "filePath": "/content/products/zh/hydraulic-pump-station.mdx",
     "relativePath": "content/products/zh/hydraulic-pump-station.mdx"
   },
   "products/zh/industrial-control-panel": {
@@ -520,7 +520,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "industrial-control-panel",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/industrial-control-panel.mdx",
+    "filePath": "/content/products/zh/industrial-control-panel.mdx",
     "relativePath": "content/products/zh/industrial-control-panel.mdx"
   },
   "products/zh/industrial-valve-set": {
@@ -528,7 +528,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "industrial-valve-set",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/industrial-valve-set.mdx",
+    "filePath": "/content/products/zh/industrial-valve-set.mdx",
     "relativePath": "content/products/zh/industrial-valve-set.mdx"
   },
   "products/zh/led-industrial-lighting": {
@@ -536,7 +536,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "led-industrial-lighting",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/led-industrial-lighting.mdx",
+    "filePath": "/content/products/zh/led-industrial-lighting.mdx",
     "relativePath": "content/products/zh/led-industrial-lighting.mdx"
   },
   "products/zh/pneumatic-cylinder": {
@@ -544,7 +544,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "pneumatic-cylinder",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/pneumatic-cylinder.mdx",
+    "filePath": "/content/products/zh/pneumatic-cylinder.mdx",
     "relativePath": "content/products/zh/pneumatic-cylinder.mdx"
   },
   "products/zh/smart-sensor-module": {
@@ -552,7 +552,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "smart-sensor-module",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/smart-sensor-module.mdx",
+    "filePath": "/content/products/zh/smart-sensor-module.mdx",
     "relativePath": "content/products/zh/smart-sensor-module.mdx"
   },
   "products/zh/stainless-steel-fasteners": {
@@ -560,7 +560,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "stainless-steel-fasteners",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/stainless-steel-fasteners.mdx",
+    "filePath": "/content/products/zh/stainless-steel-fasteners.mdx",
     "relativePath": "content/products/zh/stainless-steel-fasteners.mdx"
   },
   "products/zh/variable-frequency-drive": {
@@ -568,7 +568,7 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "locale": "zh",
     "slug": "variable-frequency-drive",
     "extension": ".mdx",
-    "filePath": "/Users/Data/Warehouse/Focus/tucsenberg-web-frontier/content/products/zh/variable-frequency-drive.mdx",
+    "filePath": "/content/products/zh/variable-frequency-drive.mdx",
     "relativePath": "content/products/zh/variable-frequency-drive.mdx"
   }
 },
