@@ -3,7 +3,7 @@
 ## 1. 核心框架
 
 ### 前端框架
-- **Next.js 16.1.0** - React 全栈框架，App Router 架构
+- **Next.js 16.1.1** - React 全栈框架，App Router 架构
 - **React 19.2.3** - 用户界面库，支持服务器组件
 - **TypeScript 5.9.3** - 类型安全的 JavaScript 超集
 - **Tailwind CSS 4.1.18** - 原子化 CSS 框架
@@ -16,7 +16,7 @@
 ## 2. 内容管理系统
 
 ### MDX 内容管理
-- **@next/mdx 16.1.0** - Next.js 原生 MDX 支持
+- **@next/mdx 16.1.1** - Next.js 原生 MDX 支持
 - **@mdx-js/loader 3.1.1** - MDX 文件加载器
 - **@mdx-js/react 3.1.1** - React 组件嵌入支持
 - **gray-matter 4.0.3** - Front Matter 解析
@@ -98,13 +98,13 @@ content/
 - **eslint-plugin-react 7.37.5** - React 组件规则
 - **eslint-plugin-react-hooks 5.2.0** - React Hooks 最佳实践
 - **eslint-plugin-react-you-might-not-need-an-effect 0.8.1** - useEffect 优化
-- **@next/eslint-plugin-next 16.1.0** - Next.js 专用规则
+- **@next/eslint-plugin-next 16.1.1** - Next.js 专用规则
 - **eslint-plugin-import 2.32.0** - 导入语句规则
 - **eslint-plugin-promise 7.2.1** - Promise 最佳实践
 - **eslint-config-prettier 10.1.8** - Prettier 冲突解决
 - **eslint-plugin-security 3.0.1** - 安全规则检查
 - **eslint-plugin-security-node 1.1.4** - Node.js 安全规则
-- **eslint-config-next 16.1.0** - Next.js ESLint 配置预设
+- **eslint-config-next 16.1.1** - Next.js ESLint 配置预设
 
 ### 代码格式化
 - **prettier 3.6.2** - 代码格式化核心
@@ -112,7 +112,7 @@ content/
 - **prettier-plugin-tailwindcss 0.7.2** - Tailwind CSS 类名排序
 
 ### 构建工具
-- **@next/bundle-analyzer 16.1.0** - 包大小分析
+- **@next/bundle-analyzer 16.1.1** - 包大小分析
 - **Turbopack** - 开发环境构建（`next dev --turbo`）
 - **Webpack 5 + SWC** - 生产环境构建
 - **pnpm 10.13.1** - 包管理器

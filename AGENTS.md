@@ -4,7 +4,7 @@ Enterprise B2B website template built with Next.js 16 + React 19 + TypeScript 5 
 
 ## Project Overview
 
-**Stack**: Next.js 16.1.0 (App Router, Turbopack) + React 19.2.3 + TypeScript 5.9.3 + Tailwind CSS 4.1.18 + next-intl
+**Stack**: Next.js 16.1.1 (App Router, Turbopack) + React 19.2.3 + TypeScript 5.9.3 + Tailwind CSS 4.1.18 + next-intl
 
 **Core Features**:
 - Internationalization: English/Chinese (en/zh) via next-intl
