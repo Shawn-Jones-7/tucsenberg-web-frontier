@@ -64,13 +64,6 @@ function createCookieConsentValue(
   };
 }
 
-function setNodeEnv(value: 'development' | 'production' | 'test') {
-  Object.defineProperty(process.env, 'NODE_ENV', {
-    value,
-    configurable: true,
-  });
-}
-
 describe('EnterpriseAnalyticsIsland', () => {
   it('renders nothing when consent system exists but is not ready', async () => {
     dynamicIndex = 0;
@@ -91,7 +84,7 @@ describe('EnterpriseAnalyticsIsland', () => {
     mockUseCookieConsentOptional.mockReturnValue(null);
 
     const originalNodeEnv = process.env.NODE_ENV;
-    setNodeEnv('production');
+    vi.stubEnv('NODE_ENV', 'production');
 
     try {
       const { EnterpriseAnalyticsIsland } =
@@ -101,7 +94,7 @@ describe('EnterpriseAnalyticsIsland', () => {
       expect(screen.getByTestId('analytics')).toBeInTheDocument();
       expect(screen.getByTestId('speed-insights')).toBeInTheDocument();
     } finally {
-      setNodeEnv(originalNodeEnv);
+      vi.stubEnv('NODE_ENV', originalNodeEnv);
     }
   });
 });
