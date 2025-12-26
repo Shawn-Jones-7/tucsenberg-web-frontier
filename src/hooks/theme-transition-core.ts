@@ -1,4 +1,3 @@
-import React from 'react';
 import { logger } from '@/lib/logger';
 import { themeAnalytics } from '@/lib/theme-analytics';
 import type {
@@ -6,9 +5,7 @@ import type {
   ViewTransitionAPI,
 } from '@/hooks/theme-transition-types';
 import {
-  calculateEndRadius,
   DEFAULT_CONFIG,
-  getClickCoordinates,
   recordThemeTransition,
   supportsViewTransitions,
 } from '@/hooks/theme-transition-utils';
@@ -236,55 +233,6 @@ export function executeBasicThemeTransition(
     currentTheme?: string;
   };
   if (currentTheme) base.currentTheme = currentTheme;
-  executeThemeTransition(base);
-}
-
-/**
- * 执行圆形动画主题切换
- */
-export function executeCircularThemeTransition(args: {
-  originalSetTheme: (_theme: string) => void;
-  newTheme: string;
-  currentTheme?: string;
-  clickEvent?: React.MouseEvent<HTMLElement>;
-}): void {
-  const { originalSetTheme, newTheme, currentTheme, clickEvent } = args;
-  const { x, y } = getClickCoordinates(clickEvent);
-  const endRadius = calculateEndRadius(x, y);
-
-  const animationSetup = (transition: ViewTransition) => {
-    // 设置圆形展开动画
-    transition.ready
-      .then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-
-        document.documentElement.animate(
-          {
-            clipPath,
-          },
-          {
-            duration: DEFAULT_CONFIG.animationDuration,
-            easing: DEFAULT_CONFIG.easing,
-            pseudoElement: '::view-transition-new(root)',
-          },
-        );
-      })
-      .catch((error: Error) => {
-        logger.warn('Failed to setup circular animation', { error });
-      });
-  };
-
-  const base = { originalSetTheme, newTheme } as {
-    originalSetTheme: (_theme: string) => void;
-    newTheme: string;
-    currentTheme?: string;
-    animationSetup?: (_transition: ViewTransition) => void;
-  };
-  if (currentTheme) base.currentTheme = currentTheme;
-  if (animationSetup) base.animationSetup = animationSetup;
   executeThemeTransition(base);
 }
 

@@ -159,13 +159,13 @@ describe('useEnhancedTheme', () => {
     expect(mockSetTheme).toHaveBeenCalledWith('dark');
   });
 
-  it('should provide setCircularTheme function', () => {
+  it('should provide setCornerExpandTheme function', () => {
     const { result } = renderHook(() => useEnhancedTheme());
 
-    expect(typeof result.current.setCircularTheme).toBe('function');
+    expect(typeof result.current.setCornerExpandTheme).toBe('function');
 
     act(() => {
-      result.current.setCircularTheme('dark');
+      result.current.setCornerExpandTheme('dark');
       // 推进防抖定时器
       vi.advanceTimersByTime(100);
     });
@@ -178,7 +178,7 @@ describe('useEnhancedTheme', () => {
 
     // Should provide both theme switching functions
     expect(typeof result.current.setTheme).toBe('function');
-    expect(typeof result.current.setCircularTheme).toBe('function');
+    expect(typeof result.current.setCornerExpandTheme).toBe('function');
   });
 
   it('should handle theme switching without errors', () => {
@@ -209,7 +209,7 @@ describe('useEnhancedTheme', () => {
 
     expect(() => {
       act(() => {
-        result.current.setCircularTheme('dark');
+        result.current.setCornerExpandTheme('dark');
         // 推进防抖定时器
         vi.advanceTimersByTime(100);
       });
@@ -287,7 +287,7 @@ describe('useEnhancedTheme', () => {
       // 即使supportsViewTransitions返回true，函数也应该能处理API不可用的情况
       expect(() => {
         act(() => {
-          result.current.setCircularTheme('dark');
+          result.current.setCornerExpandTheme('dark');
           // 推进防抖定时器
           vi.advanceTimersByTime(100);
         });
@@ -307,7 +307,7 @@ describe('useEnhancedTheme', () => {
 
       expect(() => {
         act(() => {
-          result.current.setCircularTheme('dark');
+          result.current.setCornerExpandTheme('dark');
           // 推进防抖定时器
           vi.advanceTimersByTime(100);
         });
@@ -349,7 +349,7 @@ describe('useEnhancedTheme', () => {
 
       expect(() => {
         act(() => {
-          result.current.setCircularTheme('dark');
+          result.current.setCornerExpandTheme('dark');
           // 推进防抖定时器
           vi.advanceTimersByTime(100);
         });
@@ -443,7 +443,7 @@ describe('useEnhancedTheme', () => {
         act(() => {
           for (let i = 0; i < 10; i++) {
             result.current.setTheme(i % 2 === 0 ? 'light' : 'dark');
-            result.current.setCircularTheme(i % 2 === 0 ? 'dark' : 'light');
+            result.current.setCornerExpandTheme(i % 2 === 0 ? 'dark' : 'light');
           }
         });
       }).not.toThrow();
@@ -453,7 +453,7 @@ describe('useEnhancedTheme', () => {
       const { result, unmount } = renderHook(() => useEnhancedTheme());
 
       act(() => {
-        result.current.setCircularTheme('dark');
+        result.current.setCornerExpandTheme('dark');
       });
 
       expect(() => {

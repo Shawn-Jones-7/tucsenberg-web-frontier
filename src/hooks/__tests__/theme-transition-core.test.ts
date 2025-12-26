@@ -5,7 +5,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   executeBasicThemeTransition,
-  executeCircularThemeTransition,
   executeThemeTransition,
 } from '../theme-transition-core';
 
@@ -15,8 +14,6 @@ const {
   mockThemeAnalytics,
   mockSupportsViewTransitions,
   mockRecordThemeTransition,
-  mockGetClickCoordinates,
-  mockCalculateEndRadius,
 } = vi.hoisted(() => ({
   mockLogger: {
     debug: vi.fn(),
@@ -28,8 +25,6 @@ const {
   },
   mockSupportsViewTransitions: vi.fn(),
   mockRecordThemeTransition: vi.fn(),
-  mockGetClickCoordinates: vi.fn(() => ({ x: 100, y: 100 })),
-  mockCalculateEndRadius: vi.fn(() => 1000),
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -41,12 +36,10 @@ vi.mock('@/lib/theme-analytics', () => ({
 }));
 
 vi.mock('@/hooks/theme-transition-utils', () => ({
-  calculateEndRadius: mockCalculateEndRadius,
   DEFAULT_CONFIG: {
     animationDuration: 300,
     easing: 'ease-in-out',
   },
-  getClickCoordinates: mockGetClickCoordinates,
   recordThemeTransition: mockRecordThemeTransition,
   supportsViewTransitions: mockSupportsViewTransitions,
 }));
@@ -338,113 +331,6 @@ describe('theme-transition-core', () => {
       executeBasicThemeTransition(mockSetTheme, 'dark');
 
       expect(mockSetTheme).toHaveBeenCalledWith('dark');
-    });
-  });
-
-  describe('executeCircularThemeTransition', () => {
-    beforeEach(() => {
-      mockSupportsViewTransitions.mockReturnValue(true);
-
-      const readyPromise = Promise.resolve();
-      mockStartViewTransition.mockReturnValue({
-        ready: readyPromise,
-        finished: readyPromise,
-      });
-      (
-        document as Document & {
-          startViewTransition: typeof document.startViewTransition;
-        }
-      ).startViewTransition =
-        mockStartViewTransition as unknown as typeof document.startViewTransition;
-
-      document.documentElement.animate = vi.fn();
-    });
-
-    it('creates circular animation setup', () => {
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-        currentTheme: 'light',
-      });
-
-      expect(mockStartViewTransition).toHaveBeenCalled();
-    });
-
-    it('uses click coordinates when event provided', () => {
-      const mockEvent = {
-        clientX: 200,
-        clientY: 300,
-      } as React.MouseEvent<HTMLElement>;
-
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-        clickEvent: mockEvent,
-      });
-
-      expect(mockStartViewTransition).toHaveBeenCalled();
-    });
-
-    it('animates documentElement on ready', async () => {
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      expect(document.documentElement.animate).toHaveBeenCalledWith(
-        expect.objectContaining({
-          clipPath: expect.any(Array),
-        }),
-        expect.objectContaining({
-          duration: 300,
-          easing: 'ease-in-out',
-          pseudoElement: '::view-transition-new(root)',
-        }),
-      );
-    });
-
-    it('logs warning on animation setup failure', async () => {
-      const readyPromise = Promise.reject(new Error('Ready failed'));
-      readyPromise.catch(() => {
-        // Prevent unhandled rejection
-      });
-
-      mockStartViewTransition.mockReturnValue({
-        ready: readyPromise,
-        finished: Promise.resolve(),
-      });
-
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 10));
-
-      expect(mockLogger.warn).toHaveBeenCalledWith(
-        'Failed to setup circular animation',
-        expect.any(Object),
-      );
-    });
-
-    it('works without clickEvent', () => {
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-      });
-
-      expect(mockStartViewTransition).toHaveBeenCalled();
-    });
-
-    it('works without currentTheme', () => {
-      executeCircularThemeTransition({
-        originalSetTheme: mockSetTheme,
-        newTheme: 'dark',
-      });
-
-      expect(mockSetTheme).toBeDefined();
     });
   });
 
