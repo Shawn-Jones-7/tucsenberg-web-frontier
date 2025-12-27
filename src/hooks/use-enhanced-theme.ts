@@ -1,10 +1,10 @@
 'use client';
 
-import React, { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useTheme } from 'next-themes';
 import {
   executeBasicThemeTransition,
-  executeCircularThemeTransition,
+  executeCornerExpandTransition,
 } from '@/hooks/theme-transition-core';
 import type { EnhancedThemeHook } from '@/hooks/theme-transition-types';
 import { createDebounce, DEFAULT_CONFIG } from '@/hooks/theme-transition-utils';
@@ -14,7 +14,7 @@ import { createDebounce, DEFAULT_CONFIG } from '@/hooks/theme-transition-utils';
  *
  * 提供以下功能：
  * - 基础主题切换（带防抖）
- * - 圆形动画主题切换（基于点击位置）
+ * - 角落扩展动画主题切换（从右下角展开）
  * - View Transitions API 支持
  * - 自动降级到普通切换
  * - 防抖机制防止快速连续切换
@@ -28,9 +28,8 @@ export function useEnhancedTheme(): EnhancedThemeHook {
 
   // 使用 ref 来存储防抖函数，避免重复创建
   const debouncedSetThemeRef = useRef<((_theme: string) => void) | null>(null);
-  const debouncedSetCircularThemeRef = useRef<
-    | ((_theme: string, _clickEvent?: React.MouseEvent<HTMLElement>) => void)
-    | null
+  const debouncedSetCornerExpandThemeRef = useRef<
+    ((_theme: string) => void) | null
   >(null);
 
   // 创建防抖的基础主题切换函数
@@ -50,12 +49,12 @@ export function useEnhancedTheme(): EnhancedThemeHook {
     [originalSetTheme, theme],
   );
 
-  // 创建防抖的圆形动画主题切换函数
-  const setCircularTheme = useCallback(
-    (newTheme: string, clickEvent?: React.MouseEvent<HTMLElement>) => {
-      if (!debouncedSetCircularThemeRef.current) {
-        debouncedSetCircularThemeRef.current = createDebounce(
-          (themeToSet: string, event?: React.MouseEvent<HTMLElement>) => {
+  // 创建防抖的角落扩展动画主题切换函数
+  const setCornerExpandTheme = useCallback(
+    (newTheme: string) => {
+      if (!debouncedSetCornerExpandThemeRef.current) {
+        debouncedSetCornerExpandThemeRef.current = createDebounce(
+          (themeToSet: string) => {
             const base = {
               originalSetTheme,
               newTheme: themeToSet,
@@ -63,16 +62,14 @@ export function useEnhancedTheme(): EnhancedThemeHook {
               originalSetTheme: (_theme: string) => void;
               newTheme: string;
               currentTheme?: string;
-              clickEvent?: React.MouseEvent<HTMLElement>;
             };
             if (theme !== undefined) base.currentTheme = theme;
-            if (event) base.clickEvent = event;
-            executeCircularThemeTransition(base);
+            executeCornerExpandTransition(base);
           },
           DEFAULT_CONFIG.debounceDelay,
         );
       }
-      debouncedSetCircularThemeRef.current?.(newTheme, clickEvent);
+      debouncedSetCornerExpandThemeRef.current?.(newTheme);
     },
     [originalSetTheme, theme],
   );
@@ -82,13 +79,13 @@ export function useEnhancedTheme(): EnhancedThemeHook {
     () => ({
       theme,
       setTheme,
-      setCircularTheme,
+      setCornerExpandTheme,
       themes: themeContext.themes,
       forcedTheme: themeContext.forcedTheme,
       resolvedTheme: themeContext.resolvedTheme,
       systemTheme: themeContext.systemTheme,
     }),
-    [theme, setTheme, setCircularTheme, themeContext],
+    [theme, setTheme, setCornerExpandTheme, themeContext],
   );
 }
 

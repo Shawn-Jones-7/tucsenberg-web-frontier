@@ -28,28 +28,25 @@ function useMounted() {
  * 创建主题切换处理函数
  */
 function createThemeChangeHandler(args: {
-  setCircularTheme: (
-    _theme: string,
-    _event?: React.MouseEvent<HTMLElement>,
-  ) => void;
+  setCornerExpandTheme: (_theme: string) => void;
   announceSwitching: () => void;
   announceThemeChange: (_theme: string) => void;
   prefersReducedMotion: boolean;
   setIsOpen: (_open: boolean) => void;
 }) {
   const {
-    setCircularTheme,
+    setCornerExpandTheme,
     announceSwitching,
     announceThemeChange,
     prefersReducedMotion,
     setIsOpen,
   } = args;
-  return (newTheme: string, event?: React.MouseEvent<HTMLElement>) => {
+  return (newTheme: string) => {
     // 播报切换状态
     announceSwitching();
 
-    // 执行主题切换
-    setCircularTheme(newTheme, event);
+    // 执行主题切换（使用角落扩展动画）
+    setCornerExpandTheme(newTheme);
 
     // 延迟播报完成状态
     const reducedMotionDelay = PERCENTAGE_HALF;
@@ -71,7 +68,7 @@ function createThemeChangeHandler(args: {
  * 封装主题切换、无障碍性支持和状态管理
  */
 export function useThemeToggle() {
-  const { theme, setCircularTheme } = useEnhancedTheme();
+  const { theme, setCornerExpandTheme } = useEnhancedTheme();
   const [isOpen, setIsOpenState] = useState(false);
   const mounted = useMounted();
   const locale = useLocale();
@@ -94,18 +91,18 @@ export function useThemeToggle() {
 
   // 处理主题切换
   const handleThemeChange = useCallback(
-    (newTheme: string, event?: React.MouseEvent<HTMLElement>) => {
+    (newTheme: string) => {
       const handler = createThemeChangeHandler({
-        setCircularTheme,
+        setCornerExpandTheme,
         announceSwitching,
         announceThemeChange,
         prefersReducedMotion,
         setIsOpen,
       });
-      handler(newTheme, event);
+      handler(newTheme);
     },
     [
-      setCircularTheme,
+      setCornerExpandTheme,
       announceSwitching,
       announceThemeChange,
       prefersReducedMotion,

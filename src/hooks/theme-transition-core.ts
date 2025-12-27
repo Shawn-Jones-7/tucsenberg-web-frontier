@@ -1,4 +1,3 @@
-import React from 'react';
 import { logger } from '@/lib/logger';
 import { themeAnalytics } from '@/lib/theme-analytics';
 import type {
@@ -6,9 +5,7 @@ import type {
   ViewTransitionAPI,
 } from '@/hooks/theme-transition-types';
 import {
-  calculateEndRadius,
   DEFAULT_CONFIG,
-  getClickCoordinates,
   recordThemeTransition,
   supportsViewTransitions,
 } from '@/hooks/theme-transition-utils';
@@ -240,30 +237,26 @@ export function executeBasicThemeTransition(
 }
 
 /**
- * 执行圆形动画主题切换
+ * 执行角落扩展动画主题切换
+ * 从右下角 (100% 100%) 向外扩展的圆形动画
  */
-export function executeCircularThemeTransition(args: {
+export function executeCornerExpandTransition(args: {
   originalSetTheme: (_theme: string) => void;
   newTheme: string;
   currentTheme?: string;
-  clickEvent?: React.MouseEvent<HTMLElement>;
 }): void {
-  const { originalSetTheme, newTheme, currentTheme, clickEvent } = args;
-  const { x, y } = getClickCoordinates(clickEvent);
-  const endRadius = calculateEndRadius(x, y);
+  const { originalSetTheme, newTheme, currentTheme } = args;
+  const expandRadius = '150%';
 
   const animationSetup = (transition: ViewTransition) => {
-    // 设置圆形展开动画
     transition.ready
       .then(() => {
-        const clipPath = [
-          `circle(0px at ${x}px ${y}px)`,
-          `circle(${endRadius}px at ${x}px ${y}px)`,
-        ];
-
         document.documentElement.animate(
           {
-            clipPath,
+            clipPath: [
+              `circle(0% at 100% 100%)`,
+              `circle(${expandRadius} at 100% 100%)`,
+            ],
           },
           {
             duration: DEFAULT_CONFIG.animationDuration,
@@ -273,7 +266,7 @@ export function executeCircularThemeTransition(args: {
         );
       })
       .catch((error: Error) => {
-        logger.warn('Failed to setup circular animation', { error });
+        logger.warn('Failed to setup corner expand animation', { error });
       });
   };
 
@@ -284,6 +277,6 @@ export function executeCircularThemeTransition(args: {
     animationSetup?: (_transition: ViewTransition) => void;
   };
   if (currentTheme) base.currentTheme = currentTheme;
-  if (animationSetup) base.animationSetup = animationSetup;
+  base.animationSetup = animationSetup;
   executeThemeTransition(base);
 }

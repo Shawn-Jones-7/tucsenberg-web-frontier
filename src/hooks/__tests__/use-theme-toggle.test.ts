@@ -74,7 +74,7 @@ vi.mock('react', async () => {
 });
 
 describe('useThemeToggle', () => {
-  const mockSetCircularTheme = vi.fn();
+  const mockSetCornerExpandTheme = vi.fn();
   const mockAnnounceThemeChange = vi.fn();
   const mockAnnounceSwitching = vi.fn();
   const mockHandleKeyboardNavigation = vi.fn();
@@ -83,8 +83,8 @@ describe('useThemeToggle', () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Mock setCircularTheme to return proper View Transition object
-    mockSetCircularTheme.mockImplementation((_theme, _event) => ({
+    // Mock setCornerExpandTheme to return proper View Transition object
+    mockSetCornerExpandTheme.mockImplementation((_theme) => ({
       ready: Promise.resolve(),
       finished: Promise.resolve(),
       updateCallbackDone: Promise.resolve(),
@@ -95,7 +95,7 @@ describe('useThemeToggle', () => {
     // Mock useEnhancedTheme
     mockUseEnhancedTheme.mockReturnValue({
       theme: 'light', // 修复：与测试期望一致
-      setCircularTheme: mockSetCircularTheme,
+      setCornerExpandTheme: mockSetCornerExpandTheme,
       supportsViewTransitions: true, // 修复：与测试期望一致
       setTheme: vi.fn(),
       themes: ['light', 'dark', 'system'],
@@ -206,7 +206,7 @@ describe('useThemeToggle', () => {
 
       mockUseEnhancedTheme.mockReturnValue({
         theme: undefined,
-        setCircularTheme: mockSetCircularTheme,
+        setCornerExpandTheme: mockSetCornerExpandTheme,
         supportsViewTransitions: true,
         setTheme: vi.fn(),
         themes: ['light', 'dark', 'system'],
@@ -233,7 +233,7 @@ describe('useThemeToggle', () => {
   });
 
   describe('theme change handling', () => {
-    it('should handle theme change without event', () => {
+    it('should handle theme change', () => {
       const { result } = renderHook(() => useThemeToggle());
 
       act(() => {
@@ -241,22 +241,7 @@ describe('useThemeToggle', () => {
       });
 
       expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetCircularTheme).toHaveBeenCalledWith('dark', undefined);
-    });
-
-    it('should handle theme change with click event', () => {
-      const { result } = renderHook(() => useThemeToggle());
-      const mockEvent = {
-        clientX: 100,
-        clientY: 200,
-      } as React.MouseEvent<HTMLElement>;
-
-      act(() => {
-        result.current.handleThemeChange('dark', mockEvent);
-      });
-
-      expect(mockAnnounceSwitching).toHaveBeenCalled();
-      expect(mockSetCircularTheme).toHaveBeenCalledWith('dark', mockEvent);
+      expect(mockSetCornerExpandTheme).toHaveBeenCalledWith('dark');
     });
 
     it('should close dropdown after theme change', () => {
@@ -461,7 +446,7 @@ describe('useThemeToggle', () => {
 
       mockUseEnhancedTheme.mockReturnValue({
         theme: 'light',
-        setCircularTheme: mockSetCircularTheme,
+        setCornerExpandTheme: mockSetCornerExpandTheme,
         supportsViewTransitions: false,
         setTheme: vi.fn(),
         themes: ['light', 'dark', 'system'],
@@ -498,7 +483,7 @@ describe('useThemeToggle', () => {
       });
 
       const EXPECTED_THEME_CHANGES = 3;
-      expect(mockSetCircularTheme).toHaveBeenCalledTimes(
+      expect(mockSetCornerExpandTheme).toHaveBeenCalledTimes(
         EXPECTED_THEME_CHANGES, // Three theme changes
       );
       expect(mockAnnounceSwitching).toHaveBeenCalledTimes(
