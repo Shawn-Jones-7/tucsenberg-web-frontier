@@ -194,6 +194,8 @@ class QualityGate {
           diffCoverageExcludeGlobs: [
             '**/*.generated.*',
             '**/*.d.ts',
+            '**/*-types.ts', // 纯类型定义文件（如 theme-transition-types.ts）
+            '**/*.types.ts', // 另一种类型文件命名约定
             '**/*.test.*',
             '**/*.spec.*',
             '**/__tests__/**',
