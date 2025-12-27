@@ -1,4 +1,3 @@
-import React from 'react';
 import { act, renderHook } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useEnhancedTheme } from '@/hooks/use-enhanced-theme';
@@ -81,8 +80,8 @@ describe('useEnhancedTheme Performance Tests', () => {
     // Both hooks should return the same cached result
     // Note: supportsViewTransitions is not part of the hook return value
     // It's a utility function that can be imported separately
-    expect(typeof result1.current.setCircularTheme).toBe('function');
-    expect(typeof result2.current.setCircularTheme).toBe('function');
+    expect(typeof result1.current.setCornerExpandTheme).toBe('function');
+    expect(typeof result2.current.setCornerExpandTheme).toBe('function');
   });
 
   it('should handle rapid theme switching with debouncing', async () => {
@@ -104,19 +103,14 @@ describe('useEnhancedTheme Performance Tests', () => {
     expect(mockSetTheme).toHaveBeenLastCalledWith('dark');
   });
 
-  it('should handle rapid circular transitions with debouncing', async () => {
+  it('should handle rapid corner expand transitions with debouncing', async () => {
     const { result } = renderHook(() => useEnhancedTheme());
 
-    const mockEvent = {
-      clientX: 100,
-      clientY: 100,
-    } as React.MouseEvent<HTMLElement>;
-
-    // Simulate rapid circular transitions
+    // Simulate rapid corner expand transitions
     act(() => {
-      result.current.setCircularTheme('dark', mockEvent);
-      result.current.setCircularTheme('light', mockEvent);
-      result.current.setCircularTheme('system', mockEvent);
+      result.current.setCornerExpandTheme('dark');
+      result.current.setCornerExpandTheme('light');
+      result.current.setCornerExpandTheme('system');
     });
 
     // Wait for debounce delay
@@ -131,14 +125,16 @@ describe('useEnhancedTheme Performance Tests', () => {
     const { result, rerender } = renderHook(() => useEnhancedTheme());
 
     const initialSetTheme = result.current.setTheme;
-    const initialSetCircularTheme = result.current.setCircularTheme;
+    const initialSetCornerExpandTheme = result.current.setCornerExpandTheme;
 
     // Rerender the hook
     rerender();
 
     // Functions should be the same reference (memoized)
     expect(result.current.setTheme).toBe(initialSetTheme);
-    expect(result.current.setCircularTheme).toBe(initialSetCircularTheme);
+    expect(result.current.setCornerExpandTheme).toBe(
+      initialSetCornerExpandTheme,
+    );
   });
 
   it('should handle errors gracefully without breaking functionality', () => {
