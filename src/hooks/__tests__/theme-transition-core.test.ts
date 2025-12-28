@@ -5,6 +5,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   executeBasicThemeTransition,
+  executeCornerExpandTransition,
   executeThemeTransition,
 } from '../theme-transition-core';
 
@@ -364,6 +365,75 @@ describe('theme-transition-core', () => {
       });
 
       expect(mockPerformanceMark).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('executeCornerExpandTransition', () => {
+    beforeEach(() => {
+      mockSupportsViewTransitions.mockReturnValue(true);
+    });
+
+    it('calls animate on ready resolve with clipPath and pseudoElement', async () => {
+      const mockAnimate = vi.fn();
+      vi.stubGlobal('document', {
+        ...document,
+        documentElement: {
+          ...document.documentElement,
+          animate: mockAnimate,
+        },
+        startViewTransition: vi.fn().mockReturnValue({
+          ready: Promise.resolve(),
+          finished: Promise.resolve(),
+        }),
+      });
+
+      executeCornerExpandTransition({
+        originalSetTheme: mockSetTheme,
+        newTheme: 'dark',
+        currentTheme: 'light',
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockAnimate).toHaveBeenCalledWith(
+        expect.objectContaining({
+          clipPath: expect.arrayContaining([
+            'circle(0% at 100% 100%)',
+            'circle(150% at 100% 100%)',
+          ]),
+        }),
+        expect.objectContaining({
+          pseudoElement: '::view-transition-new(root)',
+        }),
+      );
+    });
+
+    it('logs warning on ready reject', async () => {
+      const error = new Error('Animation setup failed');
+      vi.stubGlobal('document', {
+        ...document,
+        documentElement: {
+          ...document.documentElement,
+          animate: vi.fn(),
+        },
+        startViewTransition: vi.fn().mockReturnValue({
+          ready: Promise.reject(error),
+          finished: Promise.resolve(),
+        }),
+      });
+
+      executeCornerExpandTransition({
+        originalSetTheme: mockSetTheme,
+        newTheme: 'dark',
+        currentTheme: 'light',
+      });
+
+      await new Promise((resolve) => setTimeout(resolve, 10));
+
+      expect(mockLogger.warn).toHaveBeenCalledWith(
+        'Failed to setup corner expand animation',
+        { error },
+      );
     });
   });
 });

@@ -377,6 +377,42 @@ class QualityGate {
     return lineHits;
   }
 
+  getChangedStatementCoverage(entry, changedLines) {
+    const result = { total: 0, covered: 0 };
+    if (!entry || typeof entry !== 'object') return result;
+    if (!entry.statementMap || typeof entry.statementMap !== 'object') {
+      return result;
+    }
+    if (!entry.s || typeof entry.s !== 'object') return result;
+
+    for (const [id, loc] of Object.entries(entry.statementMap)) {
+      const startLine = Number(loc?.start?.line);
+      if (!Number.isFinite(startLine)) continue;
+      // Fallback: missing end.line treated as single-line statement
+      const rawEndLine = Number(loc?.end?.line);
+      const endLine = Number.isFinite(rawEndLine) ? rawEndLine : startLine;
+
+      const rangeStart = Math.min(startLine, endLine);
+      const rangeEnd = Math.max(startLine, endLine);
+
+      let intersects = false;
+      for (const lineNumber of changedLines) {
+        if (lineNumber >= rangeStart && lineNumber <= rangeEnd) {
+          intersects = true;
+          break;
+        }
+      }
+      if (!intersects) continue;
+
+      result.total += 1;
+      if (Number(entry.s[id] ?? 0) > 0) {
+        result.covered += 1;
+      }
+    }
+
+    return result;
+  }
+
   getChangedLinesByFile() {
     const base = this.getMergeBase();
     const range = base ? `${base}...HEAD` : '';
@@ -474,7 +510,7 @@ class QualityGate {
   calculateDiffCoverage(coverageSummaryData, istanbulCoverageMap) {
     const excludeList = this.config.gates.coverage.diffCoverageExclude || [];
 
-    // Prefer diff-line coverage when detailed coverage is available.
+    // Prefer diff-statement coverage when detailed coverage is available.
     if (istanbulCoverageMap && typeof istanbulCoverageMap === 'object') {
       const changedLinesByFile = this.getChangedLinesByFile();
       const excludedFiles = [...changedLinesByFile.keys()].filter((file) =>
@@ -488,31 +524,67 @@ class QualityGate {
         this.normalizeIstanbulCoverageEntries(istanbulCoverageMap);
       const fileMetrics = [];
       let totalCovered = 0;
-      let totalLines = 0;
+      let totalStatements = 0;
+      let missingCoverageData = false;
+      const missingCoverageFiles = [];
+      const skippedNonExecutableFiles = [];
 
       for (const [file, changedLines] of changedLinesByFile.entries()) {
         if (this.shouldExcludeFromDiffCoverage(file)) continue;
 
         const entry = entries.get(file);
-        const lineHits = this.getLineHitsFromIstanbulEntry(entry);
 
-        let fileCovered = 0;
-        let fileTotal = 0;
-
-        // Only count executable lines that exist in coverage data.
-        // If a file is missing coverage data, conservatively count all changed lines.
-        if (lineHits.size === 0) {
-          fileTotal = changedLines.size;
-          fileCovered = 0;
-        } else {
-          for (const lineNumber of changedLines) {
-            if (!lineHits.has(lineNumber)) continue;
-            fileTotal += 1;
-            if ((lineHits.get(lineNumber) ?? 0) > 0) {
-              fileCovered += 1;
-            }
-          }
+        // Strategy A: Fail explicitly when entry is missing from coverage map
+        if (!entry) {
+          missingCoverageData = true;
+          missingCoverageFiles.push(file);
+          fileMetrics.push({
+            file,
+            covered: 0,
+            total: 0,
+            pct: 0,
+            missingCoverageData: true,
+          });
+          continue;
         }
+
+        const statementMap = entry.statementMap;
+        const hasStatements =
+          statementMap &&
+          typeof statementMap === 'object' &&
+          Object.keys(statementMap).length > 0;
+
+        // Skip type-only files (empty statementMap)
+        if (!hasStatements) {
+          skippedNonExecutableFiles.push(file);
+          fileMetrics.push({
+            file,
+            covered: 0,
+            total: 0,
+            pct: 100,
+            skippedNonExecutable: true,
+          });
+          continue;
+        }
+
+        // Strategy A: If statementMap exists but s (hit counts) is missing/invalid,
+        // treat as corrupted coverage data - fail explicitly
+        const hasValidHitCounts = entry.s && typeof entry.s === 'object';
+        if (!hasValidHitCounts) {
+          missingCoverageData = true;
+          missingCoverageFiles.push(file);
+          fileMetrics.push({
+            file,
+            covered: 0,
+            total: 0,
+            pct: 0,
+            missingCoverageData: true,
+          });
+          continue;
+        }
+
+        const { total: fileTotal, covered: fileCovered } =
+          this.getChangedStatementCoverage(entry, changedLines);
 
         if (fileTotal === 0) {
           fileMetrics.push({
@@ -534,23 +606,34 @@ class QualityGate {
         });
 
         totalCovered += fileCovered;
-        totalLines += fileTotal;
+        totalStatements += fileTotal;
       }
 
-      if (totalLines === 0) return null;
+      if (skippedNonExecutableFiles.length > 0) {
+        log(
+          `⏭️  跳过（无可执行语句）: ${skippedNonExecutableFiles.join(', ')}`,
+        );
+      }
 
-      const pct = (totalCovered / totalLines) * 100;
-      const overall = coverageSummaryData?.total?.lines?.pct || pct;
+      if (totalStatements === 0 && !missingCoverageData) return null;
+
+      const pct =
+        totalStatements > 0 ? (totalCovered / totalStatements) * 100 : 0;
+      const overall = coverageSummaryData?.total?.statements?.pct || pct;
 
       return {
         pct,
         drop: overall - pct,
         fileMetrics,
         totalCovered,
-        totalLines,
+        totalStatements,
         changedFilesCount: [...changedLinesByFile.keys()].filter(
           (file) => !this.shouldExcludeFromDiffCoverage(file),
         ).length,
+        metric: 'statements',
+        unitLabel: '可执行语句',
+        missingCoverageData,
+        missingCoverageFiles,
       };
     }
 
@@ -572,13 +655,13 @@ class QualityGate {
     const entries = this.normalizeCoverageEntries(coverageSummaryData);
     const fileMetrics = [];
     let totalCovered = 0;
-    let totalLines = 0;
+    let totalStatements = 0;
 
     changedFiles.forEach((file) => {
       const summary = entries.get(file);
-      if (summary?.lines?.total) {
-        const fileCovered = summary.lines.covered || 0;
-        const fileTotal = summary.lines.total || 0;
+      if (summary?.statements?.total) {
+        const fileCovered = summary.statements.covered || 0;
+        const fileTotal = summary.statements.total || 0;
         const filePct = fileTotal > 0 ? (fileCovered / fileTotal) * 100 : 0;
 
         fileMetrics.push({
@@ -589,22 +672,26 @@ class QualityGate {
         });
 
         totalCovered += fileCovered;
-        totalLines += fileTotal;
+        totalStatements += fileTotal;
       }
     });
 
-    if (totalLines === 0) return null;
+    if (totalStatements === 0) return null;
 
-    const pct = (totalCovered / totalLines) * 100;
-    const overall = coverageSummaryData?.total?.lines?.pct || pct;
+    const pct = (totalCovered / totalStatements) * 100;
+    const overall = coverageSummaryData?.total?.statements?.pct || pct;
 
     return {
       pct,
       drop: overall - pct,
       fileMetrics,
       totalCovered,
-      totalLines,
+      totalStatements,
       changedFilesCount: changedFiles.length,
+      metric: 'statements',
+      unitLabel: '可执行语句',
+      missingCoverageData: false,
+      missingCoverageFiles: [],
     };
   }
 
@@ -864,17 +951,36 @@ class QualityGate {
           const warningThreshold =
             this.config.gates.coverage.diffWarningThreshold;
 
+          // 检查是否有文件缺少覆盖率数据（Strategy A: 严格失败）
+          if (diffCoverage.missingCoverageData) {
+            gate.status = gate.blocking ? 'failed' : 'warning';
+            const missingFiles = diffCoverage.missingCoverageFiles || [];
+            if (missingFiles.length > 0) {
+              gate.issues.push(
+                `新增文件未被覆盖率收录: ${missingFiles.join(', ')}`,
+              );
+              gate.issues.push('  请确保测试已执行并覆盖率配置包含所有源文件');
+            }
+          }
+
           // 检查增量覆盖率是否达到阈值
-          if (diffCoverage.pct < threshold) {
+          if (
+            !diffCoverage.missingCoverageData &&
+            diffCoverage.pct < threshold
+          ) {
             const shortfall = threshold - diffCoverage.pct;
             gate.status = gate.blocking ? 'failed' : 'warning';
+            const unitLabel = diffCoverage.unitLabel || '行';
             gate.issues.push(
-              `增量覆盖率不达标: ${diffCoverage.pct.toFixed(2)}% < ${threshold}%（差距 ${shortfall.toFixed(2)}%，变更 ${diffCoverage.changedFilesCount} 个文件，${diffCoverage.totalCovered}/${diffCoverage.totalLines} 行覆盖）`,
+              `增量覆盖率不达标: ${diffCoverage.pct.toFixed(2)}% < ${threshold}%（差距 ${shortfall.toFixed(2)}%，变更 ${diffCoverage.changedFilesCount} 个文件，${diffCoverage.totalCovered}/${diffCoverage.totalStatements} ${unitLabel}覆盖）`,
             );
 
             // 列出覆盖率低于阈值的文件
             const lowCoverageFiles = diffCoverage.fileMetrics.filter(
-              (f) => f.pct < threshold,
+              (f) =>
+                f.pct < threshold &&
+                !f.skippedNonExecutable &&
+                !f.missingCoverageData,
             );
             if (lowCoverageFiles.length > 0 && lowCoverageFiles.length <= 5) {
               lowCoverageFiles.forEach((f) => {
@@ -895,10 +1001,13 @@ class QualityGate {
           }
 
           // 检查增量覆盖率下降幅度
-          if (diffCoverage.drop > warningThreshold) {
+          if (
+            !diffCoverage.missingCoverageData &&
+            diffCoverage.drop > warningThreshold
+          ) {
             gate.status = gate.status === 'passed' ? 'warning' : gate.status;
             gate.issues.push(
-              `增量覆盖率较全量下降 ${diffCoverage.drop.toFixed(2)}%（增量 ${diffCoverage.pct.toFixed(2)}% vs 全量 ${(coverageData.total?.lines?.pct || 0).toFixed(2)}%）`,
+              `增量覆盖率较全量下降 ${diffCoverage.drop.toFixed(2)}%（增量 ${diffCoverage.pct.toFixed(2)}% vs 全量 ${(coverageData.total?.statements?.pct || 0).toFixed(2)}%）`,
             );
           }
         }
