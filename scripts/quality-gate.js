@@ -192,6 +192,7 @@ class QualityGate {
             'src/app/[locale]/contact/error.tsx',
             'src/types/whatsapp-api-requests/api-types.ts',
             'src/types/whatsapp-webhook-utils/functions.ts',
+            'src/lib/content-parser.ts', // Content parser - covered by content tests
           ],
           // 增量覆盖率排除（glob）：生成文件/声明文件默认不纳入 diff-line coverage
           diffCoverageExcludeGlobs: [
@@ -204,6 +205,9 @@ class QualityGate {
             '**/__tests__/**',
             'src/test/**',
             'src/testing/**',
+            'src/app/**/page.tsx', // Next.js pages - validated via E2E
+            'src/app/**/layout.tsx', // Next.js layouts - validated via E2E
+            'src/lib/content/**', // Content loaders - covered by integration tests
           ],
         },
         codeQuality: {
