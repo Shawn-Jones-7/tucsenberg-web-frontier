@@ -1,7 +1,11 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import { getAllPostsCached } from '@/lib/content/blog';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
 import { PostGrid } from '@/components/blog';
 import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-params';
 
@@ -24,10 +28,15 @@ export async function generateMetadata({
     namespace: 'blog',
   });
 
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  };
+  return generateMetadataForPath({
+    locale: locale as SeoLocale,
+    pageType: 'blog',
+    path: '/blog',
+    config: {
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+    },
+  });
 }
 
 export default async function BlogPage({ params }: BlogPageProps) {

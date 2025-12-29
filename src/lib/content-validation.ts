@@ -4,7 +4,10 @@
  * This module provides validation functions for content metadata,
  * ensuring data integrity and type safety.
  */
-import type { ContentType, ContentValidationResult } from '@/types/content';
+import type {
+  ContentType,
+  ContentValidationResult,
+} from '@/types/content.types';
 import { SECONDS_PER_MINUTE, ZERO } from '@/constants';
 import { COUNT_160 } from '@/constants/count';
 import {

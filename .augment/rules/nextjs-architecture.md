@@ -329,7 +329,6 @@ Critical files at project root (NOT in `src/` directory):
 - **`tailwind.config.js`** - Tailwind CSS configuration
 - **`vitest.config.mts`** - Vitest test configuration
 - **`lefthook.yml`** - Pre-commit hooks configuration
-- **`.size-limit.js`** - Bundle size budget enforcement
 
 **Important**: Do NOT look for these files in `src/` directory. Next.js requires `proxy.ts`/`middleware.ts` (depending on runtime) and `next.config.ts` at project root.
 
@@ -632,8 +631,7 @@ export default bundleAnalyzer({
   "scripts": {
     "dev": "next dev --turbo",
     "build": "next build",
-    "analyze": "ANALYZE=true next build",
-    "size:check": "bundlesize"
+    "build:analyze": "ANALYZE=true next build"
   }
 }
 ```
@@ -824,7 +822,7 @@ pnpm test
 pnpm build
 pnpm arch:validate
 pnpm security:check
-pnpm size:check
+pnpm build:analyze
 ```
 
 ## Enhanced ESLint Configuration

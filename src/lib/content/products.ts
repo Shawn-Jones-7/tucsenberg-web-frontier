@@ -21,7 +21,7 @@ import type {
   Locale,
   ProductDetail,
   ProductSummary,
-} from '@/types/content';
+} from '@/types/content.types';
 import {
   getProductDetail,
   getProductListing,
@@ -47,6 +47,7 @@ function mapProductDetailToSummary(product: ProductDetail): ProductSummary {
   if (product.updatedAt !== undefined) summary.updatedAt = product.updatedAt;
 
   if (product.description !== undefined) summary.description = product.description;
+  if (product.pdfUrl !== undefined) summary.pdfUrl = product.pdfUrl;
   if (product.images !== undefined) summary.images = product.images;
   if (product.categories !== undefined) summary.categories = product.categories;
   if (product.tags !== undefined) summary.tags = product.tags;

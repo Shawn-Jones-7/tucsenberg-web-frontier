@@ -16,7 +16,7 @@ import type {
   ContentQueryOptions,
   PageMetadata,
   ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 // Import after mocking
 import {
   getAllPages,

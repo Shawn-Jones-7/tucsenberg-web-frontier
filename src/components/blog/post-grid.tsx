@@ -1,4 +1,4 @@
-import type { PostSummary } from '@/types/content';
+import type { PostSummary } from '@/types/content.types';
 import { cn } from '@/lib/utils';
 import { PostCard, type PostCardProps } from '@/components/blog/post-card';
 

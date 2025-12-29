@@ -1,6 +1,6 @@
 import { render, screen, within } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import PrivacyPage, { generateMetadata } from '@/app/[locale]/privacy/page';
 
 const { mockGetTranslations, mockGetPageBySlug } = vi.hoisted(() => ({

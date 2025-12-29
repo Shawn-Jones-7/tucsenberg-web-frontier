@@ -3,7 +3,7 @@
  * Theme analytics utility functions
  */
 
-import * as Sentry from '@/lib/sentry-client';
+import { logger } from '@/lib/logger';
 import type {
   ThemePerformanceMetrics,
   ThemePerformanceSummary,
@@ -57,17 +57,14 @@ export class ThemeAnalyticsUtils {
   }
 
   /**
-   * 发送性能指标到Sentry
+   * 发送性能指标
    */
   static sendPerformanceMetrics(metrics: ThemePerformanceMetrics): void {
-    Sentry.addBreadcrumb({
-      category: 'theme-performance',
-      message: `Theme switched from ${metrics.fromTheme} to ${metrics.toTheme}`,
-      level: 'info',
-      data: {
-        duration: metrics.switchDuration,
-        supportsViewTransitions: metrics.supportsViewTransitions,
-      },
+    logger.info('Theme switch recorded', {
+      from: metrics.fromTheme,
+      to: metrics.toTheme,
+      duration: metrics.switchDuration,
+      supportsViewTransitions: metrics.supportsViewTransitions,
     });
   }
 
@@ -75,12 +72,7 @@ export class ThemeAnalyticsUtils {
    * 报告性能问题
    */
   static reportPerformanceIssue(metrics: ThemePerformanceMetrics): void {
-    Sentry.captureMessage(
-      `Slow theme switch detected: ${metrics.switchDuration}ms`,
-      'warning',
-    );
-
-    Sentry.setContext('theme-performance', {
+    logger.warn(`Slow theme switch detected: ${metrics.switchDuration}ms`, {
       fromTheme: metrics.fromTheme,
       toTheme: metrics.toTheme,
       duration: metrics.switchDuration,

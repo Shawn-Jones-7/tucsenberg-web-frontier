@@ -3,9 +3,14 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Download, MessageSquare } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale, ProductDetail } from '@/types/content';
+import type { Locale, ProductDetail } from '@/types/content.types';
 import { getStaticParamsForType } from '@/lib/content-manifest';
 import { getProductBySlugCached } from '@/lib/content/products';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
+import { generateProductSchema } from '@/lib/structured-data';
 import { MDXContent } from '@/components/mdx';
 import {
   ProductCertifications,
@@ -14,8 +19,10 @@ import {
   ProductSpecs,
   ProductTradeInfo,
 } from '@/components/products';
+import { JsonLdScript } from '@/components/seo';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SITE_CONFIG } from '@/config/paths';
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -36,17 +43,30 @@ export async function generateMetadata({
 
   try {
     const product = await getProductBySlugCached(locale as Locale, slug);
+    const title = product.seo?.title ?? product.title;
+    const description = product.seo?.description ?? product.description;
 
-    return {
-      title: product.seo?.title ?? product.title,
-      description: product.seo?.description ?? product.description,
-      keywords: product.seo?.keywords,
-      openGraph: {
-        title: product.seo?.title ?? product.title,
-        description: product.seo?.description ?? product.description,
-        images: product.seo?.ogImage ?? product.coverImage,
-      },
+    const overrides: NonNullable<
+      Parameters<typeof generateMetadataForPath>[0]['config']
+    > = {
+      title,
+      image: product.seo?.ogImage ?? product.coverImage,
+      type: 'product',
+      publishedTime: product.publishedAt,
     };
+
+    if (description !== undefined) overrides.description = description;
+    if (product.seo?.keywords !== undefined)
+      overrides.keywords = product.seo.keywords;
+    if (product.updatedAt !== undefined)
+      overrides.modifiedTime = product.updatedAt;
+
+    return generateMetadataForPath({
+      locale: locale as SeoLocale,
+      pageType: 'products',
+      path: `/products/${slug}`,
+      config: overrides,
+    });
   } catch {
     return {
       title: 'Product Not Found',
@@ -98,7 +118,7 @@ interface ProductInfoSectionProps {
   certificationsTitle: string;
   requestQuoteLabel: string;
   downloadPdfLabel: string;
-  downloadPdfHref: string;
+  downloadPdfHref?: string;
 }
 
 function ProductInfoSection({
@@ -145,21 +165,23 @@ function ProductInfoSection({
           {requestQuoteLabel}
         </Button>
 
-        <Button
-          size='lg'
-          variant='outline'
-          className='w-full sm:w-auto'
-          asChild
-        >
-          <Link
-            href={downloadPdfHref}
-            target='_blank'
-            rel='noreferrer'
+        {downloadPdfHref !== undefined && (
+          <Button
+            size='lg'
+            variant='outline'
+            className='w-full sm:w-auto'
+            asChild
           >
-            <Download className='mr-2 h-4 w-4' />
-            {downloadPdfLabel}
-          </Link>
-        </Button>
+            <Link
+              href={downloadPdfHref}
+              target='_blank'
+              rel='noreferrer'
+            >
+              <Download className='mr-2 h-4 w-4' />
+              {downloadPdfLabel}
+            </Link>
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -187,6 +209,83 @@ function buildTradeInfoProps(product: ProductDetail): Record<string, string> {
   };
 }
 
+function getSafePdfHref(product: ProductDetail): string | undefined {
+  const pdfUrl = product.pdfUrl?.trim();
+  if (!pdfUrl) return undefined;
+
+  if (
+    pdfUrl.startsWith('/') ||
+    pdfUrl.startsWith('https://') ||
+    pdfUrl.startsWith('http://')
+  ) {
+    return pdfUrl;
+  }
+
+  return undefined;
+}
+
+function buildProductSchema(
+  locale: Locale,
+  product: ProductDetail,
+): Promise<Record<string, unknown>> {
+  const title = product.seo?.title ?? product.title;
+  const description =
+    product.seo?.description ??
+    product.description ??
+    SITE_CONFIG.seo.defaultDescription;
+  const imageUrl = new URL(
+    product.seo?.ogImage ?? product.coverImage,
+    SITE_CONFIG.baseUrl,
+  ).toString();
+
+  return generateProductSchema(
+    {
+      name: title,
+      description,
+      image: imageUrl,
+    },
+    locale,
+  );
+}
+
+function ProductSpecsSection({
+  specs,
+  title,
+}: {
+  specs: Record<string, string> | undefined;
+  title: string;
+}) {
+  if (!specs || Object.keys(specs).length === 0) return null;
+  return (
+    <ProductSpecs
+      specs={specs}
+      title={title}
+    />
+  );
+}
+
+function ProductContent({
+  locale,
+  slug,
+  content,
+}: {
+  locale: Locale;
+  slug: string;
+  content: string;
+}) {
+  if (!content.trim()) return null;
+
+  return (
+    <article className='prose mt-12 max-w-none prose-neutral dark:prose-invert'>
+      <MDXContent
+        type='products'
+        locale={locale}
+        slug={slug}
+      />
+    </article>
+  );
+}
+
 export default async function ProductDetailPage({
   params,
 }: ProductDetailPageProps) {
@@ -196,18 +295,13 @@ export default async function ProductDetailPage({
 
   const t = await getTranslations({ locale, namespace: 'products' });
 
-  let product: ProductDetail;
-  try {
-    product = await getProductBySlugCached(locale, slug);
-  } catch {
-    notFound();
-  }
+  const product = await getProductBySlugCached(locale, slug).catch(() =>
+    notFound(),
+  );
 
   const images = [product.coverImage, ...(product.images ?? [])];
-  const hasSpecs =
-    product.specs !== undefined && Object.keys(product.specs).length > 0;
-
-  const downloadPdfHref = `/pdfs/products/${locale}/${product.slug}.pdf`;
+  const downloadPdfHref = getSafePdfHref(product);
+  const productSchema = await buildProductSchema(locale, product);
 
   const tradeInfoLabels = {
     moq: t('detail.labels.moq'),
@@ -219,6 +313,7 @@ export default async function ProductDetailPage({
 
   return (
     <main className='container mx-auto px-4 py-8 md:py-12'>
+      <JsonLdScript data={productSchema} />
       <nav className='mb-6'>
         <Link
           href={`/${locale}/products`}
@@ -241,17 +336,15 @@ export default async function ProductDetailPage({
           certificationsTitle={t('detail.certifications')}
           requestQuoteLabel={t('requestQuote')}
           downloadPdfLabel={t('detail.downloadPdf')}
-          downloadPdfHref={downloadPdfHref}
+          {...(downloadPdfHref ? { downloadPdfHref } : {})}
         />
       </div>
 
       <div className='mt-12 grid gap-8 lg:grid-cols-2'>
-        {hasSpecs && (
-          <ProductSpecs
-            specs={product.specs as Record<string, string>}
-            title={t('detail.specifications')}
-          />
-        )}
+        <ProductSpecsSection
+          specs={product.specs}
+          title={t('detail.specifications')}
+        />
         <ProductTradeInfo
           {...buildTradeInfoProps(product)}
           labels={tradeInfoLabels}
@@ -259,15 +352,11 @@ export default async function ProductDetailPage({
         />
       </div>
 
-      {product.content !== '' && (
-        <article className='prose mt-12 max-w-none prose-neutral dark:prose-invert'>
-          <MDXContent
-            type='products'
-            locale={locale}
-            slug={slug}
-          />
-        </article>
-      )}
+      <ProductContent
+        locale={locale}
+        slug={slug}
+        content={product.content}
+      />
 
       {/* Product Inquiry Form */}
       <section className='mt-12'>

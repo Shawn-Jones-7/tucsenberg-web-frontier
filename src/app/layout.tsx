@@ -13,7 +13,7 @@ export const metadata: Metadata = {
   metadataBase: new URL(
     process.env.NEXT_PUBLIC_BASE_URL ||
       process.env.NEXT_PUBLIC_SITE_URL ||
-      'http://localhost:3001',
+      'http://localhost:3000',
   ),
   title: '[PROJECT_NAME]',
   description: 'Modern B2B Enterprise Web Platform with Next.js 15',

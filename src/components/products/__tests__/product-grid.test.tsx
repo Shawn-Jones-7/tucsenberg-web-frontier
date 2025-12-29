@@ -4,7 +4,7 @@
  */
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import type { ProductSummary } from '@/types/content';
+import type { ProductSummary } from '@/types/content.types';
 import { ProductGrid } from '../product-grid';
 
 // Mock ProductCard component

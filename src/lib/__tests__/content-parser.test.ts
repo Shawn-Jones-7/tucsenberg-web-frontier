@@ -5,7 +5,7 @@ import {
   ContentError,
   ContentValidationError,
   type ContentType,
-} from '@/types/content';
+} from '@/types/content.types';
 import {
   getContentFiles,
   parseContentFile,

@@ -39,7 +39,6 @@
   // 工具型依赖由 CI/lint/分析脚本消费，标记为已使用以便聚焦业务未用项。
   "ignoreDependencies": [
     "@next/eslint-plugin-next",
-    "@sentry/cli",
     "axe-core",
     "concurrently",
     "eslint-config-next",

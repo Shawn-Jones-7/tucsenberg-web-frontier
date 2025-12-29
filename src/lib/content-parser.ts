@@ -15,7 +15,7 @@ import {
   type ContentType,
   type Locale,
   type ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 import {
   CONTENT_DIR,
   getValidationConfig,
@@ -56,7 +56,8 @@ export interface ParseContentOptions {
 function getProductionValidationConfig(): ValidationConfig {
   const config = getValidationConfig();
   const isProduction = process.env.NODE_ENV === 'production';
-  return {
+
+  const merged: ValidationConfig = {
     strictMode: isProduction || (config.strictMode ?? false),
     requireSlug: config.requireSlug ?? true,
     requireLocale: config.requireLocale ?? false,
@@ -64,17 +65,17 @@ function getProductionValidationConfig(): ValidationConfig {
     requireDescription: config.requireDescription ?? false,
     requireTags: config.requireTags ?? false,
     requireCategories: config.requireCategories ?? false,
-    ...(config.maxTitleLength !== undefined
-      ? { maxTitleLength: config.maxTitleLength }
-      : {}),
-    ...(config.maxDescriptionLength !== undefined
-      ? { maxDescriptionLength: config.maxDescriptionLength }
-      : {}),
-    ...(config.maxExcerptLength !== undefined
-      ? { maxExcerptLength: config.maxExcerptLength }
-      : {}),
-    ...(config.products !== undefined ? { products: config.products } : {}),
   };
+
+  if (config.maxTitleLength !== undefined)
+    merged.maxTitleLength = config.maxTitleLength;
+  if (config.maxDescriptionLength !== undefined)
+    merged.maxDescriptionLength = config.maxDescriptionLength;
+  if (config.maxExcerptLength !== undefined)
+    merged.maxExcerptLength = config.maxExcerptLength;
+  if (config.products !== undefined) merged.products = config.products;
+
+  return merged;
 }
 
 /**

@@ -106,10 +106,6 @@ export function checkSecurityConfig(testMode = false): {
     testMode || process.env.NODE_ENV === 'test'
       ? process.env.TURNSTILE_SECRET_KEY
       : env.TURNSTILE_SECRET_KEY;
-  const sentryDsn =
-    testMode || process.env.NODE_ENV === 'test'
-      ? process.env.SENTRY_DSN
-      : env.SENTRY_DSN;
   const securityMode =
     testMode || process.env.NODE_ENV === 'test'
       ? process.env.NEXT_PUBLIC_SECURITY_MODE
@@ -118,10 +114,6 @@ export function checkSecurityConfig(testMode = false): {
   // Check environment variables
   if (!turnstileKey && nodeEnv === 'production') {
     issues.push('Turnstile secret key not configured in production');
-  }
-
-  if (!sentryDsn && nodeEnv === 'production') {
-    recommendations.push('Consider configuring Sentry for error monitoring');
   }
 
   if (securityMode === 'relaxed' && nodeEnv === 'production') {

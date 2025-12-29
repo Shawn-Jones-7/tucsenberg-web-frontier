@@ -180,7 +180,7 @@ describe('ContactPage', () => {
       });
 
       // 验证元数据结构
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'Contact Us',
         description: 'Get in touch with our team',
       });

@@ -13,7 +13,7 @@ import type {
   Page,
   PageMetadata,
   ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 import { getContentFiles, parseContentFile } from '@/lib/content-parser';
 import { filterPosts } from '@/lib/content-query/filters';
 import { paginatePosts, sortPosts } from '@/lib/content-query/sorting';

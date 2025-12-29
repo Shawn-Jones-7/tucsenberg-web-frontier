@@ -1,11 +1,15 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import { getPageBySlug } from '@/lib/content';
 import {
   renderLegalContent,
   slugifyHeading,
 } from '@/lib/content/render-legal-content';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
 import { JsonLdScript } from '@/components/seo';
 import {
   generateLocaleStaticParams,
@@ -29,10 +33,15 @@ export async function generateMetadata({
     namespace: 'terms',
   });
 
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  };
+  return generateMetadataForPath({
+    locale: locale as SeoLocale,
+    pageType: 'terms',
+    path: '/terms',
+    config: {
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+    },
+  });
 }
 
 interface TocItem {

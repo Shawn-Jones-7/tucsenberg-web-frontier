@@ -4,15 +4,19 @@ This directory contains social media sharing images for SEO optimization.
 
 ## Required Images
 
-### og-image.jpg
-- **Size**: 1200x630px
-- **Format**: JPEG
+### og-image.svg
+- **Size**: 1200x630px (artboard)
+- **Format**: SVG (current default)
 - **Purpose**: Open Graph image for social media sharing
 - **Content**: Should include:
   - Tucsenberg Web Frontier logo/branding
   - Key messaging: "Modern B2B Enterprise Web Platform"
   - Technology stack highlights: "Next.js 16 + React 19 + TypeScript"
   - Clean, professional design matching brand colors
+
+> Note: Some social platforms have limited support for SVG Open Graph images.
+> For production, consider exporting an optimized `og-image.jpg` (or PNG) and
+> updating the SEO config to point to the raster image.
 
 ### twitter-image.jpg (Optional)
 - **Size**: 1200x600px  
@@ -30,9 +34,8 @@ This directory contains social media sharing images for SEO optimization.
 
 ## Current Status
 
-- ✅ SEO configuration updated to reference `/images/og-image.jpg`
-- ✅ SVG placeholder provided (`og-image.svg`) - convert to JPG for production
-- ⏳ For production: Replace SVG with optimized JPG (1200x630px, <200KB)
+- ✅ SEO configuration updated to reference `/images/og-image.svg`
+- ⏳ For production: Export an optimized raster image (1200x630px, <200KB) and update SEO config if needed
 
 ## Testing
 

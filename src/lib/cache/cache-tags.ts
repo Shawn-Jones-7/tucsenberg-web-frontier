@@ -7,7 +7,7 @@
  * @see openspec/changes/p1-cache-tag-invalidation/proposal.md
  */
 
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 
 /**
  * Valid cache tag domains.

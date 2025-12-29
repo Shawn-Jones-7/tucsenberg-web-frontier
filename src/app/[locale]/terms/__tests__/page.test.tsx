@@ -118,7 +118,7 @@ We provide quality products.`,
         params: Promise.resolve(mockParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'Terms of Service',
         description: 'Please read our terms carefully',
       });

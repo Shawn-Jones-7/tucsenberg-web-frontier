@@ -2,7 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
-import * as Sentry from '@/lib/sentry-client';
+import { logger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
 
 interface RouteErrorProps {
@@ -12,7 +12,7 @@ interface RouteErrorProps {
 
 export default function ContactRouteError({ error, reset }: RouteErrorProps) {
   useEffect(() => {
-    Sentry.captureException(error);
+    logger.error('Contact route error', error);
   }, [error]);
 
   return (

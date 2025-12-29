@@ -150,8 +150,6 @@ export interface ConfigOptions {
   defaultLocale: Locale;
   /** 是否启用调试模式 */
   debug: boolean;
-  /** Sentry DSN */
-  sentryDsn?: string;
 }
 
 // Window接口扩展已在lib.dom.d.ts中定义，无需重复声明

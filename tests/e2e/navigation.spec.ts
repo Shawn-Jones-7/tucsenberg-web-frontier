@@ -84,9 +84,9 @@ test.describe('Navigation System', () => {
       const nav = getNav(page);
       await expect(nav).toBeVisible();
 
-      // In desktop nav, "Products" is a dropdown trigger (button), others are links
+      // All navigation items are links (Products no longer has dropdown children)
       await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
-      await expect(nav.getByRole('button', { name: 'Products' })).toBeVisible();
+      await expect(nav.getByRole('link', { name: 'Products' })).toBeVisible();
       await expect(nav.getByRole('link', { name: 'Blog' })).toBeVisible();
       await expect(nav.getByRole('link', { name: 'About' })).toBeVisible();
     });
@@ -487,9 +487,7 @@ test.describe('Navigation System', () => {
         const nav = getNav(page);
         await expect(nav).toHaveAttribute('aria-label', 'Main navigation');
         await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
-        await expect(
-          nav.getByRole('button', { name: 'Products' }),
-        ).toBeVisible();
+        await expect(nav.getByRole('link', { name: 'Products' })).toBeVisible();
         await expect(nav.getByRole('link', { name: 'About' })).toBeVisible();
       }
     });

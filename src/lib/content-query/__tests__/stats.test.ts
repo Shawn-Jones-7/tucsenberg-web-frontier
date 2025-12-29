@@ -12,7 +12,7 @@ import type {
   ContentConfig,
   Page,
   PageMetadata,
-} from '@/types/content';
+} from '@/types/content.types';
 // Import after mocking
 import { getContentStats } from '@/lib/content-query/stats';
 

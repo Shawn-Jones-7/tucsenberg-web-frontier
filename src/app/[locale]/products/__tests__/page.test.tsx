@@ -144,7 +144,7 @@ describe('ProductsPage', () => {
         searchParams: Promise.resolve(mockSearchParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'Products',
         description: 'Browse our product catalog',
       });

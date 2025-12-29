@@ -7,7 +7,7 @@ import type {
   BlogPostMetadata,
   ContentQueryOptions,
   ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 import { getContentConfig } from '@/lib/content-utils';
 
 /**

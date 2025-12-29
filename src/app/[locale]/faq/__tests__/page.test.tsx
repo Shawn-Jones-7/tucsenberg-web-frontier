@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import FaqPage, { generateMetadata } from '@/app/[locale]/faq/page';
 
 // 使用 vi.hoisted 配置 mock，确保在模块导入前生效

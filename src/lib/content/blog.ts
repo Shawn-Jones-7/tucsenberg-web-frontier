@@ -23,7 +23,7 @@ import type {
   PostDetail,
   PostListOptions,
   PostSummary,
-} from '@/types/content';
+} from '@/types/content.types';
 import { getAllPosts, getPostBySlug } from '@/lib/content-query';
 import { contentTags } from '@/lib/cache/cache-tags';
 

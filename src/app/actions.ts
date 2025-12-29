@@ -7,11 +7,9 @@
  * @description React 19 Server Actions 基础设施
  * @version 1.0.0
  */
-// 测试/开发环境避免直接引入 @sentry/nextjs，改用服务器端轻量包装器
 import { contactFieldValidators } from '@/lib/form-schema/contact-field-validators';
 import { type ContactFormData } from '@/lib/form-schema/contact-form-schema';
 import { logger } from '@/lib/logger';
-import * as Sentry from '@/lib/sentry-server';
 import {
   createErrorResultWithLogging,
   createSuccessResultWithLogging,
@@ -214,7 +212,6 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
       );
     } catch (error) {
       const processingTime = performance.now() - startTime;
-      Sentry.captureException(error);
       logger.error('Contact form Server Action failed', {
         error: error instanceof Error ? error.message : 'Unknown error',
         stack: error instanceof Error ? error.stack : undefined,

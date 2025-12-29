@@ -1,4 +1,4 @@
-import type { ProductSummary } from '@/types/content';
+import type { ProductSummary } from '@/types/content.types';
 import { cn } from '@/lib/utils';
 import {
   ProductCard,

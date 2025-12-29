@@ -213,7 +213,7 @@ function generateManifestTsCode(manifest: ContentManifest): string {
  * No runtime fs dependency - works in dev and production builds.
  */
 
-import type { ContentType, Locale } from '@/types/content';
+import type { ContentType, Locale } from '@/types/content.types';
 
 export interface ContentEntry {
   type: ContentType;

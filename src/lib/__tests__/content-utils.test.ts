@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { ContentError } from '@/types/content';
+import { ContentError } from '@/types/content.types';
 import {
   TEST_COUNT_CONSTANTS,
   TEST_SAMPLE_CONSTANTS,

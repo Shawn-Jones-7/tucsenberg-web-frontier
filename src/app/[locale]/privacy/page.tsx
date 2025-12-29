@@ -1,8 +1,12 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import { getPageBySlug } from '@/lib/content';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
 import { JsonLdScript } from '@/components/seo';
 import {
   generateLocaleStaticParams,
@@ -26,10 +30,15 @@ export async function generateMetadata({
     namespace: 'privacy',
   });
 
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  };
+  return generateMetadataForPath({
+    locale: locale as SeoLocale,
+    pageType: 'privacy',
+    path: '/privacy',
+    config: {
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+    },
+  });
 }
 
 interface TocItem {

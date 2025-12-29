@@ -3,13 +3,17 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import ContactRouteError from '../error';
 
-// Mock Sentry using vi.hoisted
-const { mockCaptureException } = vi.hoisted(() => ({
-  mockCaptureException: vi.fn(),
+// Mock logger using vi.hoisted
+const { mockLoggerError } = vi.hoisted(() => ({
+  mockLoggerError: vi.fn(),
 }));
 
-vi.mock('@/lib/sentry-client', () => ({
-  captureException: mockCaptureException,
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    error: mockLoggerError,
+    info: vi.fn(),
+    warn: vi.fn(),
+  },
 }));
 
 // Mock Button component
@@ -124,8 +128,8 @@ describe('ContactRouteError', () => {
     });
   });
 
-  describe('Sentry integration', () => {
-    it('should capture exception with Sentry on mount', () => {
+  describe('error logging', () => {
+    it('should log error on mount', () => {
       render(
         <ContactRouteError
           error={mockError}
@@ -133,10 +137,13 @@ describe('ContactRouteError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledWith(mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        'Contact route error',
+        mockError,
+      );
     });
 
-    it('should capture exception only once on initial mount', () => {
+    it('should log error only once on initial mount', () => {
       render(
         <ContactRouteError
           error={mockError}
@@ -144,10 +151,10 @@ describe('ContactRouteError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledTimes(1);
+      expect(mockLoggerError).toHaveBeenCalledTimes(1);
     });
 
-    it('should capture new error when error prop changes', () => {
+    it('should log new error when error prop changes', () => {
       const { rerender } = render(
         <ContactRouteError
           error={mockError}
@@ -163,8 +170,11 @@ describe('ContactRouteError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledTimes(2);
-      expect(mockCaptureException).toHaveBeenLastCalledWith(newError);
+      expect(mockLoggerError).toHaveBeenCalledTimes(2);
+      expect(mockLoggerError).toHaveBeenLastCalledWith(
+        'Contact route error',
+        newError,
+      );
     });
   });
 
@@ -208,7 +218,10 @@ describe('ContactRouteError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledWith(errorWithDigest);
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        'Contact route error',
+        errorWithDigest,
+      );
     });
   });
 

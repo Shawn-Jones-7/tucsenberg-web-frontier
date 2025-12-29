@@ -207,10 +207,10 @@ content/
 - **@t3-oss/env-nextjs 0.13.8** - 类型安全环境变量
 
 ### 监控与日志
-- **Sentry（可选）**
-  - 默认不启用客户端；支持“服务端/边缘优先”按需接入
-  - 相关依赖：@sentry/nextjs、@sentry/cli（仅在启用时生效）
 - **Vercel 函数日志** - 服务端监控
+- **@vercel/analytics** - 性能分析
+- **@vercel/speed-insights** - 性能指标监控
+- **React Error Boundaries** - 客户端错误边界处理
 
 ## 8. 国际化与 SEO
 

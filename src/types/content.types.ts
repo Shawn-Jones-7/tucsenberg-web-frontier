@@ -64,6 +64,7 @@ export interface ProductMetadata extends ContentMetadata {
   coverImage: string;
   images?: string[];
   category: string;
+  pdfUrl?: string;
   moq?: string;
   leadTime?: string;
   supplyCapacity?: string;
@@ -149,6 +150,7 @@ export interface ProductSummary {
   coverImage: string;
   images?: string[];
   category: string;
+  pdfUrl?: string;
   categories?: string[];
   tags?: string[];
   featured?: boolean;

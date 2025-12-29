@@ -14,7 +14,7 @@ import type {
   BlogPost,
   BlogPostMetadata,
   ContentQueryOptions,
-} from '@/types/content';
+} from '@/types/content.types';
 // Import after ensuring mocks
 import { paginatePosts, sortPosts } from '@/lib/content-query/sorting';
 

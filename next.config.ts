@@ -2,7 +2,6 @@ import path from 'path';
 import type { NextConfig } from 'next';
 import bundleAnalyzer from '@next/bundle-analyzer';
 import createMDX from '@next/mdx';
-// import { withSentryConfig } from '@sentry/nextjs'; // Removed: Sentry package not installed
 import createNextIntlPlugin from 'next-intl/plugin';
 import { getSecurityHeaders } from './src/config/security';
 
@@ -19,11 +18,6 @@ const withMDX = createMDX({
     rehypePlugins: [],
   },
 });
-
-// 默认禁用 Sentry 客户端打包，除非显式启用（进一步瘦身首包 JS）
-const SENTRY_DISABLED =
-  process.env['ENABLE_SENTRY_BUNDLE'] !== '1' ||
-  process.env['DISABLE_SENTRY_BUNDLE'] === '1';
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -96,7 +90,7 @@ const nextConfig: NextConfig = {
   // 但 Turbopack 在处理它们时遇到问题，所以我们暂时移除这个配置
   // 让 Next.js 使用默认的外部包处理方式
 
-  // Webpack 配置 - 仅用于 resolve.alias/externals/Sentry 禁用映射
+  // Webpack 配置 - 仅用于 resolve.alias/externals
   // Next.js 16 默认使用 Turbopack，此配置仅在 build:webpack 兜底时生效
   webpack: (config, { isServer }) => {
     // Path alias configuration for @/ -> src/
@@ -105,14 +99,6 @@ const nextConfig: NextConfig = {
       '@': path.resolve(__dirname, 'src'),
       '@messages': path.resolve(__dirname, 'messages'),
       '@content': path.resolve(__dirname, 'content'),
-      ...(SENTRY_DISABLED
-        ? {
-            '@/lib/sentry-client': path.resolve(
-              __dirname,
-              'src/lib/sentry-client.disabled.ts',
-            ),
-          }
-        : {}),
     };
 
     // 服务端将部分重型依赖标记为 external，避免捆绑到通用 chunk 触发初始化顺序问题
@@ -124,17 +110,6 @@ const nextConfig: NextConfig = {
       (config.externals ||= [] as unknown[]).push({
         airtable: 'commonjs airtable',
       });
-    }
-
-    // 当禁用 Sentry 时，提供完全的空模块映射，防止生成相关 chunk
-    if (SENTRY_DISABLED) {
-      config.resolve.alias = {
-        ...config.resolve.alias,
-        '@sentry/nextjs': path.resolve(
-          __dirname,
-          'src/lib/__sentry_empty__.ts',
-        ),
-      };
     }
 
     return config;
@@ -180,10 +155,6 @@ const nextConfig: NextConfig = {
     return headerConfigs;
   },
 };
-
-// Sentry integration removed - package not installed
-// Optimized Sentry webpack plugin options for smaller bundle size
-// const sentryWebpackPluginOptions = { ... };
 
 // Export final config with all plugins applied
 export default withBundleAnalyzer(withNextIntl(withMDX(nextConfig)));

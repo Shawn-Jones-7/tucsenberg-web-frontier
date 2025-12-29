@@ -165,7 +165,7 @@ describe('AboutPage', () => {
         params: Promise.resolve(mockParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'About Us',
         description: 'Learn more about our company',
       });

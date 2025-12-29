@@ -16,7 +16,7 @@ import type {
   ContentConfig,
   ContentQueryOptions,
   ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 // Import after mocking
 import {
   filterPosts,
