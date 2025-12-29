@@ -116,8 +116,11 @@ function matchesGlob(pattern, value) {
 
   const regexText = `^${normalizedPattern
     .split('/')
-    .map((part) => {
-      if (part === '**') return '(?:.+/)?';
+    .map((part, index, parts) => {
+      if (part === '**') {
+        const isLast = index === parts.length - 1;
+        return isLast ? '(?:.+/)?[^/]*' : '(?:.+/)?';
+      }
       const segment = escapeRegExp(part).replace(/\\\*/g, '[^/]*');
       return `${segment}/`;
     })
