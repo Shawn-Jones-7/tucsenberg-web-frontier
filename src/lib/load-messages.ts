@@ -185,9 +185,9 @@ async function loadCriticalMessagesCore(locale: Locale): Promise<Messages> {
   const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
   const isDevelopment = process.env.NODE_ENV === 'development';
 
-  // Build/dev: direct file read, production: HTTP fetch with fallback
+  // Build/dev/CI: direct file read, production runtime: HTTP fetch with fallback
   const messages =
-    isBuildTime || isDevelopment
+    isBuildTime || isDevelopment || isCiLikeEnvironment
       ? await loadMessagesWithFallback(safeLocale, 'critical')
       : await fetchMessagesWithFallback(safeLocale, 'critical');
 
@@ -202,9 +202,9 @@ async function loadDeferredMessagesCore(locale: Locale): Promise<Messages> {
   const isBuildTime = process.env.NEXT_PHASE === 'phase-production-build';
   const isDevelopment = process.env.NODE_ENV === 'development';
 
-  // Build/dev: direct file read, production: HTTP fetch with fallback
+  // Build/dev/CI: direct file read, production runtime: HTTP fetch with fallback
   const messages =
-    isBuildTime || isDevelopment
+    isBuildTime || isDevelopment || isCiLikeEnvironment
       ? await loadMessagesWithFallback(safeLocale, 'deferred')
       : await fetchMessagesWithFallback(safeLocale, 'deferred');
 
