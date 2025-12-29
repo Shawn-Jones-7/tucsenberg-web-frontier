@@ -1,7 +1,9 @@
 import type { MetadataRoute } from 'next';
-import type { Locale, ProductSummary } from '@/types/content.types';
+import type { Locale, PostSummary, ProductSummary } from '@/types/content.types';
+import { getAllPostsCached } from '@/lib/content/blog';
 import { getAllProductsCached } from '@/lib/content/products';
 import {
+  getContentLastModified,
   getProductLastModified,
   getStaticPageLastModified,
   type StaticPageLastModConfig,
@@ -49,6 +51,7 @@ const PAGE_CONFIG_MAP = new Map<string, PageConfig>([
   ['/faq', { changeFrequency: 'monthly', priority: 0.6 }],
   ['/privacy', { changeFrequency: 'monthly', priority: 0.7 }],
   ['product', { changeFrequency: 'weekly', priority: 0.8 }],
+  ['blogPost', { changeFrequency: 'monthly', priority: 0.6 }],
 ]);
 
 const DEFAULT_CONFIG: PageConfig = {
@@ -216,13 +219,100 @@ async function generateProductEntries(): Promise<MetadataRoute.Sitemap> {
   return entries;
 }
 
+// Fetch all blog posts for all locales
+async function fetchAllPostsByLocale(): Promise<Map<string, PostSummary[]>> {
+  const postsByLocale = new Map<string, PostSummary[]>();
+
+  for (const locale of routing.locales) {
+    try {
+      const posts = await getAllPostsCached(locale as Locale, {
+        draft: false,
+      });
+      postsByLocale.set(locale, posts);
+    } catch {
+      postsByLocale.set(locale, []);
+    }
+  }
+
+  return postsByLocale;
+}
+
+// Build alternate languages for a blog post across locales
+function buildBlogAlternates(
+  slug: string,
+  currentLocale: string,
+  allPostsByLocale: Map<string, PostSummary[]>,
+): Record<string, string> {
+  const postPath = `/blog/${slug}`;
+
+  const entries = routing.locales
+    .filter((locale) => {
+      const posts = allPostsByLocale.get(locale);
+      if (posts === undefined) return false;
+      return locale === currentLocale || posts.some((p) => p.slug === slug);
+    })
+    .map((locale) => [locale, `${BASE_URL}/${locale}${postPath}`]);
+
+  // x-default 指向默认语言版本
+  const defaultLocalePosts = allPostsByLocale.get(routing.defaultLocale);
+  if (defaultLocalePosts?.some((p) => p.slug === slug)) {
+    entries.push([
+      'x-default',
+      `${BASE_URL}/${routing.defaultLocale}${postPath}`,
+    ]);
+  }
+
+  return Object.fromEntries(entries);
+}
+
+// Generate blog post page entries for all locales
+async function generateBlogEntries(): Promise<MetadataRoute.Sitemap> {
+  const entries: MetadataRoute.Sitemap = [];
+  const config = getPageConfig('blogPost');
+  const allPostsByLocale = await fetchAllPostsByLocale();
+
+  // Track processed post slugs to avoid duplicates
+  const processedSlugs = new Set<string>();
+
+  for (const locale of routing.locales) {
+    const posts = allPostsByLocale.get(locale);
+    if (posts === undefined) continue;
+
+    for (const post of posts) {
+      const entryKey = `${locale}:${post.slug}`;
+      if (processedSlugs.has(entryKey)) continue;
+      processedSlugs.add(entryKey);
+
+      const url = `${BASE_URL}/${locale}/blog/${post.slug}`;
+      const alternates = buildBlogAlternates(
+        post.slug,
+        locale,
+        allPostsByLocale,
+      );
+      const lastModified = getContentLastModified({
+        publishedAt: post.publishedAt,
+        updatedAt: post.updatedAt,
+      });
+
+      entries.push(
+        createSitemapEntry({ url, lastModified, config, alternates }),
+      );
+    }
+  }
+
+  return entries;
+}
+
 /**
  * Dynamic sitemap generation for Next.js.
  * Includes all static pages and dynamic product pages with proper i18n alternates.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticEntries = generateStaticPageEntries();
-  const productEntries = await generateProductEntries();
+  const [productEntries, blogEntries] = await Promise.all([
+    generateProductEntries(),
+    generateBlogEntries(),
+  ]);
 
-  return [...staticEntries, ...productEntries];
+  return [...staticEntries, ...productEntries, ...blogEntries];
 }

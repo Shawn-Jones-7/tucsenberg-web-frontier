@@ -277,6 +277,7 @@ describe('ProductDetailPage', () => {
     description: 'A test product description',
     category: 'Electronics',
     coverImage: '/images/test-product.jpg',
+    pdfUrl: '/pdfs/products/en/test-product.pdf',
     images: ['/images/test-product-2.jpg'],
     moq: '100 units',
     leadTime: '7 days',
@@ -340,14 +341,15 @@ describe('ProductDetailPage', () => {
         params: Promise.resolve(mockParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'Test Product SEO Title',
         description: 'SEO Description',
         keywords: 'test, product',
         openGraph: {
           title: 'Test Product SEO Title',
           description: 'SEO Description',
-          images: '/images/test-product.jpg', // Falls back to coverImage when ogImage not set
+          url: expect.stringContaining('/en/products/test-product'),
+          images: [{ url: '/images/test-product.jpg' }], // Falls back to coverImage when ogImage not set
         },
       });
     });

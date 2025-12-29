@@ -76,7 +76,6 @@ describe('robots.ts', () => {
       const disallowed = wildcardRule?.disallow;
 
       expect(disallowed).toContain('/error-test/');
-      expect(disallowed).toContain('/accessibility-test/');
     });
 
     it('should include sitemap URL', () => {

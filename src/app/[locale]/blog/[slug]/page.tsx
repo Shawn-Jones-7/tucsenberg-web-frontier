@@ -6,8 +6,16 @@ import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Locale, PostDetail } from '@/types/content.types';
 import { getStaticParamsForType } from '@/lib/content-manifest';
 import { getPostBySlugCached } from '@/lib/content/blog';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
+import { generateLocalizedStructuredData } from '@/lib/structured-data';
+import type { ArticleData } from '@/lib/structured-data-types';
 import { MDXContent } from '@/components/mdx';
+import { JsonLdScript } from '@/components/seo';
 import { Badge } from '@/components/ui/badge';
+import { SITE_CONFIG } from '@/config/paths';
 
 interface BlogDetailPageProps {
   params: Promise<{
@@ -20,23 +28,68 @@ export function generateStaticParams() {
   return getStaticParamsForType('posts');
 }
 
-function buildPostMetadata(post: PostDetail): Metadata {
+function buildBlogDetailSEOConfig(
+  post: PostDetail,
+): NonNullable<Parameters<typeof generateMetadataForPath>[0]['config']> {
   const title = post.seo?.title ?? post.title;
   const description = post.seo?.description ?? post.description ?? post.excerpt;
 
-  return {
+  const config: NonNullable<
+    Parameters<typeof generateMetadataForPath>[0]['config']
+  > = {
+    title,
+    type: 'article',
+    publishedTime: post.publishedAt,
+  };
+
+  if (description !== undefined) config.description = description;
+  if (post.seo?.keywords !== undefined) config.keywords = post.seo.keywords;
+  if (post.seo?.ogImage !== undefined) {
+    config.image = post.seo.ogImage;
+  } else if (post.coverImage !== undefined) {
+    config.image = post.coverImage;
+  }
+  if (post.updatedAt !== undefined) config.modifiedTime = post.updatedAt;
+  if (post.categories?.[0] !== undefined) config.section = post.categories[0];
+
+  return config;
+}
+
+function buildArticleSchema(
+  locale: Locale,
+  slug: string,
+  post: PostDetail,
+): Promise<Record<string, unknown>> {
+  const canonicalUrl = new URL(
+    `/${locale}/blog/${slug}`,
+    SITE_CONFIG.baseUrl,
+  ).toString();
+  const title = post.seo?.title ?? post.title;
+  const description =
+    post.seo?.description ??
+    post.description ??
+    post.excerpt ??
+    SITE_CONFIG.seo.defaultDescription;
+
+  const imageCandidate = post.seo?.ogImage ?? post.coverImage;
+  const imageUrl =
+    imageCandidate !== undefined
+      ? new URL(imageCandidate, SITE_CONFIG.baseUrl).toString()
+      : undefined;
+
+  const articleData: ArticleData = {
     title,
     description,
-    keywords: post.seo?.keywords,
-    openGraph: {
-      title,
-      description,
-      type: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
-      images: post.seo?.ogImage ? [post.seo.ogImage] : undefined,
-    },
+    publishedTime: post.publishedAt,
+    url: canonicalUrl,
   };
+
+  if (post.updatedAt !== undefined) articleData.modifiedTime = post.updatedAt;
+  if (imageUrl !== undefined) articleData.image = imageUrl;
+  if (post.categories?.[0] !== undefined)
+    articleData.section = post.categories[0];
+
+  return generateLocalizedStructuredData(locale, 'Article', articleData);
 }
 
 export async function generateMetadata({
@@ -46,7 +99,12 @@ export async function generateMetadata({
 
   try {
     const post = await getPostBySlugCached(locale as Locale, slug);
-    return buildPostMetadata(post);
+    return generateMetadataForPath({
+      locale: locale as SeoLocale,
+      pageType: 'blog',
+      path: `/blog/${slug}`,
+      config: buildBlogDetailSEOConfig(post),
+    });
   } catch {
     return { title: 'Article Not Found' };
   }
@@ -121,6 +179,33 @@ function ArticleTags({ tags, categories }: ArticleTagsProps) {
   );
 }
 
+function ArticleExcerpt({ excerpt }: { excerpt: string | undefined }) {
+  if (!excerpt) return null;
+  return <p className='text-body text-muted-foreground'>{excerpt}</p>;
+}
+
+function ArticleFooter({
+  tags,
+  authorLabel,
+}: {
+  tags: string[] | undefined;
+  authorLabel: string;
+}) {
+  if (!tags || tags.length === 0) return null;
+
+  return (
+    <footer className='mt-12 border-t pt-6'>
+      <div className='flex items-center gap-2'>
+        <User className='h-4 w-4 text-muted-foreground' />
+        <span className='text-sm text-muted-foreground'>
+          {authorLabel}{' '}
+          <span className='font-medium text-foreground'>Tucsenberg Team</span>
+        </span>
+      </div>
+    </footer>
+  );
+}
+
 export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
   const { locale: localeParam, slug } = await params;
   const locale = localeParam as Locale;
@@ -128,15 +213,12 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
   const t = await getTranslations({ locale, namespace: 'blog' });
 
-  let post: PostDetail;
-  try {
-    post = await getPostBySlugCached(locale, slug);
-  } catch {
-    notFound();
-  }
+  const post = await getPostBySlugCached(locale, slug).catch(() => notFound());
+  const articleSchema = await buildArticleSchema(locale, slug, post);
 
   return (
     <main className='container mx-auto px-4 py-8 md:py-12'>
+      <JsonLdScript data={articleSchema} />
       <nav className='mb-6'>
         <Link
           href={`/${locale}/blog`}
@@ -154,9 +236,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
             categories={post.categories}
           />
           <h1 className='text-heading'>{post.title}</h1>
-          {post.excerpt !== undefined && (
-            <p className='text-body text-muted-foreground'>{post.excerpt}</p>
-          )}
+          <ArticleExcerpt excerpt={post.excerpt} />
           <ArticleMeta
             post={post}
             publishedLabel={t('publishedOn')}
@@ -171,19 +251,10 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
           className='prose max-w-none prose-neutral dark:prose-invert'
         />
 
-        {post.tags !== undefined && post.tags.length > 0 && (
-          <footer className='mt-12 border-t pt-6'>
-            <div className='flex items-center gap-2'>
-              <User className='h-4 w-4 text-muted-foreground' />
-              <span className='text-sm text-muted-foreground'>
-                {t('author')}{' '}
-                <span className='font-medium text-foreground'>
-                  Tucsenberg Team
-                </span>
-              </span>
-            </div>
-          </footer>
-        )}
+        <ArticleFooter
+          tags={post.tags}
+          authorLabel={t('author')}
+        />
       </article>
     </main>
   );

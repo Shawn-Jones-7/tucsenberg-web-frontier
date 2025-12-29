@@ -3,6 +3,7 @@ import enCritical from '@messages/en/critical.json';
 import zhCritical from '@messages/zh/critical.json';
 import { SITE_CONFIG, type Locale, type PageType } from '@/config/paths';
 import { ONE } from '@/constants';
+import { routing } from '@/i18n/routing-config';
 import {
   generateCanonicalURL,
   generateLanguageAlternates,
@@ -46,6 +47,41 @@ const SEO_TRANSLATIONS: Record<Locale, SEOMessages> = {
 
 function resolveLocale(locale: Locale): Locale {
   return locale === 'zh' ? 'zh' : FALLBACK_LOCALE;
+}
+
+function normalizePath(path: string): string {
+  const trimmed = path.trim();
+  if (trimmed === '' || trimmed === '/') {
+    return '';
+  }
+  return trimmed.startsWith('/') ? trimmed : `/${trimmed}`;
+}
+
+function buildCanonicalForPath(locale: Locale, path: string): string {
+  const safeLocale = resolveLocale(locale);
+  const normalizedPath = normalizePath(path);
+  return new URL(
+    `/${safeLocale}${normalizedPath}`,
+    SITE_CONFIG.baseUrl,
+  ).toString();
+}
+
+function buildLanguagesForPath(path: string): Record<string, string> {
+  const normalizedPath = normalizePath(path);
+
+  const entries: Array<[string, string]> = routing.locales.map((locale) => [
+    locale,
+    new URL(`/${locale}${normalizedPath}`, SITE_CONFIG.baseUrl).toString(),
+  ]);
+  entries.push([
+    'x-default',
+    new URL(
+      `/${routing.defaultLocale}${normalizedPath}`,
+      SITE_CONFIG.baseUrl,
+    ).toString(),
+  ]);
+
+  return Object.fromEntries(entries);
 }
 
 interface TranslationFieldOptions {
@@ -256,6 +292,50 @@ export function generateLocalizedMetadata(
 }
 
 /**
+ * Generate path-aware metadata for App Router pages.
+ *
+ * Next.js metadata uses shallow merges: if a page does not explicitly return
+ * `alternates` or `openGraph.url`, it may inherit those fields from a parent layout.
+ * This helper ensures canonical/hreflang and OG URL are always derived from the
+ * actual route path.
+ */
+interface GenerateMetadataForPathParams {
+  locale: Locale;
+  pageType: PageType;
+  path: string;
+  config?: Partial<SEOConfig>;
+}
+
+export function generateMetadataForPath(
+  params: GenerateMetadataForPathParams,
+): Metadata {
+  const { locale, pageType, path, config } = params;
+
+  const seoConfig = createPageSEOConfig(pageType, config ?? {});
+  const metadata = generateLocalizedMetadata(locale, pageType, seoConfig);
+
+  const canonical = buildCanonicalForPath(locale, path);
+  const languages = buildLanguagesForPath(path);
+
+  metadata.alternates = {
+    canonical,
+    languages,
+  };
+
+  const { openGraph } = metadata;
+  if (openGraph && typeof openGraph === 'object') {
+    (openGraph as { url?: string | URL }).url = canonical;
+    metadata.openGraph = openGraph;
+  } else {
+    metadata.openGraph = {
+      url: canonical,
+    } as unknown as Metadata['openGraph'];
+  }
+
+  return metadata;
+}
+
+/**
  * 生成页面特定的SEO配置
  */
 export function createPageSEOConfig(
@@ -273,7 +353,7 @@ export function createPageSEOConfig(
         'Enterprise Platform',
         'B2B Solution',
       ],
-      image: '/images/og-image.jpg',
+      image: '/images/og-image.svg',
     },
     about: {
       type: 'website' as const,

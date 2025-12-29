@@ -5,6 +5,10 @@ import {
   getAllProductsCached,
   getProductCategoriesCached,
 } from '@/lib/content/products';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
 import { ProductGrid } from '@/components/products';
 import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-params';
 import { ProductCategoryFilter } from '@/app/[locale]/products/product-category-filter';
@@ -31,10 +35,15 @@ export async function generateMetadata({
     namespace: 'products',
   });
 
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  };
+  return generateMetadataForPath({
+    locale: locale as SeoLocale,
+    pageType: 'products',
+    path: '/products',
+    config: {
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+    },
+  });
 }
 
 export default async function ProductsPage({

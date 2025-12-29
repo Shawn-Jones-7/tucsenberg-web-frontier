@@ -4,6 +4,7 @@ import type { PageType } from '@/config/paths';
 import {
   createPageSEOConfig,
   generateLocalizedMetadata,
+  generateMetadataForPath,
 } from '../seo-metadata';
 
 // Use vi.hoisted to ensure proper mock setup
@@ -76,8 +77,10 @@ vi.mock('@messages/zh/critical.json', () => ({
 
 vi.mock('@/config/paths', () => ({
   SITE_CONFIG: {
+    baseUrl: 'https://example.com',
     name: 'Test Site',
     seo: {
+      titleTemplate: '%s | Test Site',
       defaultTitle: 'Default Title',
       defaultDescription: 'Default Description',
       keywords: ['test', 'site'],
@@ -249,6 +252,32 @@ describe('SEO Metadata', () => {
     });
   });
 
+  describe('generateMetadataForPath', () => {
+    it('should override canonical/hreflang and set openGraph.url from path', () => {
+      const metadata = generateMetadataForPath({
+        locale: 'en',
+        pageType: 'about',
+        path: '/about',
+        config: {
+          title: 'Custom About',
+          description: 'Custom About Description',
+        },
+      });
+
+      expect(metadata.alternates?.canonical).toBe(
+        'https://example.com/en/about',
+      );
+      expect(metadata.alternates?.languages).toEqual({
+        'en': 'https://example.com/en/about',
+        'zh': 'https://example.com/zh/about',
+        'x-default': 'https://example.com/en/about',
+      });
+
+      const openGraph = metadata.openGraph as unknown as { url?: string };
+      expect(openGraph.url).toBe('https://example.com/en/about');
+    });
+  });
+
   describe('createPageSEOConfig', () => {
     it('should return home page config by default', () => {
       const config = createPageSEOConfig('home');
@@ -264,7 +293,7 @@ describe('SEO Metadata', () => {
           'Enterprise Platform',
           'B2B Solution',
         ],
-        image: '/images/og-image.jpg',
+        image: '/images/og-image.svg',
       });
     });
 
@@ -425,7 +454,7 @@ describe('SEO Metadata', () => {
       // Test applyBaseFields with image defined (line 119-120)
       const config = createPageSEOConfig('home');
 
-      expect(config.image).toBe('/images/og-image.jpg');
+      expect(config.image).toBe('/images/og-image.svg');
     });
   });
 

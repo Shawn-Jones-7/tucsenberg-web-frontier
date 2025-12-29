@@ -44,7 +44,38 @@ vi.mock('@/lib/content/products', () => ({
   }),
 }));
 
+vi.mock('@/lib/content/blog', () => ({
+  getAllPostsCached: vi.fn(async (locale: string) => {
+    if (locale === 'en') {
+      return [
+        {
+          slug: 'post-a',
+          title: 'Post A',
+          publishedAt: '2024-04-01T00:00:00Z',
+          updatedAt: '2024-04-02T00:00:00Z',
+        },
+      ];
+    }
+    if (locale === 'zh') {
+      return [
+        {
+          slug: 'post-a',
+          title: '文章A',
+          publishedAt: '2024-04-01T00:00:00Z',
+          updatedAt: '2024-04-02T00:00:00Z',
+        },
+      ];
+    }
+    return [];
+  }),
+}));
+
 vi.mock('@/lib/sitemap-utils', () => ({
+  getContentLastModified: vi.fn(({ updatedAt, publishedAt }) => {
+    if (updatedAt) return new Date(updatedAt);
+    if (publishedAt) return new Date(publishedAt);
+    return new Date('2024-01-01T00:00:00Z');
+  }),
   getProductLastModified: vi.fn((product) => {
     if (product.updatedAt) {
       return new Date(product.updatedAt);

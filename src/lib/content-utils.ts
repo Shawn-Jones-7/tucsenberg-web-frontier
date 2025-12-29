@@ -194,53 +194,41 @@ export function shouldFilterDraft(isDraft?: boolean): boolean {
   return isDraft === true && !config.enableDrafts;
 }
 
+function buildMergedValidationConfig(
+  validation: Partial<ValidationConfig>,
+): ValidationConfig {
+  const merged: ValidationConfig = {
+    strictMode: validation.strictMode ?? false,
+    requireSlug: validation.requireSlug ?? true,
+    requireLocale: validation.requireLocale ?? false,
+    requireAuthor: validation.requireAuthor ?? false,
+    requireDescription: validation.requireDescription ?? false,
+    requireTags: validation.requireTags ?? false,
+    requireCategories: validation.requireCategories ?? false,
+  };
+
+  if (validation.maxTitleLength !== undefined) {
+    merged.maxTitleLength = validation.maxTitleLength;
+  }
+  if (validation.maxDescriptionLength !== undefined) {
+    merged.maxDescriptionLength = validation.maxDescriptionLength;
+  }
+  if (validation.maxExcerptLength !== undefined) {
+    merged.maxExcerptLength = validation.maxExcerptLength;
+  }
+  if (validation.products !== undefined) {
+    merged.products = validation.products;
+  }
+
+  return merged;
+}
+
 /**
  * Get validation configuration from content.json.
  * Falls back to sensible defaults if config file is unavailable.
  */
 export function getValidationConfig(): ValidationConfig {
-  try {
-    const configPath = path.join(CONFIG_DIR, 'content.json');
-    const validatedConfigPath = validateFilePath(configPath, CONTENT_DIR);
-
-    // eslint-disable-next-line security/detect-non-literal-fs-filename
-    if (fs.existsSync(validatedConfigPath)) {
-      // eslint-disable-next-line security/detect-non-literal-fs-filename
-      const configContent = fs.readFileSync(validatedConfigPath, 'utf-8');
-      const config = JSON.parse(configContent) as Record<string, unknown>;
-      const validation = config['validation'] as
-        | Partial<ValidationConfig>
-        | undefined;
-
-      if (validation) {
-        return {
-          strictMode: validation.strictMode ?? false,
-          requireSlug: validation.requireSlug ?? true,
-          requireLocale: validation.requireLocale ?? false,
-          requireAuthor: validation.requireAuthor ?? false,
-          requireDescription: validation.requireDescription ?? false,
-          requireTags: validation.requireTags ?? false,
-          requireCategories: validation.requireCategories ?? false,
-          ...(validation.maxTitleLength !== undefined
-            ? { maxTitleLength: validation.maxTitleLength }
-            : {}),
-          ...(validation.maxDescriptionLength !== undefined
-            ? { maxDescriptionLength: validation.maxDescriptionLength }
-            : {}),
-          ...(validation.maxExcerptLength !== undefined
-            ? { maxExcerptLength: validation.maxExcerptLength }
-            : {}),
-          ...(validation.products !== undefined
-            ? { products: validation.products }
-            : {}),
-        };
-      }
-    }
-  } catch (error) {
-    logger.warn('Failed to load validation config, using defaults', { error });
-  }
-
-  return {
+  const fallback: ValidationConfig = {
     strictMode: false,
     requireSlug: true,
     requireLocale: false,
@@ -249,4 +237,25 @@ export function getValidationConfig(): ValidationConfig {
     requireTags: false,
     requireCategories: false,
   };
+
+  try {
+    const configPath = path.join(CONFIG_DIR, 'content.json');
+    const validatedConfigPath = validateFilePath(configPath, CONTENT_DIR);
+
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
+    if (!fs.existsSync(validatedConfigPath)) return fallback;
+
+    // eslint-disable-next-line security/detect-non-literal-fs-filename
+    const configContent = fs.readFileSync(validatedConfigPath, 'utf-8');
+    const config = JSON.parse(configContent) as Record<string, unknown>;
+    const validation = config['validation'] as
+      | Partial<ValidationConfig>
+      | undefined;
+    if (!validation) return fallback;
+
+    return buildMergedValidationConfig(validation);
+  } catch (error) {
+    logger.warn('Failed to load validation config, using defaults', { error });
+  }
+  return fallback;
 }

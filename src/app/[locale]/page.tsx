@@ -1,7 +1,9 @@
 // Auto-deploy verification test: 2025-10-31T12:34:56Z
 
+import type { Metadata } from 'next';
 import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
 import { loadCriticalMessages } from '@/lib/load-messages';
+import { generateMetadataForPath, type Locale } from '@/lib/seo-metadata';
 import { BelowTheFoldClient } from '@/components/home/below-the-fold.client';
 import { HeroSectionStatic } from '@/components/home/hero-section';
 import { routing } from '@/i18n/routing';
@@ -12,6 +14,17 @@ export function generateStaticParams() {
 
 interface HomePageProps {
   params: Promise<{ locale: 'en' | 'zh' }>;
+}
+
+export async function generateMetadata({
+  params,
+}: HomePageProps): Promise<Metadata> {
+  const { locale } = await params;
+  return generateMetadataForPath({
+    locale: locale as Locale,
+    pageType: 'home',
+    path: '',
+  });
 }
 
 // Type for nested translation messages (non-recursive to satisfy TS checks)

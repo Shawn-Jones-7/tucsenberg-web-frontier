@@ -1,14 +1,16 @@
 import type { Metadata } from 'next';
-import {
-  createPageSEOConfig,
-  generateLocalizedMetadata,
-  type Locale,
-} from '@/lib/seo-metadata';
-import { routing } from '@/i18n/routing';
+import { SITE_CONFIG } from '@/config/paths';
+import { ONE } from '@/constants';
 
 /**
- * 生成本地化页面元数据（同步版本）
- * 翻译从静态 JSON 读取，确保 metadata 嵌入初始 HTML
+ * Locale layout metadata (base only).
+ *
+ * Next.js metadata is shallow-merged: page routes that don't explicitly return
+ * `alternates` or `openGraph` may inherit those fields from layouts.
+ *
+ * This function intentionally avoids returning `alternates` / `openGraph` to
+ * prevent polluting all child pages. Per-page metadata should be generated via
+ * path-aware helpers (see `generateMetadataForPath`).
  */
 export async function generateLocaleMetadata({
   params,
@@ -16,17 +18,28 @@ export async function generateLocaleMetadata({
   params: Promise<{ locale: string }>;
 }): Promise<Metadata> {
   // await params 是 Next.js 16 的要求，但解析很快
-  const { locale } = await params;
+  await params;
 
-  // 确保locale有效
-  if (!routing.locales.includes(locale as Locale)) {
-    return {
-      title: 'Tucsenberg Web Frontier',
-      description: 'Modern B2B Enterprise Web Platform with Next.js 15',
-    };
-  }
-
-  const seoConfig = createPageSEOConfig('home');
-  // generateLocalizedMetadata 现在是同步的，翻译直接从 JSON 读取
-  return generateLocalizedMetadata(locale as Locale, 'home', seoConfig);
+  return {
+    title: {
+      default: SITE_CONFIG.seo.defaultTitle,
+      template: SITE_CONFIG.seo.titleTemplate,
+    },
+    description: SITE_CONFIG.seo.defaultDescription,
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        'index': true,
+        'follow': true,
+        'max-video-preview': -ONE,
+        'max-image-preview': 'large',
+        'max-snippet': -ONE,
+      },
+    },
+    verification: {
+      google: process.env['GOOGLE_SITE_VERIFICATION'],
+      yandex: process.env['YANDEX_VERIFICATION'],
+    },
+  };
 }

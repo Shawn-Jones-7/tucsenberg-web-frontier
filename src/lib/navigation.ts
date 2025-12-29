@@ -36,23 +36,6 @@ export const mainNavigation: NavigationItem[] = [
     key: 'products',
     href: '/products',
     translationKey: 'navigation.products',
-    children: [
-      {
-        key: 'solutions',
-        href: '/products/solutions',
-        translationKey: 'navigation.solutions',
-      },
-      {
-        key: 'enterprise',
-        href: '/products/enterprise',
-        translationKey: 'navigation.enterprise',
-      },
-      {
-        key: 'pricing',
-        href: '/products/pricing',
-        translationKey: 'navigation.pricing',
-      },
-    ],
   },
   {
     key: 'blog',

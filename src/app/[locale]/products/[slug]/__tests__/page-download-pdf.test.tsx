@@ -143,6 +143,7 @@ describe('ProductDetailPage PDF 下载按钮', () => {
       title: 'Test Product',
       coverImage: '/images/test-product.jpg',
       category: 'Category A',
+      pdfUrl: '/pdfs/products/en/test-product.pdf',
       content: '<p>Test content</p>',
       filePath: '/content/products/en/test-product.mdx',
     });

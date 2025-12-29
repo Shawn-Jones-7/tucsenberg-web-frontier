@@ -43,6 +43,7 @@ function getAllProductFiles(locale: Locale): Product[] {
  */
 function assignStringFields(detail: ProductDetail, metadata: ProductMetadata): void {
   if (metadata.description !== undefined) detail.description = metadata.description;
+  if (metadata.pdfUrl !== undefined) detail.pdfUrl = metadata.pdfUrl;
   if (metadata.moq !== undefined) detail.moq = metadata.moq;
   if (metadata.leadTime !== undefined) detail.leadTime = metadata.leadTime;
   if (metadata.supplyCapacity !== undefined) detail.supplyCapacity = metadata.supplyCapacity;

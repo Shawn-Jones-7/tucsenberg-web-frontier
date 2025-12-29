@@ -194,17 +194,21 @@ describe('BlogDetailPage', () => {
         params: Promise.resolve(mockParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'SEO Title',
         description: 'SEO Description',
         keywords: ['keyword1', 'keyword2'],
+        alternates: {
+          canonical: expect.stringContaining('/en/blog/test-post'),
+        },
         openGraph: {
           title: 'SEO Title',
           description: 'SEO Description',
           type: 'article',
           publishedTime: '2024-01-15',
           modifiedTime: '2024-01-20',
-          images: ['/images/og.jpg'],
+          url: expect.stringContaining('/en/blog/test-post'),
+          images: [{ url: '/images/og.jpg' }],
         },
       });
     });

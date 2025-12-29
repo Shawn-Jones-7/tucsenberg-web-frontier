@@ -109,7 +109,7 @@ describe('BlogPage', () => {
         params: Promise.resolve(mockParams),
       });
 
-      expect(metadata).toEqual({
+      expect(metadata).toMatchObject({
         title: 'Blog',
         description: 'Read our latest articles and updates',
       });

@@ -8,6 +8,7 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
+import { generateMetadataForPath, type Locale } from '@/lib/seo-metadata';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -37,10 +38,15 @@ export async function generateMetadata({
     namespace: 'about',
   });
 
-  return {
-    title: t('pageTitle'),
-    description: t('pageDescription'),
-  };
+  return generateMetadataForPath({
+    locale: locale as Locale,
+    pageType: 'about',
+    path: '/about',
+    config: {
+      title: t('pageTitle'),
+      description: t('pageDescription'),
+    },
+  });
 }
 
 // Hero section component

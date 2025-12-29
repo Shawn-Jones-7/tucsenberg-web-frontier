@@ -3,6 +3,10 @@ import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/types/i18n';
 import { getContactCopy } from '@/lib/contact/getContactCopy';
 import { getTranslationsCached } from '@/lib/i18n/server/getTranslationsCached';
+import {
+  generateMetadataForPath,
+  type Locale as SeoLocale,
+} from '@/lib/seo-metadata';
 import { ContactForm } from '@/components/contact/contact-form';
 import { Card } from '@/components/ui/card';
 import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-params';
@@ -27,10 +31,15 @@ export async function generateMetadata({
     namespace: 'underConstruction.pages.contact',
   });
 
-  return {
-    title: t('title'),
-    description: t('description'),
-  };
+  return generateMetadataForPath({
+    locale: locale as SeoLocale,
+    pageType: 'contact',
+    path: '/contact',
+    config: {
+      title: t('title'),
+      description: t('description'),
+    },
+  });
 }
 
 // 页面标题组件
