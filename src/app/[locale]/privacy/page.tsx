@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import { getPageBySlug } from '@/lib/content';
 import { JsonLdScript } from '@/components/seo';
 import {

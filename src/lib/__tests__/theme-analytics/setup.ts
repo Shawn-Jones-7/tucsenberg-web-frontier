@@ -19,7 +19,7 @@ import {
   type ThemeAnalyticsConfig,
 } from '../../theme-analytics';
 
-// Note: Sentry is mocked in the test file using vi.hoisted
+// Note: Logger is mocked in the test file using vi.hoisted
 
 // Mock crypto for secure random
 export const mockGetRandomValues = vi.fn();
@@ -160,7 +160,7 @@ export function setupThemeAnalyticsTest() {
     return Promise.resolve();
   });
 
-  // Note: Sentry mocks are cleared by vi.clearAllMocks() above
+  // Note: Logger mocks are cleared by vi.clearAllMocks() above
 }
 
 // Helper function to create analytics instance with default config

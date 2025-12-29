@@ -8,7 +8,7 @@
  */
 
 import type { ComponentType } from 'react';
-import type { ContentType, Locale } from '@/types/content';
+import type { ContentType, Locale } from '@/types/content.types';
 import { getContentEntry } from '@/lib/content-manifest';
 import {
   pageImporters,

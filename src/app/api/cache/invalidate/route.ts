@@ -21,7 +21,7 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import {
   CACHE_DOMAINS,
   invalidateContent,

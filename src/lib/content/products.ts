@@ -21,7 +21,7 @@ import type {
   Locale,
   ProductDetail,
   ProductSummary,
-} from '@/types/content';
+} from '@/types/content.types';
 import {
   getProductDetail,
   getProductListing,

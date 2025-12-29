@@ -192,7 +192,6 @@
       "express": ">=4.22.0"
     },
     "onlyBuiltDependencies": [
-      "@sentry/cli",
       "@tailwindcss/oxide",
       "@vercel/speed-insights",
       "esbuild",

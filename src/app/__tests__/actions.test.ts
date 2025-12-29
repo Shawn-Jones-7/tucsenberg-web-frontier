@@ -11,10 +11,6 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
-vi.mock('@/lib/sentry-server', () => ({
-  captureException: vi.fn(),
-}));
-
 vi.mock('@/app/api/contact/contact-api-utils', () => ({
   verifyTurnstile: vi.fn(() => Promise.resolve(true)),
 }));

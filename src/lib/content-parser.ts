@@ -15,7 +15,7 @@ import {
   type ContentType,
   type Locale,
   type ParsedContent,
-} from '@/types/content';
+} from '@/types/content.types';
 import {
   CONTENT_DIR,
   getValidationConfig,

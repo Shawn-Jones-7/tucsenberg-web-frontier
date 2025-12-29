@@ -11,7 +11,7 @@
  */
 
 import { revalidatePath, revalidateTag } from 'next/cache';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import {
   CACHE_DOMAINS,
   cacheTags,

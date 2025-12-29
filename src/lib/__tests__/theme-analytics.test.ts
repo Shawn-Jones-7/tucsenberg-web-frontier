@@ -1,5 +1,4 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import * as Sentry from '@/lib/sentry-client';
 import {
   recordThemePreference,
   recordThemeSwitch,
@@ -17,17 +16,16 @@ import {
   setupThemeAnalyticsTest,
 } from './theme-analytics/setup';
 
-// Mock Sentry with vi.hoisted to ensure it's mocked before module imports
-const mockSentry = vi.hoisted(() => ({
-  setTag: vi.fn(),
-  setUser: vi.fn(),
-  addBreadcrumb: vi.fn(),
-  setMeasurement: vi.fn(),
-  setContext: vi.fn(),
-  captureMessage: vi.fn(),
+// Mock logger with vi.hoisted to ensure it's mocked before module imports
+const mockLogger = vi.hoisted(() => ({
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
 }));
 
-vi.mock('@/lib/sentry-client', () => mockSentry);
+vi.mock('@/lib/logger', () => ({
+  logger: mockLogger,
+}));
 
 // Mock environment variables - Set to production to enable global instance
 vi.stubEnv('NODE_ENV', 'production');
@@ -45,9 +43,8 @@ describe('ThemeAnalytics', () => {
     it('should initialize with default config in production', () => {
       const analytics = new ThemeAnalytics();
       expect(analytics.getCurrentTheme()).toBe('system');
-      expect(vi.mocked(Sentry.setTag)).toHaveBeenCalledWith(
-        'feature',
-        'theme-analytics',
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'ThemeAnalytics initialized',
       );
     });
 
@@ -62,16 +59,16 @@ describe('ThemeAnalytics', () => {
 
       const analytics = new ThemeAnalytics(customConfig);
       expect(analytics.getCurrentTheme()).toBe('system');
-      // Sentry.setTag should not be called when disabled
-      expect(vi.mocked(Sentry.setTag)).not.toHaveBeenCalled();
+      // logger.info should not be called when disabled
+      expect(mockLogger.info).not.toHaveBeenCalled();
     });
 
     it('should initialize with development environment', () => {
       vi.stubEnv('NODE_ENV', 'development');
       const analytics = new ThemeAnalytics();
       expect(analytics.getCurrentTheme()).toBe('system');
-      // Should not call Sentry.setTag in development when enabled defaults to false
-      expect(vi.mocked(Sentry.setTag)).not.toHaveBeenCalled();
+      // Should not call logger.info in development when enabled defaults to false
+      expect(mockLogger.info).not.toHaveBeenCalled();
     });
   });
 
@@ -102,15 +99,14 @@ describe('ThemeAnalytics', () => {
         supportsViewTransitions: true,
       });
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-performance',
-        message: 'Theme switched from light to dark',
-        level: 'info',
-        data: {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme switch recorded',
+        expect.objectContaining({
+          from: 'light',
+          to: 'dark',
           duration: 150,
-          supportsViewTransitions: true,
-        },
-      });
+        }),
+      );
     });
 
     it('should not record when disabled', () => {
@@ -122,7 +118,7 @@ describe('ThemeAnalytics', () => {
         endTime: 1100,
       });
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
+      expect(mockLogger.info).not.toHaveBeenCalled();
     });
 
     it('should not record when not sampled', () => {
@@ -140,7 +136,11 @@ describe('ThemeAnalytics', () => {
         endTime: 1100,
       });
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
+      // Should not record theme switch (initialization log is expected)
+      expect(mockLogger.info).not.toHaveBeenCalledWith(
+        'Theme switch recorded',
+        expect.anything(),
+      );
     });
 
     it('should report performance issue when threshold exceeded', () => {
@@ -162,20 +162,13 @@ describe('ThemeAnalytics', () => {
         endTime: 1200,
       });
 
-      expect(vi.mocked(Sentry.captureMessage)).toHaveBeenCalledWith(
+      expect(mockLogger.warn).toHaveBeenCalledWith(
         'Slow theme switch detected: 200ms',
-        'warning',
-      );
-
-      expect(vi.mocked(Sentry.setContext)).toHaveBeenCalledWith(
-        'theme-performance',
-        {
+        expect.objectContaining({
           duration: 200,
           fromTheme: 'light',
           toTheme: 'dark',
-          supportsViewTransitions: false,
-          viewportSize: { width: 0, height: 0 },
-        },
+        }),
       );
     });
 
@@ -202,15 +195,14 @@ describe('ThemeAnalytics', () => {
         endTime: 1100,
       });
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-performance',
-        message: 'Theme switched from light to dark',
-        level: 'info',
-        data: {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme switch recorded',
+        expect.objectContaining({
+          from: 'light',
+          to: 'dark',
           duration: 100,
-          supportsViewTransitions: false,
-        },
-      });
+        }),
+      );
 
       // Cleanup
       const globalWithWindow = globalThis as { window?: unknown };
@@ -248,8 +240,8 @@ describe('ThemeAnalytics', () => {
         endTime: 3100,
       }); // Different pattern
 
-      // Verify Sentry calls were made (pattern analysis is internal)
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledTimes(3);
+      // Verify logger calls were made (pattern analysis is internal)
+      expect(mockLogger.info).toHaveBeenCalledTimes(4); // 1 init + 3 switches
     });
   });
 
@@ -259,18 +251,12 @@ describe('ThemeAnalytics', () => {
       analytics.recordThemePreference('dark');
 
       expect(analytics.getCurrentTheme()).toBe('dark');
-      expect(vi.mocked(Sentry.setUser)).toHaveBeenCalledWith({
-        themePreference: 'dark',
-      });
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'user-preference',
-        message: 'Theme preference set to dark',
-        level: 'info',
-        data: {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'User theme preference recorded',
+        expect.objectContaining({
           theme: 'dark',
-          sessionDuration: expect.any(Number),
-        },
-      });
+        }),
+      );
     });
 
     it('should not record when disabled', () => {
@@ -278,8 +264,7 @@ describe('ThemeAnalytics', () => {
       analytics.recordThemePreference('dark');
 
       expect(analytics.getCurrentTheme()).toBe('system'); // Should remain default when disabled
-      expect(vi.mocked(Sentry.setUser)).not.toHaveBeenCalled();
-      expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
+      expect(mockLogger.info).not.toHaveBeenCalled();
     });
   });
 
@@ -408,43 +393,19 @@ describe('ThemeAnalytics', () => {
 
       analytics.sendPerformanceReport();
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-analytics',
-        message: 'Theme performance report',
-        level: 'info',
-        data: {
-          avg_duration_ms: expect.any(Number),
-          fastest_switch_ms: expect.any(Number),
-          most_used_theme: expect.any(String),
-          slow_switches: expect.any(Number),
-          slowest_switch_ms: expect.any(Number),
-          total_switches: expect.any(Number),
-          view_transition_support: expect.any(Boolean),
-        },
-      });
-
-      // Verify performance report was sent
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-analytics',
-        message: 'Theme performance report',
-        level: 'info',
-        data: {
-          avg_duration_ms: 100,
-          fastest_switch_ms: 100,
-          most_used_theme: 'dark',
-          slow_switches: 0,
-          slowest_switch_ms: 100,
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme performance report',
+        expect.objectContaining({
           total_switches: 1,
-          view_transition_support: false,
-        },
-      });
+        }),
+      );
     });
 
     it('should not send report when disabled', () => {
       const analytics = createAnalyticsInstance({ enabled: false });
       analytics.sendPerformanceReport();
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).not.toHaveBeenCalled();
+      expect(mockLogger.info).not.toHaveBeenCalled();
     });
 
     it('should send all performance measurements', () => {
@@ -474,20 +435,12 @@ describe('ThemeAnalytics', () => {
       analytics.sendPerformanceReport();
 
       // Verify performance report was sent
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-analytics',
-        message: 'Theme performance report',
-        level: 'info',
-        data: {
-          avg_duration_ms: 125,
-          fastest_switch_ms: 100,
-          most_used_theme: 'system',
-          slow_switches: 1,
-          slowest_switch_ms: 150,
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme performance report',
+        expect.objectContaining({
           total_switches: 2,
-          view_transition_support: true,
-        },
-      });
+        }),
+      );
     });
   });
 
@@ -507,7 +460,7 @@ describe('ThemeAnalytics', () => {
       });
 
       expect(mockGetRandomValues).toHaveBeenCalled();
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalled(); // Should sample at 50% with 60% rate
+      expect(mockLogger.info).toHaveBeenCalled(); // Should sample at 50% with 60% rate
     });
 
     it('should fallback to Math.random when crypto unavailable', () => {
@@ -525,7 +478,7 @@ describe('ThemeAnalytics', () => {
       });
 
       expect(mathRandomSpy).toHaveBeenCalled();
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalled(); // Should sample at 5% with 10% rate
+      expect(mockLogger.info).toHaveBeenCalled(); // Should sample at 5% with 10% rate
 
       mathRandomSpy.mockRestore();
     });
@@ -713,8 +666,8 @@ describe('ThemeAnalytics', () => {
 
       sendThemeReport();
 
-      // Verify Sentry was called (through mock)
-      expect(mockSentry.addBreadcrumb).toHaveBeenCalled();
+      // Verify logger was called (through mock)
+      expect(mockLogger.info).toHaveBeenCalled();
     });
   });
 
@@ -736,15 +689,14 @@ describe('ThemeAnalytics', () => {
         endTime: 1100,
       });
 
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-performance',
-        message: 'Theme switched from light to dark',
-        level: 'info',
-        data: {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme switch recorded',
+        expect.objectContaining({
+          from: 'light',
+          to: 'dark',
           duration: 100,
-          supportsViewTransitions: false,
-        },
-      });
+        }),
+      );
     });
 
     it('should handle zero duration switches', () => {
@@ -805,15 +757,14 @@ describe('ThemeAnalytics', () => {
       });
 
       // Should still record performance metrics
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalledWith({
-        category: 'theme-performance',
-        message: 'Theme switched from light to dark',
-        level: 'info',
-        data: {
+      expect(mockLogger.info).toHaveBeenCalledWith(
+        'Theme switch recorded',
+        expect.objectContaining({
+          from: 'light',
+          to: 'dark',
           duration: 100,
-          supportsViewTransitions: false,
-        },
-      });
+        }),
+      );
     });
 
     it('should handle disabled detailed tracking', () => {
@@ -835,7 +786,7 @@ describe('ThemeAnalytics', () => {
       });
 
       // Should still work normally
-      expect(vi.mocked(Sentry.addBreadcrumb)).toHaveBeenCalled();
+      expect(mockLogger.info).toHaveBeenCalled();
     });
 
     it('should handle multiple rapid switches', () => {

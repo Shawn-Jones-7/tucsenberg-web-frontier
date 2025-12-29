@@ -3,13 +3,17 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import GlobalError from '../global-error';
 
-// Mock Sentry using vi.hoisted
-const { mockCaptureException } = vi.hoisted(() => ({
-  mockCaptureException: vi.fn(),
+// Mock logger using vi.hoisted
+const { mockLoggerError } = vi.hoisted(() => ({
+  mockLoggerError: vi.fn(),
 }));
 
-vi.mock('@/lib/sentry-client', () => ({
-  captureException: mockCaptureException,
+vi.mock('@/lib/logger', () => ({
+  logger: {
+    error: mockLoggerError,
+    info: vi.fn(),
+    warn: vi.fn(),
+  },
 }));
 
 // Mock Button component
@@ -115,8 +119,8 @@ describe('GlobalError', () => {
     });
   });
 
-  describe('Sentry integration', () => {
-    it('should capture exception with Sentry on mount', () => {
+  describe('error logging', () => {
+    it('should log error on mount', () => {
       render(
         <GlobalError
           error={mockError}
@@ -124,10 +128,13 @@ describe('GlobalError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledWith(mockError);
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        'Global error caught',
+        mockError,
+      );
     });
 
-    it('should capture exception only once on initial mount', () => {
+    it('should log error only once on initial mount', () => {
       render(
         <GlobalError
           error={mockError}
@@ -135,10 +142,10 @@ describe('GlobalError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledTimes(1);
+      expect(mockLoggerError).toHaveBeenCalledTimes(1);
     });
 
-    it('should capture new error when error prop changes', () => {
+    it('should log new error when error prop changes', () => {
       const { rerender } = render(
         <GlobalError
           error={mockError}
@@ -154,8 +161,11 @@ describe('GlobalError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledTimes(2);
-      expect(mockCaptureException).toHaveBeenLastCalledWith(newError);
+      expect(mockLoggerError).toHaveBeenCalledTimes(2);
+      expect(mockLoggerError).toHaveBeenLastCalledWith(
+        'Global error caught',
+        newError,
+      );
     });
   });
 
@@ -266,7 +276,10 @@ describe('GlobalError', () => {
         />,
       );
 
-      expect(mockCaptureException).toHaveBeenCalledWith(errorWithDigest);
+      expect(mockLoggerError).toHaveBeenCalledWith(
+        'Global error caught',
+        errorWithDigest,
+      );
     });
   });
 

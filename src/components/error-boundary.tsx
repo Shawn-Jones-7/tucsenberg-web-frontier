@@ -39,12 +39,6 @@ export class ErrorBoundary extends Component<
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // 安全的错误日志记录
     this.logError(error, errorInfo);
-
-    // Log error to monitoring service in production
-    if (process.env.NODE_ENV === 'production') {
-      // Replace with your error monitoring service
-      // Sentry.captureException(error, { extra: errorInfo });
-    }
   }
 
   private logError(error: Error, errorInfo: ErrorInfo) {

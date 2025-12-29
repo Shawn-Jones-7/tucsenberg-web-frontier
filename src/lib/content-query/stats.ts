@@ -2,7 +2,7 @@
  * 内容统计函数
  */
 
-import type { ContentStats, Locale } from '@/types/content';
+import type { ContentStats, Locale } from '@/types/content.types';
 import { getAllPages, getAllPosts } from '@/lib/content-query/queries';
 import { getContentConfig } from '@/lib/content-utils';
 import { ZERO } from '@/constants';

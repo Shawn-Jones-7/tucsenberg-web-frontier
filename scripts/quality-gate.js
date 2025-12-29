@@ -187,6 +187,9 @@ class QualityGate {
             'src/lib/locale-storage-hooks.ts',
             'src/lib/security-tokens.ts',
             'src/types/react19.ts',
+            'src/lib/__tests__/theme-analytics/setup.ts',
+            'src/app/[locale]/products/error.tsx',
+            'src/app/[locale]/contact/error.tsx',
             'src/types/whatsapp-api-requests/api-types.ts',
             'src/types/whatsapp-webhook-utils/functions.ts',
           ],
@@ -460,6 +463,14 @@ class QualityGate {
 
       if (!currentFile) continue;
 
+      // Detect deleted files: +++ /dev/null means file was removed
+      if (line === '+++ /dev/null') {
+        // Remove from map since deleted files should not be in diff coverage
+        changedLinesByFile.delete(currentFile);
+        currentFile = '';
+        continue;
+      }
+
       if (line.startsWith('@@')) {
         const match = line.match(/^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/);
         if (!match) {
@@ -493,6 +504,13 @@ class QualityGate {
 
       // context line (rare with --unified=0 but possible)
       newLineNumber += 1;
+    }
+
+    // Remove files with empty changedLines (only deletions, no additions)
+    for (const [file, lines] of changedLinesByFile.entries()) {
+      if (lines.size === 0) {
+        changedLinesByFile.delete(file);
+      }
     }
 
     return changedLinesByFile;

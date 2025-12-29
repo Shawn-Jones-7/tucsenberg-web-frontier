@@ -4,7 +4,7 @@
  * 主题分析核心类
  * Theme analytics core class
  */
-import * as Sentry from '@/lib/sentry-client';
+import { logger } from '@/lib/logger';
 import type {
   ThemeAnalyticsConfig,
   ThemePerformanceMetrics,
@@ -59,9 +59,8 @@ export class ThemeAnalytics {
       this.applyPartialConfig(config);
     }
 
-    // 初始化Sentry自定义标签
     if (this.config.enabled) {
-      Sentry.setTag('feature', 'theme-analytics');
+      logger.info('ThemeAnalytics initialized');
     }
   }
 
@@ -144,30 +143,10 @@ export class ThemeAnalytics {
 
     this.currentTheme = theme;
 
-    // 发送用户偏好数据到Sentry
-    Sentry.setUser({
-      themePreference: theme,
-    });
-
-    Sentry.addBreadcrumb({
-      category: 'theme',
-      message: `User selected theme: ${theme}`,
-      level: 'info',
-      data: {
-        theme,
-        timestamp: Date.now(),
-      },
-    });
-
-    // 记录主题偏好事件
-    Sentry.addBreadcrumb({
-      category: 'user-preference',
-      message: `Theme preference set to ${theme}`,
-      level: 'info',
-      data: {
-        theme,
-        sessionDuration: Date.now() - this.sessionStartTime,
-      },
+    logger.info('User theme preference recorded', {
+      theme,
+      timestamp: Date.now(),
+      sessionDuration: Date.now() - this.sessionStartTime,
     });
   }
 
@@ -198,7 +177,7 @@ export class ThemeAnalytics {
   }
 
   /**
-   * 发送性能报告到Sentry
+   * 发送性能报告
    */
   sendPerformanceReport(): void {
     if (!this.config.enabled) return;
@@ -206,22 +185,13 @@ export class ThemeAnalytics {
     const summary = this.getPerformanceSummary();
     const usageStats = this.getUsageStatistics();
 
-    // 发送性能摘要
-    Sentry.addBreadcrumb({
-      category: 'theme-analytics',
-      message: 'Theme performance report',
-      level: 'info',
-      data: ThemeAnalyticsUtils.formatPerformanceData(summary),
-    });
-
-    // 发送使用统计
-    Sentry.setContext('theme-usage', {
-      statistics: usageStats.slice(ZERO, COUNT_FIVE), // 只发送前COUNT_FIVE个最常用的主题
+    logger.info('Theme performance report', {
+      ...ThemeAnalyticsUtils.formatPerformanceData(summary),
+      statistics: usageStats.slice(ZERO, COUNT_FIVE),
       totalThemes: usageStats.length,
       sessionDuration: Date.now() - this.sessionStartTime,
     });
 
-    // 发送切换模式分析
     if (
       this.config.enableUserBehaviorAnalysis &&
       this.switchPatterns.length > ZERO
@@ -230,7 +200,7 @@ export class ThemeAnalytics {
         .sort((a, b) => b.frequency - a.frequency)
         .slice(ZERO, COUNT_TRIPLE);
 
-      Sentry.setContext('theme-patterns', {
+      logger.info('Theme switch patterns', {
         topPatterns: topPatterns.map((p) => ({
           sequence: p.sequence.join(' → '),
           frequency: p.frequency,
@@ -238,9 +208,6 @@ export class ThemeAnalytics {
         })),
       });
     }
-
-    // 发送自定义事件
-    Sentry.captureMessage('Theme Analytics Report', 'info');
   }
 
   /**

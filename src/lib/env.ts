@@ -51,12 +51,6 @@ export const env = createEnv({
     WHATSAPP_WEBHOOK_VERIFY_TOKEN: z.string().min(1).optional(),
     WHATSAPP_APP_SECRET: z.string().min(1).optional(),
 
-    // Monitoring & Analytics
-    SENTRY_DSN: z.string().url().optional(),
-    SENTRY_ORG: z.string().optional(),
-    SENTRY_PROJECT: z.string().optional(),
-    SENTRY_AUTH_TOKEN: z.string().optional(),
-
     // Vercel
     VERCEL_URL: z.string().optional(),
     VERCEL_GIT_COMMIT_SHA: z.string().optional(),
@@ -247,10 +241,6 @@ export const env = createEnv({
     WHATSAPP_BUSINESS_ACCOUNT_ID: process.env.WHATSAPP_BUSINESS_ACCOUNT_ID,
     WHATSAPP_WEBHOOK_VERIFY_TOKEN: process.env.WHATSAPP_WEBHOOK_VERIFY_TOKEN,
     WHATSAPP_APP_SECRET: process.env.WHATSAPP_APP_SECRET,
-    SENTRY_DSN: process.env.SENTRY_DSN,
-    SENTRY_ORG: process.env.SENTRY_ORG,
-    SENTRY_PROJECT: process.env.SENTRY_PROJECT,
-    SENTRY_AUTH_TOKEN: process.env.SENTRY_AUTH_TOKEN,
     VERCEL_URL: process.env.VERCEL_URL,
     VERCEL_GIT_COMMIT_SHA: process.env.VERCEL_GIT_COMMIT_SHA,
     VERCEL_ENV: process.env.VERCEL_ENV,

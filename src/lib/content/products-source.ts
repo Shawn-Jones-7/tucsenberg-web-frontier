@@ -7,7 +7,7 @@
 
 import fs from 'fs';
 import path from 'path';
-import type { Locale, Product, ProductDetail, ProductMetadata } from '@/types/content';
+import type { Locale, Product, ProductDetail, ProductMetadata } from '@/types/content.types';
 import { parseContentFile } from '@/lib/content-parser';
 import { PRODUCTS_DIR } from '@/lib/content-utils';
 import { routing } from '@/i18n/routing';

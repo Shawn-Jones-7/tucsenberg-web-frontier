@@ -2,7 +2,7 @@
  * 内容排序和分页函数
  */
 
-import type { BlogPost, ContentQueryOptions } from '@/types/content';
+import type { BlogPost, ContentQueryOptions } from '@/types/content.types';
 import { ZERO } from '@/constants';
 
 /**

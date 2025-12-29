@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from 'vitest';
-import type { _ContentType } from '@/types/content';
+import type { _ContentType } from '@/types/content.types';
 import { validateContentMetadata } from '@/lib/content-validation';
 
 // 注释未使用的导入，保留以备将来使用

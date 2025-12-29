@@ -30,8 +30,6 @@ export function generateCSP(nonce?: string): string {
       ...(isDevelopment ? ['https://unpkg.com'] : []),
       // Vercel Analytics
       'https://va.vercel-scripts.com',
-      // Sentry
-      'https://js.sentry-cdn.com',
       // Cloudflare Turnstile
       'https://challenges.cloudflare.com',
       // Google Analytics (if enabled)
@@ -62,8 +60,6 @@ export function generateCSP(nonce?: string): string {
       "'self'",
       // Vercel Analytics
       'https://vitals.vercel-insights.com',
-      // Sentry
-      'https://o4507902318592000.ingest.us.sentry.io',
       // API endpoints
       ...(isDevelopment ? ['http://localhost:*', 'ws://localhost:*'] : []),
       // External APIs

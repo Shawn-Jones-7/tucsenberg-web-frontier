@@ -1,7 +1,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { Calendar, Clock } from 'lucide-react';
-import type { PostSummary } from '@/types/content';
+import type { PostSummary } from '@/types/content.types';
 import { getBlurPlaceholder } from '@/lib/image';
 import { cn } from '@/lib/utils';
 import { Badge } from '@/components/ui/badge';

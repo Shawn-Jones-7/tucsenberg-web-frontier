@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { BlogPost, BlogPostMetadata, Locale } from '@/types/content';
+import type { BlogPost, BlogPostMetadata, Locale } from '@/types/content.types';
 // Import after mocks so that the wrapper uses the mocked content-query functions.
 import { getAllPostsCached, getPostBySlugCached } from '@/lib/content/blog';
 

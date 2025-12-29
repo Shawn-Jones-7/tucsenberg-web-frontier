@@ -6,7 +6,7 @@
  */
 import fs from 'fs';
 import path from 'path';
-import { ContentError, type ContentConfig } from '@/types/content';
+import { ContentError, type ContentConfig } from '@/types/content.types';
 import type { ValidationConfig } from '@/lib/content-validation';
 import { logger } from '@/lib/logger';
 import { COUNT_TEN } from '@/constants';

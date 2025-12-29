@@ -12,7 +12,6 @@ import {
 vi.mock('@/lib/env', () => ({
   env: {
     TURNSTILE_SECRET_KEY: '',
-    SENTRY_DSN: '',
     NEXT_PUBLIC_SECURITY_MODE: 'strict',
   },
 }));
@@ -137,18 +136,6 @@ describe('security-headers', () => {
       expect(result.configured).toBe(false);
       expect(result.issues).toContain(
         'Turnstile secret key not configured in production',
-      );
-    });
-
-    it('should recommend Sentry in production', () => {
-      vi.stubEnv('NODE_ENV', 'production');
-      vi.stubEnv('TURNSTILE_SECRET_KEY', 'test-key');
-      vi.stubEnv('SENTRY_DSN', '');
-
-      const result = checkSecurityConfig(true);
-
-      expect(result.recommendations).toContain(
-        'Consider configuring Sentry for error monitoring',
       );
     });
 

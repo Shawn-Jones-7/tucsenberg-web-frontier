@@ -224,7 +224,6 @@ describe('Global Types', () => {
         environment: 'production',
         defaultLocale: 'en',
         debug: false,
-        sentryDsn: 'https://sentry.io/dsn',
       };
 
       expect(config.apiBaseUrl).toBe('https://api.example.com');
@@ -233,7 +232,7 @@ describe('Global Types', () => {
       expect(config.debug).toBe(false);
     });
 
-    it('should work with optional sentryDsn', () => {
+    it('should work with all optional fields omitted', () => {
       const config: ConfigOptions = {
         apiBaseUrl: 'https://api.example.com',
         environment: 'development',
@@ -241,7 +240,7 @@ describe('Global Types', () => {
         debug: true,
       };
 
-      expect(config.sentryDsn).toBeUndefined();
+      expect(config.apiBaseUrl).toBe('https://api.example.com');
     });
   });
 });

@@ -30,7 +30,7 @@ Package manager: pnpm only
 - Testing: Vitest only; no Jest APIs
 - Architecture: Next.js 16 App Router; Turbopack by default (Webpack only when explicitly invoked); all Request APIs are async (params/searchParams/cookies/headers/draftMode must be awaited or unwrapped with use()); use 'use client' only for interactive needs; use `proxy.ts` for middleware semantics (keep legacy `middleware.ts` only for edge runtime scenarios)
 - Path alias: '@/'' resolves to './src/' consistently (tsconfig, next.config, ESLint)
-- Bundle budgets: main ≤10KB, framework ≤200KB, vendors ≤150KB, CSS ≤50KB (see .size-limit.js for complete list)
+- Bundle budgets: main ≤10KB, framework ≤200KB, vendors ≤150KB, CSS ≤50KB (run pnpm build:analyze to verify)
 - CI quality gates: type-check, lint, tests, build must all pass with 0 warnings/errors
 - Test coverage: Progressive roadmap (Current baseline: 42.92% | Phase 1: ≥65% in 3 months | Phase 2: ≥75% in 6 months | Phase 3: ≥80% in 12 months)
 

@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale } from '@/types/content';
+import type { Locale } from '@/types/content.types';
 import { getAllPostsCached } from '@/lib/content/blog';
 import { PostGrid } from '@/components/blog';
 import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-params';

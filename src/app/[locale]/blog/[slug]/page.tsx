@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, Calendar, Clock, Tag, User } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
-import type { Locale, PostDetail } from '@/types/content';
+import type { Locale, PostDetail } from '@/types/content.types';
 import { getStaticParamsForType } from '@/lib/content-manifest';
 import { getPostBySlugCached } from '@/lib/content/blog';
 import { MDXContent } from '@/components/mdx';
