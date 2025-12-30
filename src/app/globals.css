@@ -514,7 +514,7 @@
   .header-mobile-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
     @apply block;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply hidden;
     }
   }
@@ -522,7 +522,7 @@
   .header-desktop-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
     @apply hidden;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply flex;
     }
   }
@@ -530,7 +530,7 @@
   .header-cta-desktop-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
     @apply hidden;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply inline-flex;
     }
   }
@@ -538,7 +538,7 @@
   .header-logo-text-desktop-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
     @apply hidden;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply block;
     }
   }

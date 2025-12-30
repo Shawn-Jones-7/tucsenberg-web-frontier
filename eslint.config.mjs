@@ -31,6 +31,7 @@ export default [
       'scripts/**',
       'reports/**',
       '.next/**',
+      '.context/**',
       'coverage/**',
       'dist/**',
       'build/**',

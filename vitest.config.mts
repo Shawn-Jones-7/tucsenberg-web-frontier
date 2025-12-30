@@ -231,8 +231,6 @@ export default defineConfig({
         'reports/**',
         'docs/**',
         'test-results/**',
-        // 排除根级配置目录（非 src 下的）
-        'config/**',
         // 排除开发工具 - 仅开发环境使用，不需要测试覆盖率
         'src/components/dev-tools/**',
         'src/app/**/dev-tools/**',
@@ -245,7 +243,6 @@ export default defineConfig({
         // 排除静态数据/配置组件，避免拉低覆盖率
         'src/components/i18n/locale-switcher/config.ts',
         'src/components/shared/animations/showcase-config.tsx',
-        'src/components/home/cta/data.ts',
         // 排除复杂监控组件 - React 19 兼容性问题，非核心业务功能
         'src/components/monitoring/enterprise-analytics.tsx',
         // 排除尚未纳入测试的后端适配层，避免拖低覆盖率
