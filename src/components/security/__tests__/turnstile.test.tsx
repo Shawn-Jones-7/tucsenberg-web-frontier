@@ -207,6 +207,103 @@ describe('TurnstileWidget', () => {
         onExpire: expect.any(Function),
       });
     });
+
+    it('应该在成功时调用onSuccess回调', () => {
+      const onSuccess = vi.fn();
+      render(<TurnstileWidget onSuccess={onSuccess} />);
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleSuccess = mockCall?.[0]?.onSuccess;
+      handleSuccess?.('test-token-123');
+
+      expect(onSuccess).toHaveBeenCalledWith('test-token-123');
+    });
+
+    it('应该在成功时调用onVerify回调（向后兼容）', () => {
+      const onVerify = vi.fn();
+      render(<TurnstileWidget onVerify={onVerify} />);
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleSuccess = mockCall?.[0]?.onSuccess;
+      handleSuccess?.('test-token-456');
+
+      expect(onVerify).toHaveBeenCalledWith('test-token-456');
+    });
+
+    it('应该在错误时调用onError回调', () => {
+      const onError = vi.fn();
+      render(
+        <TurnstileWidget
+          onVerify={vi.fn()}
+          onError={onError}
+        />,
+      );
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleError = mockCall?.[0]?.onError;
+      handleError?.('test-error');
+
+      expect(onError).toHaveBeenCalledWith('test-error');
+    });
+
+    it('应该在过期时调用onExpire回调', () => {
+      const onExpire = vi.fn();
+      render(
+        <TurnstileWidget
+          onVerify={vi.fn()}
+          onExpire={onExpire}
+        />,
+      );
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleExpire = mockCall?.[0]?.onExpire;
+      handleExpire?.();
+
+      expect(onExpire).toHaveBeenCalled();
+    });
+
+    it('应该在加载时调用onLoad回调', () => {
+      const onLoad = vi.fn();
+      render(
+        <TurnstileWidget
+          onVerify={vi.fn()}
+          onLoad={onLoad}
+        />,
+      );
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleLoad = mockCall?.[0]?.onLoad;
+      handleLoad?.();
+
+      expect(onLoad).toHaveBeenCalled();
+    });
+
+    it('应该处理没有onError回调的错误', () => {
+      render(<TurnstileWidget onVerify={vi.fn()} />);
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleError = mockCall?.[0]?.onError;
+
+      expect(() => handleError?.('test-error')).not.toThrow();
+    });
+
+    it('应该处理没有onExpire回调的过期', () => {
+      render(<TurnstileWidget onVerify={vi.fn()} />);
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleExpire = mockCall?.[0]?.onExpire;
+
+      expect(() => handleExpire?.()).not.toThrow();
+    });
+
+    it('应该处理没有onLoad回调的加载', () => {
+      render(<TurnstileWidget onVerify={vi.fn()} />);
+
+      const mockCall = getMockTurnstile().mock.calls[0];
+      const handleLoad = mockCall?.[0]?.onLoad;
+
+      expect(() => handleLoad?.()).not.toThrow();
+    });
   });
 
   describe('错误处理', () => {
@@ -264,5 +361,45 @@ describe('useTurnstile Hook', () => {
 
     expect(screen.getByTestId('verified')).toHaveTextContent('false');
     expect(screen.getByTestId('token')).toHaveTextContent('null');
+  });
+
+  it('应该提供handlers对象', () => {
+    const TestComponent = () => {
+      const turnstile = useTurnstile();
+
+      return (
+        <div>
+          <span data-testid='has-handlers'>
+            {typeof turnstile.handlers === 'object' ? 'true' : 'false'}
+          </span>
+          <span data-testid='has-onSuccess'>
+            {typeof turnstile.handlers.onSuccess === 'function'
+              ? 'true'
+              : 'false'}
+          </span>
+          <span data-testid='has-onError'>
+            {typeof turnstile.handlers.onError === 'function'
+              ? 'true'
+              : 'false'}
+          </span>
+          <span data-testid='has-onExpire'>
+            {typeof turnstile.handlers.onExpire === 'function'
+              ? 'true'
+              : 'false'}
+          </span>
+          <span data-testid='has-onLoad'>
+            {typeof turnstile.handlers.onLoad === 'function' ? 'true' : 'false'}
+          </span>
+        </div>
+      );
+    };
+
+    render(<TestComponent />);
+
+    expect(screen.getByTestId('has-handlers')).toHaveTextContent('true');
+    expect(screen.getByTestId('has-onSuccess')).toHaveTextContent('true');
+    expect(screen.getByTestId('has-onError')).toHaveTextContent('true');
+    expect(screen.getByTestId('has-onExpire')).toHaveTextContent('true');
+    expect(screen.getByTestId('has-onLoad')).toHaveTextContent('true');
   });
 });
