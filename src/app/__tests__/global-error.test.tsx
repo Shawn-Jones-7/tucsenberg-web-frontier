@@ -318,4 +318,118 @@ describe('GlobalError', () => {
       expect(contentContainer).toBeInTheDocument();
     });
   });
+
+  describe('locale detection', () => {
+    const originalNavigator = global.navigator;
+
+    afterEach(() => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: originalNavigator,
+      });
+    });
+
+    it('should detect Chinese locale from browser language', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: 'zh-CN' },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      // Should show Chinese translations
+      expect(screen.getByText('出错了！')).toBeInTheDocument();
+      expect(screen.getByText('重试')).toBeInTheDocument();
+      expect(screen.getByText('返回首页')).toBeInTheDocument();
+    });
+
+    it('should detect Chinese locale from zh-TW', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: 'zh-TW' },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      expect(screen.getByText('出错了！')).toBeInTheDocument();
+    });
+
+    it('should navigate to Chinese homepage when locale is zh', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: 'zh-CN' },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      fireEvent.click(screen.getByTestId('go-home-button'));
+
+      expect(window.location.href).toBe('/zh');
+    });
+
+    it('should default to English for non-Chinese languages', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: 'fr-FR' },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      expect(screen.getByText('Something went wrong!')).toBeInTheDocument();
+    });
+
+    it('should handle empty navigator.language', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: '' },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      // Should default to English
+      expect(screen.getByText('Something went wrong!')).toBeInTheDocument();
+    });
+
+    it('should handle undefined navigator.language', () => {
+      Object.defineProperty(global, 'navigator', {
+        writable: true,
+        value: { language: undefined },
+      });
+
+      render(
+        <GlobalError
+          error={mockError}
+          reset={mockReset}
+        />,
+      );
+
+      // Should default to English
+      expect(screen.getByText('Something went wrong!')).toBeInTheDocument();
+    });
+  });
 });

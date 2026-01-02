@@ -58,6 +58,14 @@ describe('site-config', () => {
       vi.stubEnv('NODE_ENV', 'test');
       expect(isBaseUrlConfigured()).toBe(true);
     });
+
+    it('should return false in production when baseUrl contains example.com', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      // SITE_CONFIG.baseUrl defaults to example.com when env vars not set
+      const result = isBaseUrlConfigured();
+      // Since baseUrl contains 'example.com', should return false in production
+      expect(result).toBe(false);
+    });
   });
 
   describe('getUnconfiguredPlaceholders', () => {
@@ -185,6 +193,37 @@ describe('site-config', () => {
         w.includes('SITE_CONFIG.baseUrl'),
       );
       expect(hasBaseUrlWarning).toBe(false);
+    });
+
+    it('should return errors in production environment for placeholders', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      const result = validateSiteConfig();
+      // In production, placeholders generate errors not warnings
+      expect(result.valid).toBe(false);
+      expect(result.errors.length).toBeGreaterThan(0);
+    });
+
+    it('should add baseUrl error in production when not configured', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      const result = validateSiteConfig();
+      // In production with example.com baseUrl, should have baseUrl error
+      const hasBaseUrlError = result.errors.some((e) =>
+        e.includes('SITE_CONFIG.baseUrl'),
+      );
+      expect(hasBaseUrlError).toBe(true);
+    });
+
+    it('should include placeholder paths in error messages in production', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      const result = validateSiteConfig();
+      const placeholders = getUnconfiguredPlaceholders();
+
+      for (const placeholder of placeholders) {
+        const hasError = result.errors.some((e) =>
+          e.includes(placeholder.path),
+        );
+        expect(hasError).toBe(true);
+      }
     });
   });
 });

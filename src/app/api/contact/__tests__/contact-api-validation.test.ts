@@ -258,6 +258,21 @@ describe('contact-api-validation', () => {
       );
     });
 
+    it('should map odm subject correctly', async () => {
+      const odmData: ContactFormWithToken = {
+        ...validFormData,
+        subject: 'ODM services',
+      };
+
+      await processFormSubmission(odmData);
+
+      expect(processLead).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subject: 'oem_odm',
+        }),
+      );
+    });
+
     it('should map unknown subject to other', async () => {
       const otherData: ContactFormWithToken = {
         ...validFormData,
