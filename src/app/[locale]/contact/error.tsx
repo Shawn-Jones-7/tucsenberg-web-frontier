@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect } from 'react';
-import Link from 'next/link';
+import { useTranslations } from 'next-intl';
 import { logger } from '@/lib/logger';
 import { Button } from '@/components/ui/button';
+import { Link } from '@/i18n/routing';
 
 interface RouteErrorProps {
   error: Error & { digest?: string };
@@ -11,6 +12,8 @@ interface RouteErrorProps {
 }
 
 export default function ContactRouteError({ error, reset }: RouteErrorProps) {
+  const t = useTranslations('errors.contact');
+
   useEffect(() => {
     logger.error('Contact route error', error);
   }, [error]);
@@ -20,10 +23,10 @@ export default function ContactRouteError({ error, reset }: RouteErrorProps) {
       <div className='mx-auto flex w-full max-w-lg flex-col items-center gap-6 text-center'>
         <div className='space-y-3'>
           <h2 className='text-2xl font-semibold text-foreground'>
-            联系表单暂时不可用
+            {t('title')}
           </h2>
           <p className='text-sm leading-relaxed text-muted-foreground'>
-            我们的团队会立即查看问题。您可以稍后重试提交，或者通过其他渠道与我们联系。
+            {t('description')}
           </p>
         </div>
         <div className='flex flex-wrap justify-center gap-3'>
@@ -31,13 +34,13 @@ export default function ContactRouteError({ error, reset }: RouteErrorProps) {
             type='button'
             onClick={reset}
           >
-            重试
+            {t('tryAgain')}
           </Button>
           <Button
             asChild
             variant='outline'
           >
-            <Link href='/'>返回首页</Link>
+            <Link href='/'>{t('goHome')}</Link>
           </Button>
         </div>
       </div>

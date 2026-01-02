@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
-import { ArrowLeft, Download, MessageSquare } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Locale, ProductDetail } from '@/types/content.types';
 import { getStaticParamsForType } from '@/lib/content-manifest';
@@ -13,6 +13,7 @@ import {
 import { generateProductSchema } from '@/lib/structured-data';
 import { MDXContent } from '@/components/mdx';
 import {
+  ProductActions,
   ProductCertifications,
   ProductGallery,
   ProductInquiryForm,
@@ -21,7 +22,6 @@ import {
 } from '@/components/products';
 import { JsonLdScript } from '@/components/seo';
 import { Badge } from '@/components/ui/badge';
-import { Button } from '@/components/ui/button';
 import { SITE_CONFIG } from '@/config/paths';
 
 interface ProductDetailPageProps {
@@ -156,32 +156,17 @@ function ProductInfoSection({
         />
       )}
 
-      <div className='flex flex-col gap-3 pt-4 sm:flex-row'>
-        <Button
-          size='lg'
-          className='w-full sm:w-auto'
-        >
-          <MessageSquare className='mr-2 h-4 w-4' />
-          {requestQuoteLabel}
-        </Button>
-
-        {downloadPdfHref !== undefined && (
-          <Button
-            size='lg'
-            variant='outline'
-            className='w-full sm:w-auto'
-            asChild
-          >
-            <Link
-              href={downloadPdfHref}
-              target='_blank'
-              rel='noreferrer'
-            >
-              <Download className='mr-2 h-4 w-4' />
-              {downloadPdfLabel}
-            </Link>
-          </Button>
-        )}
+      <div className='pt-4'>
+        <ProductActions
+          productSlug={product.slug}
+          productName={product.title}
+          productImage={product.coverImage}
+          requestQuoteLabel={requestQuoteLabel}
+          {...(downloadPdfHref !== undefined && {
+            pdfHref: downloadPdfHref,
+            downloadPdfLabel,
+          })}
+        />
       </div>
     </div>
   );

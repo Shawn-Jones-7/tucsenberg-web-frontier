@@ -349,7 +349,7 @@ export function createPageSEOConfig(
         'Enterprise Platform',
         'B2B Solution',
       ],
-      image: '/images/og-image.svg',
+      image: '/images/og-image.jpg',
     },
     about: {
       type: 'website' as const,

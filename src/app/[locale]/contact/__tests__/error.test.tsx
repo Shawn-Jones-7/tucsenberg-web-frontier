@@ -14,6 +14,24 @@ vi.mock('@/lib/logger', () => ({
     info: vi.fn(),
     warn: vi.fn(),
   },
+  sanitizeIP: (ip: string | undefined | null) =>
+    ip ? '[REDACTED_IP]' : '[NO_IP]',
+  sanitizeEmail: (email: string | undefined | null) =>
+    email ? '[REDACTED_EMAIL]' : '[NO_EMAIL]',
+}));
+
+// Mock next-intl - component uses useTranslations('errors.contact')
+vi.mock('next-intl', () => ({
+  useTranslations: () => (key: string) => {
+    const translations: Record<string, string> = {
+      title: '联系表单暂时不可用',
+      description:
+        '抱歉，联系表单目前无法使用。我们的团队会立即查看问题，请稍后再试。',
+      tryAgain: '重试',
+      goHome: '返回首页',
+    };
+    return translations[key] ?? key;
+  },
 }));
 
 // Mock Button component
@@ -49,6 +67,18 @@ vi.mock('@/components/ui/button', () => ({
 // Mock next/link
 vi.mock('next/link', () => ({
   default: ({ children, href }: React.PropsWithChildren<{ href: string }>) => (
+    <a
+      href={href}
+      data-testid='home-link'
+    >
+      {children}
+    </a>
+  ),
+}));
+
+// Mock i18n routing Link component (used by the actual component)
+vi.mock('@/i18n/routing', () => ({
+  Link: ({ children, href }: React.PropsWithChildren<{ href: string }>) => (
     <a
       href={href}
       data-testid='home-link'

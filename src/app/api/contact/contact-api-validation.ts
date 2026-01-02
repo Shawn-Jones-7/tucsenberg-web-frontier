@@ -10,7 +10,7 @@ import { airtableService } from '@/lib/airtable';
 import { contactFieldValidators } from '@/lib/form-schema/contact-field-validators';
 import { processLead } from '@/lib/lead-pipeline';
 import { CONTACT_SUBJECTS, LEAD_TYPES } from '@/lib/lead-pipeline/lead-schema';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeEmail, sanitizeIP } from '@/lib/logger';
 import { constantTimeCompare } from '@/lib/security-crypto';
 import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
 import { mapZodIssueToErrorKey } from '@/app/api/contact/contact-form-error-utils';
@@ -56,7 +56,7 @@ export async function validateFormData(body: unknown, clientIP: string) {
   if (!validationResult.success) {
     logger.warn('Form validation failed', {
       errors: validationResult.error.issues,
-      clientIP,
+      clientIP: sanitizeIP(clientIP),
     });
 
     const errorMessages = validationResult.error.issues.map(
@@ -83,7 +83,7 @@ export async function validateFormData(body: unknown, clientIP: string) {
     logger.warn('Form submission time validation failed', {
       submittedAt: formData.submittedAt,
       timeDiff,
-      clientIP,
+      clientIP: sanitizeIP(clientIP),
     });
 
     return {
@@ -100,7 +100,9 @@ export async function validateFormData(body: unknown, clientIP: string) {
     clientIP,
   );
   if (!turnstileValid) {
-    logger.warn('Turnstile verification failed', { clientIP });
+    logger.warn('Turnstile verification failed', {
+      clientIP: sanitizeIP(clientIP),
+    });
     return {
       success: false,
       error: 'Security verification failed',
@@ -174,7 +176,7 @@ export async function processFormSubmission(formData: ContactFormWithToken) {
   // 处理失败情况
   logger.error('Contact form submission failed via processLead', {
     error: result.error,
-    email: formData.email,
+    email: sanitizeEmail(formData.email),
   });
 
   throw new Error('Failed to process form submission');

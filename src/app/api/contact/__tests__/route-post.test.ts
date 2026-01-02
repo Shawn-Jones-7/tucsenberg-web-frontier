@@ -87,6 +87,12 @@ vi.mock('@/lib/resend', () => ({
 
 vi.mock('@/lib/logger', () => ({
   logger: mockLogger,
+  sanitizeIP: (ip: string | undefined | null) =>
+    ip ? '[REDACTED_IP]' : '[NO_IP]',
+  sanitizeEmail: (email: string | undefined | null) =>
+    email ? '[REDACTED_EMAIL]' : '[NO_EMAIL]',
+  sanitizeLogContext: <T extends Record<string, unknown>>(context: T): T =>
+    context,
 }));
 
 vi.mock('@/lib/validation-helpers', () => mockValidationHelpers);

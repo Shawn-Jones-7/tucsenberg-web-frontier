@@ -252,6 +252,36 @@ vi.mock('@/components/products', () => ({
       ))}
     </div>
   ),
+  ProductActions: ({
+    productSlug,
+    productName,
+    requestQuoteLabel,
+    pdfHref,
+    downloadPdfLabel,
+  }: {
+    productSlug: string;
+    productName: string;
+    productImage?: string;
+    requestQuoteLabel: string;
+    pdfHref?: string;
+    downloadPdfLabel?: string;
+  }) => (
+    <div
+      data-testid='product-actions'
+      data-product-slug={productSlug}
+      data-product-name={productName}
+    >
+      <button data-testid='request-quote-button'>{requestQuoteLabel}</button>
+      {pdfHref && (
+        <a
+          href={pdfHref}
+          data-testid='download-pdf-link'
+        >
+          {downloadPdfLabel}
+        </a>
+      )}
+    </div>
+  ),
 }));
 
 describe('ProductDetailPage', () => {

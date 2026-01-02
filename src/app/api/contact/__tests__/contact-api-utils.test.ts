@@ -6,6 +6,7 @@ import {
   formatErrorResponse,
   generateRequestId,
   getClientIP,
+  getFullClientIPChain,
   getRateLimitStatus,
   RATE_LIMIT_CONFIG,
   validateEnvironmentConfig,
@@ -25,6 +26,10 @@ vi.mock('@/lib/logger', () => ({
     error: vi.fn(),
     info: vi.fn(),
   },
+  sanitizeIP: (ip: string | undefined | null) =>
+    ip ? '[REDACTED_IP]' : '[NO_IP]',
+  sanitizeEmail: (email: string | undefined | null) =>
+    email ? '[REDACTED_EMAIL]' : '[NO_EMAIL]',
 }));
 
 vi.mock('@/lib/security/turnstile-config', () => ({
@@ -204,6 +209,34 @@ describe('contact-api-utils', () => {
       ).rejects.toThrow('Network error');
     });
 
+    it('should throw on non-ok response', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: false,
+        status: 500,
+        statusText: 'Internal Server Error',
+      });
+
+      await expect(
+        verifyTurnstile('valid-token', '192.168.1.1'),
+      ).rejects.toThrow('Turnstile API returned 500: Internal Server Error');
+    });
+
+    it('should not include IP in payload when IP is empty string', async () => {
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: () =>
+          Promise.resolve({
+            success: true,
+            hostname: 'localhost',
+          }),
+      });
+
+      await verifyTurnstile('token', '');
+
+      const callArgs = mockFetch.mock.calls[0]!;
+      expect(callArgs[1].body.toString()).not.toContain('remoteip');
+    });
+
     it('should return false when secret key is not configured', async () => {
       // This test verifies the early-return path when TURNSTILE_SECRET_KEY is empty
       // verifyTurnstileDetailed should return {success: false, errorCodes: ['not-configured']}
@@ -333,6 +366,57 @@ describe('contact-api-utils', () => {
       });
 
       expect(getClientIP(request)).toBe('192.168.1.1');
+    });
+  });
+
+  describe('getFullClientIPChain', () => {
+    it('should return full IP chain from x-forwarded-for header', () => {
+      const request = new NextRequest('http://localhost', {
+        headers: {
+          'x-forwarded-for': '192.168.1.1, 10.0.0.1, 172.16.0.1',
+        },
+      });
+
+      expect(getFullClientIPChain(request)).toBe(
+        '192.168.1.1, 10.0.0.1, 172.16.0.1',
+      );
+    });
+
+    it('should return IP from x-real-ip when x-forwarded-for is not present', () => {
+      const request = new NextRequest('http://localhost', {
+        headers: {
+          'x-real-ip': '192.168.1.2',
+        },
+      });
+
+      expect(getFullClientIPChain(request)).toBe('192.168.1.2');
+    });
+
+    it('should prefer x-forwarded-for over x-real-ip', () => {
+      const request = new NextRequest('http://localhost', {
+        headers: {
+          'x-forwarded-for': '192.168.1.1, 10.0.0.1',
+          'x-real-ip': '192.168.1.2',
+        },
+      });
+
+      expect(getFullClientIPChain(request)).toBe('192.168.1.1, 10.0.0.1');
+    });
+
+    it('should return unknown when no headers', () => {
+      const request = new NextRequest('http://localhost');
+
+      expect(getFullClientIPChain(request)).toBe('unknown');
+    });
+
+    it('should trim whitespace from IP chain', () => {
+      const request = new NextRequest('http://localhost', {
+        headers: {
+          'x-forwarded-for': '  192.168.1.1, 10.0.0.1  ',
+        },
+      });
+
+      expect(getFullClientIPChain(request)).toBe('192.168.1.1, 10.0.0.1');
     });
   });
 

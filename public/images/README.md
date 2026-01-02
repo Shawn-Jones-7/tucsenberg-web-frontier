@@ -4,22 +4,30 @@ This directory contains social media sharing images for SEO optimization.
 
 ## Required Images
 
-### og-image.svg
-- **Size**: 1200x630px (artboard)
-- **Format**: SVG (current default)
+### og-image.jpg
+- **Size**: 1200x630px
+- **Format**: JPEG (recommended for social platform compatibility)
 - **Purpose**: Open Graph image for social media sharing
 - **Content**: Should include:
-  - Tucsenberg Web Frontier logo/branding
-  - Key messaging: "Modern B2B Enterprise Web Platform"
-  - Technology stack highlights: "Next.js 16 + React 19 + TypeScript"
+  - Company logo/branding
+  - Key messaging
   - Clean, professional design matching brand colors
 
-> Note: Some social platforms have limited support for SVG Open Graph images.
-> For production, consider exporting an optimized `og-image.jpg` (or PNG) and
-> updating the SEO config to point to the raster image.
+### apple-touch-icon.png (Required for iOS)
+- **Location**: `public/apple-touch-icon.png` (root of public directory)
+- **Size**: 180x180px
+- **Format**: PNG
+- **Purpose**: iOS home screen bookmark icon
+- **Content**: Square icon with your brand logo
+- **Note**: Place this file in `public/` directory (not in `public/images/`)
+
+To create an Apple Touch Icon:
+1. Create a 180x180px PNG image with your logo
+2. Save as `public/apple-touch-icon.png`
+3. Next.js will automatically serve it at `/apple-touch-icon.png`
 
 ### twitter-image.jpg (Optional)
-- **Size**: 1200x600px  
+- **Size**: 1200x600px
 - **Format**: JPEG
 - **Purpose**: Twitter Cards specific image
 - **Content**: Similar to og-image but optimized for Twitter's aspect ratio
@@ -34,13 +42,14 @@ This directory contains social media sharing images for SEO optimization.
 
 ## Current Status
 
-- ✅ SEO configuration updated to reference `/images/og-image.svg`
-- ⏳ For production: Export an optimized raster image (1200x630px, <200KB) and update SEO config if needed
+- ✅ SEO configuration updated to reference `/images/og-image.jpg`
+- ⏳ Apple Touch Icon: Create `public/apple-touch-icon.png` (180x180px PNG)
 
 ## Testing
 
 After adding images, test social sharing on:
 - Facebook Sharing Debugger
-- Twitter Card Validator  
+- Twitter Card Validator
 - LinkedIn Post Inspector
 - WhatsApp link preview
+- iOS Safari (add to home screen to test apple-touch-icon)

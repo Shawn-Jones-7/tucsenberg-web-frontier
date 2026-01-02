@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createCorsPreflightResponse } from '@/lib/api/cors-utils';
 import { getApiMessages } from '@/lib/api/get-request-locale';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeIP, sanitizeLogContext } from '@/lib/logger';
 import {
   checkDistributedRateLimit,
   createRateLimitHeaders,
@@ -35,7 +35,7 @@ async function checkRateLimitOrFail(
   const rateLimitResult = await checkDistributedRateLimit(clientIP, preset);
   if (!rateLimitResult.allowed) {
     logger.warn('Rate limit exceeded', {
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
       retryAfter: rateLimitResult.retryAfter,
     });
     const headers = createRateLimitHeaders(rateLimitResult);
@@ -86,14 +86,17 @@ export async function POST(request: NextRequest) {
     const submissionResult = await processFormSubmission(validation.data);
     const processingTime = Date.now() - startTime;
 
-    logger.info('Contact form submitted successfully', {
-      email: validation.data.email,
-      company: validation.data.company,
-      ip: clientIP,
-      processingTime,
-      emailSent: submissionResult.emailSent,
-      recordCreated: submissionResult.recordCreated,
-    });
+    logger.info(
+      'Contact form submitted successfully',
+      sanitizeLogContext({
+        email: validation.data.email,
+        company: validation.data.company,
+        ip: clientIP,
+        processingTime,
+        emailSent: submissionResult.emailSent,
+        recordCreated: submissionResult.recordCreated,
+      }),
+    );
 
     return NextResponse.json(
       {
@@ -108,7 +111,7 @@ export async function POST(request: NextRequest) {
     logger.error('Contact form submission failed', {
       error: error instanceof Error ? error.message : 'Unknown error',
       stack: error instanceof Error ? error.stack : undefined,
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
       processingTime: Date.now() - startTime,
     });
 

@@ -6,7 +6,7 @@
 import { render } from '@react-email/render';
 import { Resend } from 'resend';
 import { env } from '@/lib/env';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeEmail } from '@/lib/logger';
 import { EMAIL_CONFIG, ResendUtils } from '@/lib/resend-utils';
 import type {
   EmailTemplateData,
@@ -108,8 +108,8 @@ export class ResendService {
 
       logger.info('Contact form email sent successfully', {
         messageId: result.data?.id,
-        to: this.emailConfig.replyTo,
-        from: sanitizedData.email,
+        to: sanitizeEmail(this.emailConfig.replyTo),
+        from: sanitizeEmail(sanitizedData.email),
         subject,
       });
 
@@ -117,7 +117,7 @@ export class ResendService {
     } catch (error) {
       logger.error('Failed to send contact form email', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        email: data.email,
+        email: sanitizeEmail(data.email),
       });
       throw new Error('Failed to send email');
     }
@@ -156,7 +156,7 @@ export class ResendService {
 
       logger.info('Confirmation email sent successfully', {
         messageId: result.data?.id,
-        to: sanitizedData.email,
+        to: sanitizeEmail(sanitizedData.email),
         subject,
       });
 
@@ -164,7 +164,7 @@ export class ResendService {
     } catch (error) {
       logger.error('Failed to send confirmation email', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        email: data.email,
+        email: sanitizeEmail(data.email),
       });
       throw new Error('Failed to send confirmation email');
     }
@@ -205,8 +205,8 @@ export class ResendService {
 
       logger.info('Product inquiry email sent successfully', {
         messageId: result.data?.id,
-        to: this.emailConfig.replyTo,
-        from: sanitizedData.email,
+        to: sanitizeEmail(this.emailConfig.replyTo),
+        from: sanitizeEmail(sanitizedData.email),
         product: sanitizedData.productName,
         quantity: sanitizedData.quantity,
       });
@@ -215,7 +215,7 @@ export class ResendService {
     } catch (error) {
       logger.error('Failed to send product inquiry email', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        email: data.email,
+        email: sanitizeEmail(data.email),
         product: data.productName,
       });
       throw new Error('Failed to send product inquiry email');

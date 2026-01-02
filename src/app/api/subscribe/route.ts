@@ -4,7 +4,7 @@ import { safeParseJson as safeParseJsonHelper } from '@/lib/api/safe-parse-json'
 import { withIdempotency } from '@/lib/idempotency';
 import { processLead, type LeadResult } from '@/lib/lead-pipeline';
 import { LEAD_TYPES } from '@/lib/lead-pipeline/lead-schema';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeEmail, sanitizeIP } from '@/lib/logger';
 import {
   checkDistributedRateLimit,
   createRateLimitHeaders,
@@ -36,7 +36,7 @@ function safeParseJson<T>(
 function createSuccessResponse(result: LeadResult, email: string): object {
   logger.info('Newsletter subscription successful', {
     referenceId: result.referenceId,
-    email,
+    email: sanitizeEmail(email),
   });
 
   return {
@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
   );
   if (!rateLimitResult.allowed) {
     logger.warn('Newsletter rate limit exceeded', {
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
       retryAfter: rateLimitResult.retryAfter,
     });
     const headers = createRateLimitHeaders(rateLimitResult);
@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     // Verify Turnstile token
     if (!turnstileToken) {
       logger.warn('Newsletter subscription missing Turnstile token', {
-        ip: clientIP,
+        ip: sanitizeIP(clientIP),
       });
       return NextResponse.json(
         {
@@ -137,7 +137,9 @@ export async function POST(request: NextRequest) {
 
     const isValidTurnstile = await verifyTurnstile(turnstileToken, clientIP);
     if (!isValidTurnstile) {
-      logger.warn('Newsletter Turnstile verification failed', { ip: clientIP });
+      logger.warn('Newsletter Turnstile verification failed', {
+        ip: sanitizeIP(clientIP),
+      });
       return NextResponse.json(
         {
           success: false,

@@ -160,9 +160,9 @@ function useContactForm() {
     }
 
     // 使用React 19原生useOptimistic进行乐观更新
+    // Note: message is omitted - StatusMessage uses t('submitting') as fallback
     setOptimisticState({
       status: 'submitting',
-      message: 'Submitting your message...',
       timestamp: Date.now(),
     });
 

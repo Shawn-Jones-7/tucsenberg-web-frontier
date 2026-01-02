@@ -54,7 +54,7 @@ export const SITE_CONFIG = {
 | 配置项 | 文件位置 | 说明 |
 |--------|----------|------|
 | 站点 URL | 环境变量 `NEXT_PUBLIC_BASE_URL` | 生产环境必须设置 |
-| OG 图片 | `public/images/og-image.jpg` | **当前为 SVG 占位符，需转换为 JPG** |
+| OG 图片 | `public/images/og-image.jpg` | 1200x630px JPG 格式 |
 | Twitter 图片 | `public/images/twitter-image.jpg` | 可选，1200x600px |
 | Favicon | `src/app/favicon.ico` | 替换为你的图标 |
 | robots.txt | `src/app/robots.ts` | 动态生成，通常无需修改 |

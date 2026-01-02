@@ -126,6 +126,38 @@ vi.mock('@/components/products', () => ({
   ProductInquiryForm: () => <div data-testid='product-inquiry-form' />,
   ProductSpecs: () => <div data-testid='product-specs' />,
   ProductTradeInfo: () => <div data-testid='product-trade-info' />,
+  ProductActions: ({
+    productSlug,
+    productName,
+    requestQuoteLabel,
+    pdfHref,
+    downloadPdfLabel,
+  }: {
+    productSlug: string;
+    productName: string;
+    productImage?: string;
+    requestQuoteLabel: string;
+    pdfHref?: string;
+    downloadPdfLabel?: string;
+  }) => (
+    <div
+      data-testid='product-actions'
+      data-product-slug={productSlug}
+      data-product-name={productName}
+    >
+      <button data-testid='request-quote-button'>{requestQuoteLabel}</button>
+      {pdfHref && (
+        <a
+          href={pdfHref}
+          target='_blank'
+          rel='noreferrer'
+          data-testid='download-pdf-link'
+        >
+          {downloadPdfLabel}
+        </a>
+      )}
+    </div>
+  ),
 }));
 
 describe('ProductDetailPage PDF 下载按钮', () => {

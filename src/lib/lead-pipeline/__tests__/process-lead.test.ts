@@ -35,6 +35,12 @@ vi.mock('@/lib/logger', () => ({
     warn: vi.fn(),
     error: vi.fn(),
   },
+  sanitizeEmail: (email: string | undefined | null) =>
+    email ? '[REDACTED_EMAIL]' : '[NO_EMAIL]',
+  sanitizeIP: (ip: string | undefined | null) =>
+    ip ? '[REDACTED_IP]' : '[NO_IP]',
+  sanitizeCompany: (company: string | undefined | null) =>
+    company ? '[REDACTED]' : '[NO_COMPANY]',
 }));
 
 describe('processLead', () => {

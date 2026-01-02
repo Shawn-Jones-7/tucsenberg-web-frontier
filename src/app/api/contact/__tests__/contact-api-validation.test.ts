@@ -18,6 +18,10 @@ vi.mock('@/lib/logger', () => ({
     error: vi.fn(),
     info: vi.fn(),
   },
+  sanitizeIP: (ip: string | undefined | null) =>
+    ip ? '[REDACTED_IP]' : '[NO_IP]',
+  sanitizeEmail: (email: string | undefined | null) =>
+    email ? '[REDACTED_EMAIL]' : '[NO_EMAIL]',
 }));
 
 vi.mock('@/lib/airtable', () => ({
@@ -246,6 +250,21 @@ describe('contact-api-validation', () => {
       };
 
       await processFormSubmission(oemData);
+
+      expect(processLead).toHaveBeenCalledWith(
+        expect.objectContaining({
+          subject: 'oem_odm',
+        }),
+      );
+    });
+
+    it('should map odm subject correctly', async () => {
+      const odmData: ContactFormWithToken = {
+        ...validFormData,
+        subject: 'ODM services',
+      };
+
+      await processFormSubmission(odmData);
 
       expect(processLead).toHaveBeenCalledWith(
         expect.objectContaining({

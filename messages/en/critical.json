@@ -648,5 +648,31 @@
     "CACHE_INVALID_DOMAIN": "Invalid cache domain.",
     "CACHE_INVALIDATION_FAILED": "Failed to invalidate cache.",
     "UNKNOWN_ERROR": "An unknown error occurred."
+  },
+  "errors": {
+    "global": {
+      "title": "Something went wrong!",
+      "description": "We apologize for the inconvenience. An unexpected error has occurred.",
+      "tryAgain": "Try again",
+      "goHome": "Go to homepage",
+      "devDetails": "Error Details (Development Only)"
+    },
+    "products": {
+      "title": "Failed to load product information",
+      "description": "We couldn't load the product details. Please try again or return to the homepage to browse other content.",
+      "tryAgain": "Try again",
+      "goHome": "Back to homepage"
+    },
+    "contact": {
+      "title": "Contact form temporarily unavailable",
+      "description": "Our team will look into this issue immediately. You can try again later or contact us through other channels.",
+      "tryAgain": "Try again",
+      "goHome": "Back to homepage"
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "The page you're looking for doesn't exist or has been moved.",
+      "goHome": "Back to homepage"
+    }
   }
 }

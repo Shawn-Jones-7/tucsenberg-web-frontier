@@ -26,7 +26,7 @@ import {
   generateProductInquiryMessage,
   splitName,
 } from '@/lib/lead-pipeline/utils';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeEmail } from '@/lib/logger';
 
 /**
  * Result of lead processing operation
@@ -409,7 +409,7 @@ export async function processLead(rawInput: unknown): Promise<LeadResult> {
 
   logger.info('Processing lead', {
     type: lead.type,
-    email: lead.email,
+    email: sanitizeEmail(lead.email),
     referenceId,
   });
 

@@ -5,7 +5,7 @@
 
 import { NextRequest } from 'next/server';
 import { env } from '@/lib/env';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeIP } from '@/lib/logger';
 import {
   getAllowedTurnstileHosts,
   getExpectedTurnstileAction,
@@ -92,7 +92,7 @@ function validateTurnstileHostnameResponse(
   logger.warn('Turnstile verification rejected due to unexpected hostname', {
     hostname: result.hostname,
     allowed: getAllowedTurnstileHosts(),
-    ip,
+    ip: sanitizeIP(ip),
   });
   return false;
 }
@@ -109,7 +109,7 @@ function validateTurnstileActionResponse(
   logger.warn('Turnstile verification rejected due to mismatched action', {
     action: result.action,
     expectedAction,
-    ip,
+    ip: sanitizeIP(ip),
   });
   return false;
 }
@@ -150,7 +150,9 @@ function shouldBypassTurnstile(ip: string): boolean {
   const isBypassEnabled = process.env.TURNSTILE_BYPASS === 'true';
 
   if (isDevelopment && isBypassEnabled) {
-    logger.warn('[DEV] Turnstile verification bypassed', { ip });
+    logger.warn('[DEV] Turnstile verification bypassed', {
+      ip: sanitizeIP(ip),
+    });
     return true;
   }
   return false;
@@ -177,7 +179,7 @@ function handleTurnstileFailure(
 ): { success: false; errorCodes?: string[] } {
   logger.warn('Turnstile verification failed:', {
     errorCodes: result['error-codes'],
-    clientIP: ip,
+    clientIP: sanitizeIP(ip),
   });
   const errorCodes = result['error-codes'];
   return errorCodes ? { success: false, errorCodes } : { success: false };
@@ -222,12 +224,12 @@ export async function verifyTurnstileDetailed(
     logger.info('Turnstile verification attempt', {
       success: true,
       hostname: result.hostname,
-      clientIP: ip,
+      clientIP: sanitizeIP(ip),
     });
 
     return { success: true };
   } catch (error) {
-    logger.error('Turnstile verification error', { error, ip });
+    logger.error('Turnstile verification error', { error, ip: sanitizeIP(ip) });
     throw error; // Re-throw to let caller handle 500 errors
   }
 }

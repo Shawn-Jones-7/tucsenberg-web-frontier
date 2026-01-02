@@ -376,7 +376,7 @@ describe('Verify Turnstile API Route', () => {
         expect.objectContaining({
           success: true,
           hostname: 'localhost',
-          clientIP: '127.0.0.1',
+          clientIP: '[REDACTED_IP]',
         }),
       );
 
@@ -413,7 +413,7 @@ describe('Verify Turnstile API Route', () => {
         'Turnstile verification failed:',
         expect.objectContaining({
           errorCodes: ['timeout-or-duplicate'],
-          clientIP: '127.0.0.1',
+          clientIP: '[REDACTED_IP]',
         }),
       );
 

@@ -281,7 +281,7 @@ describe('SEO Metadata', () => {
           'Enterprise Platform',
           'B2B Solution',
         ],
-        image: '/images/og-image.svg',
+        image: '/images/og-image.jpg',
       });
     });
 
@@ -435,7 +435,7 @@ describe('SEO Metadata', () => {
       // Test applyBaseFields with image defined (line 119-120)
       const config = createPageSEOConfig('home');
 
-      expect(config.image).toBe('/images/og-image.svg');
+      expect(config.image).toBe('/images/og-image.jpg');
     });
   });
 

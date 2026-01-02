@@ -9,7 +9,7 @@ import { getApiMessages, type ApiMessages } from '@/lib/api/get-request-locale';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { processLead, type LeadResult } from '@/lib/lead-pipeline';
 import { LEAD_TYPES } from '@/lib/lead-pipeline/lead-schema';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeIP } from '@/lib/logger';
 import {
   checkDistributedRateLimit,
   createRateLimitHeaders,
@@ -39,7 +39,7 @@ function createSuccessResponse(options: SuccessResponseOptions): NextResponse {
   const { result, clientIP, processingTime, headers, successMessage } = options;
   logger.info('Product inquiry submitted successfully', {
     referenceId: result.referenceId,
-    ip: clientIP,
+    ip: sanitizeIP(clientIP),
     processingTime,
     emailSent: result.emailSent,
     recordCreated: result.recordCreated,
@@ -69,7 +69,7 @@ function createErrorResponse(options: ErrorResponseOptions): NextResponse {
   const { result, clientIP, processingTime, messages } = options;
   logger.warn('Product inquiry submission failed', {
     error: result.error,
-    ip: clientIP,
+    ip: sanitizeIP(clientIP),
     processingTime,
   });
 
@@ -100,7 +100,7 @@ async function checkRateLimitOrFail(
   const rateLimitResult = await checkDistributedRateLimit(clientIP, 'inquiry');
   if (!rateLimitResult.allowed) {
     logger.warn('Product inquiry rate limit exceeded', {
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
       retryAfter: rateLimitResult.retryAfter,
     });
     const headers = createRateLimitHeaders(rateLimitResult);
@@ -130,7 +130,9 @@ async function validateTurnstile(
   const { token, clientIP, messages } = options;
 
   if (!token) {
-    logger.warn('Product inquiry missing Turnstile token', { ip: clientIP });
+    logger.warn('Product inquiry missing Turnstile token', {
+      ip: sanitizeIP(clientIP),
+    });
     return NextResponse.json(
       { success: false, error: messages.inquiry.securityRequired },
       { status: HTTP_BAD_REQUEST },
@@ -140,7 +142,7 @@ async function validateTurnstile(
   const isValid = await verifyTurnstile(token, clientIP);
   if (!isValid) {
     logger.warn('Product inquiry Turnstile verification failed', {
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
     });
     return NextResponse.json(
       {
@@ -206,7 +208,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     logger.error('Product inquiry submission failed unexpectedly', {
       error: error instanceof Error ? error.message : 'Unknown error',
-      ip: clientIP,
+      ip: sanitizeIP(clientIP),
       processingTime: Date.now() - startTime,
     });
 

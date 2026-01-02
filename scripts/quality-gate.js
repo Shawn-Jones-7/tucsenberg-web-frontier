@@ -776,6 +776,11 @@ class QualityGate {
     }
     log('');
 
+    // SEO/Config placeholder check (production only)
+    if (this.config.environment === 'production') {
+      this.results.gates.seoConfig = await this.checkSeoConfigPlaceholders();
+    }
+
     // 执行各项门禁检查
     if (this.config.gates.codeQuality.enabled) {
       this.results.gates.codeQuality = await this.checkCodeQuality();
@@ -1187,6 +1192,76 @@ class QualityGate {
     }
 
     log(`${this.getStatusEmoji(gate.status)} 安全门禁: ${gate.status}`);
+    return gate;
+  }
+
+  /**
+   * SEO/Config placeholder check for production
+   * Detects unconfigured [PLACEHOLDER] values in SITE_CONFIG
+   */
+  async checkSeoConfigPlaceholders() {
+    log('🔍 执行 SEO/Config 占位符检查...');
+
+    const gate = {
+      name: 'SEO Config',
+      status: 'unknown',
+      checks: {},
+      blocking: true, // Block production builds with placeholders
+      issues: [],
+    };
+
+    try {
+      const siteConfigPath = path.join(
+        process.cwd(),
+        'src',
+        'config',
+        'paths',
+        'site-config.ts',
+      );
+
+      if (!fs.existsSync(siteConfigPath)) {
+        gate.status = 'warning';
+        gate.issues.push('site-config.ts not found');
+        return gate;
+      }
+
+      const content = fs.readFileSync(siteConfigPath, 'utf8');
+
+      // Check for placeholder patterns [SOMETHING]
+      const placeholderPattern = /\[([A-Z_]+)\]/g;
+      const matches = [...content.matchAll(placeholderPattern)];
+      const uniquePlaceholders = [...new Set(matches.map((m) => m[0]))];
+
+      // Check for example.com in baseUrl
+      const hasExampleUrl = content.includes("'https://example.com'");
+
+      gate.checks.placeholders = uniquePlaceholders;
+      gate.checks.hasExampleUrl = hasExampleUrl;
+
+      if (uniquePlaceholders.length > 0 || hasExampleUrl) {
+        gate.status = 'failed';
+        if (uniquePlaceholders.length > 0) {
+          gate.issues.push(
+            `发现未配置的占位符: ${uniquePlaceholders.join(', ')}`,
+          );
+        }
+        if (hasExampleUrl) {
+          gate.issues.push(
+            'NEXT_PUBLIC_BASE_URL 未配置（使用默认 example.com）',
+          );
+        }
+        gate.issues.push(
+          '请在 .env.production 中配置这些值，或更新 src/config/paths/site-config.ts',
+        );
+      } else {
+        gate.status = 'passed';
+      }
+    } catch (error) {
+      gate.status = 'error';
+      gate.issues.push(`SEO/Config 检查失败: ${error.message}`);
+    }
+
+    log(`${this.getStatusEmoji(gate.status)} SEO/Config 门禁: ${gate.status}`);
     return gate;
   }
 

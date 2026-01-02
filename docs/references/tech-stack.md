@@ -222,8 +222,8 @@ content/
 
 ### SEO 优化
 - **Next.js 16 Metadata API** - 原生 SEO 优化
-- **next-sitemap 4.2.3** - 自动 sitemap 和 hreflang 生成
-- **静态 OG 图片** - 社交媒体分享图片
+- **App Router sitemap.ts/robots.ts** - 动态生成 sitemap 和 robots.txt
+- **静态 OG 图片** - 社交媒体分享图片（JPG 格式）
 - **结构化数据** - Schema.org JSON-LD 支持
 
 ### 企业通信

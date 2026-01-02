@@ -242,7 +242,6 @@
     }
   },
   "errors": {
-    "notFound": "页面未找到",
     "serverError": "服务器内部错误",
     "networkError": "网络连接错误",
     "validationError": "请检查您的输入",
@@ -330,9 +329,21 @@
     "author": "作者",
     "tags": "标签",
     "categories": "分类",
+    "allCategories": "全部",
     "relatedArticles": "相关文章",
     "shareArticle": "分享文章",
     "articleNotFound": "文章未找到",
+    "sidebar": {
+      "mostPopular": "热门文章",
+      "categories": "分类"
+    },
+    "contentTypes": {
+      "article": "文章",
+      "case-study": "案例研究",
+      "guide": "指南",
+      "news": "新闻",
+      "whitepaper": "白皮书"
+    },
     "newsletter": {
       "title": "订阅我们的通讯",
       "description": "获取最新的行业洞察、产品更新和贸易技巧。",

@@ -8,9 +8,9 @@
   },
   "packageManager": "pnpm@10.13.1",
   "scripts": {
-    "dev": "npx --yes @react-grab/claude-code@latest && next dev",
-    "dev:turbopack": "npx --yes @react-grab/claude-code@latest && next dev --turbopack",
-    "dev:no-grab": "next dev",
+    "dev": "next dev --turbopack",
+    "dev:grab": "npx --yes @react-grab/claude-code@latest && next dev --turbopack",
+    "dev:webpack": "next dev",
     "email:dev": "email dev --dir src/components/emails --port 3001",
     "prebuild": "node scripts/copy-translations.js && tsx scripts/generate-content-manifest.ts && pnpm content:slug-check",
     "build": "next build",
