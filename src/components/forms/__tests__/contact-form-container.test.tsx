@@ -287,3 +287,92 @@ describe('ContactFormContainer - 配置驱动', () => {
     expect(screen.queryByLabelText(/accept.*privacy/i)).toBeNull();
   });
 });
+
+describe('ContactFormContainer - ErrorDisplay', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should display validation error details', () => {
+    mockUseActionState.mockReturnValue([
+      {
+        success: false,
+        error: 'Validation failed',
+        details: ['errors.invalidEmail', 'errors.messageTooShort'],
+      },
+      vi.fn(),
+      false,
+    ]);
+
+    render(<ContactFormContainer />);
+
+    // Should show error container with details
+    expect(screen.getByText('errors.invalidEmail')).toBeInTheDocument();
+    expect(screen.getByText('errors.messageTooShort')).toBeInTheDocument();
+  });
+
+  it('should display raw error message for non-validation errors', () => {
+    mockUseActionState.mockReturnValue([
+      {
+        success: false,
+        error: 'Server connection failed',
+        details: undefined,
+      },
+      vi.fn(),
+      false,
+    ]);
+
+    render(<ContactFormContainer />);
+
+    expect(screen.getByText('Server connection failed')).toBeInTheDocument();
+  });
+
+  it('should not display ErrorDisplay when no error', () => {
+    mockUseActionState.mockReturnValue([{ success: true }, vi.fn(), false]);
+
+    render(<ContactFormContainer />);
+
+    // Should not have error container
+    expect(
+      screen.queryByText('Server connection failed'),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe('ContactFormContainer - 提交状态计算', () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it('should show submitting status when isPending is true', () => {
+    mockUseActionState.mockReturnValue([
+      null,
+      vi.fn(),
+      true, // isPending
+    ]);
+
+    render(<ContactFormContainer />);
+
+    // Should show submitting message
+    expect(screen.getByText('Submitting...')).toBeInTheDocument();
+  });
+
+  it('should show idle status when no state changes', () => {
+    mockUseActionState.mockReturnValue([null, vi.fn(), false]);
+
+    render(<ContactFormContainer />);
+
+    // Should not show any status message
+    expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+  });
+});

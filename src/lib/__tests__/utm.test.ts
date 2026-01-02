@@ -234,6 +234,16 @@ describe('UTM Parameter Tracking', () => {
 
       expect(snapshot).toEqual({});
     });
+
+    it('should handle invalid JSON in sessionStorage gracefully', () => {
+      mockSessionStorage.store['marketing_attribution'] = 'invalid-json{';
+      window.location.search = '?utm_source=fallback_source';
+
+      const snapshot = getAttributionSnapshot();
+
+      // Should fallback to URL params when JSON parse fails
+      expect(snapshot.utmSource).toBe('fallback_source');
+    });
   });
 
   describe('getAttributionAsObject', () => {
@@ -283,6 +293,72 @@ describe('UTM Parameter Tracking', () => {
 
       expect(formData.get('utmSource')).toBe('google');
       expect(formData.get('utmMedium')).toBeNull();
+    });
+
+    it('should append all attribution fields when present', () => {
+      mockSessionStorage.store['marketing_attribution'] = JSON.stringify({
+        utmSource: 'google',
+        utmMedium: 'cpc',
+        utmCampaign: 'spring_sale',
+        utmTerm: 'shoes',
+        utmContent: 'banner1',
+        gclid: 'g123',
+        fbclid: 'f456',
+        msclkid: 'm789',
+      });
+
+      const formData = new FormData();
+      appendAttributionToFormData(formData);
+
+      expect(formData.get('utmSource')).toBe('google');
+      expect(formData.get('utmMedium')).toBe('cpc');
+      expect(formData.get('utmCampaign')).toBe('spring_sale');
+      expect(formData.get('utmTerm')).toBe('shoes');
+      expect(formData.get('utmContent')).toBe('banner1');
+      expect(formData.get('gclid')).toBe('g123');
+      expect(formData.get('fbclid')).toBe('f456');
+      expect(formData.get('msclkid')).toBe('m789');
+    });
+  });
+
+  describe('getAttributionAsObject - complete coverage', () => {
+    it('should return all attribution fields when present', () => {
+      mockSessionStorage.store['marketing_attribution'] = JSON.stringify({
+        utmSource: 'google',
+        utmMedium: 'cpc',
+        utmCampaign: 'spring_sale',
+        utmTerm: 'shoes',
+        utmContent: 'banner1',
+        gclid: 'g123',
+        fbclid: 'f456',
+        msclkid: 'm789',
+        landingPage: '/test',
+        capturedAt: '2024-01-01',
+      });
+
+      const obj = getAttributionAsObject();
+
+      expect(obj).toEqual({
+        utmSource: 'google',
+        utmMedium: 'cpc',
+        utmCampaign: 'spring_sale',
+        utmTerm: 'shoes',
+        utmContent: 'banner1',
+        gclid: 'g123',
+        fbclid: 'f456',
+        msclkid: 'm789',
+      });
+      // Should not include non-attribution fields
+      expect(obj).not.toHaveProperty('landingPage');
+      expect(obj).not.toHaveProperty('capturedAt');
+    });
+
+    it('should return empty object when no attribution data', () => {
+      window.location.search = '';
+
+      const obj = getAttributionAsObject();
+
+      expect(obj).toEqual({});
     });
   });
 });
