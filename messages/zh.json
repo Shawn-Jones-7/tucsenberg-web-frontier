@@ -846,7 +846,30 @@
     }
   },
   "errors": {
-    "notFound": "页面未找到",
+    "global": {
+      "title": "出错了！",
+      "description": "非常抱歉给您带来不便。发生了意外错误。",
+      "tryAgain": "重试",
+      "goHome": "返回首页",
+      "devDetails": "错误详情（仅开发环境）"
+    },
+    "products": {
+      "title": "产品信息加载失败",
+      "description": "我们未能加载产品详情。请点击重试或返回首页浏览其他内容。",
+      "tryAgain": "重试",
+      "goHome": "返回首页"
+    },
+    "contact": {
+      "title": "联系表单暂时不可用",
+      "description": "我们的团队会立即查看问题。您可以稍后重试提交，或者通过其他渠道与我们联系。",
+      "tryAgain": "重试",
+      "goHome": "返回首页"
+    },
+    "notFound": {
+      "title": "页面未找到",
+      "description": "您访问的页面不存在或已被移动。",
+      "goHome": "返回首页"
+    },
     "serverError": "服务器内部错误",
     "networkError": "网络连接错误",
     "validationError": "请检查您的输入",

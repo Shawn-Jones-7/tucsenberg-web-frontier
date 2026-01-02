@@ -18,6 +18,8 @@ export interface PostCardProps {
   post: PostSummary;
   /** Prefix for the link, e.g. "/en/blog" or "/zh/blog" */
   linkPrefix?: string;
+  /** Locale for date formatting, e.g. "en" or "zh" */
+  locale?: string;
   /** Whether to show cover image */
   showCoverImage?: boolean;
   /** Whether to show tags */
@@ -89,6 +91,7 @@ interface PostMetaProps {
   readingTime: number | undefined;
   readingTimeLabel: string;
   showReadingTime: boolean;
+  locale: string;
 }
 
 function PostMeta({
@@ -96,8 +99,13 @@ function PostMeta({
   readingTime,
   readingTimeLabel,
   showReadingTime,
+  locale,
 }: PostMetaProps) {
-  const formattedDate = new Date(publishedAt).toLocaleDateString('en-US', {
+  // Map short locale codes to full locale identifiers (explicit to avoid object injection)
+  const dateLocale =
+    locale === 'en' ? 'en-US' : locale === 'zh' ? 'zh-CN' : locale;
+
+  const formattedDate = new Date(publishedAt).toLocaleDateString(dateLocale, {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
@@ -136,6 +144,7 @@ function PostMeta({
 export function PostCard({
   post,
   linkPrefix = '/blog',
+  locale = 'en',
   showCoverImage = true,
   showTags = true,
   showReadingTime = true,
@@ -204,6 +213,7 @@ export function PostCard({
             readingTime={readingTime}
             readingTimeLabel={readingTimeLabel}
             showReadingTime={showReadingTime}
+            locale={locale}
           />
         </Card>
       </Link>

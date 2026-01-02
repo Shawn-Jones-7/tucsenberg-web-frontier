@@ -6,6 +6,8 @@ export interface PostGridProps {
   posts: PostSummary[];
   /** Prefix for post links, e.g. "/en/blog" */
   linkPrefix?: string;
+  /** Locale for date formatting, e.g. "en" or "zh" */
+  locale?: string;
   /** Grid column configuration */
   columns?: {
     /** Columns on mobile (default: 1) */
@@ -18,7 +20,7 @@ export interface PostGridProps {
   /** Gap between cards (Tailwind gap class number, default: 6) */
   gap?: 4 | 6 | 8;
   /** Props to pass to each PostCard */
-  cardProps?: Partial<Omit<PostCardProps, 'post' | 'linkPrefix'>>;
+  cardProps?: Partial<Omit<PostCardProps, 'post' | 'linkPrefix' | 'locale'>>;
   /** Custom class name for the grid container */
   className?: string;
   /** Content to display when posts array is empty */
@@ -26,7 +28,8 @@ export interface PostGridProps {
 }
 
 function getSmColumnClass(sm: 1 | 2): string {
-  if (sm === 2) return 'sm:grid-cols-2';
+  // Always include base grid-cols-1 for mobile, then responsive override
+  if (sm === 2) return 'grid-cols-1 sm:grid-cols-2';
   return 'grid-cols-1';
 }
 
@@ -57,6 +60,7 @@ function getGapClass(gap: 4 | 6 | 8): string {
 export function PostGrid({
   posts,
   linkPrefix = '/blog',
+  locale = 'en',
   columns = { sm: 1, md: 2, lg: 3 },
   gap = 6,
   cardProps,
@@ -85,6 +89,7 @@ export function PostGrid({
           key={post.slug}
           post={post}
           linkPrefix={linkPrefix}
+          locale={locale}
           {...cardProps}
         />
       ))}

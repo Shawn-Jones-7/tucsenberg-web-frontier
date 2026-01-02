@@ -120,6 +120,7 @@ function NewsletterForm({
           name='email'
           required
           placeholder={placeholder}
+          aria-label={placeholder}
           className={cn(isInline && 'flex-1')}
           disabled={isSubmitting}
         />

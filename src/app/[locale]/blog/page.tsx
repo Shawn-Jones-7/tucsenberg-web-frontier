@@ -70,6 +70,7 @@ export default async function BlogPage({ params }: BlogPageProps) {
       <PostGrid
         posts={posts}
         linkPrefix={linkPrefix}
+        locale={locale}
         cardProps={{
           readingTimeLabel: t('readingTime'),
         }}
