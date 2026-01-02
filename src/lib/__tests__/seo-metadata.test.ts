@@ -33,12 +33,7 @@ vi.mock('@messages/en/critical.json', () => ({
           title: 'Products EN',
           description: 'Products Description EN',
         },
-        services: {
-          title: 'Services EN',
-          description: 'Services Description EN',
-        },
-        pricing: { title: 'Pricing EN', description: 'Pricing Description EN' },
-        support: { title: 'Support EN', description: 'Support Description EN' },
+        faq: { title: 'Faq EN', description: 'Faq Description EN' },
         privacy: { title: 'Privacy EN', description: 'Privacy Description EN' },
         terms: { title: 'Terms EN', description: 'Terms Description EN' },
       },
@@ -62,12 +57,7 @@ vi.mock('@messages/zh/critical.json', () => ({
           title: 'Products ZH',
           description: 'Products Description ZH',
         },
-        services: {
-          title: 'Services ZH',
-          description: 'Services Description ZH',
-        },
-        pricing: { title: 'Pricing ZH', description: 'Pricing Description ZH' },
-        support: { title: 'Support ZH', description: 'Support Description ZH' },
+        faq: { title: 'Faq ZH', description: 'Faq Description ZH' },
         privacy: { title: 'Privacy ZH', description: 'Privacy Description ZH' },
         terms: { title: 'Terms ZH', description: 'Terms Description ZH' },
       },
@@ -237,9 +227,7 @@ describe('SEO Metadata', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
+        'faq',
         'privacy',
         'terms',
       ] as const;
@@ -338,9 +326,7 @@ describe('SEO Metadata', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
+        'faq',
         'privacy',
         'terms',
       ];
@@ -361,24 +347,19 @@ describe('SEO Metadata', () => {
         // Only title provided, other fields should come from base config
       };
 
-      const config = createPageSEOConfig('pricing', customConfig);
+      const config = createPageSEOConfig('faq', customConfig);
 
       expect(config.title).toBe('Custom Title');
       expect(config.type).toBe('website'); // From base config
-      expect(config.keywords).toEqual([
-        'Pricing',
-        'Plans',
-        'Enterprise',
-        'B2B',
-      ]); // From base config
+      expect(config.keywords).toEqual(['FAQ', 'Help', 'Questions', 'Support']); // From base config
     });
 
     it('should handle empty custom config', () => {
-      const config = createPageSEOConfig('services', {});
+      const config = createPageSEOConfig('products', {});
 
       expect(config).toEqual({
         type: 'website',
-        keywords: ['Services', 'Solutions', 'Enterprise', 'B2B'],
+        keywords: ['Products', 'Solutions', 'Enterprise', 'B2B'],
       });
     });
 
@@ -395,7 +376,7 @@ describe('SEO Metadata', () => {
         section: 'Tech',
       };
 
-      const config = createPageSEOConfig('support', customConfig);
+      const config = createPageSEOConfig('faq', customConfig);
 
       expect(config).toEqual(customConfig);
     });

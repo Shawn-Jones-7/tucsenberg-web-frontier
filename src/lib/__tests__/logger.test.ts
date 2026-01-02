@@ -25,7 +25,7 @@ describe('logger', () => {
     Object.values(consoleSpies).forEach((spy) => spy.mockRestore());
   });
 
-  it('should forward logs when 处于开发或测试环境', () => {
+  it('should forward all logs in development/test environment', () => {
     logger.debug('debug message', { feature: 'debug' });
     logger.info('info message');
     logger.log('log message');
@@ -41,20 +41,43 @@ describe('logger', () => {
     expect(consoleSpies.error).toHaveBeenCalledWith('error message');
   });
 
-  it('should noop logs when 处于生产环境', () => {
+  it('should always output error/warn in production', () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('NODE_ENV', 'production');
+
+    logger.warn('warning in production');
+    logger.error('error in production');
+
+    expect(consoleSpies.warn).toHaveBeenCalledWith('warning in production');
+    expect(consoleSpies.error).toHaveBeenCalledWith('error in production');
+  });
+
+  it('should suppress debug/log/info in production by default', () => {
     vi.unstubAllEnvs();
     vi.stubEnv('NODE_ENV', 'production');
 
     logger.debug('should not log');
     logger.info('should not log');
     logger.log('should not log');
-    logger.warn('should not log');
-    logger.error('should not log');
 
     expect(consoleSpies.debug).not.toHaveBeenCalled();
     expect(consoleSpies.info).not.toHaveBeenCalled();
     expect(consoleSpies.log).not.toHaveBeenCalled();
-    expect(consoleSpies.warn).not.toHaveBeenCalled();
-    expect(consoleSpies.error).not.toHaveBeenCalled();
+  });
+
+  it('should respect LOG_LEVEL=info in production', () => {
+    vi.unstubAllEnvs();
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('LOG_LEVEL', 'info');
+
+    logger.debug('should not log');
+    logger.info('should log');
+    logger.warn('should log');
+    logger.error('should log');
+
+    expect(consoleSpies.debug).not.toHaveBeenCalled();
+    expect(consoleSpies.info).toHaveBeenCalledWith('should log');
+    expect(consoleSpies.warn).toHaveBeenCalledWith('should log');
+    expect(consoleSpies.error).toHaveBeenCalledWith('should log');
   });
 });

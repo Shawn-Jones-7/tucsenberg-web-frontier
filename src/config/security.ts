@@ -54,6 +54,9 @@ export function generateCSP(nonce?: string): string {
       // External image sources
       'https://images.unsplash.com',
       'https://via.placeholder.com',
+      // Google Analytics
+      'https://www.google-analytics.com',
+      'https://www.googletagmanager.com',
     ],
     'font-src': ["'self'", 'data:', 'https://fonts.gstatic.com'],
     'connect-src': [
@@ -64,6 +67,10 @@ export function generateCSP(nonce?: string): string {
       ...(isDevelopment ? ['http://localhost:*', 'ws://localhost:*'] : []),
       // External APIs
       'https://api.resend.com',
+      // Google Analytics
+      'https://www.google-analytics.com',
+      'https://analytics.google.com',
+      'https://region1.google-analytics.com',
     ],
     'frame-src': [
       // Cloudflare Turnstile (removed 'none' - conflicts with allowlist)

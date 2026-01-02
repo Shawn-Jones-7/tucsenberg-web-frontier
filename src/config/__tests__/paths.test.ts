@@ -38,9 +38,6 @@ describe('paths configuration', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
         'privacy',
         'terms',
       ];
@@ -69,9 +66,6 @@ describe('paths configuration', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
         'privacy',
         'terms',
       ];
@@ -345,9 +339,6 @@ describe('paths configuration', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
         'privacy',
         'terms',
       ];
@@ -614,9 +605,7 @@ describe('paths configuration', () => {
         'contact',
         'blog',
         'products',
-        'services',
-        'pricing',
-        'support',
+        'faq',
         'privacy',
         'terms',
       ];

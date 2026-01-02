@@ -3,6 +3,13 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_ERROR_CODES } from '@/constants/api-error-codes';
 import { handleGetRequest } from '../get-handler';
 
+const mockValidateAdminAccess = vi.hoisted(() => vi.fn());
+
+// Mock validateAdminAccess
+vi.mock('@/app/api/contact/contact-api-validation', () => ({
+  validateAdminAccess: mockValidateAdminAccess,
+}));
+
 // Mock logger
 vi.mock('@/lib/logger', () => ({
   logger: {
@@ -25,12 +32,59 @@ vi.mock('@/lib/api-cache-utils', () => ({
 describe('handleGetRequest', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockValidateAdminAccess.mockReturnValue(true);
+  });
+
+  describe('authentication', () => {
+    it('should return 401 when not authenticated', async () => {
+      mockValidateAdminAccess.mockReturnValue(false);
+      const request = new NextRequest(
+        'http://localhost:3000/api/monitoring/dashboard',
+      );
+
+      const response = handleGetRequest(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(401);
+      expect(data.success).toBe(false);
+      expect(data.error).toBe('Unauthorized');
+    });
+
+    it('should return 401 when auth header is missing', async () => {
+      mockValidateAdminAccess.mockReturnValue(false);
+      const request = new NextRequest(
+        'http://localhost:3000/api/monitoring/dashboard',
+      );
+
+      const response = handleGetRequest(request);
+
+      expect(response.status).toBe(401);
+      expect(mockValidateAdminAccess).toHaveBeenCalledWith(null);
+    });
+
+    it('should allow access with valid admin token', async () => {
+      mockValidateAdminAccess.mockReturnValue(true);
+      const request = new NextRequest(
+        'http://localhost:3000/api/monitoring/dashboard',
+        { headers: { authorization: 'Bearer valid-token' } },
+      );
+
+      const response = handleGetRequest(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.success).toBe(true);
+      expect(mockValidateAdminAccess).toHaveBeenCalledWith(
+        'Bearer valid-token',
+      );
+    });
   });
 
   describe('basic requests', () => {
     it('should return dashboard data with default parameters', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard',
+        { headers: { authorization: 'Bearer valid-token' } },
       );
 
       const response = handleGetRequest(request);

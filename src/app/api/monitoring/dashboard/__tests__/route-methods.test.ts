@@ -7,6 +7,8 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { API_ERROR_CODES } from '@/constants/api-error-codes';
 import { DELETE, GET, POST, PUT } from '../route';
 
+const TEST_ADMIN_KEY = 'test-admin-key';
+
 // Mock logger
 vi.mock('@/lib/logger', () => ({
   logger: {
@@ -26,9 +28,17 @@ vi.mock('@/lib/api-cache-utils', () => ({
   }),
 }));
 
+function createAuthHeaders(): HeadersInit {
+  return {
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${TEST_ADMIN_KEY}`,
+  };
+}
+
 describe('Monitoring Dashboard Route - All Methods', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('ADMIN_API_TOKEN', TEST_ADMIN_KEY);
   });
 
   describe('POST', () => {
@@ -42,7 +52,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
             metrics: { cls: 0.05 },
             timestamp: Date.now(),
           }),
-          headers: { 'Content-Type': 'application/json' },
+          headers: createAuthHeaders(),
         },
       );
 
@@ -58,6 +68,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
     it('should handle GET requests', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard',
+        { headers: { Authorization: `Bearer ${TEST_ADMIN_KEY}` } },
       );
 
       const response = GET(request);
@@ -71,6 +82,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
     it('should accept query parameters', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard?source=web-vitals&timeRange=24h',
+        { headers: { Authorization: `Bearer ${TEST_ADMIN_KEY}` } },
       );
 
       const response = GET(request);
@@ -79,6 +91,15 @@ describe('Monitoring Dashboard Route - All Methods', () => {
       expect(response.status).toBe(200);
       expect(data.data.source).toBe('web-vitals');
       expect(data.data.timeRange).toBe('24h');
+    });
+
+    it('should return 401 without authorization', async () => {
+      const request = new NextRequest(
+        'http://localhost:3000/api/monitoring/dashboard',
+      );
+
+      const response = GET(request);
+      expect(response.status).toBe(401);
     });
   });
 
@@ -91,7 +112,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
           body: JSON.stringify({
             config: { alertThreshold: 0.1 },
           }),
-          headers: { 'Content-Type': 'application/json' },
+          headers: createAuthHeaders(),
         },
       );
 
@@ -108,7 +129,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
         {
           method: 'PUT',
           body: JSON.stringify({}),
-          headers: { 'Content-Type': 'application/json' },
+          headers: createAuthHeaders(),
         },
       );
 
@@ -124,6 +145,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
     it('should handle DELETE requests with confirmation', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard?confirm=true',
+        { headers: { Authorization: `Bearer ${TEST_ADMIN_KEY}` } },
       );
 
       const response = DELETE(request);
@@ -136,6 +158,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
     it('should require confirmation', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard',
+        { headers: { Authorization: `Bearer ${TEST_ADMIN_KEY}` } },
       );
 
       const response = DELETE(request);
@@ -149,6 +172,7 @@ describe('Monitoring Dashboard Route - All Methods', () => {
     it('should accept filter parameters', async () => {
       const request = new NextRequest(
         'http://localhost:3000/api/monitoring/dashboard?confirm=true&source=web-vitals&timeRange=1h',
+        { headers: { Authorization: `Bearer ${TEST_ADMIN_KEY}` } },
       );
 
       const response = DELETE(request);

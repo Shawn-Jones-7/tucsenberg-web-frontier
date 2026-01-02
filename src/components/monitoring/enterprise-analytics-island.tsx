@@ -2,9 +2,12 @@
 
 import { useEffect } from 'react';
 import dynamic from 'next/dynamic';
+import { usePathname, useSearchParams } from 'next/navigation';
+import Script from 'next/script';
 import { useLocale } from 'next-intl';
 import { useCookieConsentOptional } from '@/lib/cookie-consent';
 import { logger } from '@/lib/logger';
+import { storeAttributionData } from '@/lib/utm';
 
 const Analytics = dynamic(
   () => import('@vercel/analytics/next').then((mod) => mod.Analytics),
@@ -16,20 +19,10 @@ const SpeedInsights = dynamic(
   { ssr: false },
 );
 
-export function EnterpriseAnalyticsIsland() {
-  const locale = useLocale();
-  const isProd = process.env.NODE_ENV === 'production';
-  const cookieConsent = useCookieConsentOptional();
+const GA_MEASUREMENT_ID = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
-  // Check if analytics consent is granted (default to true if no consent system)
-  const analyticsAllowed = cookieConsent
-    ? cookieConsent.ready
-      ? cookieConsent.consent.analytics
-      : false
-    : true;
-
+function useWebVitalsTracking(locale: string, analyticsAllowed: boolean) {
   useEffect(() => {
-    // Skip web vitals if analytics consent not granted
     if (!analyticsAllowed) return;
 
     const RUM_ENABLED =
@@ -41,7 +34,6 @@ export function EnterpriseAnalyticsIsland() {
       process.env.NEXT_PUBLIC_FAST_LCP_ZH === '1' ||
       process.env.NEXT_PUBLIC_FAST_LCP_ZH === 'true';
 
-    // Lazy import web-vitals after hydration
     import('web-vitals')
       .then(({ onCLS, onFCP, onLCP, onTTFB, onINP }) => {
         const baseDims = () => {
@@ -77,7 +69,6 @@ export function EnterpriseAnalyticsIsland() {
           );
           if (RUM_ENABLED && process.env.NODE_ENV === 'production') {
             try {
-              // Dynamic import to avoid pulling @vercel/analytics into initial vendors
               const { track } = await import('@vercel/analytics');
               const dims = baseDims();
               track('web-vital', {
@@ -105,14 +96,67 @@ export function EnterpriseAnalyticsIsland() {
       })
       .catch((e) => logger.error('Failed to load web-vitals', e));
   }, [locale, analyticsAllowed]);
+}
 
-  // Only render analytics if consent is granted
-  if (!analyticsAllowed) {
-    return null;
-  }
+export function EnterpriseAnalyticsIsland() {
+  const locale = useLocale();
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const isProd = process.env.NODE_ENV === 'production';
+  const cookieConsent = useCookieConsentOptional();
+
+  const analyticsAllowed = cookieConsent
+    ? cookieConsent.ready
+      ? cookieConsent.consent.analytics
+      : false
+    : true;
+
+  const gaEnabled = Boolean(GA_MEASUREMENT_ID) && analyticsAllowed && isProd;
+
+  useEffect(() => {
+    storeAttributionData();
+  }, []);
+
+  useEffect(() => {
+    if (!gaEnabled || typeof window.gtag !== 'function') return;
+    const url =
+      pathname +
+      (searchParams?.toString() ? `?${searchParams.toString()}` : '');
+    window.gtag('config', GA_MEASUREMENT_ID!, {
+      page_path: url,
+      page_location: window.location.href,
+    });
+  }, [pathname, searchParams, gaEnabled]);
+
+  useWebVitalsTracking(locale, analyticsAllowed);
+
+  if (!analyticsAllowed) return null;
 
   return (
     <>
+      {gaEnabled && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
+            strategy='afterInteractive'
+          />
+          <Script
+            id='ga4-init'
+            strategy='afterInteractive'
+            dangerouslySetInnerHTML={{
+              __html: `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', '${GA_MEASUREMENT_ID}', {
+                  page_path: window.location.pathname,
+                  send_page_view: false
+                });
+              `,
+            }}
+          />
+        </>
+      )}
       {isProd && <Analytics />}
       {isProd && <SpeedInsights />}
     </>

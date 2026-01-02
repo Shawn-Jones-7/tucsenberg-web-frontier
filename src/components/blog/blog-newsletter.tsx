@@ -1,10 +1,17 @@
 'use client';
 
-import { useActionState, useCallback, useRef, useState } from 'react';
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import dynamic from 'next/dynamic';
 import { CheckCircle, Loader2, Mail, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { getAttributionAsObject, storeAttributionData } from '@/lib/utm';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -223,6 +230,11 @@ export function BlogNewsletter({
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileTokenRef = useRef<string | null>(null);
 
+  // Capture UTM parameters on mount (first-touch attribution)
+  useEffect(() => {
+    storeAttributionData();
+  }, []);
+
   const handleTurnstileSuccess = useCallback((token: string) => {
     turnstileTokenRef.current = token;
     setTurnstileToken(token);
@@ -248,6 +260,7 @@ export function BlogNewsletter({
       const token = turnstileTokenRef.current;
       if (!token) return { success: false, error: t('turnstileRequired') };
 
+      const attribution = getAttributionAsObject();
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -255,6 +268,7 @@ export function BlogNewsletter({
           email,
           pageType: 'blog',
           turnstileToken: token,
+          ...attribution,
         }),
       });
       const result = await response.json();

@@ -40,7 +40,7 @@ export async function generateMetadata({
 
   return generateMetadataForPath({
     locale: locale as SeoLocale,
-    pageType: 'support',
+    pageType: 'faq',
     path: '/faq',
     config: {
       title: t('pageTitle'),

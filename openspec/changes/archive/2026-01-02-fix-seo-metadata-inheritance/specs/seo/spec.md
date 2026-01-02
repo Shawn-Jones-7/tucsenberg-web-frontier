@@ -68,8 +68,6 @@ The system SHALL only display download links when the referenced asset exists.
 - **THEN** the PDF download button SHALL only be displayed if the product has a valid `pdfUrl` field
 - **OR** if the corresponding PDF file exists in the public directory
 
-## MODIFIED Requirements
-
 ### Requirement: OG Image Configuration
 The system SHALL reference existing OG image files in metadata configuration.
 

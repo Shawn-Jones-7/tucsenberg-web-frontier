@@ -117,7 +117,7 @@ export const config = {
   // Match all pathnames except for
   // - … if they start with `/api`, `/_next` or `/_vercel`
   // - … the ones containing a dot (e.g. `favicon.ico`)
-  // - … the root path (handled by root page.tsx)
   // - … the `/admin` path (TinaCMS admin interface)
-  matcher: '/((?!api|_next|_vercel|admin|^$|.*\\..*).*)',
+  // Root path `/` is now handled by middleware for proper locale detection
+  matcher: ['/', '/((?!api|_next|_vercel|admin|.*\\..*).*)', '/(en|zh)/:path*'],
 };

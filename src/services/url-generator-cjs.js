@@ -40,9 +40,7 @@ const PATHS_CONFIG = {
   contact: { en: '/contact', zh: '/contact' },
   blog: { en: '/blog', zh: '/blog' },
   products: { en: '/products', zh: '/products' },
-  services: { en: '/services', zh: '/services' },
-  pricing: { en: '/pricing', zh: '/pricing' },
-  support: { en: '/support', zh: '/support' },
+  faq: { en: '/faq', zh: '/faq' },
   privacy: { en: '/privacy', zh: '/privacy' },
   terms: { en: '/terms', zh: '/terms' },
 };

@@ -107,12 +107,8 @@ function getPageDataByType(
       return pages.blog;
     case 'products':
       return pages.products;
-    case 'services':
-      return pages.services;
-    case 'pricing':
-      return pages.pricing;
-    case 'support':
-      return pages.support;
+    case 'faq':
+      return pages.faq;
     case 'privacy':
       return pages.privacy;
     case 'terms':
@@ -371,17 +367,9 @@ export function createPageSEOConfig(
       type: 'website' as const,
       keywords: ['Products', 'Solutions', 'Enterprise', 'B2B'],
     },
-    services: {
+    faq: {
       type: 'website' as const,
-      keywords: ['Services', 'Solutions', 'Enterprise', 'B2B'],
-    },
-    pricing: {
-      type: 'website' as const,
-      keywords: ['Pricing', 'Plans', 'Enterprise', 'B2B'],
-    },
-    support: {
-      type: 'website' as const,
-      keywords: ['Support', 'Help', 'Documentation', 'Service'],
+      keywords: ['FAQ', 'Help', 'Questions', 'Support'],
     },
     privacy: {
       type: 'website' as const,
@@ -410,14 +398,8 @@ export function createPageSEOConfig(
     case 'products':
       baseConfig = baseConfigs.products;
       break;
-    case 'services':
-      baseConfig = baseConfigs.services;
-      break;
-    case 'pricing':
-      baseConfig = baseConfigs.pricing;
-      break;
-    case 'support':
-      baseConfig = baseConfigs.support;
+    case 'faq':
+      baseConfig = baseConfigs.faq;
       break;
     case 'privacy':
       baseConfig = baseConfigs.privacy;

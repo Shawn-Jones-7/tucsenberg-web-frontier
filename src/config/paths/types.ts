@@ -17,9 +17,7 @@ export type PageType =
   | 'contact'
   | 'blog'
   | 'products'
-  | 'services'
-  | 'pricing'
-  | 'support'
+  | 'faq'
   | 'privacy'
   | 'terms';
 

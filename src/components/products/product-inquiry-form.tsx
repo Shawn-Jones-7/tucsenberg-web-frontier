@@ -1,10 +1,17 @@
 'use client';
 
-import { useActionState, useCallback, useRef, useState } from 'react';
+import {
+  useActionState,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import dynamic from 'next/dynamic';
 import { CheckCircle, Loader2, MessageSquare, XCircle } from 'lucide-react';
 import { useTranslations } from 'next-intl';
 import { cn } from '@/lib/utils';
+import { getAttributionAsObject, storeAttributionData } from '@/lib/utm';
 import { Button } from '@/components/ui/button';
 import {
   Card,
@@ -285,6 +292,7 @@ async function submitInquiry({
   productName,
   token,
 }: SubmitInquiryParams): Promise<{ ok: boolean; error?: string }> {
+  const attribution = getAttributionAsObject();
   const requestBody = {
     type: 'product',
     fullName: data.fullName,
@@ -295,6 +303,7 @@ async function submitInquiry({
     turnstileToken: token,
     ...(data.company !== '' && { company: data.company }),
     ...(data.requirements !== '' && { requirements: data.requirements }),
+    ...attribution,
   };
 
   const response = await fetch('/api/inquiry', {
@@ -320,6 +329,11 @@ export function ProductInquiryForm({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const turnstileTokenRef = useRef<string | null>(null);
+
+  // Capture UTM parameters on mount (first-touch attribution)
+  useEffect(() => {
+    storeAttributionData();
+  }, []);
 
   const handleTurnstileSuccess = useCallback((token: string) => {
     turnstileTokenRef.current = token;

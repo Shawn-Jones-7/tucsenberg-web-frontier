@@ -38,19 +38,9 @@ export const PATHS_CONFIG = Object.freeze({
     zh: '/products',
   }),
 
-  services: Object.freeze({
-    en: '/services',
-    zh: '/services',
-  }),
-
-  pricing: Object.freeze({
-    en: '/pricing',
-    zh: '/pricing',
-  }),
-
-  support: Object.freeze({
-    en: '/support',
-    zh: '/support',
+  faq: Object.freeze({
+    en: '/faq',
+    zh: '/faq',
   }),
 
   // 法律页面 - 统一使用标准路径

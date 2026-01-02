@@ -1,6 +1,8 @@
 import { NextRequest } from 'next/server';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as route from '@/app/api/whatsapp/send/route';
+
+const TEST_API_KEY = 'test-whatsapp-api-key';
 
 vi.mock('@/lib/whatsapp-service', () => ({
   sendWhatsAppMessage: vi.fn(async () => ({
@@ -15,11 +17,19 @@ vi.mock('@/lib/whatsapp-service', () => ({
 }));
 
 describe('api/whatsapp/send', () => {
+  beforeEach(() => {
+    vi.stubEnv('WHATSAPP_API_KEY', TEST_API_KEY);
+  });
+
   const makeReq = (body: unknown) =>
     new NextRequest(
       new Request('http://localhost/api/whatsapp/send', {
         method: 'POST',
         body: JSON.stringify(body),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${TEST_API_KEY}`,
+        },
       }),
     );
 
@@ -44,6 +54,9 @@ describe('api/whatsapp/send', () => {
       new Request('http://localhost/api/whatsapp/send', {
         method: 'POST',
         body: 'invalid json',
+        headers: {
+          Authorization: `Bearer ${TEST_API_KEY}`,
+        },
       }),
     );
 
@@ -51,5 +64,39 @@ describe('api/whatsapp/send', () => {
     const body = await res.json();
     expect(res.status).toBe(400);
     expect(body.error).toBe('INVALID_JSON');
+  });
+
+  it('returns 401 without authorization', async () => {
+    const req = new NextRequest(
+      new Request('http://localhost/api/whatsapp/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: '123',
+          type: 'text',
+          content: { body: 'hi' },
+        }),
+      }),
+    );
+    const res = await route.POST(req);
+    expect(res.status).toBe(401);
+  });
+
+  it('returns 503 when API key not configured', async () => {
+    vi.stubEnv('WHATSAPP_API_KEY', '');
+    const req = new NextRequest(
+      new Request('http://localhost/api/whatsapp/send', {
+        method: 'POST',
+        body: JSON.stringify({
+          to: '123',
+          type: 'text',
+          content: { body: 'hi' },
+        }),
+        headers: {
+          Authorization: `Bearer ${TEST_API_KEY}`,
+        },
+      }),
+    );
+    const res = await route.POST(req);
+    expect(res.status).toBe(503);
   });
 });

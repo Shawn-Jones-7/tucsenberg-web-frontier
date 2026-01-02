@@ -38,23 +38,36 @@ vi.mock('@/app/api/contact/contact-api-utils', () => ({
 function createMockRequest(
   method: string,
   body?: Record<string, unknown>,
+  options?: { skipAuth?: boolean },
 ): NextRequest {
   const url = 'http://localhost:3000/api/whatsapp/send';
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  // Include auth header by default (API key is mandatory)
+  if (!options?.skipAuth) {
+    headers['Authorization'] = 'Bearer test-api-key-12345';
+  }
 
   if (body) {
     return new NextRequest(url, {
       method,
       body: JSON.stringify(body),
-      headers: { 'Content-Type': 'application/json' },
+      headers,
     });
   }
 
-  return new NextRequest(url, { method });
+  return new NextRequest(url, { method, headers });
 }
 
 describe('WhatsApp Send Route', () => {
+  const originalEnv = process.env;
+
   beforeEach(() => {
     vi.clearAllMocks();
+    // Set default API key for all tests (mandatory authentication)
+    process.env = { ...originalEnv, WHATSAPP_API_KEY: 'test-api-key-12345' };
     // Mock rate limiter to always allow requests
     mockCheckDistributedRateLimit.mockResolvedValue({
       allowed: true,
@@ -72,6 +85,7 @@ describe('WhatsApp Send Route', () => {
 
   afterEach(() => {
     vi.restoreAllMocks();
+    process.env = originalEnv;
   });
 
   describe('GET', () => {
@@ -231,7 +245,10 @@ describe('WhatsApp Send Route', () => {
       const request = new NextRequest(url, {
         method: 'POST',
         body: 'invalid json',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer test-api-key-12345',
+        },
       });
 
       const response = await POST(request);
@@ -347,24 +364,16 @@ describe('WhatsApp Send Route', () => {
   });
 
   describe('POST - Authentication', () => {
-    const originalEnv = process.env;
-
-    beforeEach(() => {
-      process.env = { ...originalEnv };
-    });
-
-    afterEach(() => {
-      process.env = originalEnv;
-    });
-
-    it('should return 401 when Authorization header missing and API key configured', async () => {
-      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
-
-      const request = createMockRequest('POST', {
-        to: '+1234567890',
-        type: 'text',
-        content: { body: 'Hello' },
-      });
+    it('should return 401 when Authorization header missing', async () => {
+      const request = createMockRequest(
+        'POST',
+        {
+          to: '+1234567890',
+          type: 'text',
+          content: { body: 'Hello' },
+        },
+        { skipAuth: true },
+      );
 
       const response = await POST(request);
       const data = await response.json();
@@ -374,8 +383,6 @@ describe('WhatsApp Send Route', () => {
     });
 
     it('should return 401 when API key is invalid', async () => {
-      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
-
       const url = 'http://localhost:3000/api/whatsapp/send';
       const request = new NextRequest(url, {
         method: 'POST',
@@ -398,8 +405,6 @@ describe('WhatsApp Send Route', () => {
     });
 
     it('should return 401 for malformed Authorization header', async () => {
-      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
-
       const url = 'http://localhost:3000/api/whatsapp/send';
       const request = new NextRequest(url, {
         method: 'POST',
@@ -422,32 +427,6 @@ describe('WhatsApp Send Route', () => {
     });
 
     it('should succeed with valid API key', async () => {
-      process.env.WHATSAPP_API_KEY = 'test-api-key-12345';
-
-      const url = 'http://localhost:3000/api/whatsapp/send';
-      const request = new NextRequest(url, {
-        method: 'POST',
-        body: JSON.stringify({
-          to: '+1234567890',
-          type: 'text',
-          content: { body: 'Hello' },
-        }),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer test-api-key-12345',
-        },
-      });
-
-      const response = await POST(request);
-      const data = await response.json();
-
-      expect(response.status).toBe(200);
-      expect(data.success).toBe(true);
-    });
-
-    it('should skip authentication when WHATSAPP_API_KEY not configured', async () => {
-      delete process.env.WHATSAPP_API_KEY;
-
       const request = createMockRequest('POST', {
         to: '+1234567890',
         type: 'text',
@@ -459,6 +438,26 @@ describe('WhatsApp Send Route', () => {
 
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
+    });
+
+    it('should return 503 when WHATSAPP_API_KEY not configured', async () => {
+      delete process.env.WHATSAPP_API_KEY;
+
+      const request = createMockRequest(
+        'POST',
+        {
+          to: '+1234567890',
+          type: 'text',
+          content: { body: 'Hello' },
+        },
+        { skipAuth: true },
+      );
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(503);
+      expect(data.error).toBe('WhatsApp API service not configured');
     });
   });
 

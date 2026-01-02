@@ -12,6 +12,7 @@ import { useTranslations } from 'next-intl';
 import { useFormStatus } from 'react-dom';
 import { logger } from '@/lib/logger';
 import { type ServerActionResult } from '@/lib/server-action-utils';
+import { appendAttributionToFormData, storeAttributionData } from '@/lib/utm';
 import { type FormSubmissionStatus } from '@/lib/validations';
 import { LazyTurnstile } from '@/components/forms/lazy-turnstile';
 import { useOptimisticFormState } from '@/components/forms/use-optimistic-form-state';
@@ -128,6 +129,11 @@ function useContactForm() {
   const { optimisticState, setOptimisticState, optimisticMessage } =
     useOptimisticFormState();
 
+  // Capture UTM parameters on mount (first-touch attribution)
+  useEffect(() => {
+    storeAttributionData();
+  }, []);
+
   // 从Server Action状态中提取提交状态
   const submitStatus = computeSubmitStatus({
     optimisticStatus: optimisticState.status,
@@ -163,6 +169,9 @@ function useContactForm() {
     // 添加Turnstile token和提交时间戳到FormData
     formData.append('turnstileToken', turnstileToken);
     formData.append('submittedAt', new Date().toISOString());
+
+    // Append marketing attribution data
+    appendAttributionToFormData(formData);
 
     // 记录提交时间
     recordSubmission();

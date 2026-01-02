@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCachedResponse } from '@/lib/api-cache-utils';
 import { logger } from '@/lib/logger';
+import { validateAdminAccess } from '@/app/api/contact/contact-api-validation';
 import {
   HOURS_2_IN_MS,
   HOURS_24_IN_MS,
@@ -36,6 +37,15 @@ import {
  */
 export function handleGetRequest(request: NextRequest) {
   try {
+    const authHeader = request.headers.get('authorization');
+    if (!validateAdminAccess(authHeader)) {
+      logger.warn('Unauthorized access attempt to monitoring dashboard');
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 },
+      );
+    }
+
     const { searchParams } = new URL(request.url);
     const source = searchParams.get('source');
     const timeRange = searchParams.get('timeRange') || '1h';
