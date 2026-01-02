@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import {
   getUnconfiguredPlaceholders,
   isBaseUrlConfigured,
@@ -45,11 +45,8 @@ describe('site-config', () => {
   });
 
   describe('isBaseUrlConfigured', () => {
-    const originalEnv = process.env.NODE_ENV;
-
     afterEach(() => {
       vi.unstubAllEnvs();
-      process.env.NODE_ENV = originalEnv;
     });
 
     it('should return true in non-production environment', () => {
@@ -139,15 +136,8 @@ describe('site-config', () => {
   });
 
   describe('validateSiteConfig', () => {
-    const originalEnv = process.env.NODE_ENV;
-
-    beforeEach(() => {
-      vi.unstubAllEnvs();
-    });
-
     afterEach(() => {
       vi.unstubAllEnvs();
-      process.env.NODE_ENV = originalEnv;
     });
 
     it('should return validation result object', () => {
