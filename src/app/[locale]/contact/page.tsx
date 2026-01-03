@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/types/i18n';
@@ -10,7 +11,28 @@ import {
 import { ContactForm } from '@/components/contact/contact-form';
 import { Card } from '@/components/ui/card';
 import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-params';
+import { siteFacts } from '@/config/site-facts';
 import { COUNT_PAIR } from '@/constants';
+
+function ContactLoadingSkeleton() {
+  return (
+    <div className='min-h-[80vh] px-4 py-16'>
+      <div className='mx-auto max-w-4xl'>
+        <div className='mb-12 text-center'>
+          <div className='mx-auto mb-4 h-12 w-64 animate-pulse rounded bg-muted' />
+          <div className='mx-auto h-6 w-96 max-w-full animate-pulse rounded bg-muted' />
+        </div>
+        <div className='grid gap-8 md:grid-cols-2'>
+          <div className='h-96 animate-pulse rounded-lg bg-muted' />
+          <div className='space-y-6'>
+            <div className='h-48 animate-pulse rounded-lg bg-muted' />
+            <div className='h-32 animate-pulse rounded-lg bg-muted' />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface ContactPageProps {
   params: Promise<{
@@ -64,8 +86,7 @@ function ContactPageHeader({
   );
 }
 
-export default async function ContactPage({ params }: ContactPageProps) {
-  const { locale } = await params;
+async function ContactContent({ locale }: { locale: string }) {
   setRequestLocale(locale);
 
   const copy = await getContactCopy(locale as Locale);
@@ -108,7 +129,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     <p className='font-medium'>
                       {copy.panel.contact.emailLabel}
                     </p>
-                    <p className='text-muted-foreground'>[EMAIL]</p>
+                    <p className='text-muted-foreground'>
+                      {siteFacts.contact.email}
+                    </p>
                   </div>
                 </div>
 
@@ -132,7 +155,9 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     <p className='font-medium'>
                       {copy.panel.contact.phoneLabel}
                     </p>
-                    <p className='text-muted-foreground'>+1-555-0123</p>
+                    <p className='text-muted-foreground'>
+                      {siteFacts.contact.phone}
+                    </p>
                   </div>
                 </div>
               </div>
@@ -145,11 +170,15 @@ export default async function ContactPage({ params }: ContactPageProps) {
               <div className='space-y-2 text-sm'>
                 <div className='flex justify-between'>
                   <span>{copy.panel.hours.weekdaysLabel}</span>
-                  <span className='text-muted-foreground'>9:00 - 18:00</span>
+                  <span className='text-muted-foreground'>
+                    {siteFacts.contact.businessHours?.weekdays}
+                  </span>
                 </div>
                 <div className='flex justify-between'>
                   <span>{copy.panel.hours.saturdayLabel}</span>
-                  <span className='text-muted-foreground'>10:00 - 16:00</span>
+                  <span className='text-muted-foreground'>
+                    {siteFacts.contact.businessHours?.saturday}
+                  </span>
                 </div>
                 <div className='flex justify-between'>
                   <span>{copy.panel.hours.sundayLabel}</span>
@@ -163,5 +192,15 @@ export default async function ContactPage({ params }: ContactPageProps) {
         </div>
       </div>
     </main>
+  );
+}
+
+export default async function ContactPage({ params }: ContactPageProps) {
+  const { locale } = await params;
+
+  return (
+    <Suspense fallback={<ContactLoadingSkeleton />}>
+      <ContactContent locale={locale} />
+    </Suspense>
   );
 }

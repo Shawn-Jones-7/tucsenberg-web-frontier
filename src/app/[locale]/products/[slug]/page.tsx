@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -23,6 +24,26 @@ import {
 import { JsonLdScript } from '@/components/seo';
 import { Badge } from '@/components/ui/badge';
 import { SITE_CONFIG } from '@/config/paths';
+
+function ProductDetailLoadingSkeleton() {
+  return (
+    <div className='container mx-auto px-4 py-8 md:py-12'>
+      <div className='mb-6 h-6 w-24 animate-pulse rounded bg-muted' />
+      <div className='grid gap-8 lg:grid-cols-2 lg:gap-12'>
+        <div className='aspect-square animate-pulse rounded-lg bg-muted' />
+        <div className='space-y-6'>
+          <div className='h-6 w-24 animate-pulse rounded bg-muted' />
+          <div className='h-10 w-3/4 animate-pulse rounded bg-muted' />
+          <div className='h-20 w-full animate-pulse rounded bg-muted' />
+          <div className='flex gap-4'>
+            <div className='h-10 w-32 animate-pulse rounded bg-muted' />
+            <div className='h-10 w-32 animate-pulse rounded bg-muted' />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface ProductDetailPageProps {
   params: Promise<{
@@ -272,22 +293,25 @@ function ProductContent({
   );
 }
 
-export default async function ProductDetailPage({
-  params,
-}: ProductDetailPageProps) {
-  const { locale: localeParam, slug } = await params;
-  const locale = localeParam as Locale;
-  setRequestLocale(localeParam);
+async function ProductDetailContent({
+  locale,
+  slug,
+}: {
+  locale: string;
+  slug: string;
+}) {
+  const localeTyped = locale as Locale;
+  setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: 'products' });
 
-  const product = await getProductBySlugCached(locale, slug).catch(() =>
+  const product = await getProductBySlugCached(localeTyped, slug).catch(() =>
     notFound(),
   );
 
   const images = [product.coverImage, ...(product.images ?? [])];
   const downloadPdfHref = getSafePdfHref(product);
-  const productSchema = await buildProductSchema(locale, product);
+  const productSchema = await buildProductSchema(localeTyped, product);
 
   const tradeInfoLabels = {
     moq: t('detail.labels.moq'),
@@ -339,7 +363,7 @@ export default async function ProductDetailPage({
       </div>
 
       <ProductContent
-        locale={locale}
+        locale={localeTyped}
         slug={slug}
         content={product.content}
       />
@@ -352,5 +376,20 @@ export default async function ProductDetailPage({
         />
       </section>
     </main>
+  );
+}
+
+export default async function ProductDetailPage({
+  params,
+}: ProductDetailPageProps) {
+  const { locale, slug } = await params;
+
+  return (
+    <Suspense fallback={<ProductDetailLoadingSkeleton />}>
+      <ProductDetailContent
+        locale={locale}
+        slug={slug}
+      />
+    </Suspense>
   );
 }

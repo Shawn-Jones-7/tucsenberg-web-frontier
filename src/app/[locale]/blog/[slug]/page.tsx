@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -16,6 +17,36 @@ import { MDXContent } from '@/components/mdx';
 import { JsonLdScript } from '@/components/seo';
 import { Badge } from '@/components/ui/badge';
 import { SITE_CONFIG } from '@/config/paths';
+
+function BlogDetailLoadingSkeleton() {
+  return (
+    <div className='container mx-auto px-4 py-8 md:py-12'>
+      <div className='mb-6 h-6 w-24 animate-pulse rounded bg-muted' />
+      <div className='mx-auto max-w-3xl'>
+        <div className='mb-8 space-y-4'>
+          <div className='flex gap-2'>
+            <div className='h-6 w-20 animate-pulse rounded bg-muted' />
+            <div className='h-6 w-16 animate-pulse rounded bg-muted' />
+          </div>
+          <div className='h-12 w-full animate-pulse rounded bg-muted' />
+          <div className='h-6 w-3/4 animate-pulse rounded bg-muted' />
+          <div className='flex gap-4'>
+            <div className='h-5 w-32 animate-pulse rounded bg-muted' />
+            <div className='h-5 w-24 animate-pulse rounded bg-muted' />
+          </div>
+        </div>
+        <div className='space-y-4'>
+          {[1, 2, 3, 4, 5].map((i) => (
+            <div
+              key={i}
+              className='h-20 animate-pulse rounded bg-muted'
+            />
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 interface BlogDetailPageProps {
   params: Promise<{
@@ -206,15 +237,22 @@ function ArticleFooter({
   );
 }
 
-export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
-  const { locale: localeParam, slug } = await params;
-  const locale = localeParam as Locale;
-  setRequestLocale(localeParam);
+async function BlogDetailContent({
+  locale,
+  slug,
+}: {
+  locale: string;
+  slug: string;
+}) {
+  const localeTyped = locale as Locale;
+  setRequestLocale(locale);
 
   const t = await getTranslations({ locale, namespace: 'blog' });
 
-  const post = await getPostBySlugCached(locale, slug).catch(() => notFound());
-  const articleSchema = await buildArticleSchema(locale, slug, post);
+  const post = await getPostBySlugCached(localeTyped, slug).catch(() =>
+    notFound(),
+  );
+  const articleSchema = await buildArticleSchema(localeTyped, slug, post);
 
   return (
     <main className='container mx-auto px-4 py-8 md:py-12'>
@@ -246,7 +284,7 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
 
         <MDXContent
           type='posts'
-          locale={locale}
+          locale={localeTyped}
           slug={slug}
           className='prose max-w-none prose-neutral dark:prose-invert'
         />
@@ -257,5 +295,18 @@ export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
         />
       </article>
     </main>
+  );
+}
+
+export default async function BlogDetailPage({ params }: BlogDetailPageProps) {
+  const { locale, slug } = await params;
+
+  return (
+    <Suspense fallback={<BlogDetailLoadingSkeleton />}>
+      <BlogDetailContent
+        locale={locale}
+        slug={slug}
+      />
+    </Suspense>
   );
 }

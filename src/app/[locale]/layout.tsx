@@ -4,7 +4,7 @@ import '@/app/globals.css';
 import { Suspense, type ReactNode } from 'react';
 import { notFound } from 'next/navigation';
 import { NextIntlClientProvider } from 'next-intl';
-import { setRequestLocale } from 'next-intl/server';
+import { getTranslations, setRequestLocale } from 'next-intl/server';
 import { CookieConsentProvider } from '@/lib/cookie-consent';
 import { loadCriticalMessages } from '@/lib/load-messages';
 import { generateJSONLD } from '@/lib/structured-data';
@@ -39,15 +39,31 @@ interface LocaleLayoutProps {
 }
 interface AsyncLocaleLayoutContentProps {
   locale: 'en' | 'zh';
-  isDevelopment: boolean;
   children: ReactNode;
 }
 
 async function AsyncLocaleLayoutContent({
   locale,
-  isDevelopment,
   children,
 }: AsyncLocaleLayoutContentProps) {
+  // Set request locale inside Suspense boundary
+  setRequestLocale(locale);
+
+  const isDevelopment = process.env.NODE_ENV === 'development';
+
+  // Load translations for layout-level strings inside Suspense boundary
+  const tMonitoring = await getTranslations({
+    locale,
+    namespace: 'monitoring',
+  });
+  const tFooter = await getTranslations({
+    locale,
+    namespace: 'footer',
+  });
+
+  const monitoringLoadError = tMonitoring('loadError');
+  const footerSystemStatus = tFooter('systemStatus');
+
   const appConfig = getAppConfig();
   const showWhatsAppButton =
     appConfig.features.ENABLE_WHATSAPP_CHAT &&
@@ -69,7 +85,14 @@ async function AsyncLocaleLayoutContent({
       {/* Client-side html[lang] correction for PPR mode */}
       <LangUpdater locale={locale} />
 
-      {/* JSON-LD structured data for SEO - no nonce needed as it's data-only */}
+      {/*
+        JSON-LD Structured Data for SEO
+        --------------------------------
+        CSP nonce is NOT required for these scripts because:
+        1. type="application/ld+json" declares data-only content (not executable JavaScript)
+        2. Per CSP Level 3 spec, script-src restrictions apply only to executable scripts
+        3. Reference: https://www.w3.org/TR/CSP3/#should-block-inline
+      */}
       <script
         type='application/ld+json'
         dangerouslySetInnerHTML={{
@@ -107,7 +130,7 @@ async function AsyncLocaleLayoutContent({
                 <ErrorBoundary
                   fallback={
                     <div className='fixed right-4 bottom-4 z-[1100] rounded-md bg-destructive/80 px-3 py-2 text-xs text-white shadow-lg'>
-                      监控组件加载失败
+                      {monitoringLoadError}
                     </div>
                   }
                 >
@@ -130,7 +153,7 @@ async function AsyncLocaleLayoutContent({
               tokens={FOOTER_STYLE_TOKENS}
               statusSlot={
                 <span className='text-xs font-medium text-muted-foreground sm:text-sm'>
-                  All systems normal.
+                  {footerSystemStatus}
                 </span>
               }
               themeToggleSlot={
@@ -172,21 +195,14 @@ export default async function LocaleLayout({
     notFound();
   }
 
-  // Set request locale for the current subtree so that navigation wrappers
-  // (Link/usePathname/useRouter from next-intl) can correctly infer the locale
-  setRequestLocale(locale);
-
-  const isDevelopment = process.env.NODE_ENV === 'development';
   const typedLocale = locale as 'en' | 'zh';
 
   // Root layout renders <html>/<body> to ensure metadata is injected.
   // This layout provides locale context and page skeleton only.
+  // All async operations (setRequestLocale, getTranslations) are inside Suspense.
   return (
     <Suspense fallback={null}>
-      <AsyncLocaleLayoutContent
-        locale={typedLocale}
-        isDevelopment={isDevelopment}
-      >
+      <AsyncLocaleLayoutContent locale={typedLocale}>
         {children}
       </AsyncLocaleLayoutContent>
     </Suspense>
