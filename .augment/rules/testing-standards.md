@@ -843,8 +843,8 @@ export const setupTestEnvironment = () => {
 
   // Mock environment variables - Use vi.stubEnv instead of Object.defineProperty
   vi.stubEnv('NODE_ENV', 'test');
-  vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://tucsenberg.com');
-  vi.stubEnv('NEXT_PUBLIC_VERCEL_URL', 'tucsenberg.vercel.app');
+  vi.stubEnv('NEXT_PUBLIC_SITE_URL', 'https://example.com');
+  vi.stubEnv('NEXT_PUBLIC_VERCEL_URL', 'your-app.vercel.app');
 
   // Mock localStorage and sessionStorage - Complete type-safe mock
   const createStorageMock = () => {

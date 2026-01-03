@@ -1,4 +1,4 @@
-# Design: Convert to Generic Enterprise Template
+# Design: Convert to Generic B2B Web Template
 
 ## Context
 
@@ -9,8 +9,9 @@ This project started as a specific B2B enterprise website (Tucsenberg) and needs
 **Constraints**:
 - Must maintain TypeScript strict mode
 - Must pass all existing quality gates
-- Must preserve i18n structure (en/zh)
 - Generated files depend on content structure
+- GitHub repository rename requires updating git remotes
+- Vercel deployment bound by projectId (not name)
 
 ## Goals / Non-Goals
 
@@ -20,6 +21,7 @@ This project started as a specific B2B enterprise website (Tucsenberg) and needs
 - Remove dead footer links and simplify navigation
 - Maintain all existing functionality and architecture
 - Provide clear placeholder conventions for customization
+- Rename repository to `b2b-web-template`
 
 **Non-Goals**:
 - Adding new features or capabilities
@@ -53,12 +55,13 @@ This project started as a specific B2B enterprise website (Tucsenberg) and needs
 - Cleaner, more maintainable structure
 
 ### D3: Content Strategy
-**Decision**: Delete all products, keep 1 sample blog post per locale.
+**Decision**: Delete all products, rewrite welcome blog post as generic template article.
 
 **Rationale**:
 - Products are highly business-specific
 - Empty product listing demonstrates the feature
-- Sample blog post shows content structure
+- Rewriting welcome post (instead of creating new) preserves content structure example
+- Generic welcome article serves as template for users
 - Minimal content reduces template size
 
 ### D4: Generated Files Handling
@@ -79,6 +82,21 @@ This project started as a specific B2B enterprise website (Tucsenberg) and needs
 - Maintains Chinese font optimization
 - Clear template naming
 
+### D6: Repository Naming
+**Decision**: Rename GitHub repository from `tucsenberg-web-frontier` to `b2b-web-template`.
+
+**Rationale**:
+- `b2b-web-template` is concise and descriptive
+- Clearly indicates purpose (B2B website template)
+- GitHub auto-creates 301 redirect from old URL
+- All PR/Issue/Star history preserved
+- Vercel deployment unaffected (bound by projectId)
+
+**Alternatives considered**:
+- `enterprise-web-template` - More generic but less specific
+- `b2b-website-template` - Slightly longer
+- `website-template-for-b2b` - Too verbose
+
 ## Risks / Trade-offs
 
 | Risk | Mitigation |
@@ -87,6 +105,8 @@ This project started as a specific B2B enterprise website (Tucsenberg) and needs
 | Missing tucsenberg references | Grep verification in Phase 8 |
 | Breaking changes in footer | Clear documentation in proposal.md |
 | Generated file out of sync | Explicit regeneration step in Phase 6 |
+| Other developers' git remote broken | GitHub 301 redirect + notify team |
+| Lighthouse test URLs invalid | Update `lighthouserc.js` with new blog slug |
 
 ## Migration Plan
 

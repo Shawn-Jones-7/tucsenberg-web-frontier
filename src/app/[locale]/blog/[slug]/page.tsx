@@ -199,7 +199,7 @@ function ArticleFooter({
         <User className='h-4 w-4 text-muted-foreground' />
         <span className='text-sm text-muted-foreground'>
           {authorLabel}{' '}
-          <span className='font-medium text-foreground'>Tucsenberg Team</span>
+          <span className='font-medium text-foreground'>[TEAM_NAME]</span>
         </span>
       </div>
     </footer>

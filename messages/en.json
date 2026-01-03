@@ -386,13 +386,13 @@
         "issues": "Report Issues"
       }
     },
-    "title": "Tucsenberg Web Frontier",
+    "title": "[PROJECT_NAME]",
     "subtitle": "Modern B2B Enterprise Web Platform",
-    "description": "A cutting-edge web platform built with Next.js 15, React 19, and TypeScript for modern B2B enterprises.",
+    "description": "A cutting-edge web platform built with Next.js 16, React 19, and TypeScript for modern B2B enterprises.",
     "getStarted": "Get Started",
     "learnMore": "Learn More",
-    "welcome": "Welcome to Tucsenberg",
-    "modernApp": "A modern web application built with Next.js 15 and React 19",
+    "welcome": "Welcome to [PROJECT_NAME]",
+    "modernApp": "A modern web application built with Next.js 16 and React 19",
     "features": {
       "title": "Features",
       "performance": {
@@ -502,7 +502,7 @@
     "learn": "Learn",
     "examples": "Examples",
     "goToNextjs": "Go to nextjs.org",
-    "copyright": "© {year} Tucsenberg. All rights reserved.",
+    "copyright": "(c) {year} [PROJECT_NAME]. All rights reserved.",
     "description": "Modern B2B enterprise web solutions with cutting-edge technology."
   },
   "accessibility": {
@@ -515,29 +515,29 @@
     "themeSelector": "Select theme"
   },
   "seo": {
-    "title": "Tucsenberg Web Frontier",
-    "description": "Modern B2B Enterprise Web Platform with Next.js 15, React 19, and TypeScript",
-    "siteName": "Tucsenberg Web Frontier",
+    "title": "[PROJECT_NAME]",
+    "description": "Modern B2B Enterprise Web Platform with Next.js 16, React 19, and TypeScript",
+    "siteName": "[PROJECT_NAME]",
     "keywords": "Next.js, React, TypeScript, B2B, Enterprise, Web Platform",
     "pages": {
       "home": {
-        "title": "Tucsenberg Web Frontier - Modern B2B Enterprise Platform",
-        "description": "Build modern B2B applications with Next.js 15, React 19, TypeScript, and enterprise-grade features."
+        "title": "[PROJECT_NAME] - Modern B2B Enterprise Platform",
+        "description": "Build modern B2B applications with Next.js 16, React 19, TypeScript, and enterprise-grade features."
       },
       "about": {
-        "title": "About Us - Tucsenberg Web Frontier",
+        "title": "About Us - [PROJECT_NAME]",
         "description": "Learn about our mission to provide cutting-edge B2B enterprise web solutions."
       },
       "contact": {
-        "title": "Contact Us - Tucsenberg Web Frontier",
+        "title": "Contact Us - [PROJECT_NAME]",
         "description": "Get in touch with our team for enterprise solutions and support."
       },
       "products": {
-        "title": "Products - Tucsenberg Web Frontier",
+        "title": "Products - [PROJECT_NAME]",
         "description": "Discover our enterprise-grade products and solutions for modern businesses."
       },
       "blog": {
-        "title": "Blog - Tucsenberg Web Frontier",
+        "title": "Blog - [PROJECT_NAME]",
         "description": "Latest insights, tutorials, and updates from our development team."
       }
     }
@@ -656,23 +656,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "Tucsenberg Web Frontier",
+      "name": "[PROJECT_NAME]",
       "description": "Modern B2B Enterprise Web Platform",
-      "phone": "+1-555-0123",
+      "phone": "[PHONE]",
       "social": {
-        "twitter": "https://twitter.com/tucsenberg",
-        "linkedin": "https://linkedin.com/company/tucsenberg",
-        "github": "https://github.com/tucsenberg"
+        "twitter": "[TWITTER_URL]",
+        "linkedin": "[LINKEDIN_URL]",
+        "github": "[GITHUB_URL]"
       }
     },
     "website": {
-      "name": "Tucsenberg Web Frontier",
-      "description": "Modern B2B Enterprise Web Platform with Next.js 15"
+      "name": "[PROJECT_NAME]",
+      "description": "Modern B2B Enterprise Web Platform with Next.js 16"
     },
     "article": {
       "defaultTitle": "Article",
       "defaultDescription": "Article description",
-      "defaultAuthor": "Tucsenberg Team"
+      "defaultAuthor": "[TEAM_NAME]"
     },
     "product": {
       "defaultName": "Product",
@@ -930,21 +930,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "Phone Number",
   "organization": {
-    "name": "Tucsenberg Web Frontier",
+    "name": "[PROJECT_NAME]",
     "description": "Modern B2B Enterprise Web Platform",
-    "phone": "+1-555-0123",
+    "phone": "[PHONE]",
     "social": {
-      "twitter": "https://twitter.com/tucsenberg",
-      "linkedin": "https://linkedin.com/company/tucsenberg",
-      "github": "https://github.com/tucsenberg"
+      "twitter": "[TWITTER_URL]",
+      "linkedin": "[LINKEDIN_URL]",
+      "github": "[GITHUB_URL]"
     }
   },
   "website": {
-    "name": "Tucsenberg Web Frontier",
-    "description": "Modern B2B Enterprise Web Platform with Next.js 15"
+    "name": "[PROJECT_NAME]",
+    "description": "Modern B2B Enterprise Web Platform with Next.js 16"
   },
   "article": {
-    "defaultAuthor": "Tucsenberg Team"
+    "defaultAuthor": "[TEAM_NAME]"
   },
   "blog": {
     "pageTitle": "Blog",
@@ -1070,7 +1070,7 @@
       "turnstileRequired": "Please complete the security verification."
     }
   },
-  "title": "Tucsenberg Web Frontier",
+  "title": "[PROJECT_NAME]",
   "trust": {
     "testimonials": {
       "title": "What Our Clients Say",

@@ -108,9 +108,7 @@ export default async function ContactPage({ params }: ContactPageProps) {
                     <p className='font-medium'>
                       {copy.panel.contact.emailLabel}
                     </p>
-                    <p className='text-muted-foreground'>
-                      contact@tucsenberg.com
-                    </p>
+                    <p className='text-muted-foreground'>[EMAIL]</p>
                   </div>
                 </div>
 

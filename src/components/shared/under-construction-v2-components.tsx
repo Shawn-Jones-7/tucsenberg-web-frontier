@@ -119,11 +119,11 @@ interface SocialLinksProps {
 
 export function SocialLinks({ showSocialLinks }: SocialLinksProps) {
   const socialLinks = [
-    { icon: Twitter, href: 'https://twitter.com/tucsenberg', label: 'Twitter' },
-    { icon: Github, href: 'https://github.com/tucsenberg', label: 'GitHub' },
+    { icon: Twitter, href: '[SOCIAL_URL]', label: 'Twitter' },
+    { icon: Github, href: '[GITHUB_URL]', label: 'GitHub' },
     {
       icon: Linkedin,
-      href: 'https://www.linkedin.com/company/tucsenberg',
+      href: '[SOCIAL_URL]',
       label: 'LinkedIn',
     },
   ] as const;

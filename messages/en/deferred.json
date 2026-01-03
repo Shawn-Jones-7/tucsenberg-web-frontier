@@ -44,13 +44,13 @@
     "tryAgain": "Try Again"
   },
   "home": {
-    "title": "Tucsenberg Web Frontier",
+    "title": "[PROJECT_NAME]",
     "subtitle": "Modern B2B Enterprise Web Platform",
-    "description": "A cutting-edge web platform built with Next.js 15, React 19, and TypeScript for modern B2B enterprises.",
+    "description": "A cutting-edge web platform built with Next.js 16, React 19, and TypeScript for modern B2B enterprises.",
     "getStarted": "Get Started",
     "learnMore": "Learn More",
-    "welcome": "Welcome to Tucsenberg",
-    "modernApp": "A modern web application built with Next.js 15 and React 19",
+    "welcome": "Welcome to [PROJECT_NAME]",
+    "modernApp": "A modern web application built with Next.js 16 and React 19",
     "features": {
       "title": "Features",
       "performance": {
@@ -207,7 +207,7 @@
     "learn": "Learn",
     "examples": "Examples",
     "goToNextjs": "Go to nextjs.org",
-    "copyright": "© {year} Tucsenberg. All rights reserved.",
+    "copyright": "(c) {year} [PROJECT_NAME]. All rights reserved.",
     "description": "Modern B2B enterprise web solutions with cutting-edge technology."
   },
   "formatting": {
@@ -302,21 +302,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "Phone Number",
   "organization": {
-    "name": "Tucsenberg Web Frontier",
+    "name": "[PROJECT_NAME]",
     "description": "Modern B2B Enterprise Web Platform",
-    "phone": "+1-555-0123",
+    "phone": "[PHONE]",
     "social": {
-      "twitter": "https://twitter.com/tucsenberg",
-      "linkedin": "https://linkedin.com/company/tucsenberg",
-      "github": "https://github.com/tucsenberg"
+      "twitter": "[TWITTER_URL]",
+      "linkedin": "[LINKEDIN_URL]",
+      "github": "[GITHUB_URL]"
     }
   },
   "website": {
-    "name": "Tucsenberg Web Frontier",
-    "description": "Modern B2B Enterprise Web Platform with Next.js 15"
+    "name": "[PROJECT_NAME]",
+    "description": "Modern B2B Enterprise Web Platform with Next.js 16"
   },
   "article": {
-    "defaultAuthor": "Tucsenberg Team"
+    "defaultAuthor": "[TEAM_NAME]"
   },
   "blog": {
     "pageTitle": "Blog",
@@ -442,7 +442,7 @@
       "turnstileRequired": "Please complete the security verification."
     }
   },
-  "title": "Tucsenberg Web Frontier",
+  "title": "[PROJECT_NAME]",
   "trust": {
     "testimonials": {
       "title": "What Our Clients Say",

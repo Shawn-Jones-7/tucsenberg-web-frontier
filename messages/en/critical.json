@@ -586,23 +586,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "Tucsenberg Web Frontier",
+      "name": "[PROJECT_NAME]",
       "description": "Modern B2B Enterprise Web Platform",
-      "phone": "+1-555-0123",
+      "phone": "[PHONE]",
       "social": {
-        "twitter": "https://twitter.com/tucsenberg",
-        "linkedin": "https://linkedin.com/company/tucsenberg",
-        "github": "https://github.com/tucsenberg"
+        "twitter": "[TWITTER_URL]",
+        "linkedin": "[LINKEDIN_URL]",
+        "github": "[GITHUB_URL]"
       }
     },
     "website": {
-      "name": "Tucsenberg Web Frontier",
-      "description": "Modern B2B Enterprise Web Platform with Next.js 15"
+      "name": "[PROJECT_NAME]",
+      "description": "Modern B2B Enterprise Web Platform with Next.js 16"
     },
     "article": {
       "defaultTitle": "Article",
       "defaultDescription": "Article description",
-      "defaultAuthor": "Tucsenberg Team"
+      "defaultAuthor": "[TEAM_NAME]"
     },
     "product": {
       "defaultName": "Product",

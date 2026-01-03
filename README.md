@@ -1,7 +1,7 @@
-# 🚀 Tucsenberg Web Frontier
+# B2B Web Template
 
 [![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](./reports/coverage/)
-[![CI/CD](https://github.com/tucsenberg/tucsenberg-web-frontier/actions/workflows/ci.yml/badge.svg)](https://github.com/tucsenberg/tucsenberg-web-frontier/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/user/b2b-web-template/actions/workflows/ci.yml/badge.svg)](https://github.com/user/b2b-web-template/actions/workflows/ci.yml)
 
 现代化B2B企业网站模板，采用Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS
 4技术栈，实现英中双语国际化、主题切换、响应式设计，确保企业级质量标准。
@@ -106,7 +106,7 @@ TURNSTILE_SECRET_KEY=你的服务端私钥
 
 ```bash
 git clone <repository-url>
-cd tucsenberg-web-frontier
+cd b2b-web-template
 ```
 
 ### 2. 安装依赖

@@ -1,9 +1,9 @@
 ---
 type: "always_apply"
-description: "Foundational coding standards and AI decision framework for Tucsenberg B2B website"
+description: "Foundational coding standards and AI decision framework for B2B Web Template"
 ---
 
-# Tucsenberg Core Coding Standards
+# B2B Web Template Core Coding Standards
 
 ## AI Decision Framework (Enforced)
 

@@ -265,7 +265,7 @@ key output snippet
 
 ---
 
-## 6) Project-Specific Rules (tucsenberg-web-frontier)
+## 6) Project-Specific Rules (b2b-web-template)
 
 ### Authentication Patterns to Look For
 ```typescript

@@ -22,7 +22,7 @@ const SITE_CONFIG = {
   baseUrl:
     process.env.NEXT_PUBLIC_BASE_URL ||
     process.env.NEXT_PUBLIC_SITE_URL ||
-    'https://tucsenberg.com',
+    'https://example.com',
 };
 
 const LOCALES_CONFIG = {
