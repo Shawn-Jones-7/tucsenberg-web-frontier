@@ -150,7 +150,7 @@ describe('paths configuration', () => {
     });
 
     it('should have basic site information', () => {
-      expect(SITE_CONFIG.name).toBe('[PROJECT_NAME]');
+      expect(SITE_CONFIG.name).toBe('B2B Web Template');
       expect(SITE_CONFIG.description).toContain('Modern B2B Enterprise');
     });
 

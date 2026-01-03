@@ -48,7 +48,8 @@ function tryHandleExplicitLocalizedRequest(
   nonce: string,
 ): NextResponse | null {
   const locale = extractLocaleCandidate(request.nextUrl.pathname);
-  if (locale && !request.cookies.get('NEXT_LOCALE')) {
+  const existingLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (locale && existingLocale !== locale) {
     const resp = NextResponse.next();
     setLocaleCookie(resp, locale);
     addSecurityHeaders(resp, nonce);
@@ -108,9 +109,9 @@ export default function middleware(request: NextRequest) {
 
   const response = intlMiddleware(request);
   const locale = extractLocaleCandidate(request.nextUrl.pathname);
-  if (response && locale && !request.cookies.get('NEXT_LOCALE')) {
+  const existingLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (response && locale && existingLocale !== locale)
     setLocaleCookie(response, locale);
-  }
   if (response) addSecurityHeaders(response, nonce);
   return response;
 }

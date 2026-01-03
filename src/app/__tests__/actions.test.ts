@@ -12,7 +12,7 @@ vi.mock('@/lib/logger', () => ({
   },
 }));
 
-const mockHeadersGet = vi.fn((key: string) => {
+const mockHeadersGet = vi.fn<(key: string) => string | null>((key) => {
   if (key === 'x-forwarded-for') return '192.168.1.100';
   if (key === 'x-real-ip') return '192.168.1.101';
   return null;

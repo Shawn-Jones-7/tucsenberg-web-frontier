@@ -7,7 +7,7 @@ function useAnimatedCounter(
   target: number,
   duration: number = 2000,
   enabled: boolean = true,
-): number {
+): readonly [number, React.RefObject<HTMLDivElement | null>] {
   const [count, setCount] = useState(0);
   const [hasAnimated, setHasAnimated] = useState(false);
   const elementRef = useRef<HTMLDivElement>(null);
@@ -51,7 +51,7 @@ function useAnimatedCounter(
     };
   }, [target, duration, enabled, hasAnimated]);
 
-  return count;
+  return [count, elementRef] as const;
 }
 
 export interface AnimatedStatItemProps {
@@ -59,7 +59,7 @@ export interface AnimatedStatItemProps {
 }
 
 export function AnimatedStatItem({ stat }: AnimatedStatItemProps) {
-  const animatedValue = useAnimatedCounter(
+  const [animatedValue, elementRef] = useAnimatedCounter(
     stat.numericValue ?? 0,
     2000,
     stat.numericValue !== undefined,
@@ -71,7 +71,10 @@ export function AnimatedStatItem({ stat }: AnimatedStatItemProps) {
       : stat.value;
 
   return (
-    <div className='text-center'>
+    <div
+      ref={elementRef}
+      className='text-center'
+    >
       <div className='mb-2 text-4xl font-bold text-primary'>{displayValue}</div>
       <div className='text-sm text-muted-foreground'>{stat.label}</div>
     </div>

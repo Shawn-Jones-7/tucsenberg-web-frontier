@@ -15,6 +15,7 @@ import {
   useStorageEvents,
   useStorageStats,
 } from '@/lib/locale-storage-hooks';
+import { ONE } from '@/constants';
 
 // Use vi.hoisted to define mocks before they're used in vi.mock factories
 const mockFns = vi.hoisted(() => ({
@@ -99,8 +100,9 @@ describe('locale-storage-hooks', () => {
       const { result } = renderHook(() => useLocaleStorage());
       const preference = {
         locale: 'en' as const,
-        source: 'user',
+        source: 'user' as const,
         timestamp: Date.now(),
+        confidence: ONE,
       };
 
       act(() => {
@@ -111,16 +113,19 @@ describe('locale-storage-hooks', () => {
     });
 
     it('should call LocaleStorageManager.getUserPreference', () => {
-      mockFns.getUserPreference.mockReturnValue({
-        locale: 'zh',
-        source: 'user',
-      });
+      const preference = {
+        locale: 'zh' as const,
+        source: 'user' as const,
+        timestamp: Date.now(),
+        confidence: ONE,
+      };
+      mockFns.getUserPreference.mockReturnValue(preference);
       const { result } = renderHook(() => useLocaleStorage());
 
-      const preference = result.current.getUserPreference();
+      const returnedPreference = result.current.getUserPreference();
 
       expect(mockFns.getUserPreference).toHaveBeenCalled();
-      expect(preference).toEqual({ locale: 'zh', source: 'user' });
+      expect(returnedPreference).toEqual(preference);
     });
 
     it('should call LocaleStorageManager.setUserOverride', () => {
@@ -218,8 +223,9 @@ describe('locale-storage-hooks', () => {
 
       const newPreference = {
         locale: 'zh' as const,
-        source: 'user',
+        source: 'user' as const,
         timestamp: Date.now(),
+        confidence: ONE,
       };
       act(() => {
         result.current.updatePreference(newPreference);
@@ -383,7 +389,22 @@ describe('locale-storage-hooks', () => {
 
   describe('useStorageDataManager', () => {
     it('should export data', () => {
-      const mockData = { preference: { locale: 'en' } };
+      const timestamp = Date.now();
+      const mockData = {
+        version: '1.0.0',
+        timestamp,
+        metadata: {
+          userAgent: 'test',
+          exportedBy: 'test',
+          dataIntegrity: 'test',
+        },
+        preference: {
+          locale: 'en' as const,
+          source: 'user' as const,
+          timestamp,
+          confidence: ONE,
+        },
+      };
       mockFns.exportData.mockReturnValue(mockData);
 
       const { result } = renderHook(() => useStorageDataManager());
@@ -396,7 +417,22 @@ describe('locale-storage-hooks', () => {
 
     it('should import data', () => {
       const { result } = renderHook(() => useStorageDataManager());
-      const data = { preference: { locale: 'zh' } };
+      const timestamp = Date.now();
+      const data = {
+        version: '1.0.0',
+        timestamp,
+        metadata: {
+          userAgent: 'test',
+          exportedBy: 'test',
+          dataIntegrity: 'test',
+        },
+        preference: {
+          locale: 'zh' as const,
+          source: 'user' as const,
+          timestamp,
+          confidence: ONE,
+        },
+      };
 
       act(() => {
         result.current.importData(data);
