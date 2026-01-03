@@ -36,11 +36,18 @@ export interface CompanyInfo {
   };
 }
 
+export interface BusinessHours {
+  weekdays: string;
+  saturday: string;
+  sundayClosed: boolean;
+}
+
 export interface ContactInfo {
   phone: string;
   email: string;
   whatsapp?: string;
   wechat?: string;
+  businessHours?: BusinessHours;
 }
 
 export interface Certification {
@@ -82,16 +89,21 @@ export interface SiteFacts {
  */
 export const siteFacts: SiteFacts = {
   company: {
-    name: 'Tucsenberg',
-    established: 2010,
+    name: '[PROJECT_NAME]',
+    established: 2020,
     location: {
-      country: 'China',
-      city: 'Shenzhen',
+      country: '[COUNTRY]',
+      city: '[CITY]',
     },
   },
   contact: {
-    phone: '+86-xxx-xxxx-xxxx',
-    email: 'sales@example.com',
+    phone: '[PHONE]',
+    email: '[EMAIL]',
+    businessHours: {
+      weekdays: '9:00 - 18:00',
+      saturday: '10:00 - 16:00',
+      sundayClosed: true,
+    },
   },
   certifications: [
     { name: 'ISO 9001', file: '/certs/iso9001.pdf' },
@@ -103,6 +115,6 @@ export const siteFacts: SiteFacts = {
     onTimeDeliveryRate: 98,
   },
   social: {
-    linkedin: 'https://linkedin.com/company/example',
+    linkedin: '[LINKEDIN_URL]',
   },
 };

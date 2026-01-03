@@ -6,11 +6,17 @@ import { GET, POST } from '../route';
 const mockVerifyWebhook = vi.hoisted(() => vi.fn());
 const mockHandleIncomingMessage = vi.hoisted(() => vi.fn());
 const mockVerifyWebhookSignature = vi.hoisted(() => vi.fn());
+const mockCheckDistributedRateLimit = vi.hoisted(() => vi.fn());
 
 vi.mock('@/lib/whatsapp-service', () => ({
   verifyWebhook: mockVerifyWebhook,
   handleIncomingMessage: mockHandleIncomingMessage,
   verifyWebhookSignature: mockVerifyWebhookSignature,
+}));
+
+vi.mock('@/lib/security/distributed-rate-limit', () => ({
+  checkDistributedRateLimit: mockCheckDistributedRateLimit,
+  createRateLimitHeaders: vi.fn(() => new Headers()),
 }));
 
 vi.mock('@/lib/logger', () => ({
@@ -53,6 +59,12 @@ describe('WhatsApp Webhook Route', () => {
     mockVerifyWebhook.mockReturnValue(null);
     mockHandleIncomingMessage.mockResolvedValue(undefined);
     mockVerifyWebhookSignature.mockReturnValue(true);
+    mockCheckDistributedRateLimit.mockResolvedValue({
+      allowed: true,
+      remaining: 10,
+      resetTime: Date.now() + 60000,
+      retryAfter: null,
+    });
   });
 
   afterEach(() => {
@@ -374,6 +386,75 @@ describe('WhatsApp Webhook Route', () => {
       expect(response.status).toBe(200);
       expect(data.success).toBe(true);
       expect(mockHandleIncomingMessage).toHaveBeenCalledWith(multiEntryPayload);
+    });
+  });
+
+  describe('Signature-First Rate Limiting', () => {
+    it('should NOT call rate limit check when signature is invalid', async () => {
+      mockVerifyWebhookSignature.mockReturnValue(false);
+
+      const request = createMockPostRequest({
+        object: 'whatsapp_business_account',
+        entry: [],
+      });
+
+      const response = await POST(request);
+
+      expect(response.status).toBe(401);
+      expect(mockVerifyWebhookSignature).toHaveBeenCalled();
+      expect(mockCheckDistributedRateLimit).not.toHaveBeenCalled();
+    });
+
+    it('should call rate limit check ONLY after signature is valid', async () => {
+      mockVerifyWebhookSignature.mockReturnValue(true);
+
+      const request = createMockPostRequest({
+        object: 'whatsapp_business_account',
+        entry: [],
+      });
+
+      await POST(request);
+
+      expect(mockVerifyWebhookSignature).toHaveBeenCalled();
+      expect(mockCheckDistributedRateLimit).toHaveBeenCalled();
+    });
+
+    it('should return 429 when rate limit exceeded for valid signature', async () => {
+      mockVerifyWebhookSignature.mockReturnValue(true);
+      mockCheckDistributedRateLimit.mockResolvedValue({
+        allowed: false,
+        remaining: 0,
+        resetTime: Date.now() + 60000,
+        retryAfter: 60,
+      });
+
+      const request = createMockPostRequest({
+        object: 'whatsapp_business_account',
+        entry: [],
+      });
+
+      const response = await POST(request);
+      const data = await response.json();
+
+      expect(response.status).toBe(429);
+      expect(data.error).toBe('Too many requests');
+      expect(mockHandleIncomingMessage).not.toHaveBeenCalled();
+    });
+
+    it('should not consume rate limit quota for invalid signatures', async () => {
+      mockVerifyWebhookSignature.mockReturnValue(false);
+
+      // Simulate multiple invalid signature requests
+      for (let i = 0; i < 5; i++) {
+        const request = createMockPostRequest(
+          { object: 'whatsapp_business_account', entry: [] },
+          `sha256=invalid-signature-${i}`,
+        );
+        await POST(request);
+      }
+
+      // Rate limit should never be called for invalid signatures
+      expect(mockCheckDistributedRateLimit).not.toHaveBeenCalled();
     });
   });
 });

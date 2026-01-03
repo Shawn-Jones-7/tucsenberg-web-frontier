@@ -45,10 +45,10 @@ vi.mock('../../../../env.mjs', () => ({
     // 客户端环境变量 - 关键修复！
     NEXT_PUBLIC_TURNSTILE_SITE_KEY: 'test-site-key-12345',
     NEXT_PUBLIC_TEST_MODE: false, // 确保组件正常渲染，不使用测试模式
-    NEXT_PUBLIC_SITE_URL: 'https://tucsenberg.com',
-    NEXT_PUBLIC_VERCEL_URL: 'tucsenberg.vercel.app',
+    NEXT_PUBLIC_SITE_URL: 'https://example.com',
+    NEXT_PUBLIC_VERCEL_URL: 'example.vercel.app',
     NEXT_PUBLIC_BASE_URL: 'http://localhost:3000',
-    NEXT_PUBLIC_APP_NAME: 'Tucsenberg Web Frontier',
+    NEXT_PUBLIC_APP_NAME: '[PROJECT_NAME]',
     NEXT_PUBLIC_APP_VERSION: '1.0.0',
     NEXT_PUBLIC_ENABLE_ANALYTICS: true,
     NEXT_PUBLIC_ENABLE_ERROR_REPORTING: true,

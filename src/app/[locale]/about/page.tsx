@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
@@ -21,6 +22,30 @@ import { generateLocaleStaticParams } from '@/app/[locale]/generate-static-param
 
 export function generateStaticParams() {
   return generateLocaleStaticParams();
+}
+
+function AboutLoadingSkeleton() {
+  return (
+    <div>
+      <div className='bg-muted/30 py-16 md:py-24'>
+        <div className='container mx-auto px-4'>
+          <div className='max-w-3xl space-y-4'>
+            <div className='h-12 w-64 animate-pulse rounded bg-muted' />
+            <div className='h-6 w-48 animate-pulse rounded bg-muted' />
+            <div className='h-20 w-full animate-pulse rounded bg-muted' />
+          </div>
+        </div>
+      </div>
+      <div className='py-12 md:py-16'>
+        <div className='container mx-auto px-4'>
+          <div className='mx-auto max-w-3xl space-y-4 text-center'>
+            <div className='mx-auto h-8 w-48 animate-pulse rounded bg-muted' />
+            <div className='h-24 w-full animate-pulse rounded bg-muted' />
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface AboutPageProps {
@@ -247,8 +272,7 @@ function CTASection({
   );
 }
 
-export default async function AboutPage({ params }: AboutPageProps) {
-  const { locale } = await params;
+async function AboutContent({ locale }: { locale: string }) {
   setRequestLocale(locale);
 
   const t = await getTranslations({
@@ -313,5 +337,15 @@ export default async function AboutPage({ params }: AboutPageProps) {
       <StatsSection {...statsProps} />
       <CTASection {...ctaProps} />
     </main>
+  );
+}
+
+export default async function AboutPage({ params }: AboutPageProps) {
+  const { locale } = await params;
+
+  return (
+    <Suspense fallback={<AboutLoadingSkeleton />}>
+      <AboutContent locale={locale} />
+    </Suspense>
   );
 }

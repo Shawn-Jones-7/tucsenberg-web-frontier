@@ -1,6 +1,6 @@
-# 二次开发指南
+# Development Guide
 
-本文档面向基于 Tucsenberg Web Frontier 模板进行二次开发的开发者，涵盖快速定制清单、已知问题、架构约束和部署检查清单。
+This document is for developers building on the B2B Web Template, covering quick customization, known issues, architectural constraints, and deployment checklists.
 
 ---
 

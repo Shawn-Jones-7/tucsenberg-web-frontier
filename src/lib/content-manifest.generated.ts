@@ -28,82 +28,18 @@ export const CONTENT_MANIFEST: ContentManifest = {
   {
     "type": "posts",
     "locale": "en",
-    "slug": "choosing-reliable-suppliers",
+    "slug": "welcome",
     "extension": ".mdx",
-    "filePath": "/content/posts/en/choosing-reliable-suppliers.mdx",
-    "relativePath": "content/posts/en/choosing-reliable-suppliers.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "en",
-    "slug": "export-documentation-checklist",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/export-documentation-checklist.mdx",
-    "relativePath": "content/posts/en/export-documentation-checklist.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "en",
-    "slug": "guide-to-international-trade-terms",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/guide-to-international-trade-terms.mdx",
-    "relativePath": "content/posts/en/guide-to-international-trade-terms.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "en",
-    "slug": "quality-control-best-practices",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/quality-control-best-practices.mdx",
-    "relativePath": "content/posts/en/quality-control-best-practices.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "en",
-    "slug": "welcome-to-tucsenberg",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/welcome-to-tucsenberg.mdx",
-    "relativePath": "content/posts/en/welcome-to-tucsenberg.mdx"
+    "filePath": "/content/posts/en/welcome.mdx",
+    "relativePath": "content/posts/en/welcome.mdx"
   },
   {
     "type": "posts",
     "locale": "zh",
-    "slug": "choosing-reliable-suppliers",
+    "slug": "welcome",
     "extension": ".mdx",
-    "filePath": "/content/posts/zh/choosing-reliable-suppliers.mdx",
-    "relativePath": "content/posts/zh/choosing-reliable-suppliers.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "export-documentation-checklist",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/export-documentation-checklist.mdx",
-    "relativePath": "content/posts/zh/export-documentation-checklist.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "guide-to-international-trade-terms",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/guide-to-international-trade-terms.mdx",
-    "relativePath": "content/posts/zh/guide-to-international-trade-terms.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "quality-control-best-practices",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/quality-control-best-practices.mdx",
-    "relativePath": "content/posts/zh/quality-control-best-practices.mdx"
-  },
-  {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "welcome-to-tucsenberg",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/welcome-to-tucsenberg.mdx",
-    "relativePath": "content/posts/zh/welcome-to-tucsenberg.mdx"
+    "filePath": "/content/posts/zh/welcome.mdx",
+    "relativePath": "content/posts/zh/welcome.mdx"
   },
   {
     "type": "pages",
@@ -172,212 +108,36 @@ export const CONTENT_MANIFEST: ContentManifest = {
   {
     "type": "products",
     "locale": "en",
-    "slug": "hydraulic-pump-station",
+    "slug": "sample-product",
     "extension": ".mdx",
-    "filePath": "/content/products/en/hydraulic-pump-station.mdx",
-    "relativePath": "content/products/en/hydraulic-pump-station.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "industrial-control-panel",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/industrial-control-panel.mdx",
-    "relativePath": "content/products/en/industrial-control-panel.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "industrial-valve-set",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/industrial-valve-set.mdx",
-    "relativePath": "content/products/en/industrial-valve-set.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "led-industrial-lighting",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/led-industrial-lighting.mdx",
-    "relativePath": "content/products/en/led-industrial-lighting.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "pneumatic-cylinder",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/pneumatic-cylinder.mdx",
-    "relativePath": "content/products/en/pneumatic-cylinder.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "smart-sensor-module",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/smart-sensor-module.mdx",
-    "relativePath": "content/products/en/smart-sensor-module.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "stainless-steel-fasteners",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/stainless-steel-fasteners.mdx",
-    "relativePath": "content/products/en/stainless-steel-fasteners.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "en",
-    "slug": "variable-frequency-drive",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/variable-frequency-drive.mdx",
-    "relativePath": "content/products/en/variable-frequency-drive.mdx"
+    "filePath": "/content/products/en/sample-product.mdx",
+    "relativePath": "content/products/en/sample-product.mdx"
   },
   {
     "type": "products",
     "locale": "zh",
-    "slug": "hydraulic-pump-station",
+    "slug": "sample-product",
     "extension": ".mdx",
-    "filePath": "/content/products/zh/hydraulic-pump-station.mdx",
-    "relativePath": "content/products/zh/hydraulic-pump-station.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "industrial-control-panel",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/industrial-control-panel.mdx",
-    "relativePath": "content/products/zh/industrial-control-panel.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "industrial-valve-set",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/industrial-valve-set.mdx",
-    "relativePath": "content/products/zh/industrial-valve-set.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "led-industrial-lighting",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/led-industrial-lighting.mdx",
-    "relativePath": "content/products/zh/led-industrial-lighting.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "pneumatic-cylinder",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/pneumatic-cylinder.mdx",
-    "relativePath": "content/products/zh/pneumatic-cylinder.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "smart-sensor-module",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/smart-sensor-module.mdx",
-    "relativePath": "content/products/zh/smart-sensor-module.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "stainless-steel-fasteners",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/stainless-steel-fasteners.mdx",
-    "relativePath": "content/products/zh/stainless-steel-fasteners.mdx"
-  },
-  {
-    "type": "products",
-    "locale": "zh",
-    "slug": "variable-frequency-drive",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/variable-frequency-drive.mdx",
-    "relativePath": "content/products/zh/variable-frequency-drive.mdx"
+    "filePath": "/content/products/zh/sample-product.mdx",
+    "relativePath": "content/products/zh/sample-product.mdx"
   }
 ],
   byKey: {
-  "posts/en/choosing-reliable-suppliers": {
+  "posts/en/welcome": {
     "type": "posts",
     "locale": "en",
-    "slug": "choosing-reliable-suppliers",
+    "slug": "welcome",
     "extension": ".mdx",
-    "filePath": "/content/posts/en/choosing-reliable-suppliers.mdx",
-    "relativePath": "content/posts/en/choosing-reliable-suppliers.mdx"
+    "filePath": "/content/posts/en/welcome.mdx",
+    "relativePath": "content/posts/en/welcome.mdx"
   },
-  "posts/en/export-documentation-checklist": {
-    "type": "posts",
-    "locale": "en",
-    "slug": "export-documentation-checklist",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/export-documentation-checklist.mdx",
-    "relativePath": "content/posts/en/export-documentation-checklist.mdx"
-  },
-  "posts/en/guide-to-international-trade-terms": {
-    "type": "posts",
-    "locale": "en",
-    "slug": "guide-to-international-trade-terms",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/guide-to-international-trade-terms.mdx",
-    "relativePath": "content/posts/en/guide-to-international-trade-terms.mdx"
-  },
-  "posts/en/quality-control-best-practices": {
-    "type": "posts",
-    "locale": "en",
-    "slug": "quality-control-best-practices",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/quality-control-best-practices.mdx",
-    "relativePath": "content/posts/en/quality-control-best-practices.mdx"
-  },
-  "posts/en/welcome-to-tucsenberg": {
-    "type": "posts",
-    "locale": "en",
-    "slug": "welcome-to-tucsenberg",
-    "extension": ".mdx",
-    "filePath": "/content/posts/en/welcome-to-tucsenberg.mdx",
-    "relativePath": "content/posts/en/welcome-to-tucsenberg.mdx"
-  },
-  "posts/zh/choosing-reliable-suppliers": {
+  "posts/zh/welcome": {
     "type": "posts",
     "locale": "zh",
-    "slug": "choosing-reliable-suppliers",
+    "slug": "welcome",
     "extension": ".mdx",
-    "filePath": "/content/posts/zh/choosing-reliable-suppliers.mdx",
-    "relativePath": "content/posts/zh/choosing-reliable-suppliers.mdx"
-  },
-  "posts/zh/export-documentation-checklist": {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "export-documentation-checklist",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/export-documentation-checklist.mdx",
-    "relativePath": "content/posts/zh/export-documentation-checklist.mdx"
-  },
-  "posts/zh/guide-to-international-trade-terms": {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "guide-to-international-trade-terms",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/guide-to-international-trade-terms.mdx",
-    "relativePath": "content/posts/zh/guide-to-international-trade-terms.mdx"
-  },
-  "posts/zh/quality-control-best-practices": {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "quality-control-best-practices",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/quality-control-best-practices.mdx",
-    "relativePath": "content/posts/zh/quality-control-best-practices.mdx"
-  },
-  "posts/zh/welcome-to-tucsenberg": {
-    "type": "posts",
-    "locale": "zh",
-    "slug": "welcome-to-tucsenberg",
-    "extension": ".mdx",
-    "filePath": "/content/posts/zh/welcome-to-tucsenberg.mdx",
-    "relativePath": "content/posts/zh/welcome-to-tucsenberg.mdx"
+    "filePath": "/content/posts/zh/welcome.mdx",
+    "relativePath": "content/posts/zh/welcome.mdx"
   },
   "pages/en/about": {
     "type": "pages",
@@ -443,133 +203,21 @@ export const CONTENT_MANIFEST: ContentManifest = {
     "filePath": "/content/pages/zh/terms.mdx",
     "relativePath": "content/pages/zh/terms.mdx"
   },
-  "products/en/hydraulic-pump-station": {
+  "products/en/sample-product": {
     "type": "products",
     "locale": "en",
-    "slug": "hydraulic-pump-station",
+    "slug": "sample-product",
     "extension": ".mdx",
-    "filePath": "/content/products/en/hydraulic-pump-station.mdx",
-    "relativePath": "content/products/en/hydraulic-pump-station.mdx"
+    "filePath": "/content/products/en/sample-product.mdx",
+    "relativePath": "content/products/en/sample-product.mdx"
   },
-  "products/en/industrial-control-panel": {
-    "type": "products",
-    "locale": "en",
-    "slug": "industrial-control-panel",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/industrial-control-panel.mdx",
-    "relativePath": "content/products/en/industrial-control-panel.mdx"
-  },
-  "products/en/industrial-valve-set": {
-    "type": "products",
-    "locale": "en",
-    "slug": "industrial-valve-set",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/industrial-valve-set.mdx",
-    "relativePath": "content/products/en/industrial-valve-set.mdx"
-  },
-  "products/en/led-industrial-lighting": {
-    "type": "products",
-    "locale": "en",
-    "slug": "led-industrial-lighting",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/led-industrial-lighting.mdx",
-    "relativePath": "content/products/en/led-industrial-lighting.mdx"
-  },
-  "products/en/pneumatic-cylinder": {
-    "type": "products",
-    "locale": "en",
-    "slug": "pneumatic-cylinder",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/pneumatic-cylinder.mdx",
-    "relativePath": "content/products/en/pneumatic-cylinder.mdx"
-  },
-  "products/en/smart-sensor-module": {
-    "type": "products",
-    "locale": "en",
-    "slug": "smart-sensor-module",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/smart-sensor-module.mdx",
-    "relativePath": "content/products/en/smart-sensor-module.mdx"
-  },
-  "products/en/stainless-steel-fasteners": {
-    "type": "products",
-    "locale": "en",
-    "slug": "stainless-steel-fasteners",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/stainless-steel-fasteners.mdx",
-    "relativePath": "content/products/en/stainless-steel-fasteners.mdx"
-  },
-  "products/en/variable-frequency-drive": {
-    "type": "products",
-    "locale": "en",
-    "slug": "variable-frequency-drive",
-    "extension": ".mdx",
-    "filePath": "/content/products/en/variable-frequency-drive.mdx",
-    "relativePath": "content/products/en/variable-frequency-drive.mdx"
-  },
-  "products/zh/hydraulic-pump-station": {
+  "products/zh/sample-product": {
     "type": "products",
     "locale": "zh",
-    "slug": "hydraulic-pump-station",
+    "slug": "sample-product",
     "extension": ".mdx",
-    "filePath": "/content/products/zh/hydraulic-pump-station.mdx",
-    "relativePath": "content/products/zh/hydraulic-pump-station.mdx"
-  },
-  "products/zh/industrial-control-panel": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "industrial-control-panel",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/industrial-control-panel.mdx",
-    "relativePath": "content/products/zh/industrial-control-panel.mdx"
-  },
-  "products/zh/industrial-valve-set": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "industrial-valve-set",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/industrial-valve-set.mdx",
-    "relativePath": "content/products/zh/industrial-valve-set.mdx"
-  },
-  "products/zh/led-industrial-lighting": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "led-industrial-lighting",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/led-industrial-lighting.mdx",
-    "relativePath": "content/products/zh/led-industrial-lighting.mdx"
-  },
-  "products/zh/pneumatic-cylinder": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "pneumatic-cylinder",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/pneumatic-cylinder.mdx",
-    "relativePath": "content/products/zh/pneumatic-cylinder.mdx"
-  },
-  "products/zh/smart-sensor-module": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "smart-sensor-module",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/smart-sensor-module.mdx",
-    "relativePath": "content/products/zh/smart-sensor-module.mdx"
-  },
-  "products/zh/stainless-steel-fasteners": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "stainless-steel-fasteners",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/stainless-steel-fasteners.mdx",
-    "relativePath": "content/products/zh/stainless-steel-fasteners.mdx"
-  },
-  "products/zh/variable-frequency-drive": {
-    "type": "products",
-    "locale": "zh",
-    "slug": "variable-frequency-drive",
-    "extension": ".mdx",
-    "filePath": "/content/products/zh/variable-frequency-drive.mdx",
-    "relativePath": "content/products/zh/variable-frequency-drive.mdx"
+    "filePath": "/content/products/zh/sample-product.mdx",
+    "relativePath": "content/products/zh/sample-product.mdx"
   }
 },
 } as const;

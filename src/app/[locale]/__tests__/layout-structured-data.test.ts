@@ -21,15 +21,15 @@ describe('Layout Structured Data Generation', () => {
         return Promise.resolve({
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          'name': 'Tucsenberg',
-          'url': 'https://tucsenberg.com',
+          'name': '[PROJECT_NAME]',
+          'url': 'https://example.com',
         });
       } else if (type === 'WebSite') {
         return Promise.resolve({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          'name': 'Tucsenberg Web Frontier',
-          'url': 'https://tucsenberg.com',
+          'name': '[PROJECT_NAME]',
+          'url': 'https://example.com',
         });
       }
       return Promise.resolve({});
@@ -85,14 +85,14 @@ describe('Layout Structured Data Generation', () => {
         organizationData: {
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          'name': 'Tucsenberg',
-          'url': 'https://tucsenberg.com',
+          'name': '[PROJECT_NAME]',
+          'url': 'https://example.com',
         },
         websiteData: {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          'name': 'Tucsenberg Web Frontier',
-          'url': 'https://tucsenberg.com',
+          'name': '[PROJECT_NAME]',
+          'url': 'https://example.com',
         },
       });
     });

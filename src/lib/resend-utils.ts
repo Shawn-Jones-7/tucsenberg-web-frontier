@@ -16,9 +16,9 @@ import {
  * Email configuration constants
  */
 export const EMAIL_CONFIG = {
-  from: 'noreply@tucsenberg.com',
-  replyTo: 'contact@tucsenberg.com',
-  supportEmail: 'support@tucsenberg.com',
+  from: '[EMAIL]',
+  replyTo: '[EMAIL]',
+  supportEmail: '[EMAIL]',
 } as const;
 
 /**
@@ -67,7 +67,7 @@ export class ResendUtils {
    * Generate confirmation email subject
    */
   static generateConfirmationSubject(): string {
-    return 'Thank you for contacting us - Tucsenberg';
+    return 'Thank you for contacting us - [PROJECT_NAME]';
   }
 
   /**

@@ -450,8 +450,8 @@ export async function createToken(payload: JWTPayload): Promise<string> {
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
     .setExpirationTime('7d') // Token expires in 7 days
-    .setIssuer('tucsenberg-app')
-    .setAudience('tucsenberg-users')
+    .setIssuer('b2b-web-template-app')
+    .setAudience('b2b-web-template-users')
     .sign(JWT_SECRET);
 }
 
@@ -461,8 +461,8 @@ export async function createToken(payload: JWTPayload): Promise<string> {
 export async function verifyToken(token: string): Promise<JWTPayload | null> {
   try {
     const { payload } = await jwtVerify(token, JWT_SECRET, {
-      issuer: 'tucsenberg-app',
-      audience: 'tucsenberg-users',
+      issuer: 'b2b-web-template-app',
+      audience: 'b2b-web-template-users',
     });
 
     return payload as JWTPayload;
@@ -956,6 +956,6 @@ pnpm run test:security
 
 ### Emergency Contacts
 
-- **Security Team**: security@tucsenberg.com
+- **Security Team**: security@your-company.com
 - **On-Call Engineer**: Configured in PagerDuty/Opsgenie
 - **Vercel Support**: For infrastructure issues

@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { getApiMessages, type ApiMessages } from '@/lib/api/get-request-locale';
 import { safeParseJson } from '@/lib/api/safe-parse-json';
 import { env } from '@/lib/env';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeIP } from '@/lib/logger';
 import {
   getFullClientIPChain,
   verifyTurnstileDetailed,
@@ -73,7 +73,7 @@ function createNetworkErrorResponse(
 ) {
   logger.error('Turnstile verification request failed', {
     error: verifyError,
-    clientIP,
+    clientIP: sanitizeIP(clientIP),
   });
   return NextResponse.json(
     {

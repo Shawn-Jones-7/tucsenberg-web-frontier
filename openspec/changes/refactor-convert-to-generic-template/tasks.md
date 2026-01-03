@@ -1,4 +1,17 @@
-# Tasks: Convert to Generic Enterprise Template
+# Tasks: Convert to Generic B2B Web Template
+
+## 0. Phase 0 - Repository & Project Rename
+
+- [ ] 0.1 Rename GitHub repository via GitHub Settings
+  - Go to: Settings → General → Repository name
+  - Change: `tucsenberg-web-frontier` → `b2b-web-template`
+  - GitHub auto-creates 301 redirect from old URL
+- [ ] 0.2 Update local git remote URL
+  - Run: `git remote set-url origin https://github.com/Alx-707/b2b-web-template.git`
+- [ ] 0.3 Update Vercel project display name (optional)
+  - Go to: Vercel Dashboard → Project Settings → General → Project Name
+  - Note: `projectId` in `.vercel/project.json` remains unchanged
+- [ ] 0.4 Update `.vercel/project.json` projectName field
 
 ## 1. Phase 1.1 - Core Configuration Files
 
@@ -9,7 +22,7 @@
   - Replace social → `[TWITTER_URL]`, `[LINKEDIN_URL]`, `[GITHUB_URL]`
 - [ ] 1.1.2 Update `src/config/site-facts.ts` with placeholders
 - [ ] 1.1.3 Update `content/config/content.json` SEO defaults
-- [ ] 1.1.4 Update `package.json` name to `enterprise-web-template`
+- [ ] 1.1.4 Update `package.json` name to `b2b-web-template`
 - [ ] 1.1.5 Update `vercel.json` app name and URLs
 - [ ] 1.1.6 Update `.env.example` default values
 - [ ] 1.1.7 Update `src/services/url-generator-cjs.js:25` default URL
@@ -43,10 +56,15 @@
 
 ## 4. Phase 2.2 - Replace Blog Posts
 
-- [ ] 4.1 Delete `content/posts/en/*.mdx` (5 files)
-- [ ] 4.2 Delete `content/posts/zh/*.mdx` (5 files)
-- [ ] 4.3 Create `content/posts/en/sample-post.mdx` (sample post)
-- [ ] 4.4 Create `content/posts/zh/sample-post.mdx` (translated sample)
+- [ ] 4.1 Rewrite `content/posts/en/welcome-to-tucsenberg.mdx` as generic "Welcome to Your Site" article
+  - Rename file to `content/posts/en/welcome.mdx`
+  - Replace all Tucsenberg references with `[PROJECT_NAME]` placeholders
+  - Keep structure as template example
+- [ ] 4.2 Rewrite `content/posts/zh/welcome-to-tucsenberg.mdx` as generic welcome article (Chinese)
+  - Rename file to `content/posts/zh/welcome.mdx`
+  - Replace all Tucsenberg references with `[PROJECT_NAME]` placeholders
+- [ ] 4.3 Delete other blog posts in `content/posts/en/` (4 files)
+- [ ] 4.4 Delete other blog posts in `content/posts/zh/` (4 files)
 
 ## 5. Phase 2.3 - Update Page Content
 

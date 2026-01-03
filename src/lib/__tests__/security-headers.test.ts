@@ -94,11 +94,11 @@ describe('security-headers', () => {
       expect(headers['Access-Control-Allow-Credentials']).toBe('true');
     });
 
-    it('should include origin for tucsenberg.com', () => {
-      const headers = getCORSHeaders('https://tucsenberg.com');
+    it('should include origin for example.com', () => {
+      const headers = getCORSHeaders('https://example.com');
 
       expect(headers['Access-Control-Allow-Origin']).toBe(
-        'https://tucsenberg.com',
+        'https://example.com',
       );
     });
 

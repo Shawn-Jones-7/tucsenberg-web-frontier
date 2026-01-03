@@ -2,7 +2,6 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale } from '@/types/i18n';
 import { LocaleStorageManager } from '@/lib/locale-storage';
 import type { LocaleDetectionRecord } from '@/lib/locale-storage-types-data';
-import { WEB_VITALS_CONSTANTS as _WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 import type {
   LocaleDetectionHistory,
   UserLocalePreference,

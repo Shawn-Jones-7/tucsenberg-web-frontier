@@ -7,9 +7,11 @@
  * @description React 19 Server Actions 基础设施
  * @version 1.0.0
  */
+import { headers } from 'next/headers';
 import { contactFieldValidators } from '@/lib/form-schema/contact-field-validators';
 import { type ContactFormData } from '@/lib/form-schema/contact-form-schema';
 import { logger } from '@/lib/logger';
+import { checkDistributedRateLimit } from '@/lib/security/distributed-rate-limit';
 import {
   createErrorResultWithLogging,
   createSuccessResultWithLogging,
@@ -17,6 +19,7 @@ import {
   getFormDataString,
   withErrorHandling,
   type ServerAction,
+  type ServerActionResult,
 } from '@/lib/server-action-utils';
 import { verifyTurnstile } from '@/app/api/contact/contact-api-utils';
 import { processFormSubmission } from '@/app/api/contact/contact-api-validation';
@@ -56,9 +59,22 @@ const contactFormSchema = createContactFormSchemaFromConfig(
 );
 
 /**
+ * Extract client IP from request headers
+ */
+async function getClientIPFromHeaders(): Promise<string> {
+  const headersList = await headers();
+  const forwardedFor = headersList.get('x-forwarded-for');
+  const realIP = headersList.get('x-real-ip');
+  return forwardedFor?.split(',')[0]?.trim() || realIP || 'unknown';
+}
+
+/**
  * 验证联系表单数据（包含Turnstile验证）
  */
-async function validateContactFormData(data: ContactFormWithToken) {
+async function validateContactFormData(
+  data: ContactFormWithToken,
+  clientIP: string,
+) {
   // 首先验证基础表单数据
   const baseValidation = contactFormSchema.safeParse(data);
   if (!baseValidation.success) {
@@ -90,10 +106,7 @@ async function validateContactFormData(data: ContactFormWithToken) {
   }
 
   // 验证Turnstile token
-  const turnstileValid = await verifyTurnstile(
-    data.turnstileToken,
-    'server-action',
-  );
+  const turnstileValid = await verifyTurnstile(data.turnstileToken, clientIP);
   if (!turnstileValid) {
     return {
       success: false,
@@ -129,6 +142,56 @@ async function processContactFormSubmission(
 }
 
 /**
+ * Extract contact form data from FormData
+ */
+function extractContactFormData(formData: FormData): ContactFormWithToken {
+  return {
+    firstName: getFormDataString(formData, 'firstName'),
+    lastName: getFormDataString(formData, 'lastName'),
+    email: getFormDataString(formData, 'email'),
+    company: getFormDataString(formData, 'company'),
+    phone: getFormDataString(formData, 'phone'),
+    subject: getFormDataString(formData, 'subject'),
+    message: getFormDataString(formData, 'message'),
+    acceptPrivacy: getFormDataBoolean(formData, 'acceptPrivacy'),
+    marketingConsent: getFormDataBoolean(formData, 'marketingConsent'),
+    turnstileToken: getFormDataString(formData, 'turnstileToken'),
+    submittedAt:
+      getFormDataString(formData, 'submittedAt') || new Date().toISOString(),
+  };
+}
+
+/**
+ * Perform security checks (rate limiting + honeypot)
+ * Returns early result if blocked, null to continue processing
+ */
+async function performSecurityChecks(
+  formData: FormData,
+  clientIP: string,
+): Promise<ServerActionResult<ContactFormResult> | null> {
+  const rateLimitResult = await checkDistributedRateLimit(clientIP, 'contact');
+  if (!rateLimitResult.allowed) {
+    return createErrorResultWithLogging('Too many requests', undefined, logger);
+  }
+
+  const honeypot = getFormDataString(formData, 'website');
+  if (honeypot) {
+    return createSuccessResultWithLogging(
+      {
+        emailSent: false,
+        recordCreated: false,
+        emailMessageId: null,
+        airtableRecordId: null,
+      } satisfies ContactFormResult,
+      'Thank you for your message.',
+      logger,
+    );
+  }
+
+  return null;
+}
+
+/**
  * 联系表单 Server Action
  * 处理联系表单提交，集成Zod验证、Turnstile验证和现有的业务逻辑
  *
@@ -154,22 +217,15 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
     const startTime = performance.now();
 
     try {
+      // Extract client IP for rate limiting and Turnstile verification
+      const clientIP = await getClientIPFromHeaders();
+
+      // Perform security checks (rate limiting + honeypot)
+      const securityResult = await performSecurityChecks(formData, clientIP);
+      if (securityResult) return securityResult;
+
       // 提取表单数据
-      const contactData: ContactFormWithToken = {
-        firstName: getFormDataString(formData, 'firstName'),
-        lastName: getFormDataString(formData, 'lastName'),
-        email: getFormDataString(formData, 'email'),
-        company: getFormDataString(formData, 'company'),
-        phone: getFormDataString(formData, 'phone'),
-        subject: getFormDataString(formData, 'subject'),
-        message: getFormDataString(formData, 'message'),
-        acceptPrivacy: getFormDataBoolean(formData, 'acceptPrivacy'),
-        marketingConsent: getFormDataBoolean(formData, 'marketingConsent'),
-        turnstileToken: getFormDataString(formData, 'turnstileToken'),
-        submittedAt:
-          getFormDataString(formData, 'submittedAt') ||
-          new Date().toISOString(),
-      };
+      const contactData = extractContactFormData(formData);
 
       // 验证必需的Turnstile token
       if (!contactData.turnstileToken) {
@@ -181,7 +237,7 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
       }
 
       // 使用现有的验证逻辑
-      const validation = await validateContactFormData(contactData);
+      const validation = await validateContactFormData(contactData, clientIP);
       if (!validation.success || !validation.data) {
         return createErrorResultWithLogging(
           validation.error || 'Validation failed',
@@ -196,8 +252,6 @@ export const contactFormAction: ServerAction<FormData, ContactFormResult> =
       // 记录成功提交
       const processingTime = performance.now() - startTime;
       logger.info('Contact form submitted via Server Action', {
-        email: validation.data.email,
-        company: validation.data.company,
         processingTime,
         emailSent: submissionResult.emailSent,
         recordCreated: submissionResult.recordCreated,

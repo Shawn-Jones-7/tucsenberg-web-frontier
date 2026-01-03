@@ -350,7 +350,11 @@
       }
     }
   },
+  "monitoring": {
+    "loadError": "监控组件加载失败"
+  },
   "footer": {
+    "systemStatus": "系统运行正常。",
     "sections": {
       "product": {
         "title": "产品",
@@ -372,8 +376,19 @@
         "community": "Vercel社区",
         "vercel": "Vercel"
       },
+      "navigation": {
+        "title": "导航",
+        "home": "首页",
+        "about": "关于",
+        "products": "产品",
+        "blog": "博客",
+        "contact": "联系"
+      },
       "social": {
-        "title": "社交"
+        "title": "社交",
+        "twitter": "Twitter",
+        "linkedin": "LinkedIn",
+        "github": "GitHub"
       },
       "support": {
         "title": "支持",
@@ -586,23 +601,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "图森堡网络前沿",
+      "name": "[PROJECT_NAME]",
       "description": "现代化B2B企业级网络平台",
-      "phone": "+86-400-123-4567",
+      "phone": "[PHONE]",
       "social": {
-        "twitter": "https://twitter.com/tucsenberg",
-        "linkedin": "https://linkedin.com/company/tucsenberg",
-        "github": "https://github.com/tucsenberg"
+        "twitter": "[TWITTER_URL]",
+        "linkedin": "[LINKEDIN_URL]",
+        "github": "[GITHUB_URL]"
       }
     },
     "website": {
-      "name": "图森堡网络前沿",
-      "description": "基于Next.js 15的现代化B2B企业级网络平台"
+      "name": "[PROJECT_NAME]",
+      "description": "基于Next.js 16的现代化B2B企业级网络平台"
     },
     "article": {
       "defaultTitle": "文章",
       "defaultDescription": "文章描述",
-      "defaultAuthor": "图森堡团队"
+      "defaultAuthor": "[TEAM_NAME]"
     },
     "product": {
       "defaultName": "产品",

@@ -1,4 +1,4 @@
-# Change: Convert to Generic Enterprise Template
+# Change: Convert to Generic B2B Web Template
 
 ## Why
 
@@ -6,10 +6,15 @@ The current codebase contains business-specific content (Tucsenberg branding, pr
 
 ## What Changes
 
+### Phase 0: Repository & Project Rename
+- Rename GitHub repository: `tucsenberg-web-frontier` → `b2b-web-template`
+- Rename Vercel project display name (projectId unchanged)
+- Update local git remote URL after GitHub rename
+
 ### Phase 1: Core Configuration
 - Replace all `tucsenberg` references with `[PROJECT_NAME]` placeholders
 - Update `src/services/url-generator-cjs.js` default URL
-- Modify `package.json` name to `enterprise-web-template`
+- Modify `package.json` name to `b2b-web-template`
 
 ### Phase 2: Footer Restructure
 - **BREAKING**: Remove 38 Vercel external links from `FOOTER_COLUMNS`
@@ -19,7 +24,8 @@ The current codebase contains business-specific content (Tucsenberg branding, pr
 
 ### Phase 3: Content
 - Delete all 16 product MDX files
-- Replace 10 blog posts with 2 sample posts
+- Rewrite `welcome-to-tucsenberg` blog posts as generic "Welcome to Your Site" template articles (en/zh)
+- Delete other 4 blog posts per locale
 - Update About/FAQ pages with placeholder content
 - Keep Privacy/Terms structure, replace company name
 
@@ -46,6 +52,7 @@ The current codebase contains business-specific content (Tucsenberg branding, pr
 - **Affected code**: ~170 files, ~4300 lines changed
 - **Breaking changes**: Footer link structure completely redesigned
 - **Generated files**: Must run `pnpm content:manifest` after content deletion
+- **External services**: GitHub repository rename (auto-redirect), Vercel project name update
 
 ## Verification
 
@@ -55,6 +62,9 @@ grep -r "tucsenberg" src/ content/ messages/ public/
 
 # No Vercel external links in footer
 grep -r "vercel.com" src/config/footer-links.ts
+
+# Verify git remote updated
+git remote -v
 ```
 
 ## Placeholder Convention

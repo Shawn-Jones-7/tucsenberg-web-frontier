@@ -16,11 +16,9 @@ describe('security-headers', () => {
   it('should return whitelisted origin and credentials for allowed origin', () => {
     vi.stubEnv('NODE_ENV', 'production');
 
-    const headers = getCORSHeaders('https://tucsenberg.com');
+    const headers = getCORSHeaders('https://example.com');
 
-    expect(headers['Access-Control-Allow-Origin']).toBe(
-      'https://tucsenberg.com',
-    );
+    expect(headers['Access-Control-Allow-Origin']).toBe('https://example.com');
     expect(headers['Access-Control-Allow-Credentials']).toBe('true');
     expect(headers['Access-Control-Allow-Methods']).toContain('GET');
   });

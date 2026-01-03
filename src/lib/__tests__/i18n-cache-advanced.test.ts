@@ -11,7 +11,7 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale, Messages } from '@/types/i18n';
 import { I18nCacheManager } from '@/lib/i18n-cache';
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
+import { TEST_PERFORMANCE_MONITORING } from '@/constants/test-constants';
 
 // Mock localStorage
 const mockLocalStorage = {
@@ -198,7 +198,7 @@ describe('I18nCacheManager - Advanced Functionality', () => {
 
       // Preloading should be reasonably fast
       expect(duration).toBeLessThan(
-        WEB_VITALS_CONSTANTS.PERFORMANCE_THRESHOLDS.LCP,
+        TEST_PERFORMANCE_MONITORING.LCP_GOOD_THRESHOLD,
       );
 
       const stats = cacheManager.getCacheStats();

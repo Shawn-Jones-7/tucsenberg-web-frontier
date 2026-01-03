@@ -341,7 +341,7 @@ describe('Structured Data Generation', () => {
     it('should generate valid FAQ schema', async () => {
       const faqData = [
         {
-          question: 'What is Tucsenberg?',
+          question: 'What is this platform?',
           answer: 'A modern enterprise platform',
         },
         {
@@ -358,7 +358,7 @@ describe('Structured Data Generation', () => {
         'mainEntity': [
           {
             '@type': 'Question',
-            'name': 'What is Tucsenberg?',
+            'name': 'What is this platform?',
             'acceptedAnswer': {
               '@type': 'Answer',
               'text': 'A modern enterprise platform',
@@ -380,7 +380,7 @@ describe('Structured Data Generation', () => {
   describe('generateLocalBusinessSchema', () => {
     it('should generate valid local business schema', async () => {
       const businessData = {
-        name: 'Tucsenberg Office',
+        name: '[PROJECT_NAME] Office',
         address: '123 Business St, City, Country',
         phone: '+1-234-567-8900',
         email: 'contact@example.com',
@@ -393,7 +393,7 @@ describe('Structured Data Generation', () => {
       expect(schema).toEqual({
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
-        'name': 'Tucsenberg Office',
+        'name': '[PROJECT_NAME] Office',
         'address': {
           '@type': 'PostalAddress',
           'streetAddress': '123 Business St, City, Country',

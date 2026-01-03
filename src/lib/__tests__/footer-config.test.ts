@@ -116,9 +116,8 @@ describe('footer-config', () => {
   describe('FOOTER_SECTIONS', () => {
     it('should have all required sections', () => {
       const sectionKeys = FOOTER_SECTIONS.map((section) => section.key);
-      expect(sectionKeys).toContain('product');
-      expect(sectionKeys).toContain('company');
-      expect(sectionKeys).toContain('resources');
+      expect(sectionKeys).toContain('navigation');
+      expect(sectionKeys).toContain('support');
     });
 
     it('should have valid section structure', () => {
@@ -150,19 +149,26 @@ describe('footer-config', () => {
       });
     });
 
-    it('should have product section with correct links', () => {
-      const productSection = FOOTER_SECTIONS.find((s) => s.key === 'product');
-      expect(productSection).toBeDefined();
+    it('should have navigation section with correct links', () => {
+      const navigationSection = FOOTER_SECTIONS.find(
+        (s) => s.key === 'navigation',
+      );
+      expect(navigationSection).toBeDefined();
 
-      const linkKeys = productSection!.links.map((link) => link.key);
+      const linkKeys = navigationSection!.links.map((link) => link.key);
       expect(linkKeys).toContain('home');
+      expect(linkKeys).toContain('about');
+      expect(linkKeys).toContain('products');
+      expect(linkKeys).toContain('blog');
+      expect(linkKeys).toContain('contact');
     });
 
-    it('should have company section with correct links', () => {
-      const companySection = FOOTER_SECTIONS.find((s) => s.key === 'company');
-      expect(companySection).toBeDefined();
+    it('should have support section with correct links', () => {
+      const supportSection = FOOTER_SECTIONS.find((s) => s.key === 'support');
+      expect(supportSection).toBeDefined();
 
-      const linkKeys = companySection!.links.map((link) => link.key);
+      const linkKeys = supportSection!.links.map((link) => link.key);
+      expect(linkKeys).toContain('faq');
       expect(linkKeys).toContain('privacy');
       expect(linkKeys).toContain('terms');
     });
@@ -173,7 +179,9 @@ describe('footer-config', () => {
       expect(SOCIAL_LINKS.length).toBeGreaterThan(0);
 
       const socialKeys = SOCIAL_LINKS.map((link) => link.key);
+      expect(socialKeys).toContain('twitter');
       expect(socialKeys).toContain('linkedin');
+      expect(socialKeys).toContain('github');
     });
 
     it('should have valid social link structure', () => {

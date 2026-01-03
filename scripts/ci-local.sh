@@ -246,6 +246,15 @@ run_security_checks() {
         print_error "安全审计失败"
         return 1
     fi
+
+    print_step "PII 日志泄露检查"
+    if pnpm lint:pii; then
+        print_success "PII 检查通过"
+    else
+        print_error "PII 检查失败 - 发现未脱敏的敏感信息"
+        echo "  修复: 使用 sanitizeEmail/sanitizeIP/sanitizeCompany 函数"
+        return 1
+    fi
 }
 
 # 翻译质量检查

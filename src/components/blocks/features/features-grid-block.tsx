@@ -142,7 +142,7 @@ const DEFAULT_CTA: CTAConfig = {
   descriptionKey: 'cta.description',
   primaryButtonKey: 'cta.getStarted',
   secondaryButtonKey: 'cta.viewSource',
-  secondaryButtonHref: 'https://github.com/tucsenberg/web-frontier',
+  secondaryButtonHref: '[GITHUB_URL]',
 };
 
 // Color mapping for architecture cards

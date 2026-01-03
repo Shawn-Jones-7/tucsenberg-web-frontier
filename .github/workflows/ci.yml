@@ -298,6 +298,9 @@ jobs:
       - name: 安全审计
         run: pnpm security:audit
 
+      - name: PII 日志泄露检查
+        run: pnpm lint:pii
+
       - name: 安装 Semgrep CLI
         run: |
           python3 -m pip install --user "semgrep<2"

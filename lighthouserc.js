@@ -43,8 +43,8 @@ const allUrls = [
   // Dynamic pages: test one product and one blog post per locale
   'http://localhost:3000/en/products/industrial-control-panel',
   'http://localhost:3000/zh/products/industrial-control-panel',
-  'http://localhost:3000/en/blog/welcome-to-tucsenberg',
-  'http://localhost:3000/zh/blog/welcome-to-tucsenberg',
+  'http://localhost:3000/en/blog/welcome',
+  'http://localhost:3000/zh/blog/welcome',
 ];
 
 module.exports = {

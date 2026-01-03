@@ -133,7 +133,7 @@ describe('CSP Report API Route - GET & OPTIONS Tests', () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.error).toBe('Invalid CSP report format');
       // 空请求体是预期的错误处理，不会记录到error级别
     });
@@ -151,7 +151,7 @@ describe('CSP Report API Route - GET & OPTIONS Tests', () => {
       const response = await POST(request);
       const data = await response.json();
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       expect(data.error).toBe('Invalid JSON format');
       // JSON解析错误是预期的错误处理，不会记录到error级别
     });
@@ -167,7 +167,7 @@ describe('CSP Report API Route - GET & OPTIONS Tests', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
     });
 
     it('应该处理null请求体', async () => {
@@ -181,7 +181,7 @@ describe('CSP Report API Route - GET & OPTIONS Tests', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
     });
   });
 

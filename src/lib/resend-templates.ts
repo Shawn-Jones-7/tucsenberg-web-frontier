@@ -95,7 +95,7 @@ export class ResendTemplates {
       }
     </div>
     <div class="footer">
-      <p>This email was sent from the Tucsenberg website contact form.</p>
+      <p>This email was sent from the [PROJECT_NAME] website contact form.</p>
     </div>
   </div>
 </body>
@@ -123,7 +123,7 @@ Submitted At: ${ResendUtils.formatDateTime(data.submittedAt)}
 ${data.marketingConsent ? 'Marketing Consent: Yes' : ''}
 
 ---
-This email was sent from the Tucsenberg website contact form.
+This email was sent from the [PROJECT_NAME] website contact form.
 `;
   }
 
@@ -164,10 +164,10 @@ This email was sent from the Tucsenberg website contact form.
         <li><strong>Submitted:</strong> ${ResendUtils.formatDateTime(data.submittedAt)}</li>
       </ul>
       <p>If you have any urgent questions, please don't hesitate to contact us directly.</p>
-      <p>Best regards,<br>The Tucsenberg Team</p>
+      <p>Best regards,<br>The [TEAM_NAME] Team</p>
     </div>
     <div class="footer">
-      <p>© 2024 Tucsenberg. All rights reserved.</p>
+      <p>© 2024 [PROJECT_NAME]. All rights reserved.</p>
     </div>
   </div>
 </body>
@@ -196,10 +196,10 @@ ${data.subject ? `- Subject: ${data.subject}` : ''}
 If you have any urgent questions, please don't hesitate to contact us directly.
 
 Best regards,
-The Tucsenberg Team
+The [TEAM_NAME] Team
 
 ---
-© 2024 Tucsenberg. All rights reserved.
+© 2024 [PROJECT_NAME]. All rights reserved.
 `;
   }
 

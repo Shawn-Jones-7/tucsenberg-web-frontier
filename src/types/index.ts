@@ -68,12 +68,6 @@ export type {
   MockGeolocation,
 } from '@/types/test-types';
 
-// 导出Web Vitals类型
-export type {
-  DetailedWebVitals,
-  PerformanceBaseline,
-} from '@/lib/web-vitals/types';
-
 // 导出颜色系统类型
 export type { ThemeColors } from '@/lib/colors/types';
 

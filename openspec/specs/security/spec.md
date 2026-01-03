@@ -38,19 +38,6 @@ The WhatsApp send API SHALL be protected against unauthorized access and abuse.
 - **THEN** rate limiting MUST still be enforced
 - **AND** requests without Authorization header MUST be allowed (rate limit only)
 
-### Requirement: Analytics Endpoint Rate Limiting
-Public analytics collection endpoints SHALL be rate limited to prevent abuse.
-
-#### Scenario: Web vitals endpoint protected
-- **WHEN** requests are sent to `/api/analytics/web-vitals`
-- **THEN** requests MUST be rate limited (default: 100 req/min/IP)
-- **AND** exceeding limit MUST return HTTP 429
-
-#### Scenario: i18n analytics endpoint protected
-- **WHEN** requests are sent to `/api/analytics/i18n`
-- **THEN** requests MUST be rate limited (default: 100 req/min/IP)
-- **AND** exceeding limit MUST return HTTP 429
-
 ### Requirement: Server-Derived Client IP for Turnstile
 Turnstile verification SHALL use only server-derived client IP addresses.
 

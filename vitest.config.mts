@@ -48,14 +48,14 @@ async function detectListenRestriction(): Promise<boolean> {
 
 function patchServerListen() {
   const proto = Server.prototype as Server & {
-    isTucsenbergListenPatched?: boolean;
+    isTemplateListenPatched?: boolean;
   };
 
-  if (proto.isTucsenbergListenPatched) {
+  if (proto.isTemplateListenPatched) {
     return;
   }
 
-  proto.isTucsenbergListenPatched = true;
+  proto.isTemplateListenPatched = true;
 
   const fallbackAddress: AddressInfo = {
     address: '127.0.0.1',

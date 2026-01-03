@@ -21,7 +21,9 @@
  */
 
 import { NextRequest, NextResponse } from 'next/server';
+import { z } from 'zod';
 import type { Locale } from '@/types/content.types';
+import { createValidationErrorResponse } from '@/lib/api/validation-error-response';
 import {
   CACHE_DOMAINS,
   invalidateContent,
@@ -39,13 +41,27 @@ import { getClientIP } from '@/app/api/contact/contact-api-utils';
 import { API_ERROR_CODES } from '@/constants/api-error-codes';
 
 const VALID_LOCALES = ['en', 'zh'] as const;
+const VALID_DOMAINS = ['i18n', 'content', 'product', 'all'] as const;
+const VALID_ENTITIES = [
+  'critical',
+  'deferred',
+  'blog',
+  'page',
+  'detail',
+  'categories',
+  'featured',
+] as const;
 
-interface InvalidationRequest {
-  domain: 'i18n' | 'content' | 'product' | 'all';
-  locale?: Locale;
-  entity?: string;
-  identifier?: string;
-}
+const cacheInvalidationSchema = z.object({
+  domain: z.enum(VALID_DOMAINS, {
+    message: `domain must be one of: ${VALID_DOMAINS.join(', ')}`,
+  }),
+  locale: z.enum(VALID_LOCALES).optional(),
+  entity: z.enum(VALID_ENTITIES).optional(),
+  identifier: z.string().min(1).max(256).optional(),
+});
+
+type InvalidationRequest = z.infer<typeof cacheInvalidationSchema>;
 
 function isValidLocale(locale: unknown): locale is Locale {
   return typeof locale === 'string' && VALID_LOCALES.includes(locale as Locale);
@@ -155,10 +171,75 @@ async function checkRateLimitAndRespond(
   return null;
 }
 
+async function parseRequestBody(
+  request: NextRequest,
+): Promise<InvalidationRequest | NextResponse> {
+  let rawBody: unknown;
+  try {
+    rawBody = await request.json();
+  } catch {
+    return NextResponse.json(
+      { success: false, errorCode: API_ERROR_CODES.INVALID_JSON_BODY },
+      { status: 400 },
+    );
+  }
+
+  const parseResult = cacheInvalidationSchema.safeParse(rawBody);
+  if (!parseResult.success) {
+    return createValidationErrorResponse(
+      parseResult.error,
+      API_ERROR_CODES.INVALID_JSON_BODY,
+    );
+  }
+
+  return parseResult.data;
+}
+
+function buildSuccessResponse(result: InvalidationResult): NextResponse {
+  return NextResponse.json({
+    success: result.success,
+    errorCode: API_ERROR_CODES.CACHE_INVALIDATED,
+    invalidatedTags: result.invalidatedTags,
+    ...(result.errors.length > 0 && { errors: result.errors }),
+  });
+}
+
+async function handleCacheInvalidation(
+  request: NextRequest,
+): Promise<NextResponse> {
+  const body = await parseRequestBody(request);
+  if (body instanceof NextResponse) return body;
+
+  const { domain, locale, entity, identifier } = body;
+  const result = processDomainInvalidation({
+    domain,
+    locale,
+    entity,
+    identifier,
+  });
+
+  if ('errorCode' in result) {
+    return NextResponse.json(
+      { success: false, errorCode: result.errorCode },
+      { status: result.status },
+    );
+  }
+
+  logger.info('Cache invalidation triggered', {
+    domain,
+    locale,
+    entity,
+    identifier,
+    result,
+  });
+
+  return buildSuccessResponse(result);
+}
+
 export async function POST(request: NextRequest) {
   const clientIP = getClientIP(request);
 
-  // 1. Pre-auth rate limit (brute force protection - coarse limit per IP)
+  // 1. Pre-auth rate limit (brute force protection)
   const preAuthBlock = await checkRateLimitAndRespond(
     clientIP,
     'cacheInvalidatePreAuth',
@@ -174,7 +255,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  // 3. Post-auth rate limit (defense in depth - finer limit for valid tokens)
+  // 3. Post-auth rate limit (defense in depth)
   const postAuthBlock = await checkRateLimitAndRespond(
     clientIP,
     'cacheInvalidate',
@@ -183,36 +264,7 @@ export async function POST(request: NextRequest) {
   if (postAuthBlock) return postAuthBlock;
 
   try {
-    const body = (await request.json()) as InvalidationRequest;
-    const { domain, locale, entity, identifier } = body;
-
-    const result = processDomainInvalidation({
-      domain,
-      locale,
-      entity,
-      identifier,
-    });
-    if ('errorCode' in result) {
-      return NextResponse.json(
-        { success: false, errorCode: result.errorCode },
-        { status: result.status },
-      );
-    }
-
-    logger.info('Cache invalidation triggered', {
-      domain,
-      locale,
-      entity,
-      identifier,
-      result,
-    });
-
-    return NextResponse.json({
-      success: result.success,
-      errorCode: API_ERROR_CODES.CACHE_INVALIDATED,
-      invalidatedTags: result.invalidatedTags,
-      ...(result.errors.length > 0 && { errors: result.errors }),
-    });
+    return await handleCacheInvalidation(request);
   } catch (error) {
     logger.error('Cache invalidation failed', error);
     return NextResponse.json(

@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "tucsenberg-web-frontier": {
+    "b2b-web-template": {
       "type": "http",
-      "url": "http://localhost:8000/mcp/tucsenberg-web-frontier"
+      "url": "http://localhost:8000/mcp/b2b-web-template"
     }
   }
 }

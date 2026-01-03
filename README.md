@@ -1,7 +1,7 @@
-# 🚀 Tucsenberg Web Frontier
+# B2B Web Template
 
 [![Test Coverage](https://img.shields.io/badge/coverage-85%25-brightgreen)](./reports/coverage/)
-[![CI/CD](https://github.com/tucsenberg/tucsenberg-web-frontier/actions/workflows/ci.yml/badge.svg)](https://github.com/tucsenberg/tucsenberg-web-frontier/actions/workflows/ci.yml)
+[![CI/CD](https://github.com/user/b2b-web-template/actions/workflows/ci.yml/badge.svg)](https://github.com/user/b2b-web-template/actions/workflows/ci.yml)
 
 现代化B2B企业网站模板，采用Next.js 16 + React 19 + TypeScript 5.9 + Tailwind CSS
 4技术栈，实现英中双语国际化、主题切换、响应式设计，确保企业级质量标准。
@@ -106,7 +106,7 @@ TURNSTILE_SECRET_KEY=你的服务端私钥
 
 ```bash
 git clone <repository-url>
-cd tucsenberg-web-frontier
+cd b2b-web-template
 ```
 
 ### 2. 安装依赖
@@ -390,6 +390,20 @@ npx vercel
 # 1. 推送代码到GitHub
 # 2. 在Vercel导入项目
 # 3. 自动部署和CI/CD
+```
+
+### 生产环境 Rate Limiting
+
+生产环境需要配置 Upstash Redis 或 Vercel KV 以实现跨 serverless 实例的分布式限流。未配置时将回退到内存存储（仅适用于开发环境）。
+
+```bash
+# Upstash Redis (推荐)
+UPSTASH_REDIS_REST_URL=https://your-instance.upstash.io
+UPSTASH_REDIS_REST_TOKEN=your_token
+
+# 或 Vercel KV
+KV_REST_API_URL=https://your-kv.vercel-storage.com
+KV_REST_API_TOKEN=your_token
 ```
 
 查看

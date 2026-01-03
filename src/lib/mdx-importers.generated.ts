@@ -18,18 +18,10 @@ type ContentImporter = () => Promise<MDXContentModule>;
 
 export const postImporters: Record<string, Record<string, ContentImporter>> = {
   en: {
-    'choosing-reliable-suppliers': () => import('@content/posts/en/choosing-reliable-suppliers.mdx'),
-    'export-documentation-checklist': () => import('@content/posts/en/export-documentation-checklist.mdx'),
-    'guide-to-international-trade-terms': () => import('@content/posts/en/guide-to-international-trade-terms.mdx'),
-    'quality-control-best-practices': () => import('@content/posts/en/quality-control-best-practices.mdx'),
-    'welcome-to-tucsenberg': () => import('@content/posts/en/welcome-to-tucsenberg.mdx'),
+    'welcome': () => import('@content/posts/en/welcome.mdx'),
   },
   zh: {
-    'choosing-reliable-suppliers': () => import('@content/posts/zh/choosing-reliable-suppliers.mdx'),
-    'export-documentation-checklist': () => import('@content/posts/zh/export-documentation-checklist.mdx'),
-    'guide-to-international-trade-terms': () => import('@content/posts/zh/guide-to-international-trade-terms.mdx'),
-    'quality-control-best-practices': () => import('@content/posts/zh/quality-control-best-practices.mdx'),
-    'welcome-to-tucsenberg': () => import('@content/posts/zh/welcome-to-tucsenberg.mdx'),
+    'welcome': () => import('@content/posts/zh/welcome.mdx'),
   },
 };
 
@@ -50,23 +42,9 @@ export const pageImporters: Record<string, Record<string, ContentImporter>> = {
 
 export const productImporters: Record<string, Record<string, ContentImporter>> = {
   en: {
-    'hydraulic-pump-station': () => import('@content/products/en/hydraulic-pump-station.mdx'),
-    'industrial-control-panel': () => import('@content/products/en/industrial-control-panel.mdx'),
-    'industrial-valve-set': () => import('@content/products/en/industrial-valve-set.mdx'),
-    'led-industrial-lighting': () => import('@content/products/en/led-industrial-lighting.mdx'),
-    'pneumatic-cylinder': () => import('@content/products/en/pneumatic-cylinder.mdx'),
-    'smart-sensor-module': () => import('@content/products/en/smart-sensor-module.mdx'),
-    'stainless-steel-fasteners': () => import('@content/products/en/stainless-steel-fasteners.mdx'),
-    'variable-frequency-drive': () => import('@content/products/en/variable-frequency-drive.mdx'),
+    'sample-product': () => import('@content/products/en/sample-product.mdx'),
   },
   zh: {
-    'hydraulic-pump-station': () => import('@content/products/zh/hydraulic-pump-station.mdx'),
-    'industrial-control-panel': () => import('@content/products/zh/industrial-control-panel.mdx'),
-    'industrial-valve-set': () => import('@content/products/zh/industrial-valve-set.mdx'),
-    'led-industrial-lighting': () => import('@content/products/zh/led-industrial-lighting.mdx'),
-    'pneumatic-cylinder': () => import('@content/products/zh/pneumatic-cylinder.mdx'),
-    'smart-sensor-module': () => import('@content/products/zh/smart-sensor-module.mdx'),
-    'stainless-steel-fasteners': () => import('@content/products/zh/stainless-steel-fasteners.mdx'),
-    'variable-frequency-drive': () => import('@content/products/zh/variable-frequency-drive.mdx'),
+    'sample-product': () => import('@content/products/zh/sample-product.mdx'),
   },
 };

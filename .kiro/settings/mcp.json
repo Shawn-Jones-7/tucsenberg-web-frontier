@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "Kiro-tucsenberg": {
+    "Kiro-b2b-web-template": {
       "type": "http",
-      "url": "http://localhost:8000/mcp/Kiro-tucsenberg"
+      "url": "http://localhost:8000/mcp/Kiro-b2b-web-template"
     },
     "codexmcp": {
       "type": "stdio",

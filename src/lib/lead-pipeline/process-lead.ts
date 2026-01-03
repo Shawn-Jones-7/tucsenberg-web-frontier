@@ -27,6 +27,7 @@ import {
   splitName,
 } from '@/lib/lead-pipeline/utils';
 import { logger, sanitizeEmail } from '@/lib/logger';
+import { CONTACT_FORM_CONFIG } from '@/config/contact-form-config';
 
 /**
  * Result of lead processing operation
@@ -124,6 +125,16 @@ async function processContactLead(
       'CRM record',
     ),
   ]);
+
+  // Send confirmation email if enabled (fire-and-forget, non-blocking)
+  if (CONTACT_FORM_CONFIG.features.sendConfirmationEmail) {
+    resendService.sendConfirmationEmail(emailData).catch((error) => {
+      logger.warn('Confirmation email failed (non-blocking)', {
+        error: error instanceof Error ? error.message : 'Unknown error',
+        email: sanitizeEmail(lead.email),
+      });
+    });
+  }
 
   const emailLatency =
     emailSettled.status === 'fulfilled'

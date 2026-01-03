@@ -15,7 +15,7 @@ export const metadata: Metadata = {
       process.env.NEXT_PUBLIC_SITE_URL ||
       'http://localhost:3000',
   ),
-  title: 'Tucsenberg Web Frontier',
+  title: '[PROJECT_NAME]',
   description: 'Modern B2B Enterprise Web Platform with Next.js 15',
 };
 
