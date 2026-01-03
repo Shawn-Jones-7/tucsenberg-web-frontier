@@ -50,14 +50,14 @@
 
 ### 2.2 CSP Report Endpoint Rate Limiting
 - [x] 2.2.1 Add `withRateLimit('analytics', handler)` wrapper to `src/app/api/csp-report/route.ts` (DONE: already uses `checkDistributedRateLimit`)
-- [x] 2.2.2 Add `export const dynamic = 'force-dynamic'` to route file (DONE)
+- [x] 2.2.2 ~~Add `export const dynamic = 'force-dynamic'` to route file~~ (N/A: incompatible with `nextConfig.cacheComponents`, API routes are dynamic by default)
 - [x] 2.2.3 Add tests for rate limiting behavior (DONE: `route-rate-limit.test.ts`)
 
 ### 2.3 Webhook Endpoint Rate Limiting
 - [x] 2.3.1 Refactor `src/app/api/whatsapp/webhook/route.ts` to verify signature BEFORE rate limit check (signature-first pattern) (DONE: already implemented)
 - [x] 2.3.2 Add rate limiting only for requests with valid signatures (invalid signatures rejected early, don't consume quota) (DONE: already implemented)
-- [x] 2.3.3 Add `export const dynamic = 'force-dynamic'` to route file (DONE)
-- [x] 2.3.4 Add tests for signature-first rate limiting behavior (DONE: 5 tests added)
+- [x] 2.3.3 ~~Add `export const dynamic = 'force-dynamic'` to route file~~ (N/A: incompatible with `nextConfig.cacheComponents`, API routes are dynamic by default)
+- [x] 2.3.4 Add tests for signature-first rate limiting behavior (DONE: 4 tests added)
 
 ### 2.4 Distributed Rate Limit Documentation
 - [x] 2.4.1 Add warning log when falling back to memory store in production (DONE: already exists in `distributed-rate-limit.ts:71-79`)

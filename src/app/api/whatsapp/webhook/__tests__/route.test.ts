@@ -1,6 +1,5 @@
 import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import * as routeModule from '../route';
 import { GET, POST } from '../route';
 
 // Mock dependencies
@@ -456,10 +455,6 @@ describe('WhatsApp Webhook Route', () => {
 
       // Rate limit should never be called for invalid signatures
       expect(mockCheckDistributedRateLimit).not.toHaveBeenCalled();
-    });
-
-    it('should export dynamic as force-dynamic', () => {
-      expect(routeModule.dynamic).toBe('force-dynamic');
     });
   });
 });

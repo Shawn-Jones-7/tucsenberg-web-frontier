@@ -145,11 +145,4 @@ describe('CSP Report API Route - Rate Limiting', () => {
       );
     });
   });
-
-  describe('dynamic export', () => {
-    it('should export dynamic as force-dynamic', async () => {
-      const routeModule = await import('../route');
-      expect(routeModule.dynamic).toBe('force-dynamic');
-    });
-  });
 });
