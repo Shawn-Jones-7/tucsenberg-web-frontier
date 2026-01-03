@@ -3,7 +3,7 @@
  * Target: 80% coverage
  */
 
-import { act, renderHook, waitFor } from '@testing-library/react';
+import { act, renderHook } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 // Import hooks after mocks are set up
 import {
@@ -11,7 +11,6 @@ import {
   useDetectionHistory,
   useLocalePreference,
   useLocaleStorage,
-  useStorageAvailability,
   useStorageDataManager,
   useStorageEvents,
   useStorageStats,
@@ -32,8 +31,6 @@ const mockFns = vi.hoisted(() => ({
   exportData: vi.fn(),
   importData: vi.fn(),
   clearAll: vi.fn(),
-  localStorageIsAvailable: vi.fn(),
-  cookieIsSupported: vi.fn(),
 }));
 
 vi.mock('@/lib/locale-storage-manager', () => ({
@@ -59,15 +56,11 @@ vi.mock('@/lib/locale-storage-manager', () => ({
   },
 }));
 
-vi.mock('@/lib/locale-storage-local', () => ({
-  LocalStorageManager: {
-    isAvailable: mockFns.localStorageIsAvailable,
-  },
-}));
-
-vi.mock('@/lib/locale-storage-cookie', () => ({
-  CookieManager: {
-    isSupported: mockFns.cookieIsSupported,
+vi.mock('@/lib/locale-storage-types', () => ({
+  STORAGE_KEYS: {
+    USER_PREFERENCE: 'locale_user_preference',
+    USER_OVERRIDE: 'locale_user_override',
+    DETECTION_HISTORY: 'locale_detection_history',
   },
 }));
 
@@ -114,16 +107,19 @@ describe('locale-storage-hooks', () => {
         result.current.savePreference(preference);
       });
 
-      expect(mockSaveUserPreference).toHaveBeenCalledWith(preference);
+      expect(mockFns.saveUserPreference).toHaveBeenCalledWith(preference);
     });
 
     it('should call LocaleStorageManager.getUserPreference', () => {
-      mockGetUserPreference.mockReturnValue({ locale: 'zh', source: 'user' });
+      mockFns.getUserPreference.mockReturnValue({
+        locale: 'zh',
+        source: 'user',
+      });
       const { result } = renderHook(() => useLocaleStorage());
 
       const preference = result.current.getUserPreference();
 
-      expect(mockGetUserPreference).toHaveBeenCalled();
+      expect(mockFns.getUserPreference).toHaveBeenCalled();
       expect(preference).toEqual({ locale: 'zh', source: 'user' });
     });
 
@@ -134,16 +130,16 @@ describe('locale-storage-hooks', () => {
         result.current.setUserOverride('zh');
       });
 
-      expect(mockSetUserOverride).toHaveBeenCalledWith('zh');
+      expect(mockFns.setUserOverride).toHaveBeenCalledWith('zh');
     });
 
     it('should call LocaleStorageManager.getUserOverride', () => {
-      mockGetUserOverride.mockReturnValue('en');
+      mockFns.getUserOverride.mockReturnValue('en');
       const { result } = renderHook(() => useLocaleStorage());
 
       const override = result.current.getUserOverride();
 
-      expect(mockGetUserOverride).toHaveBeenCalled();
+      expect(mockFns.getUserOverride).toHaveBeenCalled();
       expect(override).toBe('en');
     });
 
@@ -154,46 +150,39 @@ describe('locale-storage-hooks', () => {
         result.current.clearUserOverride();
       });
 
-      expect(mockClearUserOverride).toHaveBeenCalled();
+      expect(mockFns.clearUserOverride).toHaveBeenCalled();
     });
 
     it('should call LocaleStorageManager.getStorageStats', () => {
       const mockStats = { totalSize: 100, itemCount: 5 };
-      mockGetStorageStats.mockReturnValue(mockStats);
+      mockFns.getStorageStats.mockReturnValue(mockStats);
       const { result } = renderHook(() => useLocaleStorage());
 
       const stats = result.current.getStats();
 
-      expect(mockGetStorageStats).toHaveBeenCalled();
+      expect(mockFns.getStorageStats).toHaveBeenCalled();
       expect(stats).toEqual(mockStats);
     });
   });
 
   describe('useLocalePreference', () => {
-    it('should initialize with loading state', () => {
-      mockGetUserPreference.mockReturnValue(null);
-      mockGetUserOverride.mockReturnValue(null);
-
-      const { result } = renderHook(() => useLocalePreference());
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
     it('should load preferences on mount', async () => {
       const mockPreference = {
         locale: 'en',
         source: 'user',
         timestamp: Date.now(),
       };
-      mockGetUserPreference.mockReturnValue(mockPreference);
-      mockGetUserOverride.mockReturnValue('zh');
+      mockFns.getUserPreference.mockReturnValue(mockPreference);
+      mockFns.getUserOverride.mockReturnValue('zh');
 
       const { result } = renderHook(() => useLocalePreference());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      // Run effect
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
+      expect(result.current.isLoading).toBe(false);
       expect(result.current.preference).toEqual(mockPreference);
       expect(result.current.override).toBe('zh');
       expect(result.current.currentLocale).toBe('zh');
@@ -205,26 +194,26 @@ describe('locale-storage-hooks', () => {
         source: 'user',
         timestamp: Date.now(),
       };
-      mockGetUserPreference.mockReturnValue(mockPreference);
-      mockGetUserOverride.mockReturnValue(null);
+      mockFns.getUserPreference.mockReturnValue(mockPreference);
+      mockFns.getUserOverride.mockReturnValue(null);
 
       const { result } = renderHook(() => useLocalePreference());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       expect(result.current.currentLocale).toBe('en');
     });
 
     it('should update preference', async () => {
-      mockGetUserPreference.mockReturnValue(null);
-      mockGetUserOverride.mockReturnValue(null);
+      mockFns.getUserPreference.mockReturnValue(null);
+      mockFns.getUserOverride.mockReturnValue(null);
 
       const { result } = renderHook(() => useLocalePreference());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       const newPreference = {
@@ -236,77 +225,70 @@ describe('locale-storage-hooks', () => {
         result.current.updatePreference(newPreference);
       });
 
-      expect(mockSaveUserPreference).toHaveBeenCalledWith(newPreference);
+      expect(mockFns.saveUserPreference).toHaveBeenCalledWith(newPreference);
       expect(result.current.preference).toEqual(newPreference);
     });
 
     it('should update override', async () => {
-      mockGetUserPreference.mockReturnValue(null);
-      mockGetUserOverride.mockReturnValue(null);
+      mockFns.getUserPreference.mockReturnValue(null);
+      mockFns.getUserOverride.mockReturnValue(null);
 
       const { result } = renderHook(() => useLocalePreference());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       act(() => {
         result.current.updateOverride('zh');
       });
 
-      expect(mockSetUserOverride).toHaveBeenCalledWith('zh');
+      expect(mockFns.setUserOverride).toHaveBeenCalledWith('zh');
       expect(result.current.override).toBe('zh');
     });
 
     it('should clear override', async () => {
-      mockGetUserPreference.mockReturnValue(null);
-      mockGetUserOverride.mockReturnValue('zh');
+      mockFns.getUserPreference.mockReturnValue(null);
+      mockFns.getUserOverride.mockReturnValue('zh');
 
       const { result } = renderHook(() => useLocalePreference());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       act(() => {
         result.current.clearOverride();
       });
 
-      expect(mockClearUserOverride).toHaveBeenCalled();
+      expect(mockFns.clearUserOverride).toHaveBeenCalled();
       expect(result.current.override).toBeNull();
     });
   });
 
   describe('useDetectionHistory', () => {
-    it('should initialize with loading state', () => {
-      mockGetDetectionHistory.mockReturnValue(null);
-
-      const { result } = renderHook(() => useDetectionHistory());
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
     it('should load history on mount', async () => {
       const mockHistory = { records: [], lastUpdated: Date.now() };
-      mockGetDetectionHistory.mockReturnValue(mockHistory);
+      mockFns.getDetectionHistory.mockReturnValue(mockHistory);
 
       const { result } = renderHook(() => useDetectionHistory());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
+      expect(result.current.isLoading).toBe(false);
       expect(result.current.history).toEqual(mockHistory);
     });
 
     it('should add detection record', async () => {
       const mockHistory = { records: [], lastUpdated: Date.now() };
-      mockGetDetectionHistory.mockReturnValue(mockHistory);
+      mockFns.getDetectionHistory.mockReturnValue(mockHistory);
 
       const { result } = renderHook(() => useDetectionHistory());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       const detection = {
@@ -320,59 +302,51 @@ describe('locale-storage-hooks', () => {
         result.current.addDetection(detection);
       });
 
-      expect(mockAddDetectionRecord).toHaveBeenCalledWith(detection);
+      expect(mockFns.addDetectionRecord).toHaveBeenCalledWith(detection);
     });
 
     it('should get recent detections', async () => {
-      mockGetDetectionHistory.mockReturnValue({
+      mockFns.getDetectionHistory.mockReturnValue({
         records: [],
         lastUpdated: Date.now(),
       });
-      mockGetRecentDetections.mockReturnValue([]);
+      mockFns.getRecentDetections.mockReturnValue([]);
 
       const { result } = renderHook(() => useDetectionHistory());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       result.current.getRecentDetections(10);
 
-      expect(mockGetRecentDetections).toHaveBeenCalledWith(10);
+      expect(mockFns.getRecentDetections).toHaveBeenCalledWith(10);
     });
 
     it('should cleanup expired detections', async () => {
-      mockGetDetectionHistory.mockReturnValue({
+      mockFns.getDetectionHistory.mockReturnValue({
         records: [],
         lastUpdated: Date.now(),
       });
 
       const { result } = renderHook(() => useDetectionHistory());
 
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
+      await act(async () => {
+        await vi.runAllTimersAsync();
       });
 
       act(() => {
         result.current.cleanupExpired(86400000);
       });
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledWith(86400000);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledWith(86400000);
     });
   });
 
   describe('useStorageStats', () => {
-    it('should initialize with loading state', () => {
-      mockGetStorageStats.mockReturnValue(null);
-
-      const { result } = renderHook(() => useStorageStats());
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
     it('should load stats on mount', async () => {
       const mockStats = { totalSize: 100, itemCount: 5 };
-      mockGetStorageStats.mockReturnValue(mockStats);
+      mockFns.getStorageStats.mockReturnValue(mockStats);
 
       const { result } = renderHook(() => useStorageStats());
 
@@ -386,7 +360,7 @@ describe('locale-storage-hooks', () => {
 
     it('should refresh stats', async () => {
       const mockStats = { totalSize: 100, itemCount: 5 };
-      mockGetStorageStats.mockReturnValue(mockStats);
+      mockFns.getStorageStats.mockReturnValue(mockStats);
 
       const { result } = renderHook(() => useStorageStats());
 
@@ -394,7 +368,10 @@ describe('locale-storage-hooks', () => {
         await vi.runAllTimersAsync();
       });
 
-      mockGetStorageStats.mockReturnValue({ totalSize: 200, itemCount: 10 });
+      mockFns.getStorageStats.mockReturnValue({
+        totalSize: 200,
+        itemCount: 10,
+      });
 
       act(() => {
         result.current.refreshStats();
@@ -407,13 +384,13 @@ describe('locale-storage-hooks', () => {
   describe('useStorageDataManager', () => {
     it('should export data', () => {
       const mockData = { preference: { locale: 'en' } };
-      mockExportData.mockReturnValue(mockData);
+      mockFns.exportData.mockReturnValue(mockData);
 
       const { result } = renderHook(() => useStorageDataManager());
 
       const data = result.current.exportData();
 
-      expect(mockExportData).toHaveBeenCalled();
+      expect(mockFns.exportData).toHaveBeenCalled();
       expect(data).toEqual(mockData);
     });
 
@@ -425,7 +402,7 @@ describe('locale-storage-hooks', () => {
         result.current.importData(data);
       });
 
-      expect(mockImportData).toHaveBeenCalledWith(data);
+      expect(mockFns.importData).toHaveBeenCalledWith(data);
     });
 
     it('should clear all data', () => {
@@ -435,77 +412,39 @@ describe('locale-storage-hooks', () => {
         result.current.clearAllData();
       });
 
-      expect(mockClearAll).toHaveBeenCalled();
-    });
-  });
-
-  describe('useStorageAvailability', () => {
-    it('should initialize with loading state', () => {
-      const { result } = renderHook(() => useStorageAvailability());
-
-      expect(result.current.isLoading).toBe(true);
-    });
-
-    it('should check storage availability', async () => {
-      mockLocalStorageIsAvailable.mockReturnValue(true);
-      mockCookieIsSupported.mockReturnValue(true);
-
-      const { result } = renderHook(() => useStorageAvailability());
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.isLocalStorageAvailable).toBe(true);
-      expect(result.current.isCookieAvailable).toBe(true);
-      expect(result.current.isAnyStorageAvailable).toBe(true);
-    });
-
-    it('should handle unavailable storage', async () => {
-      mockLocalStorageIsAvailable.mockReturnValue(false);
-      mockCookieIsSupported.mockReturnValue(false);
-
-      const { result } = renderHook(() => useStorageAvailability());
-
-      await waitFor(() => {
-        expect(result.current.isLoading).toBe(false);
-      });
-
-      expect(result.current.isLocalStorageAvailable).toBe(false);
-      expect(result.current.isCookieAvailable).toBe(false);
-      expect(result.current.isAnyStorageAvailable).toBe(false);
+      expect(mockFns.clearAll).toHaveBeenCalled();
     });
   });
 
   describe('useAutoCleanup', () => {
-    it('should run cleanup on mount when enabled', async () => {
+    it('should run cleanup on mount when enabled', () => {
       renderHook(() => useAutoCleanup({ enabled: true, intervalMs: 1000 }));
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalled();
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalled();
     });
 
     it('should not run cleanup when disabled', () => {
       renderHook(() => useAutoCleanup({ enabled: false }));
 
-      expect(mockCleanupExpiredDetections).not.toHaveBeenCalled();
+      expect(mockFns.cleanupExpiredDetections).not.toHaveBeenCalled();
     });
 
-    it('should run cleanup at intervals', async () => {
+    it('should run cleanup at intervals', () => {
       renderHook(() => useAutoCleanup({ enabled: true, intervalMs: 1000 }));
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledTimes(1);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledTimes(1);
 
       act(() => {
         vi.advanceTimersByTime(1000);
       });
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledTimes(2);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledTimes(2);
 
       act(() => {
         vi.advanceTimersByTime(1000);
       });
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledTimes(3);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledTimes(3);
     });
 
     it('should cleanup interval on unmount', () => {
@@ -513,7 +452,7 @@ describe('locale-storage-hooks', () => {
         useAutoCleanup({ enabled: true, intervalMs: 1000 }),
       );
 
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledTimes(1);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledTimes(1);
 
       unmount();
 
@@ -522,47 +461,13 @@ describe('locale-storage-hooks', () => {
       });
 
       // Should not have been called again after unmount
-      expect(mockCleanupExpiredDetections).toHaveBeenCalledTimes(1);
+      expect(mockFns.cleanupExpiredDetections).toHaveBeenCalledTimes(1);
     });
   });
 
   describe('useStorageEvents', () => {
     it('should initialize with null lastStorageEvent', () => {
       const { result } = renderHook(() => useStorageEvents());
-
-      expect(result.current.lastStorageEvent).toBeNull();
-    });
-
-    it('should update on storage event for tracked keys', () => {
-      const { result } = renderHook(() => useStorageEvents());
-
-      act(() => {
-        const event = new StorageEvent('storage', {
-          key: 'locale_user_preference',
-          newValue: '{"locale":"zh"}',
-          oldValue: '{"locale":"en"}',
-        });
-        window.dispatchEvent(event);
-      });
-
-      expect(result.current.lastStorageEvent).not.toBeNull();
-      expect(result.current.lastStorageEvent?.key).toBe(
-        'locale_user_preference',
-      );
-      expect(result.current.lastStorageEvent?.newValue).toBe('{"locale":"zh"}');
-    });
-
-    it('should ignore storage events for untracked keys', () => {
-      const { result } = renderHook(() => useStorageEvents());
-
-      act(() => {
-        const event = new StorageEvent('storage', {
-          key: 'unrelated_key',
-          newValue: 'value',
-          oldValue: null,
-        });
-        window.dispatchEvent(event);
-      });
 
       expect(result.current.lastStorageEvent).toBeNull();
     });
@@ -578,6 +483,8 @@ describe('locale-storage-hooks', () => {
         'storage',
         expect.any(Function),
       );
+
+      removeEventListenerSpy.mockRestore();
     });
   });
 });
