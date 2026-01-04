@@ -148,6 +148,7 @@ describe('Security Configuration', () => {
 
     it('should include report-uri directive in CSP', () => {
       vi.stubEnv('SECURITY_HEADERS_ENABLED', 'true');
+      vi.stubEnv('CSP_REPORT_URI', '');
 
       const headers = getSecurityHeaders(undefined, true);
       const cspHeader = headers.find(
@@ -157,6 +158,22 @@ describe('Security Configuration', () => {
       );
 
       expect(cspHeader?.value).toContain('report-uri /api/csp-report');
+    });
+
+    it('should allow CSP report-uri override via env', () => {
+      vi.stubEnv('SECURITY_HEADERS_ENABLED', 'true');
+      vi.stubEnv('CSP_REPORT_URI', 'https://example.com/csp-report');
+
+      const headers = getSecurityHeaders(undefined, true);
+      const cspHeader = headers.find(
+        (h) =>
+          h.key === 'Content-Security-Policy' ||
+          h.key === 'Content-Security-Policy-Report-Only',
+      );
+
+      expect(cspHeader?.value).toContain(
+        'report-uri https://example.com/csp-report',
+      );
     });
   });
 

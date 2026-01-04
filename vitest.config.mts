@@ -211,7 +211,6 @@ export default defineConfig({
         'postcss.config.mjs',
         'eslint.config.mjs',
         'playwright.config.ts',
-        'next-sitemap.config.js',
         'commitlint.config.js',
         'translation.config.js',
         'tsconfig.json',

@@ -17,6 +17,11 @@ export type SecurityHeader = {
 export function generateCSP(nonce?: string): string {
   const isDevelopment = process.env.NODE_ENV === 'development';
   const isProduction = process.env.NODE_ENV === 'production';
+  const configuredReportUri = process.env.CSP_REPORT_URI?.trim();
+  const reportUri =
+    configuredReportUri && configuredReportUri.length > ZERO
+      ? configuredReportUri
+      : '/api/csp-report';
 
   // Base CSP directives
   const cspDirectives = {
@@ -78,7 +83,7 @@ export function generateCSP(nonce?: string): string {
     'base-uri': ["'self'"],
     'form-action': ["'self'"],
     'frame-ancestors': ["'none'"],
-    'report-uri': ['/api/csp-report'],
+    'report-uri': [reportUri],
     'upgrade-insecure-requests': isProduction ? [] : undefined,
   };
 

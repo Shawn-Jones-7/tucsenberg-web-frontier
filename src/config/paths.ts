@@ -27,7 +27,6 @@ export {
   getPageTypeFromPath,
   getPathnames,
   getRoutingConfig,
-  getSitemapConfig,
   validatePathsConfig,
 } from '@/config/paths/utils';
 

@@ -107,6 +107,10 @@ reports/**/*.png
 reports/**/*.webm
 reports/**/*.zip
 
+# Build/analyzer artifacts (root-level)
+stats.html
+semgrep-report.json
+
 # E2E summary/matrix (use CI artifacts instead of committing latest)
 reports/e2e-summary-latest.json
 reports/e2e-summary-latest.md

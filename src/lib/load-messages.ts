@@ -26,8 +26,8 @@ import { readFile } from 'fs/promises';
 import { join } from 'path';
 import { unstable_cache } from 'next/cache';
 import { i18nTags } from '@/lib/cache/cache-tags';
-import { mergeObjects } from '@/lib/locale-storage-types-utils/object-utils';
 import { logger } from '@/lib/logger';
+import { mergeObjects } from '@/lib/merge-objects';
 import { MONITORING_INTERVALS } from '@/constants/performance-constants';
 import { routing } from '@/i18n/routing';
 

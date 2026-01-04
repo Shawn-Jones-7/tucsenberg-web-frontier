@@ -5,7 +5,6 @@ import {
   getPageTypeFromPath,
   getPathnames,
   getRoutingConfig,
-  getSitemapConfig,
   LOCALES_CONFIG,
   PATHS_CONFIG,
   SITE_CONFIG,
@@ -276,30 +275,6 @@ describe('paths configuration', () => {
     });
   });
 
-  describe('getSitemapConfig', () => {
-    it('should return valid sitemap configuration', () => {
-      const config = getSitemapConfig();
-
-      expect(config.baseUrl).toBeTruthy();
-      expect(Array.isArray(config.locales)).toBe(true);
-      expect(config.defaultLocale).toBe('en');
-      expect(typeof config.localizedPaths).toBe('object');
-    });
-
-    it('should exclude home page from localized paths', () => {
-      const config = getSitemapConfig();
-
-      expect(config.localizedPaths).not.toHaveProperty('/');
-    });
-
-    it('should include other pages in localized paths', () => {
-      const config = getSitemapConfig();
-
-      expect(config.localizedPaths).toHaveProperty('/about');
-      expect(config.localizedPaths).toHaveProperty('/contact');
-    });
-  });
-
   describe('getRoutingConfig', () => {
     it('should return valid routing configuration', () => {
       const config = getRoutingConfig();
@@ -321,13 +296,9 @@ describe('paths configuration', () => {
   describe('integration tests', () => {
     it('should have consistent configuration across all functions', () => {
       const pathnames = getPathnames();
-      const sitemapConfig = getSitemapConfig();
       const routingConfig = getRoutingConfig();
 
       // Check that all configurations use the same locales
-      expect(sitemapConfig.locales).toEqual(routingConfig.locales);
-      expect(sitemapConfig.defaultLocale).toBe(routingConfig.defaultLocale);
-
       // Check that pathnames are consistent
       expect(routingConfig.pathnames).toEqual(pathnames);
     });

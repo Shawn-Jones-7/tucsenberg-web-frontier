@@ -36,15 +36,11 @@ const {
   mockUseIntersectionObserver,
   mockUseRouter,
   mockUseTheme,
-  mockUseDeferredBackground,
-  mockUseDeferredContent,
 } = vi.hoisted(() => ({
   mockUseTranslations: vi.fn(),
   mockUseIntersectionObserver: vi.fn(),
   mockUseRouter: vi.fn(),
   mockUseTheme: vi.fn(),
-  mockUseDeferredBackground: vi.fn(),
-  mockUseDeferredContent: vi.fn(),
 }));
 
 // Mock next-intl
@@ -65,12 +61,6 @@ vi.mock('next/navigation', () => ({
 // Mock next-themes
 vi.mock('next-themes', () => ({
   useTheme: mockUseTheme,
-}));
-
-// Mock deferred render hooks
-vi.mock('@/hooks/use-deferred-render', () => ({
-  useDeferredBackground: mockUseDeferredBackground,
-  useDeferredContent: mockUseDeferredContent,
 }));
 
 // Mock Lucide React icons
@@ -163,8 +153,6 @@ describe('HeroSplitBlock', () => {
       setTheme: vi.fn(),
       resolvedTheme: 'light',
     });
-    mockUseDeferredBackground.mockReturnValue(true);
-    mockUseDeferredContent.mockReturnValue(true);
   });
 
   describe('Basic Rendering', () => {

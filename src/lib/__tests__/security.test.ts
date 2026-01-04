@@ -1,13 +1,13 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { validateFileUpload } from '@/lib/security-file-upload';
+import { checkSecurityConfig } from '@/lib/security-headers';
+import { rateLimit } from '@/lib/security-rate-limit';
+import { generateSecureToken } from '@/lib/security-tokens';
 import {
-  checkSecurityConfig,
-  generateSecureToken,
   isValidEmail,
   isValidUrl,
-  rateLimit,
   sanitizeInput,
-  validateFileUpload,
-} from '../security';
+} from '@/lib/security-validation';
 
 describe('Security Utils', () => {
   describe('sanitizeInput', () => {
@@ -23,9 +23,9 @@ describe('Security Utils', () => {
     });
 
     it('should handle non-string input', () => {
-      expect(sanitizeInput(null as any)).toBe('');
-      expect(sanitizeInput(undefined as any)).toBe('');
-      expect(sanitizeInput(123 as any)).toBe('');
+      expect(sanitizeInput(null as unknown as string)).toBe('');
+      expect(sanitizeInput(undefined as unknown as string)).toBe('');
+      expect(sanitizeInput(123 as unknown as string)).toBe('');
     });
 
     it('should preserve safe content', () => {

@@ -244,66 +244,6 @@ vi.mock('lucide-react', () => ({
   ),
 }));
 
-// Mock theme components
-vi.mock('@/components/theme/theme-toggle-button', () => {
-  const MockThemeToggleButton = React.forwardRef(
-    (
-      {
-        ariaAttributes,
-        onKeyDown,
-        onClick,
-        prefersHighContrast: _prefersHighContrast,
-        prefersReducedMotion: _prefersReducedMotion,
-        ...props
-      }: {
-        ariaAttributes?: Record<string, any>;
-        onKeyDown?: (event: React.KeyboardEvent) => void;
-        onClick?: () => void;
-        prefersHighContrast?: boolean;
-        prefersReducedMotion?: boolean;
-        [key: string]: any;
-      },
-      ref: React.Ref<HTMLButtonElement>,
-    ) => {
-      return (
-        <button
-          ref={ref}
-          data-testid='theme-toggle-button'
-          data-variant='outline'
-          data-size='icon'
-          className='inline-flex items-center justify-center'
-          onKeyDown={onKeyDown}
-          onClick={onClick}
-          {...ariaAttributes}
-          {...props}
-        >
-          <span
-            data-testid='sun-icon'
-            className='lucide-sun'
-            aria-hidden='true'
-          >
-            ☀️
-          </span>
-          <span
-            data-testid='moon-icon'
-            className='lucide-moon'
-            aria-hidden='true'
-          >
-            🌙
-          </span>
-          <span className='sr-only'>主题切换按钮</span>
-        </button>
-      );
-    },
-  );
-
-  MockThemeToggleButton.displayName = 'MockThemeToggleButton';
-
-  return {
-    ThemeToggleButton: MockThemeToggleButton,
-  };
-});
-
 vi.mock('@/components/theme/theme-menu-item', () => ({
   ThemeMenuItem: ({
     theme,

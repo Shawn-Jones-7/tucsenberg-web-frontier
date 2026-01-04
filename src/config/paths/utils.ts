@@ -9,8 +9,7 @@ import {
   DYNAMIC_PATHS_CONFIG,
   PATHS_CONFIG,
 } from '@/config/paths/paths-config';
-import { SITE_CONFIG } from '@/config/paths/site-config';
-import type { Locale, LocalizedPath, PageType } from '@/config/paths/types';
+import type { Locale, PageType } from '@/config/paths/types';
 import { ZERO } from '@/constants';
 
 /**
@@ -158,26 +157,6 @@ export function validatePathsConfig(): { isValid: boolean; errors: string[] } {
   return {
     isValid: errors.length === ZERO,
     errors,
-  };
-}
-
-/**
- * 获取sitemap配置（用于next-sitemap）
- */
-export function getSitemapConfig() {
-  const localizedPaths: Record<string, LocalizedPath> = {};
-
-  Object.entries(PATHS_CONFIG).forEach(([pageType, paths]) => {
-    if (pageType !== 'home') {
-      localizedPaths[paths.en] = paths;
-    }
-  });
-
-  return {
-    baseUrl: SITE_CONFIG.baseUrl,
-    localizedPaths,
-    locales: LOCALES_CONFIG.locales,
-    defaultLocale: LOCALES_CONFIG.defaultLocale,
   };
 }
 

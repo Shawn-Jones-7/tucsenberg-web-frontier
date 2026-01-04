@@ -55,24 +55,6 @@ vi.mock('@/i18n/routing', () => ({
   usePathname: vi.fn(() => '/'),
 }));
 
-// Mock locale detection and storage hooks
-vi.mock('@/lib/locale-detection', () => ({
-  useClientLocaleDetection: vi.fn(() => ({
-    detectClientLocale: vi.fn(() => ({
-      locale: 'en',
-      source: 'browser',
-      confidence: 0.9,
-    })),
-  })),
-}));
-
-vi.mock('@/lib/locale-storage', () => ({
-  useLocaleStorage: vi.fn(() => ({
-    storedLocale: 'en',
-    setStoredLocale: vi.fn(),
-  })),
-}));
-
 describe('Mobile Navigation - 核心边界情况测试', () => {
   let user: ReturnType<typeof userEvent.setup>;
 

@@ -4,7 +4,6 @@
  */
 
 import type { ReactNode } from 'react';
-import type { UserLocalePreference } from '@/lib/locale-storage-types-data';
 
 // ============================================================================
 // DOM Mock Types - 用于测试中的DOM元素模拟
@@ -461,6 +460,18 @@ export type NumberFormatConstructor = typeof Intl.NumberFormat;
  * 用于测试中模拟Intl.DateTimeFormat
  */
 export type DateTimeFormatConstructor = typeof Intl.DateTimeFormat;
+
+/**
+ * Test-only locale preference shape.
+ * Previously sourced from the locale-storage subsystem (now removed).
+ */
+export interface UserLocalePreference {
+  locale: string;
+  source?: string;
+  confidence?: number;
+  timestamp: number;
+  metadata?: Record<string, unknown>;
+}
 
 /**
  * Mock存储管理器接口
