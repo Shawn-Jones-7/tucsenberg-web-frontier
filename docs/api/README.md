@@ -8,6 +8,7 @@ All endpoints are located under `/api/`. Rate limits use a sliding window (1 min
 
 | Endpoint | Method | Purpose | Auth | Rate Limit |
 |----------|--------|---------|------|------------|
+| `/api/health` | GET | Health check for monitoring/cron | None | None |
 | `/api/contact` | POST | Contact form submission | Turnstile | 5/min |
 | `/api/inquiry` | POST | Product inquiry from drawer | Turnstile | 10/min |
 | `/api/subscribe` | POST | Newsletter subscription | Turnstile | 3/min |

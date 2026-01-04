@@ -28,7 +28,7 @@ This document is for developers building on the B2B Web Template, covering quick
 | 社交媒体链接 | `src/config/paths/site-config.ts` | 修改 `SITE_CONFIG.social` |
 | 首屏文案 | `messages/[locale]/critical.json` | 修改 `home.hero` 相关字段 |
 | Logo | `public/` 或组件内 | 替换 Logo 图片或修改 SVG |
-| 品牌色 | `src/config/theme-customization.ts` | 修改主题颜色变量 |
+| 品牌色 | `src/app/globals.css` | 修改 `:root/.dark` 中的 CSS 变量 |
 
 ```typescript
 // src/config/paths/site-config.ts 关键字段
@@ -359,17 +359,22 @@ curl http://localhost:3000/robots.txt
 
 ### 自定义主题
 
-编辑 `src/config/theme-customization.ts`：
+编辑 `src/app/globals.css` 中的 CSS 变量：
 
-```typescript
-export const THEME_CUSTOMIZATION = {
-  colors: {
-    primary: '#your-primary-color',
-    secondary: '#your-secondary-color',
-    // ...
-  },
-  // ...
-};
+```css
+:root {
+  --primary: oklch(0.21 0.034 264.67);       /* 主色 */
+  --primary-foreground: oklch(0.985 0 0);    /* 主色上的文字 */
+  --background: oklch(1 0 0);                /* 背景色 */
+  --foreground: oklch(0.145 0.014 285.82);   /* 前景色 */
+  /* ... 其他变量 */
+}
+
+.dark {
+  --primary: oklch(0.92 0.004 286.32);
+  --background: oklch(0.145 0.014 285.82);
+  /* ... 暗色主题变量 */
+}
 ```
 
 ---

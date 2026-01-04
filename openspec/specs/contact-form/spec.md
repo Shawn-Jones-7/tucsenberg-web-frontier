@@ -43,9 +43,9 @@ The system SHALL always display alternative contact methods alongside the form.
 #### Scenario: Contact methods always visible
 - **WHEN** user views the contact page
 - **THEN** the following contact methods MUST be visible:
-  - Email address (contact@tucsenberg.com)
-  - Phone number (+1-555-0123)
-  - Business hours
+  - Email address (configured via `siteFacts.contact.email`)
+  - Phone number (configured via `siteFacts.contact.phone`)
+  - Business hours (configured via `siteFacts.contact.businessHours`)
 - **AND** these methods MUST be displayed regardless of form status
 
 #### Scenario: Emphasized alternatives on form error

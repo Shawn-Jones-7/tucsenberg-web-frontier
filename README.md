@@ -86,7 +86,7 @@ TURNSTILE_SECRET_KEY=你的服务端私钥
 
 - **联系表单配置**：`src/config/contact-form-config.ts` 提供字段顺序、启用状态以及校验配置，并通过 `buildFormFieldsFromConfig` 与 `createContactFormSchemaFromConfig` 同步前后端字段定义。
 - **WhatsApp 支持**：`FEATURE_FLAGS.ENABLE_WHATSAPP_CHAT`（可通过 `ENABLE_WHATSAPP_CHAT` 环境变量关闭）配合 `SITE_CONFIG.contact.whatsappNumber`（可通过 `NEXT_PUBLIC_WHATSAPP_NUMBER` 覆盖）自动在右下角注入 `WhatsAppFloatingButton`。
-- **主题与变量**：`src/config/theme-customization.ts` 定义品牌色、布局与组件默认样式，`getThemeCssVariables()` 注入 CSS 变量，并将 `THEME_CUSTOMIZATION.components.button` 应用于所有 `Button` 默认变体。
+- **主题与变量**：`src/app/globals.css` 定义品牌色、布局与 CSS 变量，通过 Tailwind CSS 4 的 `@theme inline` 和 `:root/.dark` 实现明暗主题切换。
 
 ## 🔧 二次开发
 

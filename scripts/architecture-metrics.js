@@ -281,7 +281,7 @@ class ArchitectureMetrics {
       metadata: {
         timestamp: this.metrics.timestamp,
         version: '1.0.0',
-        project: 'tucsenberg-web-frontier',
+        project: 'b2b-web-template',
       },
       metrics: this.metrics,
       thresholds: METRICS_CONFIG.thresholds,

@@ -34,9 +34,9 @@ const { mockRouting, mockEnMessages, mockZhMessages, mockGetFormats } =
         contact: 'Contact',
       },
       seo: {
-        title: 'Tucsenberg Web Frontier',
+        title: 'B2B Web Template',
         description: 'Modern B2B Enterprise Web Platform',
-        siteName: 'Tucsenberg Web Frontier',
+        siteName: 'B2B Web Template',
       },
     },
     mockZhMessages: {
@@ -51,9 +51,9 @@ const { mockRouting, mockEnMessages, mockZhMessages, mockGetFormats } =
         contact: '联系',
       },
       seo: {
-        title: 'Tucsenberg Web Frontier',
+        title: 'B2B Web Template',
         description: '现代化B2B企业网络平台',
-        siteName: 'Tucsenberg Web Frontier',
+        siteName: 'B2B Web Template',
       },
     },
     mockGetFormats: vi.fn(),

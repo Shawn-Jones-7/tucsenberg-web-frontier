@@ -244,10 +244,9 @@
 - 中文字体回退与中英文混排策略
 - 任何与可访问性/企业风格强相关的定制（例如对比度、特定阴影规则）
 
-### 4.3 “主题源头”提醒（避免协作迷路）
+### 4.3 主题源头
 
-仓库文档中存在对 `src/config/theme-customization.ts` 的引用（例如 README/DEVELOPMENT），但当前工作区没有这个文件。  
-在该文件补齐之前，请把 **`src/app/globals.css` 的 `:root/.dark`** 视为主题 tokens 的唯一真实入口，避免出现两套主题系统并存。
+本项目使用 **`src/app/globals.css` 的 `:root/.dark`** 作为主题 tokens 的唯一真实入口。通过 Tailwind CSS 4 的 `@theme inline` 将 CSS 变量映射到 Tailwind 工具类。
 
 ---
 

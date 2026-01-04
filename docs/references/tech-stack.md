@@ -43,7 +43,7 @@ content/
 
 ### 数据服务
 - **Airtable 0.12.2** - 联系表单数据存储
-- **Resend 6.4.2** - 邮件发送服务
+- **Resend 6.6.0** - 邮件发送服务
 
 ## 3. UI 设计系统
 
@@ -80,7 +80,7 @@ content/
   - useActionState - 表单状态管理，替代手动 useTransition + useState
   - useFormStatus - 表单子组件中访问提交状态
   - Server Actions - 服务端表单处理，类型安全的数据提交
-- **Zod 4.1.12** - TypeScript 模式验证和数据校验
+- **Zod 4.2.1** - TypeScript 模式验证和数据校验
 
 #### React 19 表单架构
 - **表单状态管理**：使用 useActionState Hook 替代传统表单库
@@ -91,7 +91,7 @@ content/
 ## 4. 开发工具链
 
 ### 代码质量
-- **eslint 9.39.1** - 代码质量检查（Flat Config）
+- **eslint 9.39.2** - 代码质量检查（Flat Config）
   - @eslint/eslintrc 3.3.1 - ESLint 配置工具
   - @eslint/js 9.39.1 - ESLint JavaScript 配置
 - **typescript-eslint 8.46.4** - TypeScript 专用规则
@@ -107,7 +107,7 @@ content/
 - **eslint-config-next 16.1.1** - Next.js ESLint 配置预设
 
 ### 代码格式化
-- **prettier 3.6.2** - 代码格式化核心
+- **prettier 3.7.4** - 代码格式化核心
 - **@ianvs/prettier-plugin-sort-imports 4.7.0** - 导入排序
 - **prettier-plugin-tailwindcss 0.7.2** - Tailwind CSS 类名排序
 
@@ -162,7 +162,7 @@ content/
 ## 5. 测试框架
 
 ### 核心测试工具
-- **vitest 4.0.8** - 现代化测试框架
+- **vitest 4.0.16** - 现代化测试框架
   - @vitest/browser-playwright 4.0.8 - Playwright 浏览器测试
 - **@vitest/coverage-v8 4.0.8** - V8 引擎覆盖率工具
 - **@vitest/ui 4.0.8** - 可视化测试界面
@@ -174,8 +174,8 @@ content/
 - **@testing-library/user-event 14.6.1** - 用户交互模拟
 
 ### 端到端测试
-- **@playwright/test 1.56.1** - 端到端测试框架
-- **playwright 1.56.1** - Playwright 核心库
+- **@playwright/test 1.57.0** - 端到端测试框架
+- **playwright 1.57.0** - Playwright 核心库
 
 ### 无障碍性和性能测试
 - **@axe-core/playwright 4.11.0** - 无障碍性测试
@@ -215,7 +215,7 @@ content/
 ## 8. 国际化与 SEO
 
 ### 国际化
-- **next-intl 4.5.2** - Next.js 国际化框架
+- **next-intl 4.6.1** - Next.js 国际化框架
 - **支持语言** - 英语(en) + 中文(zh)
 - **翻译管理** - 基于Git工作流的手动翻译管理
 - **类型安全** - strictMessageTypeSafety 确保翻译完整性
@@ -238,7 +238,7 @@ content/
 ## 9. 可选扩展
 
 ### 媒体处理
-- **sharp 0.34.5** - 高性能图片处理库
+- **sharp** - 高性能图片处理库（未安装，按需添加）
 - **@react-pdf/renderer 4.3.1** - PDF 文档生成
 - **react-loading-skeleton** - 骨架屏加载状态（未安装，按需添加）
 

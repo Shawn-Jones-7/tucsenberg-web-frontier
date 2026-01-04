@@ -76,7 +76,6 @@ test-coverage-output.txt
 docs/data/memory/tasks_memory_*.json
 docs/data/003-Dashboard/
 docs/data/Data/
-docs/data/tucsenberg-web-frontier/
 
 # WebGUI generated files
 WebGUI.md
