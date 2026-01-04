@@ -9,6 +9,9 @@ import { NextRequest } from 'next/server';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '@/app/api/csp-report/route';
 
+// Unmock zod to use real validation in this test file
+vi.unmock('zod');
+
 describe('CSP Report API Route - 核心功能测试', () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -125,7 +128,7 @@ describe('CSP Report API Route - 核心功能测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       const responseData = await response.json();
       expect(responseData.error).toBe('Invalid CSP report format');
     });
@@ -141,7 +144,7 @@ describe('CSP Report API Route - 核心功能测试', () => {
 
       const response = await POST(request);
 
-      expect(response.status).toBe(500);
+      expect(response.status).toBe(400);
       const responseData = await response.json();
       expect(responseData.error).toBe('Invalid JSON format');
     });
@@ -162,9 +165,9 @@ describe('CSP Report API Route - 核心功能测试', () => {
       });
 
       const response = await POST(request);
+      const responseData = await response.json();
 
       expect(response.status).toBe(400);
-      const responseData = await response.json();
       expect(responseData.error).toBe('Invalid CSP report format');
     });
 

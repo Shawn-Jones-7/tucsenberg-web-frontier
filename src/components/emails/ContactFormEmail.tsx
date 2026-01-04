@@ -10,7 +10,7 @@ const ACCENT_COLOR = COLORS.primary;
 const CONTENT_BACKGROUND = COLORS.contentBackground;
 const PREVIEW_PREFIX = 'New contact form submission';
 const FOOTER_TEXT =
-  'This email was sent from the Tucsenberg website contact form.';
+  'This email was sent from the [PROJECT_NAME] website contact form.';
 
 const valueTextStyle: CSSProperties = {
   margin: '0',

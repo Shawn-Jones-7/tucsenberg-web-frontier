@@ -28,7 +28,10 @@ describe('Security Configuration', () => {
 
       const csp = generateCSP();
       expect(csp).toContain("default-src 'self'");
-      expect(csp).not.toContain("'unsafe-inline'");
+      // style-src allows 'unsafe-inline' for Tailwind CSS compatibility
+      expect(csp).toMatch(/style-src[^;]*'unsafe-inline'/);
+      // script-src should NOT contain unsafe-inline in production
+      expect(csp).not.toMatch(/script-src[^;]*'unsafe-inline'/);
       expect(csp).not.toContain("'unsafe-eval'");
       expect(csp).toContain('upgrade-insecure-requests');
     });

@@ -191,34 +191,34 @@ export const errorBoundaryMessages = {
  * 用于测试 metadata 生成和 SEO 组件
  */
 export const seoMessages = {
-  title: 'Tucsenberg Web Frontier',
+  title: '[PROJECT_NAME]',
   description:
     'Modern B2B Enterprise Web Platform with Next.js 15, React 19, and TypeScript',
-  siteName: 'Tucsenberg Web Frontier',
+  siteName: '[PROJECT_NAME]',
   keywords: 'Next.js, React, TypeScript, B2B, Enterprise, Web Platform',
   pages: {
     home: {
-      title: 'Tucsenberg Web Frontier - Modern B2B Enterprise Platform',
+      title: '[PROJECT_NAME] - Modern B2B Enterprise Platform',
       description:
         'Build modern B2B applications with Next.js 15, React 19, TypeScript, and enterprise-grade features.',
     },
     about: {
-      title: 'About Us - Tucsenberg Web Frontier',
+      title: 'About Us - [PROJECT_NAME]',
       description:
         'Learn about our mission to provide cutting-edge B2B enterprise web solutions.',
     },
     contact: {
-      title: 'Contact Us - Tucsenberg Web Frontier',
+      title: 'Contact Us - [PROJECT_NAME]',
       description:
         'Get in touch with our team for enterprise solutions and support.',
     },
     products: {
-      title: 'Products - Tucsenberg Web Frontier',
+      title: 'Products - [PROJECT_NAME]',
       description:
         'Discover our enterprise-grade products and solutions for modern businesses.',
     },
     blog: {
-      title: 'Blog - Tucsenberg Web Frontier',
+      title: 'Blog - [PROJECT_NAME]',
       description:
         'Latest insights, tutorials, and updates from our development team.',
     },

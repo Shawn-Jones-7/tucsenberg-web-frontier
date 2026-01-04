@@ -203,7 +203,7 @@ function getDefaultData(t: (key: string) => string) {
         icon: Github,
         title: t('actions.github.title'),
         description: t('actions.github.description'),
-        href: 'https://github.com/tucsenberg/web-frontier',
+        href: '[GITHUB_URL]',
         primary: true,
         external: true,
       },
@@ -211,7 +211,7 @@ function getDefaultData(t: (key: string) => string) {
         icon: Star, // Using Star as placeholder for Download
         title: t('actions.download.title'),
         description: t('actions.download.description'),
-        href: 'https://github.com/tucsenberg/web-frontier/archive/main.zip',
+        href: '[GITHUB_URL]/archive/main.zip',
         primary: false,
         external: true,
       },
@@ -237,10 +237,10 @@ export function CTABannerBlock({
   actions,
   stats,
   i18nNamespace = 'home.cta',
-  githubHref = 'https://github.com/tucsenberg/web-frontier',
+  githubHref = '[GITHUB_URL]',
   demoHref = '#demo',
-  discussionsHref = 'https://github.com/tucsenberg/web-frontier/discussions',
-  issuesHref = 'https://github.com/tucsenberg/web-frontier/issues',
+  discussionsHref = '[GITHUB_URL]/discussions',
+  issuesHref = '[GITHUB_URL]/issues',
 }: CTABannerBlockProps = {}) {
   const t = useTranslations(i18nNamespace);
 

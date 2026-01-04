@@ -1,7 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale, Messages } from '@/types/i18n';
 import { i18nCache, I18nCacheManager } from '@/lib/i18n-cache';
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
 
 // Mock localStorage
 const mockLocalStorage = {
@@ -269,7 +268,7 @@ describe('I18nCacheManager', () => {
       await cacheManager.getMessages('en');
 
       const metrics = cacheManager.getMetrics();
-      expect(metrics.localeUsage.en).toBe(WEB_VITALS_CONSTANTS.CACHE_SIZE_TWO);
+      expect(metrics.localeUsage.en).toBe(2);
       expect(metrics.localeUsage.zh).toBe(1);
     });
 
@@ -310,7 +309,7 @@ describe('I18nCacheManager', () => {
       await cacheManager.getMessages('zh');
 
       const stats = cacheManager.getCacheStats();
-      expect(stats.size).toBe(WEB_VITALS_CONSTANTS.CACHE_SIZE_TWO);
+      expect(stats.size).toBe(2);
       expect(stats.totalHits).toBeGreaterThanOrEqual(0);
       expect(stats.averageAge).toBeGreaterThanOrEqual(0);
     });

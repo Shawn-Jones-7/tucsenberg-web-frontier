@@ -5,9 +5,32 @@ import {
   isPlaceholder,
   SITE_CONFIG,
   validateSiteConfig,
+  type SiteConfig,
 } from '../site-config';
 
 describe('site-config', () => {
+  const PLACEHOLDER_CONFIG = {
+    baseUrl: 'https://example.com',
+    name: '[PROJECT_NAME]',
+    description: 'Modern B2B Enterprise Web Platform with Next.js',
+    seo: {
+      titleTemplate: '%s | [PROJECT_NAME]',
+      defaultTitle: '[PROJECT_NAME]',
+      defaultDescription: 'Modern B2B Enterprise Web Platform with Next.js',
+      keywords: ['Next.js', 'React', 'TypeScript', 'B2B', 'Enterprise'],
+    },
+    social: {
+      twitter: '[TWITTER_URL]',
+      linkedin: '[LINKEDIN_URL]',
+      github: '[GITHUB_URL]',
+    },
+    contact: {
+      phone: '+1-555-0123',
+      email: '[CONTACT_EMAIL]',
+      whatsappNumber: '+1-555-0123',
+    },
+  } as const satisfies SiteConfig;
+
   describe('SITE_CONFIG', () => {
     it('should export SITE_CONFIG object', () => {
       expect(SITE_CONFIG).toBeDefined();
@@ -61,10 +84,14 @@ describe('site-config', () => {
 
     it('should return false in production when baseUrl contains example.com', () => {
       vi.stubEnv('NODE_ENV', 'production');
-      // SITE_CONFIG.baseUrl defaults to example.com when env vars not set
-      const result = isBaseUrlConfigured();
-      // Since baseUrl contains 'example.com', should return false in production
-      expect(result).toBe(false);
+      expect(isBaseUrlConfigured('https://example.com')).toBe(false);
+    });
+
+    it('should return true in production when baseUrl is configured', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      expect(isBaseUrlConfigured('https://b2b-web-template.vercel.app')).toBe(
+        true,
+      );
     });
   });
 
@@ -85,28 +112,24 @@ describe('site-config', () => {
     });
 
     it('should detect placeholder in SITE_CONFIG.name', () => {
-      const placeholders = getUnconfiguredPlaceholders();
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
       const namePlaceholder = placeholders.find(
         (p) => p.path === 'SITE_CONFIG.name',
       );
-      if (isPlaceholder(SITE_CONFIG.name)) {
-        expect(namePlaceholder).toBeDefined();
-        expect(namePlaceholder?.value).toBe(SITE_CONFIG.name);
-      }
+      expect(namePlaceholder).toBeDefined();
+      expect(namePlaceholder?.value).toBe(PLACEHOLDER_CONFIG.name);
     });
 
     it('should detect placeholder in SITE_CONFIG.seo.defaultTitle', () => {
-      const placeholders = getUnconfiguredPlaceholders();
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
       const titlePlaceholder = placeholders.find(
         (p) => p.path === 'SITE_CONFIG.seo.defaultTitle',
       );
-      if (isPlaceholder(SITE_CONFIG.seo.defaultTitle)) {
-        expect(titlePlaceholder).toBeDefined();
-      }
+      expect(titlePlaceholder).toBeDefined();
     });
 
     it('should detect placeholder in social links', () => {
-      const placeholders = getUnconfiguredPlaceholders();
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
       const socialPaths = [
         'SITE_CONFIG.social.twitter',
         'SITE_CONFIG.social.linkedin',
@@ -115,31 +138,26 @@ describe('site-config', () => {
 
       for (const path of socialPaths) {
         const key = path.split('.').pop() as keyof typeof SITE_CONFIG.social;
-        if (isPlaceholder(SITE_CONFIG.social[key])) {
-          const found = placeholders.find((p) => p.path === path);
-          expect(found).toBeDefined();
-        }
+        const found = placeholders.find((p) => p.path === path);
+        expect(found).toBeDefined();
+        expect(found?.value).toBe(PLACEHOLDER_CONFIG.social[key]);
       }
     });
 
     it('should detect placeholder in contact email', () => {
-      const placeholders = getUnconfiguredPlaceholders();
-      if (isPlaceholder(SITE_CONFIG.contact.email)) {
-        const emailPlaceholder = placeholders.find(
-          (p) => p.path === 'SITE_CONFIG.contact.email',
-        );
-        expect(emailPlaceholder).toBeDefined();
-      }
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
+      const emailPlaceholder = placeholders.find(
+        (p) => p.path === 'SITE_CONFIG.contact.email',
+      );
+      expect(emailPlaceholder).toBeDefined();
     });
 
     it('should detect titleTemplate containing [PROJECT_NAME]', () => {
-      const placeholders = getUnconfiguredPlaceholders();
-      if (SITE_CONFIG.seo.titleTemplate.includes('[PROJECT_NAME]')) {
-        const templatePlaceholder = placeholders.find(
-          (p) => p.path === 'SITE_CONFIG.seo.titleTemplate',
-        );
-        expect(templatePlaceholder).toBeDefined();
-      }
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
+      const templatePlaceholder = placeholders.find(
+        (p) => p.path === 'SITE_CONFIG.seo.titleTemplate',
+      );
+      expect(templatePlaceholder).toBeDefined();
     });
   });
 
@@ -160,7 +178,7 @@ describe('site-config', () => {
 
     it('should return warnings in non-production environment', () => {
       vi.stubEnv('NODE_ENV', 'development');
-      const result = validateSiteConfig();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
       // In development, placeholders generate warnings not errors
       expect(result.valid).toBe(true);
       expect(result.warnings.length).toBeGreaterThan(0);
@@ -168,14 +186,14 @@ describe('site-config', () => {
 
     it('should have valid=true when errors array is empty', () => {
       vi.stubEnv('NODE_ENV', 'development');
-      const result = validateSiteConfig();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
       expect(result.valid).toBe(result.errors.length === 0);
     });
 
     it('should include placeholder paths in warning messages', () => {
       vi.stubEnv('NODE_ENV', 'development');
-      const result = validateSiteConfig();
-      const placeholders = getUnconfiguredPlaceholders();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
 
       for (const placeholder of placeholders) {
         const hasWarning = result.warnings.some((w) =>
@@ -187,7 +205,7 @@ describe('site-config', () => {
 
     it('should not add baseUrl warning in development (isBaseUrlConfigured returns true)', () => {
       vi.stubEnv('NODE_ENV', 'development');
-      const result = validateSiteConfig();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
       // In development, isBaseUrlConfigured() returns true, so no baseUrl warning
       const hasBaseUrlWarning = result.warnings.some((w) =>
         w.includes('SITE_CONFIG.baseUrl'),
@@ -197,7 +215,7 @@ describe('site-config', () => {
 
     it('should return errors in production environment for placeholders', () => {
       vi.stubEnv('NODE_ENV', 'production');
-      const result = validateSiteConfig();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
       // In production, placeholders generate errors not warnings
       expect(result.valid).toBe(false);
       expect(result.errors.length).toBeGreaterThan(0);
@@ -205,7 +223,7 @@ describe('site-config', () => {
 
     it('should add baseUrl error in production when not configured', () => {
       vi.stubEnv('NODE_ENV', 'production');
-      const result = validateSiteConfig();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
       // In production with example.com baseUrl, should have baseUrl error
       const hasBaseUrlError = result.errors.some((e) =>
         e.includes('SITE_CONFIG.baseUrl'),
@@ -215,8 +233,8 @@ describe('site-config', () => {
 
     it('should include placeholder paths in error messages in production', () => {
       vi.stubEnv('NODE_ENV', 'production');
-      const result = validateSiteConfig();
-      const placeholders = getUnconfiguredPlaceholders();
+      const result = validateSiteConfig(PLACEHOLDER_CONFIG);
+      const placeholders = getUnconfiguredPlaceholders(PLACEHOLDER_CONFIG);
 
       for (const placeholder of placeholders) {
         const hasError = result.errors.some((e) =>
@@ -224,6 +242,17 @@ describe('site-config', () => {
         );
         expect(hasError).toBe(true);
       }
+    });
+
+    it('should return valid result when production config is configured', () => {
+      vi.stubEnv('NODE_ENV', 'production');
+      const configuredConfig = {
+        ...SITE_CONFIG,
+        baseUrl: 'https://b2b-web-template.vercel.app',
+      } satisfies SiteConfig;
+      const result = validateSiteConfig(configuredConfig);
+      expect(result.valid).toBe(true);
+      expect(result.errors.length).toBe(0);
     });
   });
 });

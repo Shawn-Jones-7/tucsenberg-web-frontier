@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_CONSENT,
   type CookieConsentContextValue,
@@ -8,6 +8,14 @@ import {
 const { mockUseLocale, mockUseCookieConsentOptional } = vi.hoisted(() => ({
   mockUseLocale: vi.fn(() => 'en'),
   mockUseCookieConsentOptional: vi.fn<() => CookieConsentContextValue | null>(),
+}));
+
+const { mockStoreAttributionData } = vi.hoisted(() => ({
+  mockStoreAttributionData: vi.fn(),
+}));
+
+vi.mock('@/lib/utm', () => ({
+  storeAttributionData: mockStoreAttributionData,
 }));
 
 vi.mock('next-intl', () => ({
@@ -64,8 +72,16 @@ function createCookieConsentValue(
 }
 
 describe('EnterpriseAnalyticsIsland', () => {
-  it('renders nothing when consent system exists but is not ready', async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    vi.resetModules();
     dynamicIndex = 0;
+    // Reset window.dataLayer and window.gtag
+    delete (window as unknown as Record<string, unknown>).dataLayer;
+    delete (window as unknown as Record<string, unknown>).gtag;
+  });
+
+  it('renders nothing when consent system exists but is not ready', async () => {
     mockUseCookieConsentOptional.mockReturnValue(
       createCookieConsentValue({ ready: false }),
     );
@@ -79,21 +95,54 @@ describe('EnterpriseAnalyticsIsland', () => {
   });
 
   it('renders analytics components when no consent system exists (prod)', async () => {
-    dynamicIndex = 0;
     mockUseCookieConsentOptional.mockReturnValue(null);
-
-    const originalNodeEnv = process.env.NODE_ENV;
     vi.stubEnv('NODE_ENV', 'production');
 
-    try {
-      const { EnterpriseAnalyticsIsland } =
-        await import('../enterprise-analytics-island');
-      render(<EnterpriseAnalyticsIsland />);
+    const { EnterpriseAnalyticsIsland } =
+      await import('../enterprise-analytics-island');
+    render(<EnterpriseAnalyticsIsland />);
 
-      expect(screen.getByTestId('analytics')).toBeInTheDocument();
-      expect(screen.getByTestId('speed-insights')).toBeInTheDocument();
-    } finally {
-      vi.stubEnv('NODE_ENV', originalNodeEnv);
-    }
+    expect(screen.getByTestId('analytics')).toBeInTheDocument();
+    expect(screen.getByTestId('speed-insights')).toBeInTheDocument();
+  });
+
+  it('initializes GA4 dataLayer and gtag when enabled in production', async () => {
+    mockUseCookieConsentOptional.mockReturnValue(null);
+    vi.stubEnv('NODE_ENV', 'production');
+    vi.stubEnv('NEXT_PUBLIC_GA_MEASUREMENT_ID', 'G-TEST123');
+
+    const { EnterpriseAnalyticsIsland } =
+      await import('../enterprise-analytics-island');
+    render(<EnterpriseAnalyticsIsland />);
+
+    // GA4 initialization should set up dataLayer
+    expect(window.dataLayer).toBeDefined();
+    expect(Array.isArray(window.dataLayer)).toBe(true);
+    expect(typeof window.gtag).toBe('function');
+  });
+
+  it('calls storeAttributionData on mount', async () => {
+    mockUseCookieConsentOptional.mockReturnValue(null);
+
+    const { EnterpriseAnalyticsIsland } =
+      await import('../enterprise-analytics-island');
+    render(<EnterpriseAnalyticsIsland />);
+
+    expect(mockStoreAttributionData).toHaveBeenCalledTimes(1);
+  });
+
+  it('renders nothing when analytics consent is denied', async () => {
+    mockUseCookieConsentOptional.mockReturnValue(
+      createCookieConsentValue({
+        ready: true,
+        consent: { ...DEFAULT_CONSENT, analytics: false },
+      }),
+    );
+
+    const { EnterpriseAnalyticsIsland } =
+      await import('../enterprise-analytics-island');
+    const { container } = render(<EnterpriseAnalyticsIsland />);
+
+    expect(container).toBeEmptyDOMElement();
   });
 });

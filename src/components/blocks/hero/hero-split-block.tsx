@@ -171,7 +171,7 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_DEMO_HREF = '#demo';
-const DEFAULT_GITHUB_HREF = 'https://github.com/tucsenberg/web-frontier';
+const DEFAULT_GITHUB_HREF = '[GITHUB_URL]';
 
 function HeroSplitBlockBody({
   t,

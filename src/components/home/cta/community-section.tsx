@@ -32,7 +32,7 @@ export function CommunitySection({ t }: CommunitySectionProps) {
               asChild
             >
               <a
-                href='https://github.com/tucsenberg/web-frontier/discussions'
+                href='[GITHUB_URL]/discussions'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='flex items-center gap-2'
@@ -46,7 +46,7 @@ export function CommunitySection({ t }: CommunitySectionProps) {
               asChild
             >
               <a
-                href='https://github.com/tucsenberg/web-frontier/issues'
+                href='[GITHUB_URL]/issues'
                 target='_blank'
                 rel='noopener noreferrer'
                 className='flex items-center gap-2'

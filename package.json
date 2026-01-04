@@ -1,5 +1,5 @@
 {
-  "name": "tucsenberg-web-frontier",
+  "name": "b2b-web-template",
   "version": "0.1.0",
   "private": true,
   "engines": {
@@ -12,7 +12,7 @@
     "dev:grab": "npx --yes @react-grab/claude-code@latest && next dev --turbopack",
     "dev:webpack": "next dev",
     "email:dev": "email dev --dir src/components/emails --port 3001",
-    "prebuild": "node scripts/copy-translations.js && tsx scripts/generate-content-manifest.ts && pnpm content:slug-check",
+    "prebuild": "node scripts/copy-translations.js && tsx scripts/generate-content-manifest.ts && pnpm content:slug-check && pnpm validate:config",
     "build": "next build",
     "build:analyze": "ANALYZE=true TURBOPACK_STATS=1 next build",
     "build:analyze:webpack": "ANALYZE=true next build --webpack",
@@ -42,6 +42,7 @@
     "security:audit": "pnpm audit --audit-level moderate",
     "security:semgrep": "bash -lc 'export PATH=\"$HOME/.local/bin:/Library/Frameworks/Python.framework/Versions/3.12/bin:$PATH\"; SEMGR=$(command -v semgrep || true); if [ -z \"$SEMGR\" ]; then python3 -m pip install --user \"semgrep<2\" >/dev/null 2>&1; SEMGR=$(command -v semgrep || true); fi; if [ -z \"$SEMGR\" ] || [ ! -x \"$SEMGR\" ]; then echo \"semgrep not installed\"; exit 127; fi; \"$SEMGR\" --config semgrep.yml src/'",
     "security:check": "pnpm security:audit && pnpm security:semgrep",
+    "lint:pii": "node scripts/check-pii-in-logs.js",
     "i18n:validate:code": "tsx scripts/validate-i18n-content.ts",
     "i18n:shape:check": "node scripts/i18n-shape-check.js",
     "unused:check": "knip",
@@ -71,6 +72,7 @@
     "ci:metrics": "pnpm run arch:metrics",
     "perf:check": "echo 'Performance monitoring via Lighthouse CI - see lighthouserc.js'",
     "config:check": "node scripts/check-config-consistency.js",
+    "validate:config": "tsx scripts/validate-production-config.ts",
     "eslint:disable:check": "node scripts/check-eslint-disable-usage.js",
     "test:e2e:no-reuse": "CI=1 pnpm test:e2e",
     "test:e2e:ci-local": "CI=1 pnpm test:e2e",
@@ -117,7 +119,6 @@
     "server-only": "^0.0.1",
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.4.0",
-    "web-vitals": "^5.1.0",
     "whatsapp": "0.0.5-Alpha",
     "zod": "^4.2.1"
   },

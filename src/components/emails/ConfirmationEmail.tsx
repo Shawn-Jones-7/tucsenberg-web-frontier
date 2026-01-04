@@ -8,7 +8,7 @@ import { COLORS, FONT_SIZES, SPACING } from '@/components/emails/theme';
 const ACCENT_COLOR = COLORS.primary;
 const CONTENT_BACKGROUND = COLORS.background;
 const PREVIEW_TEXT = 'We received your message and will reply within 24 hours.';
-const FOOTER_TEXT = '© 2024 Tucsenberg. All rights reserved.';
+const FOOTER_TEXT = '© 2024 [PROJECT_NAME]. All rights reserved.';
 
 const paragraphStyle: CSSProperties = {
   margin: `0 0 ${SPACING.md} 0`,
@@ -60,7 +60,7 @@ export function ConfirmationEmail(data: EmailTemplateData) {
       </Text>
       <Text style={paragraphStyle}>Best regards,</Text>
       <Text style={{ ...paragraphStyle, fontWeight: 'bold' }}>
-        The Tucsenberg Team
+        The [TEAM_NAME] Team
       </Text>
     </EmailLayout>
   );

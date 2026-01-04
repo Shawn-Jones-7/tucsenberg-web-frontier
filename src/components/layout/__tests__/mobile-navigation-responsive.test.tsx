@@ -27,7 +27,7 @@ vi.mock('next-intl', () => ({
     const translations: Record<string, string> = {
       'accessibility.closeMenu': 'Close menu',
       'accessibility.openMenu': 'Open menu',
-      'seo.siteName': 'Tucsenberg',
+      'seo.siteName': '[PROJECT_NAME]',
       'seo.description': 'Modern web development',
     };
     return translations[key] || key;
@@ -102,7 +102,7 @@ describe('Mobile Navigation Responsive - Main Tests', () => {
           'navigation.diagnostics': 'Diagnostics',
           'accessibility.closeMenu': 'Close menu',
           'accessibility.openMenu': 'Open menu',
-          'seo.siteName': 'Tucsenberg',
+          'seo.siteName': '[PROJECT_NAME]',
           'seo.description': 'Modern web development',
         };
         return translations[key] || key; // key 来自测试数据，安全

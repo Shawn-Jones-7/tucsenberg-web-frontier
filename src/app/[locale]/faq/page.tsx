@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { getTranslations, setRequestLocale } from 'next-intl/server';
 import type { Locale } from '@/types/content.types';
@@ -23,6 +24,25 @@ import { Link } from '@/i18n/routing';
 
 export function generateStaticParams() {
   return generateLocaleStaticParams();
+}
+
+function FaqLoadingSkeleton() {
+  return (
+    <div className='container mx-auto px-4 py-8 md:py-12'>
+      <div className='mb-8 md:mb-12'>
+        <div className='mb-4 h-10 w-48 animate-pulse rounded bg-muted' />
+        <div className='h-6 w-96 max-w-full animate-pulse rounded bg-muted' />
+      </div>
+      <div className='space-y-4'>
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div
+            key={i}
+            className='h-16 animate-pulse rounded bg-muted'
+          />
+        ))}
+      </div>
+    </div>
+  );
 }
 
 interface FaqPageProps {
@@ -130,8 +150,7 @@ function parseFaqContent(rawContent: string): FaqCategory[] {
   return categories.filter((category) => category.items.length > 0);
 }
 
-export default async function FaqPage({ params }: FaqPageProps) {
-  const { locale } = await params;
+async function FaqContent({ locale }: { locale: string }) {
   setRequestLocale(locale);
 
   const page = getPageBySlug('faq', locale as Locale);
@@ -216,5 +235,15 @@ export default async function FaqPage({ params }: FaqPageProps) {
         </section>
       </main>
     </>
+  );
+}
+
+export default async function FaqPage({ params }: FaqPageProps) {
+  const { locale } = await params;
+
+  return (
+    <Suspense fallback={<FaqLoadingSkeleton />}>
+      <FaqContent locale={locale} />
+    </Suspense>
   );
 }

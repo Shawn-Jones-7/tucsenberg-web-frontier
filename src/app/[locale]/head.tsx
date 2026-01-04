@@ -91,11 +91,11 @@ function buildSubsetStyle(sources: SubsetSource[]): string | null {
         .map((entry) => `url('${entry.href}') format('${entry.format}')`)
         .join(', ');
 
-      return `@font-face{font-family:'Tucsenberg SC Subset';font-style:normal;font-weight:${weight};font-display:swap;unicode-range:U+4E00-9FFF;src:${ordered};}`;
+      return `@font-face{font-family:'Template SC Subset';font-style:normal;font-weight:${weight};font-display:swap;unicode-range:U+4E00-9FFF;src:${ordered};}`;
     })
     .join('');
 
-  return `${fontFaceBlocks}:root{--font-chinese-stack:'Tucsenberg SC Subset','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Source Han Sans SC','Noto Sans SC','Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif;}`;
+  return `${fontFaceBlocks}:root{--font-chinese-stack:'Template SC Subset','PingFang SC','Hiragino Sans GB','Microsoft YaHei','Source Han Sans SC','Noto Sans SC','Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif;}`;
 }
 
 export default function LocaleHead(): ReactElement {

@@ -4,8 +4,6 @@
  * 遵循项目编码标准，提高测试代码的可维护性
  */
 
-// 导入Web Vitals相关常量
-
 // 导入UI相关常量
 import {
   TEST_CONTENT_LIMITS,
@@ -13,10 +11,6 @@ import {
   TEST_SCREEN_CONSTANTS,
   TEST_SPECIAL_CONSTANTS,
 } from './test-ui-constants';
-import {
-  TEST_WEB_VITALS_DIAGNOSTICS,
-  WEB_VITALS_CONSTANTS,
-} from './test-web-vitals-constants';
 
 // ==================== 应用特定测试常量 ====================
 
@@ -461,10 +455,6 @@ export const TEST_CONSTANTS = {
   SCREEN: TEST_SCREEN_CONSTANTS,
   SPECIAL: TEST_SPECIAL_CONSTANTS,
 
-  // 性能常量
-  WEB_VITALS: WEB_VITALS_CONSTANTS,
-  WEB_VITALS_DIAGNOSTICS: TEST_WEB_VITALS_DIAGNOSTICS,
-
   // 应用常量（从外部导入）
   APP: TEST_APP_CONSTANTS,
   TIME: TEST_TIME_CALCULATIONS,
@@ -475,8 +465,6 @@ export const TEST_CONSTANTS = {
 // 兼容旧版测试用到的下划线命名
 // eslint-disable-next-line no-underscore-dangle
 export const _TEST_CONSTANTS = TEST_CONSTANTS;
-// eslint-disable-next-line no-underscore-dangle
-export const _WEB_VITALS_CONSTANTS = WEB_VITALS_CONSTANTS;
 
 // ==================== 单独导出常用常量 ====================
 
@@ -487,9 +475,3 @@ export {
   TEST_SCREEN_CONSTANTS,
   TEST_SPECIAL_CONSTANTS,
 } from './test-ui-constants';
-
-// 导出Web Vitals相关常量
-export {
-  TEST_WEB_VITALS_DIAGNOSTICS,
-  WEB_VITALS_CONSTANTS,
-} from './test-web-vitals-constants';

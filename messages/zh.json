@@ -2,6 +2,9 @@
   "_comment": "⚠️ 此文件仅用于 VITEST 测试 Mock - 请勿在生产代码中使用",
   "_usage": "由 vi.mock() 在 Vitest 测试中引用。运行时翻译从 messages/[locale]/critical.json 和 messages/[locale]/deferred.json 加载。",
   "_last_updated": "2025-11-26",
+  "monitoring": {
+    "loadError": "监控组件加载失败"
+  },
   "common": {
     "loading": "加载中…",
     "error": "发生错误",
@@ -386,13 +389,13 @@
         "issues": "报告问题"
       }
     },
-    "title": "Tucsenberg Web Frontier",
+    "title": "[PROJECT_NAME]",
     "subtitle": "现代化B2B企业级Web平台",
-    "description": "基于Next.js 15、React 19和TypeScript构建的现代化B2B企业级Web平台。",
+    "description": "基于Next.js 16、React 19和TypeScript构建的现代化B2B企业级Web平台。",
     "getStarted": "开始使用",
     "learnMore": "了解更多",
-    "welcome": "欢迎来到 Tucsenberg",
-    "modernApp": "基于 Next.js 15 和 React 19 构建的现代化Web应用",
+    "welcome": "欢迎来到 [PROJECT_NAME]",
+    "modernApp": "基于 Next.js 16 和 React 19 构建的现代化Web应用",
     "features": {
       "title": "特性",
       "performance": {
@@ -416,6 +419,7 @@
     "testingReadyDesc": "完整的端到端测试配置"
   },
   "footer": {
+    "systemStatus": "系统运行正常。",
     "sections": {
       "product": {
         "title": "产品",
@@ -437,8 +441,19 @@
         "community": "Vercel社区",
         "vercel": "Vercel"
       },
+      "navigation": {
+        "title": "导航",
+        "home": "首页",
+        "about": "关于",
+        "products": "产品",
+        "blog": "博客",
+        "contact": "联系"
+      },
       "social": {
-        "title": "社交"
+        "title": "社交",
+        "twitter": "Twitter",
+        "linkedin": "LinkedIn",
+        "github": "GitHub"
       },
       "support": {
         "title": "支持",
@@ -502,7 +517,7 @@
     "learn": "学习",
     "examples": "示例",
     "goToNextjs": "访问nextjs.org",
-    "copyright": "© {year} Tucsenberg。保留所有权利。",
+    "copyright": "(c) {year} [PROJECT_NAME]。保留所有权利。",
     "description": "现代B2B企业级网络解决方案，采用前沿技术。"
   },
   "accessibility": {
@@ -515,29 +530,29 @@
     "themeSelector": "选择主题"
   },
   "seo": {
-    "title": "图森堡网络前沿",
-    "description": "基于Next.js 15、React 19和TypeScript的现代化B2B企业级网络平台",
-    "siteName": "图森堡网络前沿",
+    "title": "[PROJECT_NAME]",
+    "description": "基于Next.js 16、React 19和TypeScript的现代化B2B企业级网络平台",
+    "siteName": "[PROJECT_NAME]",
     "keywords": "Next.js, React, TypeScript, B2B, 企业级, 网络平台",
     "pages": {
       "home": {
-        "title": "图森堡网络前沿 - 现代化B2B企业级平台",
-        "description": "使用Next.js 15、React 19、TypeScript构建现代化B2B应用，提供企业级功能。"
+        "title": "[PROJECT_NAME] - 现代化B2B企业级平台",
+        "description": "使用Next.js 16、React 19、TypeScript构建现代化B2B应用，提供企业级功能。"
       },
       "about": {
-        "title": "关于我们 - 图森堡网络前沿",
+        "title": "关于我们 - [PROJECT_NAME]",
         "description": "了解我们为企业提供前沿B2B网络解决方案的使命。"
       },
       "contact": {
-        "title": "联系我们 - 图森堡网络前沿",
+        "title": "联系我们 - [PROJECT_NAME]",
         "description": "联系我们的团队获取企业解决方案和技术支持。"
       },
       "products": {
-        "title": "产品中心 - 图森堡网络前沿",
+        "title": "产品中心 - [PROJECT_NAME]",
         "description": "探索我们为现代企业提供的企业级产品和解决方案。"
       },
       "blog": {
-        "title": "技术博客 - 图森堡网络前沿",
+        "title": "技术博客 - [PROJECT_NAME]",
         "description": "来自我们开发团队的最新见解、教程和技术更新。"
       }
     }
@@ -656,23 +671,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "图森堡网络前沿",
+      "name": "[PROJECT_NAME]",
       "description": "现代化B2B企业级网络平台",
-      "phone": "+86-400-123-4567",
+      "phone": "[PHONE]",
       "social": {
-        "twitter": "https://twitter.com/tucsenberg",
-        "linkedin": "https://linkedin.com/company/tucsenberg",
-        "github": "https://github.com/tucsenberg"
+        "twitter": "[TWITTER_URL]",
+        "linkedin": "[LINKEDIN_URL]",
+        "github": "[GITHUB_URL]"
       }
     },
     "website": {
-      "name": "图森堡网络前沿",
-      "description": "基于Next.js 15的现代化B2B企业级网络平台"
+      "name": "[PROJECT_NAME]",
+      "description": "基于Next.js 16的现代化B2B企业级网络平台"
     },
     "article": {
       "defaultTitle": "文章",
       "defaultDescription": "文章描述",
-      "defaultAuthor": "图森堡团队"
+      "defaultAuthor": "[TEAM_NAME]"
     },
     "product": {
       "defaultName": "产品",
@@ -930,21 +945,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "电话号码",
   "organization": {
-    "name": "图森堡网络前沿",
+    "name": "[PROJECT_NAME]",
     "description": "现代化B2B企业级网络平台",
-    "phone": "+86-400-123-4567",
+    "phone": "[PHONE]",
     "social": {
-      "twitter": "https://twitter.com/tucsenberg",
-      "linkedin": "https://linkedin.com/company/tucsenberg",
-      "github": "https://github.com/tucsenberg"
+      "twitter": "[TWITTER_URL]",
+      "linkedin": "[LINKEDIN_URL]",
+      "github": "[GITHUB_URL]"
     }
   },
   "website": {
-    "name": "图森堡网络前沿",
-    "description": "基于Next.js 15的现代化B2B企业级网络平台"
+    "name": "[PROJECT_NAME]",
+    "description": "基于Next.js 16的现代化B2B企业级网络平台"
   },
   "article": {
-    "defaultAuthor": "图森堡团队"
+    "defaultAuthor": "[TEAM_NAME]"
   },
   "blog": {
     "pageTitle": "博客",
@@ -1070,7 +1085,7 @@
       "turnstileRequired": "请完成安全验证。"
     }
   },
-  "title": "图森堡网络前沿",
+  "title": "[PROJECT_NAME]",
   "trust": {
     "testimonials": {
       "title": "客户评价",

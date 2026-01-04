@@ -58,6 +58,7 @@ export interface ContactFormFeatures {
   showPrivacyCheckbox: boolean;
   showMarketingConsent: boolean;
   useWebsiteHoneypot: boolean;
+  sendConfirmationEmail: boolean;
 }
 
 /**
@@ -206,6 +207,7 @@ export const CONTACT_FORM_CONFIG: ContactFormConfig = {
     showPrivacyCheckbox: true,
     showMarketingConsent: true,
     useWebsiteHoneypot: true,
+    sendConfirmationEmail: false,
   },
   validation: {
     emailDomainWhitelist: [],
@@ -228,6 +230,7 @@ const FEATURES_SCHEMA = z.object({
   showPrivacyCheckbox: z.boolean(),
   showMarketingConsent: z.boolean(),
   useWebsiteHoneypot: z.boolean(),
+  sendConfirmationEmail: z.boolean(),
 });
 
 const VALIDATION_SCHEMA = z

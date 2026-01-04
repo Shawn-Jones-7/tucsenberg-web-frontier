@@ -242,10 +242,7 @@ describe('CallToAction Component - Integration Tests', () => {
       render(<CallToAction />);
 
       const githubLink = screen.getByRole('link', { name: /primary\.github/i });
-      expect(githubLink).toHaveAttribute(
-        'href',
-        'https://github.com/tucsenberg/web-frontier',
-      );
+      expect(githubLink).toHaveAttribute('href', '[GITHUB_URL]');
 
       const demoLink = screen.getByRole('link', { name: /primary\.demo/i });
       expect(demoLink).toHaveAttribute('href', '#demo');

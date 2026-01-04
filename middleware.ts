@@ -27,14 +27,16 @@ function extractLocaleCandidate(pathname: string): string | undefined {
 
 function setLocaleCookie(resp: NextResponse, locale: string): void {
   try {
+    const isProduction = process.env.NODE_ENV === 'production';
     resp.cookies.set('NEXT_LOCALE', locale, {
       path: '/',
-      httpOnly: false,
+      httpOnly: true,
       sameSite: 'lax',
+      secure: isProduction,
     });
     resp.headers.append(
       'set-cookie',
-      `NEXT_LOCALE=${locale}; Path=/; SameSite=Lax`,
+      `NEXT_LOCALE=${locale}; Path=/; SameSite=Lax; HttpOnly${isProduction ? '; Secure' : ''}`,
     );
   } catch {
     // ignore cookie errors to keep middleware resilient
@@ -46,7 +48,8 @@ function tryHandleExplicitLocalizedRequest(
   nonce: string,
 ): NextResponse | null {
   const locale = extractLocaleCandidate(request.nextUrl.pathname);
-  if (locale && !request.cookies.get('NEXT_LOCALE')) {
+  const existingLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (locale && existingLocale !== locale) {
     const resp = NextResponse.next();
     setLocaleCookie(resp, locale);
     addSecurityHeaders(resp, nonce);
@@ -69,7 +72,7 @@ function tryHandleInvalidLocalePrefix(
   const [first, ...rest] = segments;
 
   // 已知 locale 前缀交由默认逻辑处理
-  if (SUPPORTED_LOCALES.has(first)) {
+  if (first && SUPPORTED_LOCALES.has(first)) {
     return null;
   }
 
@@ -106,9 +109,9 @@ export default function middleware(request: NextRequest) {
 
   const response = intlMiddleware(request);
   const locale = extractLocaleCandidate(request.nextUrl.pathname);
-  if (response && locale && !request.cookies.get('NEXT_LOCALE')) {
+  const existingLocale = request.cookies.get('NEXT_LOCALE')?.value;
+  if (response && locale && existingLocale !== locale)
     setLocaleCookie(response, locale);
-  }
   if (response) addSecurityHeaders(response, nonce);
   return response;
 }

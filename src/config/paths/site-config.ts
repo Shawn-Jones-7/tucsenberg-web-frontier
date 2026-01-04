@@ -2,39 +2,59 @@
  * 站点配置
  */
 
+export interface SiteConfig {
+  baseUrl: string;
+  name: string;
+  description: string;
+  seo: {
+    titleTemplate: string;
+    defaultTitle: string;
+    defaultDescription: string;
+    keywords: string[];
+  };
+  social: {
+    twitter: string;
+    linkedin: string;
+    github: string;
+  };
+  contact: {
+    phone: string;
+    email: string;
+    whatsappNumber: string;
+  };
+}
+
 // 站点配置
 export const SITE_CONFIG = {
   baseUrl:
     process.env['NEXT_PUBLIC_BASE_URL'] ||
     process.env['NEXT_PUBLIC_SITE_URL'] ||
-    'https://example.com',
-  name: '[PROJECT_NAME]',
-  description: 'Modern B2B Enterprise Web Platform with Next.js 15',
+    'https://b2b-web-template.vercel.app',
+  name: 'B2B Web Template',
+  description: 'Modern B2B Enterprise Web Platform with Next.js',
 
   // SEO配置
   seo: {
-    titleTemplate: '%s | [PROJECT_NAME]',
-    defaultTitle: '[PROJECT_NAME]',
-    defaultDescription: 'Modern B2B Enterprise Web Platform with Next.js 15',
+    titleTemplate: '%s | B2B Web Template',
+    defaultTitle: 'B2B Web Template',
+    defaultDescription: 'Modern B2B Enterprise Web Platform with Next.js',
     keywords: ['Next.js', 'React', 'TypeScript', 'B2B', 'Enterprise'],
   },
 
   // 社交媒体链接
   social: {
-    twitter: '[TWITTER_URL]',
-    linkedin: '[LINKEDIN_URL]',
-    github: '[GITHUB_URL]',
+    twitter: 'https://x.com/b2b-web-template',
+    linkedin: 'https://www.linkedin.com/company/b2b-web-template/',
+    github: 'https://github.com/Alx-707/b2b-web-template',
   },
 
   // 联系信息
   contact: {
     phone: '+1-555-0123',
-    email: '[CONTACT_EMAIL]',
+    email: 'hello@b2b-web-template.com',
     whatsappNumber: process.env['NEXT_PUBLIC_WHATSAPP_NUMBER'] ?? '+1-555-0123',
   },
-} as const;
-
-export type SiteConfig = typeof SITE_CONFIG;
+} as const satisfies SiteConfig;
 
 /**
  * Production placeholder pattern - matches [PLACEHOLDER_NAME] format
@@ -53,8 +73,9 @@ export function isPlaceholder(value: string): boolean {
  * Check if the base URL is properly configured for production
  * Returns false if using example.com or localhost in production
  */
-export function isBaseUrlConfigured(): boolean {
-  const { baseUrl } = SITE_CONFIG;
+export function isBaseUrlConfigured(
+  baseUrl: string = SITE_CONFIG.baseUrl,
+): boolean {
   if (process.env.NODE_ENV !== 'production') return true;
   return !baseUrl.includes('example.com') && !baseUrl.includes('localhost');
 }
@@ -63,56 +84,58 @@ export function isBaseUrlConfigured(): boolean {
  * Get all unconfigured placeholders in SITE_CONFIG
  * Returns array of { path, value } for each placeholder found
  */
-export function getUnconfiguredPlaceholders(): Array<{
+export function getUnconfiguredPlaceholders(
+  config: SiteConfig = SITE_CONFIG,
+): Array<{
   path: string;
   value: string;
 }> {
   const placeholders: Array<{ path: string; value: string }> = [];
 
   // Check top-level string values
-  if (isPlaceholder(SITE_CONFIG.name)) {
-    placeholders.push({ path: 'SITE_CONFIG.name', value: SITE_CONFIG.name });
+  if (isPlaceholder(config.name)) {
+    placeholders.push({ path: 'SITE_CONFIG.name', value: config.name });
   }
 
   // Check SEO config
-  if (isPlaceholder(SITE_CONFIG.seo.defaultTitle)) {
+  if (isPlaceholder(config.seo.defaultTitle)) {
     placeholders.push({
       path: 'SITE_CONFIG.seo.defaultTitle',
-      value: SITE_CONFIG.seo.defaultTitle,
+      value: config.seo.defaultTitle,
     });
   }
-  if (SITE_CONFIG.seo.titleTemplate.includes('[PROJECT_NAME]')) {
+  if (config.seo.titleTemplate.includes('[PROJECT_NAME]')) {
     placeholders.push({
       path: 'SITE_CONFIG.seo.titleTemplate',
-      value: SITE_CONFIG.seo.titleTemplate,
+      value: config.seo.titleTemplate,
     });
   }
 
   // Check social links
-  if (isPlaceholder(SITE_CONFIG.social.twitter)) {
+  if (isPlaceholder(config.social.twitter)) {
     placeholders.push({
       path: 'SITE_CONFIG.social.twitter',
-      value: SITE_CONFIG.social.twitter,
+      value: config.social.twitter,
     });
   }
-  if (isPlaceholder(SITE_CONFIG.social.linkedin)) {
+  if (isPlaceholder(config.social.linkedin)) {
     placeholders.push({
       path: 'SITE_CONFIG.social.linkedin',
-      value: SITE_CONFIG.social.linkedin,
+      value: config.social.linkedin,
     });
   }
-  if (isPlaceholder(SITE_CONFIG.social.github)) {
+  if (isPlaceholder(config.social.github)) {
     placeholders.push({
       path: 'SITE_CONFIG.social.github',
-      value: SITE_CONFIG.social.github,
+      value: config.social.github,
     });
   }
 
   // Check contact info
-  if (isPlaceholder(SITE_CONFIG.contact.email)) {
+  if (isPlaceholder(config.contact.email)) {
     placeholders.push({
       path: 'SITE_CONFIG.contact.email',
-      value: SITE_CONFIG.contact.email,
+      value: config.contact.email,
     });
   }
 
@@ -123,7 +146,7 @@ export function getUnconfiguredPlaceholders(): Array<{
  * Validate site config for production readiness
  * Returns validation result object for build-time checks
  */
-export function validateSiteConfig(): {
+export function validateSiteConfig(config: SiteConfig = SITE_CONFIG): {
   valid: boolean;
   errors: string[];
   warnings: string[];
@@ -133,8 +156,8 @@ export function validateSiteConfig(): {
   const isProduction = process.env.NODE_ENV === 'production';
 
   // Check base URL
-  if (!isBaseUrlConfigured()) {
-    const msg = `SITE_CONFIG.baseUrl is not configured for production: ${SITE_CONFIG.baseUrl}`;
+  if (!isBaseUrlConfigured(config.baseUrl)) {
+    const msg = `SITE_CONFIG.baseUrl is not configured for production: ${config.baseUrl}`;
     if (isProduction) {
       errors.push(msg);
     } else {
@@ -143,7 +166,7 @@ export function validateSiteConfig(): {
   }
 
   // Check placeholders
-  const placeholders = getUnconfiguredPlaceholders();
+  const placeholders = getUnconfiguredPlaceholders(config);
   for (const { path, value } of placeholders) {
     const msg = `${path} contains placeholder value: ${value}`;
     if (isProduction) {

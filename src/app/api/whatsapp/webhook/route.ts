@@ -1,6 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { logger } from '@/lib/logger';
 import {
+  checkDistributedRateLimit,
+  createRateLimitHeaders,
+} from '@/lib/security/distributed-rate-limit';
+import {
   handleIncomingMessage,
   verifyWebhook,
   verifyWebhookSignature,
@@ -61,10 +65,28 @@ export async function POST(request: NextRequest) {
     const rawBody = await request.text();
     const signature = request.headers.get('x-hub-signature-256');
 
-    // Verify webhook signature
+    // Verify webhook signature FIRST (before rate limiting)
+    // Invalid signatures are rejected early without consuming rate limit quota
     if (!verifyWebhookSignature(rawBody, signature)) {
       logger.warn('[WhatsAppWebhook] Invalid signature');
       return NextResponse.json({ error: 'Invalid signature' }, { status: 401 });
+    }
+
+    // Rate limiting (only for valid signatures)
+    const clientIP =
+      request.headers.get('x-forwarded-for')?.split(',')[0]?.trim() ||
+      request.headers.get('x-real-ip') ||
+      'unknown';
+    const rateLimitResult = await checkDistributedRateLimit(
+      clientIP,
+      'whatsapp',
+    );
+    if (!rateLimitResult.allowed) {
+      const headers = createRateLimitHeaders(rateLimitResult);
+      return NextResponse.json(
+        { error: 'Too many requests' },
+        { status: 429, headers },
+      );
     }
 
     // Parse JSON body

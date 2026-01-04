@@ -17,7 +17,7 @@ import type {
 } from '@/lib/airtable/types';
 import { env } from '@/lib/env';
 import { LEAD_TYPES, type LeadType } from '@/lib/lead-pipeline/lead-schema';
-import { logger } from '@/lib/logger';
+import { logger, sanitizeCompany, sanitizeEmail } from '@/lib/logger';
 import { sanitizePlainText } from '@/lib/security-validation';
 import { airtableRecordSchema } from '@/lib/validations';
 import {
@@ -197,8 +197,8 @@ export class AirtableService {
 
       logger.info('Contact record created successfully', {
         recordId: createdRecord.id,
-        email: sanitizedData.email,
-        company: sanitizedData.company,
+        email: sanitizeEmail(sanitizedData.email),
+        company: sanitizeCompany(sanitizedData.company),
       });
 
       return {
@@ -209,7 +209,6 @@ export class AirtableService {
     } catch (error) {
       logger.error('Failed to create contact record', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        email: formData.email,
       });
       throw new Error('Failed to create contact record');
     }
@@ -322,7 +321,7 @@ export class AirtableService {
         recordId: createdRecord.id,
         type,
         source,
-        email: data.email,
+        email: sanitizeEmail(data.email),
         referenceId: data.referenceId,
       });
 
@@ -335,7 +334,6 @@ export class AirtableService {
       logger.error('Failed to create lead record', {
         error: error instanceof Error ? error.message : 'Unknown error',
         type,
-        email: data.email,
       });
       throw new Error('Failed to create lead record');
     }
@@ -470,7 +468,6 @@ export class AirtableService {
     } catch (error) {
       logger.error('Failed to check duplicate email', {
         error: error instanceof Error ? error.message : 'Unknown error',
-        email,
       });
       return false;
     }

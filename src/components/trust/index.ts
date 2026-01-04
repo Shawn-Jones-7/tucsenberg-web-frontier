@@ -20,6 +20,6 @@ export {
 } from '@/components/trust/certification-badges';
 export {
   TrustStats,
-  type TrustStat,
   type TrustStatsProps,
 } from '@/components/trust/trust-stats';
+export type { TrustStat } from '@/components/trust/trust-types';

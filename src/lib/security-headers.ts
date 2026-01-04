@@ -41,8 +41,8 @@ export function getCORSHeaders(origin?: string): Record<string, string> {
   const allowedOrigins = [
     'http://localhost:3000',
     'http://localhost:3001',
-    'https://tucsenberg.com',
-    'https://www.tucsenberg.com',
+    'https://example.com',
+    'https://www.example.com',
   ];
 
   const headers: Record<string, string> = {

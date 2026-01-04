@@ -87,7 +87,7 @@ describe('withRateLimit', () => {
       });
 
       const mockHandler = createMockHandler({ success: true });
-      const wrappedHandler = withRateLimit('analytics', mockHandler);
+      const wrappedHandler = withRateLimit('contact', mockHandler);
 
       const request = createMockRequest();
       const response = await wrappedHandler(request);
@@ -116,7 +116,7 @@ describe('withRateLimit', () => {
         return NextResponse.json({ success: true });
       });
 
-      const wrappedHandler = withRateLimit('analytics', mockHandler);
+      const wrappedHandler = withRateLimit('contact', mockHandler);
       await wrappedHandler(createMockRequest());
 
       expect(capturedContext).toBeDefined();
@@ -247,7 +247,7 @@ describe('withRateLimit', () => {
       });
 
       const mockHandler = createMockHandler({ success: true });
-      const wrappedHandler = withRateLimit('analytics', mockHandler);
+      const wrappedHandler = withRateLimit('contact', mockHandler);
 
       const response = await wrappedHandler(createMockRequest());
 
@@ -265,7 +265,7 @@ describe('withRateLimit', () => {
       });
 
       const wrappedHandler = withRateLimit(
-        'analytics',
+        'contact',
         createMockHandler({ success: true }),
       );
 
@@ -289,7 +289,7 @@ describe('withRateLimit', () => {
         return NextResponse.json({ success: true });
       });
 
-      const wrappedHandler = withRateLimit('analytics', mockHandler);
+      const wrappedHandler = withRateLimit('contact', mockHandler);
       await wrappedHandler(createMockRequest());
 
       expect(capturedContext?.degraded).toBe(true);
@@ -330,7 +330,7 @@ describe('withRateLimit', () => {
       });
 
       const wrappedHandler = withRateLimit(
-        'analytics',
+        'contact',
         createMockHandler({ success: true }),
       );
 
@@ -364,7 +364,7 @@ describe('withRateLimit', () => {
       });
 
       const wrappedHandler = withRateLimit(
-        'analytics',
+        'contact',
         createMockHandler({ success: true }),
         customKeyStrategy,
       );
@@ -375,7 +375,7 @@ describe('withRateLimit', () => {
       expect(customKeyStrategy).toHaveBeenCalledWith(request);
       expect(mockCheckDistributedRateLimit).toHaveBeenCalledWith(
         customKey,
-        'analytics',
+        'contact',
       );
     });
 
@@ -388,7 +388,7 @@ describe('withRateLimit', () => {
       });
 
       const wrappedHandler = withRateLimit(
-        'analytics',
+        'contact',
         createMockHandler({ success: true }),
       );
 
@@ -417,7 +417,7 @@ describe('withRateLimit', () => {
       const mockHandler = createMockHandler(expectedResponse);
 
       const wrappedHandler = withRateLimit<TestResponse>(
-        'analytics',
+        'contact',
         mockHandler,
       );
       const response = await wrappedHandler(createMockRequest());

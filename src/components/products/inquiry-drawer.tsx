@@ -114,14 +114,16 @@ export function InquiryDrawer({
           </SheetDescription>
         </SheetHeader>
 
-        {/* Scrollable form container */}
+        {/* Scrollable form container - lazy mount on open */}
         <div className='flex-1 overflow-y-auto py-4'>
-          <ProductInquiryForm
-            productName={productName}
-            productSlug={productSlug}
-            onSuccess={handleSuccess}
-            className='border-0 shadow-none'
-          />
+          {open && (
+            <ProductInquiryForm
+              productName={productName}
+              productSlug={productSlug}
+              onSuccess={handleSuccess}
+              className='border-0 shadow-none'
+            />
+          )}
         </div>
       </SheetContent>
     </Sheet>

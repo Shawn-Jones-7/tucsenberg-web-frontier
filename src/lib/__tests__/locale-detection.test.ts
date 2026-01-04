@@ -1,7 +1,10 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { Locale } from '@/types/i18n';
 import { SmartLocaleDetector } from '@/lib/locale-detector';
-import { WEB_VITALS_CONSTANTS } from '@/constants/test-constants';
+
+// Confidence thresholds for testing
+const CONFIDENCE_THRESHOLD_MEDIUM = 0.5;
+const CONFIDENCE_THRESHOLD_HIGH = 0.8;
 
 // Use vi.hoisted to ensure proper mock setup
 const { mockLocaleStorageManager } = vi.hoisted(() => ({
@@ -345,7 +348,7 @@ describe('SmartLocaleDetector', () => {
       expect(result.locale).toBe('zh');
       expect(['browser', 'combined']).toContain(result.source);
       expect(result.confidence).toBeGreaterThanOrEqual(
-        WEB_VITALS_CONSTANTS.CONFIDENCE_THRESHOLD_MEDIUM,
+        CONFIDENCE_THRESHOLD_MEDIUM,
       );
     });
 
@@ -374,9 +377,7 @@ describe('SmartLocaleDetector', () => {
 
       const result = await detector.detectSmartLocale();
       expect(result.locale).toBe('zh');
-      expect(result.confidence).toBeGreaterThan(
-        WEB_VITALS_CONSTANTS.CONFIDENCE_THRESHOLD_MEDIUM,
-      );
+      expect(result.confidence).toBeGreaterThan(CONFIDENCE_THRESHOLD_MEDIUM);
     });
 
     it('should handle conflicting detection results', async () => {
@@ -401,9 +402,7 @@ describe('SmartLocaleDetector', () => {
       const result = await detector.detectSmartLocale();
       // With conflicting results, should have lower confidence
       expect(['en', 'zh']).toContain(result.locale);
-      expect(result.confidence).toBeLessThan(
-        WEB_VITALS_CONSTANTS.CONFIDENCE_THRESHOLD_HIGH,
-      );
+      expect(result.confidence).toBeLessThan(CONFIDENCE_THRESHOLD_HIGH);
     });
   });
 

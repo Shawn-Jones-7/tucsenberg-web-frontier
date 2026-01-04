@@ -9,9 +9,9 @@
   "dateFormat": "YYYY-MM-DD",
   "timeZone": "UTC",
   "seo": {
-    "defaultTitle": "Tucsenberg Web Frontier",
-    "titleTemplate": "%s | Tucsenberg",
-    "defaultDescription": "Modern B2B enterprise website template with Next.js 15, React 19, TypeScript, and Tailwind CSS",
+    "defaultTitle": "[PROJECT_NAME]",
+    "titleTemplate": "%s | [PROJECT_NAME]",
+    "defaultDescription": "Modern B2B enterprise website template with Next.js 16, React 19, TypeScript, and Tailwind CSS",
     "defaultKeywords": [
       "Next.js",
       "React",

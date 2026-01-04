@@ -1,20 +1,8 @@
-'use client';
-
-import { useEffect, useRef, useState } from 'react';
 import { cn } from '@/lib/utils';
+import { AnimatedStatItem } from '@/components/trust/animated-stat-item';
+import type { TrustStat } from '@/components/trust/trust-types';
 
-export interface TrustStat {
-  /** Unique identifier */
-  id: string;
-  /** Display value (e.g., "15+", "98%", "10M+") */
-  value: string;
-  /** Label text */
-  label: string;
-  /** Optional numeric value for animation */
-  numericValue: number | undefined;
-  /** Optional suffix (e.g., "+", "%", "M+") */
-  suffix: string | undefined;
-}
+export type { TrustStat } from '@/components/trust/trust-types';
 
 export interface TrustStatsProps {
   /** Section title */
@@ -27,86 +15,17 @@ export interface TrustStatsProps {
   className?: string;
 }
 
-// Animated counter hook
-function useAnimatedCounter(
-  target: number,
-  duration: number = 2000,
-  enabled: boolean = true,
-): number {
-  const [count, setCount] = useState(0);
-  const [hasAnimated, setHasAnimated] = useState(false);
-  const elementRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!enabled || hasAnimated) {
-      return undefined;
-    }
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        const firstEntry = entries.at(0);
-        if (firstEntry?.isIntersecting === true && !hasAnimated) {
-          setHasAnimated(true);
-          let start = 0;
-          const increment = target / (duration / 16);
-
-          const timer = setInterval(() => {
-            start += increment;
-            if (start >= target) {
-              setCount(target);
-              clearInterval(timer);
-            } else {
-              setCount(Math.floor(start));
-            }
-          }, 16);
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    const currentElement = elementRef.current;
-    if (currentElement !== null) {
-      observer.observe(currentElement);
-    }
-
-    return () => {
-      if (currentElement !== null) {
-        observer.unobserve(currentElement);
-      }
-    };
-  }, [target, duration, enabled, hasAnimated]);
-
-  return count;
-}
-
-// Single stat item component
-interface StatItemProps {
-  stat: TrustStat;
-  animated: boolean;
-}
-
-function StatItem({ stat, animated }: StatItemProps) {
-  const animatedValue = useAnimatedCounter(
-    stat.numericValue ?? 0,
-    2000,
-    animated && stat.numericValue !== undefined,
-  );
-
-  const displayValue =
-    animated && stat.numericValue !== undefined
-      ? `${animatedValue}${stat.suffix ?? ''}`
-      : stat.value;
-
+function StaticStatItem({ stat }: { stat: TrustStat }) {
   return (
     <div className='text-center'>
-      <div className='mb-2 text-4xl font-bold text-primary'>{displayValue}</div>
+      <div className='mb-2 text-4xl font-bold text-primary'>{stat.value}</div>
       <div className='text-sm text-muted-foreground'>{stat.label}</div>
     </div>
   );
 }
 
 /**
- * Trust stats section component.
+ * Trust stats section component (Server Component).
  * Displays key business metrics with optional animation.
  */
 export function TrustStats({
@@ -127,13 +46,19 @@ export function TrustStats({
         )}
 
         <div className='grid gap-8 sm:grid-cols-2 lg:grid-cols-4'>
-          {stats.map((stat) => (
-            <StatItem
-              key={stat.id}
-              stat={stat}
-              animated={animated}
-            />
-          ))}
+          {stats.map((stat) =>
+            animated ? (
+              <AnimatedStatItem
+                key={stat.id}
+                stat={stat}
+              />
+            ) : (
+              <StaticStatItem
+                key={stat.id}
+                stat={stat}
+              />
+            ),
+          )}
         </div>
       </div>
     </section>

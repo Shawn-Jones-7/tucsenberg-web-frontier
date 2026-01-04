@@ -52,9 +52,7 @@
     "coverage/i18n",
     "src/i18n",
     "coverage/components/i18n",
-    "src/components/i18n",
-    "coverage/app/api/analytics/i18n",
-    "src/app/api/analytics/i18n"
+    "src/components/i18n"
   ],
   "editor.codeActionsOnSaveTimeout": 3000,
   "typescript.preferences.organizeImportsIgnoreCase": false,
