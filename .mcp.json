@@ -1,8 +1,8 @@
 {
   "mcpServers": {
-    "b2b-web-template": {
+    "web-dev": {
       "type": "http",
-      "url": "http://localhost:8000/mcp/b2b-web-template"
+      "url": "http://localhost:8000/mcp/web-dev"
     }
   }
 }
