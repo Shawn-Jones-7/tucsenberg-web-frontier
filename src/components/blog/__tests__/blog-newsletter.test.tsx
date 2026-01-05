@@ -3,14 +3,21 @@
  * Tests for BlogNewsletter component
  */
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { BlogNewsletter } from '../blog-newsletter';
 
 // Mock hoisted variables
-const { mockFetch, mockUseTranslations } = vi.hoisted(() => ({
-  mockFetch: vi.fn(),
-  mockUseTranslations: vi.fn(),
+const { mockFetch, mockUseTranslations, mockGetAttributionAsObject } =
+  vi.hoisted(() => ({
+    mockFetch: vi.fn(),
+    mockUseTranslations: vi.fn(),
+    mockGetAttributionAsObject: vi.fn(),
+  }));
+
+// Mock @/lib/utm
+vi.mock('@/lib/utm', () => ({
+  getAttributionAsObject: mockGetAttributionAsObject,
 }));
 
 // Mock next-intl
@@ -116,6 +123,7 @@ describe('BlogNewsletter', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     mockUseTranslations.mockReturnValue(createTranslationMock());
+    mockGetAttributionAsObject.mockReturnValue({ utm_source: 'test' });
     mockFetch.mockResolvedValue({
       ok: true,
       json: async () => ({ success: true }),
@@ -370,6 +378,23 @@ describe('BlogNewsletter', () => {
       // Submit form
       const form = emailInput.closest('form');
       expect(form).toBeInTheDocument();
+      fireEvent.submit(form!);
+
+      // Wait for success message
+      await waitFor(() => {
+        expect(mockFetch).toHaveBeenCalledWith('/api/subscribe', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: expect.stringContaining('test@example.com'),
+        });
+      });
+
+      // Verify success state
+      await waitFor(() => {
+        expect(
+          screen.getByText('Successfully subscribed!'),
+        ).toBeInTheDocument();
+      });
     });
 
     it('shows error message when API returns error', async () => {
@@ -385,7 +410,16 @@ describe('BlogNewsletter', () => {
 
       // Fill email
       const emailInput = screen.getByPlaceholderText('Enter your email');
-      fireEvent.change(emailInput, { target: { value: 'invalid' } });
+      fireEvent.change(emailInput, { target: { value: 'invalid@test.com' } });
+
+      // Submit form
+      const form = emailInput.closest('form');
+      fireEvent.submit(form!);
+
+      // Wait for error message
+      await waitFor(() => {
+        expect(screen.getByText('Invalid email')).toBeInTheDocument();
+      });
     });
 
     it('handles network error gracefully', async () => {
@@ -399,6 +433,29 @@ describe('BlogNewsletter', () => {
       // Fill email
       const emailInput = screen.getByPlaceholderText('Enter your email');
       fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+
+      // Submit form
+      const form = emailInput.closest('form');
+      fireEvent.submit(form!);
+
+      // Wait for error message (should show generic error)
+      await waitFor(() => {
+        expect(screen.getByText('Something went wrong')).toBeInTheDocument();
+      });
+    });
+
+    it('shows turnstile required error when token is missing', async () => {
+      render(<BlogNewsletter />);
+
+      // Do NOT enable turnstile - token will be null
+
+      // Fill email
+      const emailInput = screen.getByPlaceholderText('Enter your email');
+      fireEvent.change(emailInput, { target: { value: 'test@example.com' } });
+
+      // Note: Submit button should be disabled when turnstile not completed
+      const submitButton = screen.getByRole('button', { name: /Subscribe/i });
+      expect(submitButton).toBeDisabled();
     });
   });
 
