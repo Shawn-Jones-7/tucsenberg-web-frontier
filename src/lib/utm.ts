@@ -91,6 +91,8 @@ export function storeAttributionData(): void {
 
   if (!hasData) return;
 
+  // nosemgrep: object-injection-sink-spread-operator
+  // Safe: utmParams and clickIds are derived from sanitizeParam() which validates alphanumeric only
   const data: AttributionData = {
     ...utmParams,
     ...clickIds,
@@ -114,6 +116,8 @@ export function getAttributionSnapshot(): AttributionData {
   }
 
   // Fallback to current URL params if no stored data
+  // nosemgrep: object-injection-sink-spread-operator
+  // Safe: captureUtmParams/captureClickIds return sanitized objects with validated alphanumeric values
   return {
     ...captureUtmParams(),
     ...captureClickIds(),

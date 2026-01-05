@@ -265,6 +265,17 @@ rules:
         - "**/src/lib/lead-pipeline/process-lead.ts"
         # Rate limiting - fetch config object construction (body from internal data)
         - "**/src/lib/security/distributed-rate-limit.ts"
+        # UTM tracking - spread operators used with sanitizeParam() validated alphanumeric values
+        - "**/src/lib/utm.ts"
+        # Logger - spread operator used with internal application logging context, not user input
+        - "**/src/lib/logger.ts"
+        # Email templates - spread operators used with static CSSProperties style objects
+        - "**/src/components/emails/EmailLayout.tsx"
+        - "**/src/components/emails/ContactFormEmail.tsx"
+        - "**/src/components/emails/ProductInquiryEmail.tsx"
+        - "**/src/components/emails/ConfirmationEmail.tsx"
+        # Blog newsletter - spread operator used with getAttributionAsObject() sanitized values
+        - "**/src/components/blog/blog-newsletter.tsx"
     message: '检测到潜在的对象注入：使用扩展运算符或Object.assign时需验证输入对象的安全性'
     languages: [typescript, javascript]
     severity: WARNING

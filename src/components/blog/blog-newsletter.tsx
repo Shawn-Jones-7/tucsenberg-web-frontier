@@ -254,6 +254,8 @@ export function BlogNewsletter({
       const response = await fetch('/api/subscribe', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        // nosemgrep: object-injection-sink-spread-operator
+        // Safe: attribution is from getAttributionAsObject() which returns sanitized alphanumeric values
         body: JSON.stringify({
           email,
           pageType: 'blog',

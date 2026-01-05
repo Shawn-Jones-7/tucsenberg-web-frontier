@@ -54,11 +54,15 @@ export function ConfirmationEmail(data: EmailTemplateData) {
           </Text>
         ))}
       </Section>
+      {/* nosemgrep: object-injection-sink-spread-operator */}
+      {/* Safe: paragraphStyle is a static CSSProperties object defined in this file */}
       <Text style={{ ...paragraphStyle, marginTop: SPACING.lg }}>
         If you have any urgent questions, please do not hesitate to contact us
         directly.
       </Text>
       <Text style={paragraphStyle}>Best regards,</Text>
+      {/* nosemgrep: object-injection-sink-spread-operator */}
+      {/* Safe: paragraphStyle is a static CSSProperties object defined in this file */}
       <Text style={{ ...paragraphStyle, fontWeight: 'bold' }}>
         The [TEAM_NAME] Team
       </Text>

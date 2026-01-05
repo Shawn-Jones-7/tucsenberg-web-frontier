@@ -9,38 +9,6 @@
       "maxDuration": 30
     }
   },
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Robots-Tag",
-          "value": "index, follow"
-        },
-        {
-          "key": "X-Powered-By",
-          "value": "[PROJECT_NAME]"
-        }
-      ]
-    },
-    {
-      "source": "/api/(.*)",
-      "headers": [
-        {
-          "key": "Access-Control-Allow-Origin",
-          "value": "[BASE_URL]"
-        },
-        {
-          "key": "Access-Control-Allow-Methods",
-          "value": "GET, POST, OPTIONS"
-        },
-        {
-          "key": "Access-Control-Allow-Headers",
-          "value": "Content-Type, Authorization"
-        }
-      ]
-    }
-  ],
   "redirects": [
     {
       "source": "/admin",
@@ -58,7 +26,6 @@
       "permanent": false
     }
   ],
-  "rewrites": [],
   "crons": [
     {
       "path": "/api/health",
