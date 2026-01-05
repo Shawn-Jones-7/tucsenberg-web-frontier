@@ -44,6 +44,8 @@ interface VercelNavigationProps {
   className?: string;
 }
 
+const SECONDARY_NAV_KEYS = new Set(['about', 'privacy']);
+
 // Hook for hover delay interaction
 function useHoverDelay() {
   const [openItem, setOpenItem] = useState<string | null>(null);
@@ -87,6 +89,7 @@ function useHoverDelay() {
 interface RenderDropdownItemProps {
   item: NavigationItem;
   t: (key: string) => string;
+  className?: string;
   hoverState: {
     openItem: string | null;
     handleMouseEnter: (key: string) => void;
@@ -95,12 +98,18 @@ interface RenderDropdownItemProps {
   };
 }
 
-function renderDropdownItem({ item, t, hoverState }: RenderDropdownItemProps) {
+function renderDropdownItem({
+  item,
+  t,
+  className,
+  hoverState,
+}: RenderDropdownItemProps) {
   const isOpen = hoverState.openItem === item.key;
 
   return (
     <NavigationMenuItem
       key={item.key}
+      className={className}
       onMouseEnter={() => hoverState.handleMouseEnter(item.key)}
       onMouseLeave={hoverState.handleMouseLeave}
     >
@@ -129,9 +138,16 @@ function renderDropdownItem({ item, t, hoverState }: RenderDropdownItemProps) {
 }
 
 // Render link navigation item
-function renderLinkItem(item: NavigationItem, t: (key: string) => string) {
+function renderLinkItem(
+  item: NavigationItem,
+  t: (key: string) => string,
+  className?: string,
+) {
   return (
-    <NavigationMenuItem key={item.key}>
+    <NavigationMenuItem
+      key={item.key}
+      className={className}
+    >
       <NavigationMenuLink asChild>
         <Link
           href={item.href as StaticPathname}
@@ -155,6 +171,23 @@ export function VercelNavigation({ className }: VercelNavigationProps) {
   const t = useTranslations();
   const hoverState = useHoverDelay();
 
+  const primaryNavigation = mainNavigation.filter(
+    (item) => !SECONDARY_NAV_KEYS.has(item.key),
+  );
+  const secondaryNavigation = mainNavigation.filter((item) =>
+    SECONDARY_NAV_KEYS.has(item.key),
+  );
+
+  const moreItem: NavigationItem | null =
+    secondaryNavigation.length > 0
+      ? {
+          key: 'more',
+          href: '/',
+          translationKey: 'navigation.more',
+          children: secondaryNavigation,
+        }
+      : null;
+
   return (
     <nav
       className={cn('header-desktop-only', className)}
@@ -162,7 +195,7 @@ export function VercelNavigation({ className }: VercelNavigationProps) {
     >
       <NavigationMenu>
         <NavigationMenuList>
-          {mainNavigation.map((item) => {
+          {primaryNavigation.map((item) => {
             if (item.children && item.children.length > 0) {
               return renderDropdownItem({
                 item,
@@ -172,6 +205,19 @@ export function VercelNavigation({ className }: VercelNavigationProps) {
             }
             return renderLinkItem(item, t);
           })}
+
+          {secondaryNavigation.map((item) =>
+            renderLinkItem(item, t, 'header-nav-secondary-only'),
+          )}
+
+          {moreItem
+            ? renderDropdownItem({
+                item: moreItem,
+                t,
+                hoverState,
+                className: 'header-nav-more-only',
+              })
+            : null}
         </NavigationMenuList>
       </NavigationMenu>
     </nav>

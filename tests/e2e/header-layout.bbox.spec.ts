@@ -51,10 +51,10 @@ const VIEWPORTS = [
     expectMobileHeader: true,
   },
   {
-    // Desktop navigation requires more horizontal room; keep mobile header at 1024 to prevent overlaps.
+    // Desktop navigation is visible from 1024px (lg). CTA may still be hidden below wider breakpoints.
     name: 'desktop-1024',
     viewport: { width: 1024, height: 800 },
-    expectMobileHeader: true,
+    expectMobileHeader: false,
   },
   {
     name: 'desktop-1280',
@@ -93,24 +93,28 @@ test.describe('Header layout (bbox regression)', () => {
         const logoLink = page
           .getByRole('link', { name: /\[PROJECT_NAME\]/ })
           .first();
-        const cta = page.getByTestId('header-cta').first();
 
         const logoBox = await expectBoundingBox(logoLink, 'Logo link');
         const navBox = await expectBoundingBox(nav, 'Desktop navigation');
-        const ctaBox = await expectBoundingBox(cta, 'Header CTA');
 
         expect(
           boxesOverlap(logoBox, navBox),
           'Logo should not overlap desktop navigation',
         ).toBe(false);
-        expect(
-          boxesOverlap(navBox, ctaBox),
-          'Desktop navigation should not overlap CTA',
-        ).toBe(false);
-        expect(
-          boxesOverlap(logoBox, ctaBox),
-          'Logo should not overlap CTA',
-        ).toBe(false);
+
+        // CTA is intentionally hidden on narrower desktop viewports.
+        const cta = page.getByTestId('header-cta').first();
+        if (await cta.isVisible().catch(() => false)) {
+          const ctaBox = await expectBoundingBox(cta, 'Header CTA');
+          expect(
+            boxesOverlap(navBox, ctaBox),
+            'Desktop navigation should not overlap CTA',
+          ).toBe(false);
+          expect(
+            boxesOverlap(logoBox, ctaBox),
+            'Logo should not overlap CTA',
+          ).toBe(false);
+        }
 
         // Optional: if the language toggle button is already hydrated, assert it doesn't overlap.
         const languageToggle = page

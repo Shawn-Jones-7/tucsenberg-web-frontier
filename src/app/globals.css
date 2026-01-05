@@ -513,9 +513,9 @@
   /* Visibility helpers */
   .header-mobile-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
-    /* Breakpoint at 1280px to prevent nav overlap at 1024px (see header-layout.bbox.spec.ts) */
+    /* Primary navigation becomes visible at 1024px; keep mobile controls below this breakpoint. */
     @apply block;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply hidden;
     }
   }
@@ -523,8 +523,28 @@
   .header-desktop-only {
     /* Tailwind v4: avoid applying responsive variants directly via @apply */
     @apply hidden;
-    @media (min-width: 1280px) {
+    @media (min-width: 1024px) {
       @apply flex;
+    }
+  }
+
+  /* Desktop nav overflow handling (1024px-1279px) */
+  .header-nav-more-only {
+    /* Visible at lg, hidden at xl+ */
+    @apply hidden;
+    @media (min-width: 1024px) {
+      @apply block;
+    }
+    @media (min-width: 1280px) {
+      @apply hidden;
+    }
+  }
+
+  .header-nav-secondary-only {
+    /* Hidden below xl to prevent crowding; shown at xl+ */
+    @apply hidden;
+    @media (min-width: 1280px) {
+      @apply block;
     }
   }
 
