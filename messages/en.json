@@ -142,7 +142,7 @@
         "line1": "Modern B2B Enterprise",
         "line2": "Web Platform"
       },
-      "subtitle": "Built with Next.js 15, React 19, TypeScript 5.8, and Tailwind CSS 4. Features enterprise-grade security, internationalization, and performance optimization.",
+      "subtitle": "Built with Next.js 16, React 19, TypeScript 5.9.3, and Tailwind CSS 4. Features enterprise-grade security, internationalization, and performance optimization.",
       "cta": {
         "demo": "View Demo",
         "github": "View on GitHub"
@@ -185,6 +185,9 @@
         "next-intl": "Next.js internationalization solution",
         "eslint": "JavaScript/TypeScript code linter",
         "prettier": "Code formatting tool",
+        "lefthook": "Git hooks management tool",
+        "vitest": "Fast unit testing framework",
+        "playwright": "End-to-end testing framework",
         "husky": "Git hooks management tool",
         "jest": "JavaScript testing framework",
         "testing-library": "React component testing tool",
@@ -390,12 +393,12 @@
         "issues": "Report Issues"
       }
     },
-    "title": "[PROJECT_NAME]",
+    "title": "B2B Web Template",
     "subtitle": "Modern B2B Enterprise Web Platform",
     "description": "A cutting-edge web platform built with Next.js 16, React 19, and TypeScript for modern B2B enterprises.",
     "getStarted": "Get Started",
     "learnMore": "Learn More",
-    "welcome": "Welcome to [PROJECT_NAME]",
+    "welcome": "Welcome to B2B Web Template",
     "modernApp": "A modern web application built with Next.js 16 and React 19",
     "features": {
       "title": "Features",
@@ -518,7 +521,7 @@
     "learn": "Learn",
     "examples": "Examples",
     "goToNextjs": "Go to nextjs.org",
-    "copyright": "(c) {year} [PROJECT_NAME]. All rights reserved.",
+    "copyright": "(c) {year} B2B Web Template. All rights reserved.",
     "description": "Modern B2B enterprise web solutions with cutting-edge technology."
   },
   "accessibility": {
@@ -531,29 +534,29 @@
     "themeSelector": "Select theme"
   },
   "seo": {
-    "title": "[PROJECT_NAME]",
+    "title": "B2B Web Template",
     "description": "Modern B2B Enterprise Web Platform with Next.js 16, React 19, and TypeScript",
-    "siteName": "[PROJECT_NAME]",
+    "siteName": "B2B Web Template",
     "keywords": "Next.js, React, TypeScript, B2B, Enterprise, Web Platform",
     "pages": {
       "home": {
-        "title": "[PROJECT_NAME] - Modern B2B Enterprise Platform",
+        "title": "B2B Web Template - Modern B2B Enterprise Platform",
         "description": "Build modern B2B applications with Next.js 16, React 19, TypeScript, and enterprise-grade features."
       },
       "about": {
-        "title": "About Us - [PROJECT_NAME]",
+        "title": "About Us - B2B Web Template",
         "description": "Learn about our mission to provide cutting-edge B2B enterprise web solutions."
       },
       "contact": {
-        "title": "Contact Us - [PROJECT_NAME]",
+        "title": "Contact Us - B2B Web Template",
         "description": "Get in touch with our team for enterprise solutions and support."
       },
       "products": {
-        "title": "Products - [PROJECT_NAME]",
+        "title": "Products - B2B Web Template",
         "description": "Discover our enterprise-grade products and solutions for modern businesses."
       },
       "blog": {
-        "title": "Blog - [PROJECT_NAME]",
+        "title": "Blog - B2B Web Template",
         "description": "Latest insights, tutorials, and updates from our development team."
       }
     }
@@ -672,23 +675,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "[PROJECT_NAME]",
+      "name": "B2B Web Template",
       "description": "Modern B2B Enterprise Web Platform",
-      "phone": "[PHONE]",
+      "phone": "+1-555-0123",
       "social": {
-        "twitter": "[TWITTER_URL]",
-        "linkedin": "[LINKEDIN_URL]",
-        "github": "[GITHUB_URL]"
+        "twitter": "https://x.com/b2b-web-template",
+        "linkedin": "https://www.linkedin.com/company/b2b-web-template/",
+        "github": "https://github.com/Alx-707/b2b-web-template"
       }
     },
     "website": {
-      "name": "[PROJECT_NAME]",
+      "name": "B2B Web Template",
       "description": "Modern B2B Enterprise Web Platform with Next.js 16"
     },
     "article": {
       "defaultTitle": "Article",
       "defaultDescription": "Article description",
-      "defaultAuthor": "[TEAM_NAME]"
+      "defaultAuthor": "B2B Web Template"
     },
     "product": {
       "defaultName": "Product",
@@ -946,21 +949,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "Phone Number",
   "organization": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "Modern B2B Enterprise Web Platform",
-    "phone": "[PHONE]",
+    "phone": "+1-555-0123",
     "social": {
-      "twitter": "[TWITTER_URL]",
-      "linkedin": "[LINKEDIN_URL]",
-      "github": "[GITHUB_URL]"
+      "twitter": "https://x.com/b2b-web-template",
+      "linkedin": "https://www.linkedin.com/company/b2b-web-template/",
+      "github": "https://github.com/Alx-707/b2b-web-template"
     }
   },
   "website": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "Modern B2B Enterprise Web Platform with Next.js 16"
   },
   "article": {
-    "defaultAuthor": "[TEAM_NAME]"
+    "defaultAuthor": "B2B Web Template"
   },
   "blog": {
     "pageTitle": "Blog",
@@ -1086,7 +1089,7 @@
       "turnstileRequired": "Please complete the security verification."
     }
   },
-  "title": "[PROJECT_NAME]",
+  "title": "B2B Web Template",
   "trust": {
     "testimonials": {
       "title": "What Our Clients Say",

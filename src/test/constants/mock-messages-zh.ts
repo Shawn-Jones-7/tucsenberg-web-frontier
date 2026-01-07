@@ -178,30 +178,30 @@ export const errorBoundaryMessages = {
  * SEO 命名空间 - SEO 相关元数据 (中文)
  */
 export const seoMessages = {
-  title: '图森堡网络前沿',
-  description: '基于Next.js 15、React 19和TypeScript的现代化B2B企业级网络平台',
-  siteName: '图森堡网络前沿',
+  title: 'B2B Web Template',
+  description: '基于Next.js 16、React 19和TypeScript的现代化B2B企业级网络平台',
+  siteName: 'B2B Web Template',
   keywords: 'Next.js, React, TypeScript, B2B, 企业级, 网络平台',
   pages: {
     home: {
-      title: '图森堡网络前沿 - 现代化B2B企业级平台',
+      title: 'B2B Web Template - 现代化B2B企业级平台',
       description:
-        '使用Next.js 15、React 19、TypeScript构建现代化B2B应用，提供企业级功能。',
+        '使用Next.js 16、React 19、TypeScript构建现代化B2B应用，提供企业级功能。',
     },
     about: {
-      title: '关于我们 - 图森堡网络前沿',
+      title: '关于我们 - B2B Web Template',
       description: '了解我们为企业提供前沿B2B网络解决方案的使命。',
     },
     contact: {
-      title: '联系我们 - 图森堡网络前沿',
+      title: '联系我们 - B2B Web Template',
       description: '联系我们的团队获取企业解决方案和技术支持。',
     },
     products: {
-      title: '产品中心 - 图森堡网络前沿',
+      title: '产品中心 - B2B Web Template',
       description: '探索我们为现代企业提供的企业级产品和解决方案。',
     },
     blog: {
-      title: '技术博客 - 图森堡网络前沿',
+      title: '技术博客 - B2B Web Template',
       description: '来自我们开发团队的最新见解、教程和技术更新。',
     },
   },

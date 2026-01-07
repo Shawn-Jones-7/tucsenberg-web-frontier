@@ -217,7 +217,7 @@ describe('ProjectOverview', () => {
       expect(badges.length).toBeGreaterThan(0);
 
       // Check for specific badge content from FeaturesGridBlock DEFAULT_FEATURES
-      // Badges: 'A+', '100%', '2', 'Multiple', 'TS 5.8', 'Vercel'
+      // Badges: 'A+', '100%', '2', 'Multiple', 'TS 5.9.3', 'Vercel'
       expect(screen.getByText('A+')).toBeInTheDocument();
       expect(screen.getByText('100%')).toBeInTheDocument();
     });
@@ -228,14 +228,14 @@ describe('ProjectOverview', () => {
       render(<ProjectOverview />);
 
       // Check if architecture section exists by looking for technology items
-      expect(screen.getByText('Next.js 15')).toBeInTheDocument();
+      expect(screen.getByText('Next.js 16')).toBeInTheDocument();
     });
 
     it('should render architecture categories', () => {
       render(<ProjectOverview />);
 
       // Check for technology items instead of category titles
-      expect(screen.getByText('Next.js 15')).toBeInTheDocument();
+      expect(screen.getByText('Next.js 16')).toBeInTheDocument();
       expect(screen.getByText('shadcn/ui')).toBeInTheDocument();
       expect(screen.getByText('ESLint')).toBeInTheDocument();
     });
@@ -243,7 +243,7 @@ describe('ProjectOverview', () => {
     it('should render technology items', () => {
       render(<ProjectOverview />);
 
-      expect(screen.getByText('Next.js 15')).toBeInTheDocument();
+      expect(screen.getByText('Next.js 16')).toBeInTheDocument();
       expect(screen.getByText('React 19')).toBeInTheDocument();
       expect(screen.getByText('TypeScript')).toBeInTheDocument();
       expect(screen.getByText('shadcn/ui')).toBeInTheDocument();

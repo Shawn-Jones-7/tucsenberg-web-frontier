@@ -1,5 +1,5 @@
 /**
- * React Email components for [PROJECT_NAME] email templates.
+ * React Email components for site email templates.
  * @module components/emails
  */
 

@@ -724,22 +724,20 @@ if (require.main === module) {
 
 ### Development Tools Exemptions
 
-For development-only tools (React Scan, diagnostics, dev panels), apply relaxed rules:
+For development-only tools (diagnostics, dev panels), apply relaxed rules:
 
 ```javascript
 // eslint.config.mjs
-{
-  name: 'dev-tools-complexity-exemption',
-  files: [
-    'src/components/dev-tools/**/*.{ts,tsx}',
-    'src/app/*/dev-tools/**/*.{ts,tsx}',
-    'src/app/*/react-scan-demo/**/*.{ts,tsx}',
-    'src/app/*/diagnostics/**/*.{ts,tsx}',
-    'src/lib/dev-tools-positioning.ts',
-    'src/lib/performance-monitoring-coordinator.ts',
-    'src/lib/react-scan-config.ts',
-    'src/constants/dev-tools.ts'
-  ],
+  {
+	  name: 'dev-tools-complexity-exemption',
+	  files: [
+	    'src/components/dev-tools/**/*.{ts,tsx}',
+	    'src/app/*/dev-tools/**/*.{ts,tsx}',
+	    'src/app/*/diagnostics/**/*.{ts,tsx}',
+	    'src/lib/dev-tools-positioning.ts',
+	    'src/lib/performance-monitoring-coordinator.ts',
+	    'src/constants/dev-tools.ts'
+	  ],
   rules: {
     'max-lines-per-function': 'off',
     'complexity': 'off',
@@ -754,22 +752,21 @@ For development-only tools (React Scan, diagnostics, dev panels), apply relaxed 
 ### Development Tools Special Rules
 
 ```javascript
-{
-  name: 'dev-tools-special-config',
-  files: [
-    'src/components/dev-tools/**/*.{ts,tsx}',
-    'src/app/**/dev-tools/**/*.{ts,tsx}',
-    'src/lib/react-scan-config.ts',
-    'src/lib/dev-tools-positioning.ts'
-  ],
-  rules: {
+  {
+	  name: 'dev-tools-special-config',
+	  files: [
+	    'src/components/dev-tools/**/*.{ts,tsx}',
+	    'src/app/**/dev-tools/**/*.{ts,tsx}',
+	    'src/lib/dev-tools-positioning.ts'
+	  ],
+	  rules: {
     // Allow console output for development tools
     'no-console': ['warn', { allow: ['warn', 'error', 'info', 'log'] }],
 
-    // Allow React Scan specific naming
-    'no-underscore-dangle': ['error', {
-      allow: ['__REACT_SCAN__', '__DEV__']
-    }],
+	    // Allow dev-tools specific naming
+	    'no-underscore-dangle': ['error', {
+	      allow: ['__DEV__']
+	    }],
 
     // Allow any types with documentation requirement
     '@typescript-eslint/no-explicit-any': ['warn', {
@@ -786,18 +783,16 @@ For development-only tools (React Scan, diagnostics, dev panels), apply relaxed 
 
 ```json
 // tsconfig.json
-{
-  "exclude": [
-    "src/components/dev-tools/**/*.{ts,tsx}",
-    "src/app/[locale]/dev-tools/**/*.{ts,tsx}",
-    "src/app/[locale]/react-scan-demo/**/*.{ts,tsx}",
-    "src/app/[locale]/diagnostics/**/*.{ts,tsx}",
-    "src/lib/dev-tools-positioning.ts",
-    "src/lib/performance-monitoring-coordinator.ts",
-    "src/lib/react-scan-config.ts",
-    "src/constants/dev-tools.ts"
-  ]
-}
+  {
+    "exclude": [
+      "src/components/dev-tools/**/*.{ts,tsx}",
+      "src/app/[locale]/dev-tools/**/*.{ts,tsx}",
+      "src/app/[locale]/diagnostics/**/*.{ts,tsx}",
+      "src/lib/dev-tools-positioning.ts",
+      "src/lib/performance-monitoring-coordinator.ts",
+      "src/constants/dev-tools.ts"
+    ]
+  }
 ```
 
 **Rationale**: Development tools are excluded from strict quality checks as they:

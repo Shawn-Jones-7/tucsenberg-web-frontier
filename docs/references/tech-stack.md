@@ -59,13 +59,13 @@ content/
   - tabs 1.1.13 - 标签页组件
 - **class-variance-authority 0.7.1** - 样式变体管理
 - **clsx 2.1.1 + tailwind-merge 3.4.0** - 条件类名合并
-- **lucide-react 0.553.0** - SVG 图标库
+- **lucide-react 0.562.0** - SVG 图标库
 - **sonner 2.0.7** - 通知系统
 - **nextjs-toploader 3.9.17** - 页面加载进度条
 
 ### 字体与排版
 - **@tailwindcss/typography 0.5.19** - 排版系统
-- **next/font + geist 1.5.1** - Vercel 官方字体
+- **next/font/local** - 本地字体（Geist Sans Latin 子集）
 - **PingFang SC** - 中文系统字体
 - **智能字体回退** - 中英文混排优化
 
@@ -92,11 +92,11 @@ content/
 
 ### 代码质量
 - **eslint 9.39.2** - 代码质量检查（Flat Config）
-  - @eslint/eslintrc 3.3.1 - ESLint 配置工具
-  - @eslint/js 9.39.1 - ESLint JavaScript 配置
-- **typescript-eslint 8.46.4** - TypeScript 专用规则
+  - @eslint/eslintrc 3.3.3 - ESLint 配置工具
+  - @eslint/js 9.39.2 - ESLint JavaScript 配置
+- **typescript-eslint 8.50.0** - TypeScript 专用规则
 - **eslint-plugin-react 7.37.5** - React 组件规则
-- **eslint-plugin-react-hooks 5.2.0** - React Hooks 最佳实践
+- **eslint-plugin-react-hooks 7.0.1** - React Hooks 最佳实践
 - **eslint-plugin-react-you-might-not-need-an-effect 0.8.1** - useEffect 优化
 - **@next/eslint-plugin-next 16.1.1** - Next.js 专用规则
 - **eslint-plugin-import 2.32.0** - 导入语句规则
@@ -113,13 +113,13 @@ content/
 
 ### 构建工具
 - **@next/bundle-analyzer 16.1.1** - 包大小分析
-- **Turbopack** - 开发环境构建（`next dev --turbo`）
+- **Turbopack** - 开发环境构建（`next dev --turbopack`）
 - **Webpack 5 + SWC** - 生产环境构建
 - **pnpm 10.13.1** - 包管理器
 - **Lighthouse CI** - 性能监控（替代 size-limit）
-- **dependency-cruiser 17.2.0** - 依赖分析
+- **dependency-cruiser 17.3.5** - 依赖分析
 - **madge 8.0.0** - 循环依赖检测
-- **knip 5.69.1** - 未使用代码检测
+- **knip 5.76.2** - 未使用代码检测
 
 ### AST 处理工具
 - **@babel/parser 7.28.5** - Babel AST 解析器
@@ -129,26 +129,19 @@ content/
 ### 开发工具链增强
 - **concurrently 9.2.1** - 并行执行多个命令
 - **dotenv 17.2.3** - 环境变量加载工具
-- **glob 11.1.0** - 文件匹配模式工具
+- **glob 13.0.0** - 文件匹配模式工具
 - **@tailwindcss/postcss 4.1.18** - Tailwind CSS PostCSS 插件
 - **postcss 8.5.6** - CSS 处理工具
 - **cssnano 7.1.2** - CSS 压缩工具
-- **tsx 4.20.6** - TypeScript 执行工具
-
-### 性能监控
-- **react-scan 0.0.42** - React 组件性能监控
-  - 开发环境自动启用
-  - 实时检测不必要的重新渲染
-  - 可视化性能瓶颈识别
+- **tsx 4.21.0** - TypeScript 执行工具
 
 ### Git 工作流
 - **lefthook 2.0.12** - Git hooks 管理
-- **@commitlint/cli 19.8.1** - 提交信息规范
-- **@commitlint/config-conventional 19.8.1** - 约定式提交
-- **husky 9.1.7** - Git hooks 备用方案
+- **@commitlint/cli 20.2.0** - 提交信息规范
+- **@commitlint/config-conventional 20.2.0** - 约定式提交
 
 ### TypeScript 类型定义
-- **@types/node 20.19.9** - Node.js 类型定义
+- **@types/node 22.15.0** - Node.js 类型定义
 - **@types/react 19.2.7** - React 19 类型定义
 - **@types/react-dom 19.2.3** - React DOM 类型定义
 - **@types/js-yaml 4.0.9** - JS-YAML 类型定义
@@ -163,12 +156,12 @@ content/
 
 ### 核心测试工具
 - **vitest 4.0.16** - 现代化测试框架
-  - @vitest/browser-playwright 4.0.8 - Playwright 浏览器测试
-- **@vitest/coverage-v8 4.0.8** - V8 引擎覆盖率工具
-- **@vitest/ui 4.0.8** - 可视化测试界面
-- **jsdom 27.2.0** - 浏览器环境模拟
-- **happy-dom 20.0.10** - 轻量级 DOM 环境（性能优化）
-- **@testing-library/react 16.3.0** - React 组件测试
+  - @vitest/browser-playwright 4.0.16 - Playwright 浏览器测试
+- **@vitest/coverage-v8 4.0.16** - V8 引擎覆盖率工具
+- **@vitest/ui 4.0.16** - 可视化测试界面
+- **jsdom 27.3.0** - 浏览器环境模拟
+- **happy-dom 20.0.11** - 轻量级 DOM 环境（性能优化）
+- **@testing-library/react 16.3.1** - React 组件测试
 - **@testing-library/dom 10.4.1** - DOM 测试工具
 - **@testing-library/jest-dom 6.9.1** - DOM 断言扩展
 - **@testing-library/user-event 14.6.1** - 用户交互模拟
@@ -192,19 +185,18 @@ content/
 - **Vercel Edge Cache** - CDN 缓存
 
 ### 监控与分析
-- **@vercel/analytics 1.5.0** - 性能分析和用户行为追踪
-- **@vercel/speed-insights 1.2.0** - 性能指标监控
-- **web-vitals 5.1.0** - 核心性能指标监控
+- **@vercel/analytics 1.6.1** - 性能分析和用户行为追踪
+- **@vercel/speed-insights 1.3.1** - 性能指标监控（内置 Core Web Vitals）
 - **Google Analytics 4** - 用户行为分析
 - **React Error Boundaries** - 错误边界处理
 
 ## 7. 安全与部署
 
 ### 安全防护
-- **@marsidev/react-turnstile 1.3.1** - Cloudflare Turnstile 机器人防护
+- **@marsidev/react-turnstile 1.4.0** - Cloudflare Turnstile 机器人防护
 - **Next.js 安全头配置** - CSP、X-Frame-Options 等
 - **Next.js Middleware** - 中间件安全防护
-- **@t3-oss/env-nextjs 0.13.8** - 类型安全环境变量
+- **@t3-oss/env-nextjs 0.13.10** - 类型安全环境变量
 
 ### 监控与日志
 - **Vercel 函数日志** - 服务端监控
@@ -227,7 +219,7 @@ content/
 - **结构化数据** - Schema.org JSON-LD 支持
 
 ### 企业通信
-- **WhatsApp Business API 0.0.5-Alpha** - Meta 官方企业级 API（已集成）
+- **WhatsApp Business API（Cloud API）** - Meta 官方企业级接口（自研封装，已集成）
   - Cloud API 集成，无需自建服务器
   - 自动消息处理和回复系统
   - Webhook 支持实时消息接收
@@ -238,8 +230,8 @@ content/
 ## 9. 可选扩展
 
 ### 媒体处理
-- **sharp** - 高性能图片处理库（未安装，按需添加）
-- **@react-pdf/renderer 4.3.1** - PDF 文档生成
+- **sharp 0.34.5** - 高性能图片处理库（Next.js Image 优化依赖）
+- **@react-pdf/renderer** - PDF 文档生成（未安装，按需添加）
 - **react-loading-skeleton** - 骨架屏加载状态（未安装，按需添加）
 
 ### 地图集成
@@ -341,7 +333,7 @@ messages/              # next-intl 国际化文件
   - UI组件：70%
 
 ### 性能优化策略
-- **开发模式** - Turbopack (`next dev --turbo`)
+- **开发模式** - Turbopack (`next dev --turbopack`)
 - **生产构建** - Webpack 5 + SWC 编译器
 - **缓存策略** - SSG/ISR 混合渲染
 - **图片优化** - sharp + WebP/AVIF 支持
@@ -356,7 +348,7 @@ messages/              # next-intl 国际化文件
 ```bash
 # 开发环境
 pnpm dev                    # 启动开发服务器（Turbopack）
-pnpm dev:turbopack          # 显式启用 Turbopack
+pnpm dev:webpack            # Webpack 开发模式（兼容/排查用）
 
 # 代码质量检查
 pnpm type-check            # TypeScript 类型检查

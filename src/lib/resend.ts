@@ -12,12 +12,6 @@ export { ResendService } from '@/lib/resend-core';
 // 导出工具类
 export { ResendUtils } from '@/lib/resend-utils';
 
-/**
- * @deprecated Use React Email components from @/components/emails instead.
- * This export will be removed in a future version.
- */
-export { ResendTemplates } from '@/lib/resend-templates';
-
 // 导出配置和类型
 export { EMAIL_CONFIG } from '@/lib/resend-utils';
 export type { EmailTemplateData } from '@/lib/validations';

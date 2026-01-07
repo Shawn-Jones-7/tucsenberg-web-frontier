@@ -60,8 +60,6 @@ module.exports = {
           '^src/hooks/.*\\.(ts|tsx)$',
           // 可访问性测试组件（测试专用）
           '^src/app/.*/accessibility-test/.*\\.(ts|tsx)$',
-          // React Scan演示相关（开发工具）
-          '^src/app/.*/react-scan-demo/.*\\.(ts|tsx)$',
           // 数据和配置文件（可能通过动态导入使用）
           '/data\\.(ts|tsx|js|jsx)$',
           '.*-config\\.(ts|tsx)$',

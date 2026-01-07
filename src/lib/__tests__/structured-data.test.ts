@@ -55,15 +55,26 @@ vi.mock('@/i18n/routing', () => ({
   },
 }));
 
-vi.mock('@/config/paths', () => ({
+vi.mock('@/config/paths/site-config', () => ({
   SITE_CONFIG: {
-    name: '[PROJECT_NAME]',
-    description: 'Modern Enterprise Platform',
     baseUrl: 'https://example.com',
-    author: '[AUTHOR_NAME]',
+    name: 'B2B Web Template',
+    description: 'Modern Enterprise Platform',
+    seo: {
+      titleTemplate: '%s | B2B Web Template',
+      defaultTitle: 'B2B Web Template',
+      defaultDescription: 'Modern Enterprise Platform',
+      keywords: [],
+    },
     social: {
-      twitter: '[TWITTER_URL]',
-      linkedin: '[LINKEDIN_URL]',
+      twitter: 'https://x.com/b2b-web-template',
+      linkedin: 'https://www.linkedin.com/company/b2b-web-template/',
+      github: 'https://github.com/Alx-707/b2b-web-template',
+    },
+    contact: {
+      phone: '+1-555-0123',
+      email: 'hello@b2b-web-template.com',
+      whatsappNumber: '+1-555-0123',
     },
   },
 }));
@@ -75,18 +86,18 @@ describe('Structured Data Generation', () => {
     // Mock translation function
     const mockT = vi.fn((key: string, options?: { defaultValue?: string }) => {
       const translations: Record<string, string> = {
-        'organization.name': '[PROJECT_NAME]',
+        'organization.name': 'B2B Web Template',
         'organization.description': 'Modern Enterprise Platform',
-        'website.name': '[PROJECT_NAME]',
+        'website.name': 'B2B Web Template',
         'website.description': 'Enterprise Solutions',
         'breadcrumb.home': 'Home',
         'breadcrumb.about': 'About',
         'breadcrumb.contact': 'Contact',
-        'article.author': '[AUTHOR_NAME]',
-        'product.brand': '[PROJECT_NAME]',
+        'article.author': 'B2B Web Template',
+        'product.brand': 'B2B Web Template',
         'faq.question1': 'What is this platform?',
         'faq.answer1': 'A modern enterprise platform',
-        'business.name': '[PROJECT_NAME] Inc.',
+        'business.name': 'B2B Web Template Inc.',
         'business.address': '123 Business St, City, Country',
         'business.phone': '+1-234-567-8900',
       };
@@ -113,10 +124,10 @@ describe('Structured Data Generation', () => {
       expect(schema).toMatchObject({
         '@context': 'https://schema.org',
         '@type': 'Organization',
-        'name': '[PROJECT_NAME]',
+        'name': 'B2B Web Template',
         'description': 'Modern Enterprise Platform',
         'url': 'https://example.com',
-        'logo': 'https://example.com/logo.png',
+        'logo': 'https://example.com/next.svg',
         'contactPoint': {
           '@type': 'ContactPoint',
           'telephone': '+1-555-0123',
@@ -151,7 +162,7 @@ describe('Structured Data Generation', () => {
       expect(schema).toMatchObject({
         '@context': 'https://schema.org',
         '@type': 'WebSite',
-        'name': '[PROJECT_NAME]',
+        'name': 'B2B Web Template',
         'description': 'Enterprise Solutions',
         'url': 'https://example.com',
         'inLanguage': ['en', 'zh'],
@@ -228,10 +239,10 @@ describe('Structured Data Generation', () => {
         },
         'publisher': {
           '@type': 'Organization',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
           'logo': {
             '@type': 'ImageObject',
-            'url': 'https://example.com/logo.png',
+            'url': 'https://example.com/next.svg',
           },
         },
         'datePublished': '2023-01-01T00:00:00Z',
@@ -259,7 +270,7 @@ describe('Structured Data Generation', () => {
 
       expect(schema.author).toEqual({
         '@type': 'Person',
-        'name': '[PROJECT_NAME] Team',
+        'name': 'B2B Web Template Team',
       });
       expect(schema.datePublished).toBeDefined();
       expect(schema.dateModified).toBeDefined();
@@ -275,7 +286,7 @@ describe('Structured Data Generation', () => {
         price: '999.00',
         currency: 'USD',
         availability: 'InStock' as const,
-        brand: '[PROJECT_NAME]',
+        brand: 'B2B Web Template',
         sku: 'ENT-001',
       };
 
@@ -289,11 +300,11 @@ describe('Structured Data Generation', () => {
         'image': ['/product-image.jpg'],
         'manufacturer': {
           '@type': 'Organization',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
         },
         'brand': {
           '@type': 'Brand',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
         },
         'sku': 'ENT-001',
         'offers': {
@@ -310,7 +321,7 @@ describe('Structured Data Generation', () => {
         name: 'Free Tool',
         description: 'Open source utility',
         image: '/tool-image.jpg',
-        brand: '[PROJECT_NAME]',
+        brand: 'B2B Web Template',
         sku: 'FREE-001',
         // No price provided
       };
@@ -325,11 +336,11 @@ describe('Structured Data Generation', () => {
         'image': ['/tool-image.jpg'],
         'manufacturer': {
           '@type': 'Organization',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
         },
         'brand': {
           '@type': 'Brand',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
         },
         'sku': 'FREE-001',
         'offers': undefined, // This should cover the undefined case on line 170
@@ -380,7 +391,7 @@ describe('Structured Data Generation', () => {
   describe('generateLocalBusinessSchema', () => {
     it('should generate valid local business schema', async () => {
       const businessData = {
-        name: '[PROJECT_NAME] Office',
+        name: 'B2B Web Template Office',
         address: '123 Business St, City, Country',
         phone: '+1-234-567-8900',
         email: 'contact@example.com',
@@ -393,7 +404,7 @@ describe('Structured Data Generation', () => {
       expect(schema).toEqual({
         '@context': 'https://schema.org',
         '@type': 'LocalBusiness',
-        'name': '[PROJECT_NAME] Office',
+        'name': 'B2B Web Template Office',
         'address': {
           '@type': 'PostalAddress',
           'streetAddress': '123 Business St, City, Country',
@@ -706,7 +717,7 @@ describe('Structured Data Generation', () => {
           'name': 'Test Publisher',
           'logo': {
             '@type': 'ImageObject',
-            'url': 'https://example.com/logo.png',
+            'url': 'https://example.com/next.svg',
           },
         },
       };

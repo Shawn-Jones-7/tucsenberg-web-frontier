@@ -19,6 +19,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { COUNT_700 } from '@/constants/count';
 import { MAGIC_0_2 } from '@/constants/decimal';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
@@ -54,6 +55,11 @@ const UI_CONSTANTS = {
   INTERSECTION_THRESHOLD: MAGIC_0_2,
   ANIMATION_DURATION: 200,
 } as const;
+
+const DEFAULT_GITHUB_HREF = SITE_CONFIG.social.github;
+const DEFAULT_GITHUB_DOWNLOAD_HREF = `${DEFAULT_GITHUB_HREF}/archive/main.zip`;
+const DEFAULT_GITHUB_DISCUSSIONS_HREF = `${DEFAULT_GITHUB_HREF}/discussions`;
+const DEFAULT_GITHUB_ISSUES_HREF = `${DEFAULT_GITHUB_HREF}/issues`;
 
 // Sub-components
 function StatsDisplay({ stats }: { stats: StatItem[] }) {
@@ -203,7 +209,7 @@ function getDefaultData(t: (key: string) => string) {
         icon: Github,
         title: t('actions.github.title'),
         description: t('actions.github.description'),
-        href: '[GITHUB_URL]',
+        href: DEFAULT_GITHUB_HREF,
         primary: true,
         external: true,
       },
@@ -211,7 +217,7 @@ function getDefaultData(t: (key: string) => string) {
         icon: Star, // Using Star as placeholder for Download
         title: t('actions.download.title'),
         description: t('actions.download.description'),
-        href: '[GITHUB_URL]/archive/main.zip',
+        href: DEFAULT_GITHUB_DOWNLOAD_HREF,
         primary: false,
         external: true,
       },
@@ -237,10 +243,10 @@ export function CTABannerBlock({
   actions,
   stats,
   i18nNamespace = 'home.cta',
-  githubHref = '[GITHUB_URL]',
+  githubHref = DEFAULT_GITHUB_HREF,
   demoHref = '#demo',
-  discussionsHref = '[GITHUB_URL]/discussions',
-  issuesHref = '[GITHUB_URL]/issues',
+  discussionsHref = DEFAULT_GITHUB_DISCUSSIONS_HREF,
+  issuesHref = DEFAULT_GITHUB_ISSUES_HREF,
 }: CTABannerBlockProps = {}) {
   const t = useTranslations(i18nNamespace);
 

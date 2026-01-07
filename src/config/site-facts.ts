@@ -24,6 +24,8 @@
  * ```
  */
 
+import { SITE_CONFIG } from '@/config/paths/site-config';
+
 export interface CompanyInfo {
   name: string;
   established: number;
@@ -65,6 +67,7 @@ export interface BusinessStats {
 
 export interface SocialLinks {
   linkedin?: string;
+  github?: string;
   facebook?: string;
   youtube?: string;
   twitter?: string;
@@ -89,16 +92,17 @@ export interface SiteFacts {
  */
 export const siteFacts: SiteFacts = {
   company: {
-    name: '[PROJECT_NAME]',
+    name: SITE_CONFIG.name,
     established: 2020,
     location: {
-      country: '[COUNTRY]',
-      city: '[CITY]',
+      country: 'United States',
+      city: 'San Francisco',
     },
   },
   contact: {
-    phone: '[PHONE]',
-    email: '[EMAIL]',
+    phone: SITE_CONFIG.contact.phone,
+    email: SITE_CONFIG.contact.email,
+    whatsapp: SITE_CONFIG.contact.whatsappNumber,
     businessHours: {
       weekdays: '9:00 - 18:00',
       saturday: '10:00 - 16:00',
@@ -115,6 +119,8 @@ export const siteFacts: SiteFacts = {
     onTimeDeliveryRate: 98,
   },
   social: {
-    linkedin: '[LINKEDIN_URL]',
+    linkedin: SITE_CONFIG.social.linkedin,
+    twitter: SITE_CONFIG.social.twitter,
+    github: SITE_CONFIG.social.github,
   },
 };

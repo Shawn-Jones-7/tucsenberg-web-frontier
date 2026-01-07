@@ -1,5 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { DynamicImportModule } from '@/types/test-types';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import type { ResendService as ResendServiceInstance } from '../resend-core';
 
 type ResendServiceConstructor = new () => ResendServiceInstance;
@@ -277,7 +278,7 @@ describe('resend - Confirmation and Validation', () => {
           from: 'test@example.com',
           to: ['john.doe@example.com'],
           replyTo: 'reply@example.com',
-          subject: 'Thank you for contacting us - [PROJECT_NAME]',
+          subject: `Thank you for contacting us - ${SITE_CONFIG.name}`,
           react: expect.anything(),
           text: expect.any(String),
           tags: expect.arrayContaining([

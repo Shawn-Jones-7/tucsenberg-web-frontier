@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import type { Metadata } from 'next';
-import Script from 'next/script';
 import { getFontClassNames } from '@/app/[locale]/layout-fonts';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { routing } from '@/i18n/routing';
 
 interface RootLayoutProps {
@@ -15,8 +15,8 @@ export const metadata: Metadata = {
       process.env.NEXT_PUBLIC_SITE_URL ||
       'http://localhost:3000',
   ),
-  title: '[PROJECT_NAME]',
-  description: 'Modern B2B Enterprise Web Platform with Next.js 15',
+  title: SITE_CONFIG.seo.defaultTitle,
+  description: SITE_CONFIG.seo.defaultDescription,
 };
 
 // Root layout renders the document shell so that metadata can be injected into <head>.
@@ -35,20 +35,6 @@ export default function RootLayout({ children }: RootLayoutProps) {
         suppressHydrationWarning
       >
         {children}
-
-        {/* React Grab: AI 上下文提取工具 (仅开发环境) */}
-        {process.env.NODE_ENV === 'development' && (
-          <>
-            <Script
-              src='https://unpkg.com/react-grab/dist/index.global.js'
-              strategy='afterInteractive'
-            />
-            <Script
-              src='https://unpkg.com/@react-grab/claude-code/dist/client.global.js'
-              strategy='lazyOnload'
-            />
-          </>
-        )}
       </body>
     </html>
   );

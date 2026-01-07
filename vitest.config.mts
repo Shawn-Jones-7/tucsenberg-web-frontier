@@ -233,11 +233,9 @@ export default defineConfig({
         // 排除开发工具 - 仅开发环境使用，不需要测试覆盖率
         'src/components/dev-tools/**',
         'src/app/**/dev-tools/**',
-        'src/app/**/react-scan-demo/**',
         'src/app/**/diagnostics/**',
         'src/lib/dev-tools-positioning.ts',
         'src/lib/performance-monitoring-coordinator.ts',
-        'src/lib/react-scan-config.ts',
         'src/constants/dev-tools.ts',
         // 排除静态数据/配置组件，避免拉低覆盖率
         'src/components/i18n/locale-switcher/config.ts',

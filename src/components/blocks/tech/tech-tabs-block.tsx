@@ -39,33 +39,33 @@ type TFunc = (
   values?: Record<string, string | number | Date>,
 ) => string;
 
-// Default tech data (matches existing tech-stack-data.ts)
+// Default tech data (keep in sync with package.json)
 const DEFAULT_TECH_DATA: TechItem[] = [
   {
     id: 'nextjs',
     name: 'Next.js',
-    version: '15.1.6',
+    version: '16.1.1',
     category: 'core',
     url: 'https://nextjs.org',
   },
   {
     id: 'react',
     name: 'React',
-    version: '19.0.0',
+    version: '19.2.3',
     category: 'core',
     url: 'https://react.dev',
   },
   {
     id: 'typescript',
     name: 'TypeScript',
-    version: '5.8.2',
+    version: '5.9.3',
     category: 'core',
     url: 'https://typescriptlang.org',
   },
   {
     id: 'tailwindcss',
     name: 'Tailwind CSS',
-    version: '4.0.0',
+    version: '4.1.18',
     category: 'ui',
     url: 'https://tailwindcss.com',
   },
@@ -86,44 +86,51 @@ const DEFAULT_TECH_DATA: TechItem[] = [
   {
     id: 'next-intl',
     name: 'next-intl',
-    version: '3.29.1',
+    version: '4.6.1',
     category: 'i18n',
     url: 'https://next-intl.dev',
   },
   {
     id: 'eslint',
     name: 'ESLint',
-    version: '9.18.0',
+    version: '9.39.2',
     category: 'tools',
     url: 'https://eslint.org',
   },
   {
     id: 'prettier',
     name: 'Prettier',
-    version: '3.4.2',
+    version: '3.7.4',
     category: 'tools',
     url: 'https://prettier.io',
   },
   {
-    id: 'husky',
-    name: 'Husky',
-    version: '9.1.7',
+    id: 'lefthook',
+    name: 'Lefthook',
+    version: '2.0.12',
     category: 'tools',
-    url: 'https://typicode.github.io/husky',
+    url: 'https://lefthook.dev',
   },
   {
-    id: 'jest',
-    name: 'Jest',
-    version: '29.7.0',
+    id: 'vitest',
+    name: 'Vitest',
+    version: '4.0.16',
     category: 'testing',
-    url: 'https://jestjs.io',
+    url: 'https://vitest.dev',
   },
   {
     id: 'testing-library',
     name: 'Testing Library',
-    version: '16.1.0',
+    version: '16.3.1',
     category: 'testing',
     url: 'https://testing-library.com',
+  },
+  {
+    id: 'playwright',
+    name: 'Playwright',
+    version: '1.57.0',
+    category: 'testing',
+    url: 'https://playwright.dev',
   },
   {
     id: 'pnpm',
@@ -131,13 +138,6 @@ const DEFAULT_TECH_DATA: TechItem[] = [
     version: '10.13.1',
     category: 'dev',
     url: 'https://pnpm.io',
-  },
-  {
-    id: 'turbo',
-    name: 'Turbo',
-    version: '2.3.3',
-    category: 'dev',
-    url: 'https://turbo.build',
   },
 ];
 
@@ -148,7 +148,6 @@ const DEFAULT_CATEGORIES: Record<string, string> = {
   tools: 'tools',
   testing: 'testing',
   dev: 'dev',
-  performance: 'performance',
 };
 
 // Sub-components

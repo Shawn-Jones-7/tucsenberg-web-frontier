@@ -3,6 +3,8 @@
  * 集中管理所有硬编码的数值和配置
  */
 
+import { SITE_CONFIG } from '@/config/paths/site-config';
+
 // 项目统计数据
 export const PROJECT_STATS = {
   // 技术栈统计
@@ -19,7 +21,7 @@ export const PROJECT_STATS = {
     securityScore: '100%',
     languages: 2,
     themes: 'Multiple',
-    typescriptVersion: 'TS 5.8',
+    typescriptVersion: 'TS 5.9.3',
     deployment: 'Vercel',
   },
 
@@ -34,17 +36,17 @@ export const PROJECT_STATS = {
 
 // 项目链接
 export const PROJECT_LINKS = {
-  github: '[GITHUB_REPO_URL]',
+  github: SITE_CONFIG.social.github,
   documentation: '/docs',
   demo: '/demo',
-  discussions: '[GITHUB_DISCUSSIONS_URL]',
+  discussions: `${SITE_CONFIG.social.github}/discussions`,
 } as const;
 
 // 技术架构配置
 export const TECH_ARCHITECTURE = {
   frontend: {
     title: 'Frontend',
-    technologies: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS'],
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS'],
     color: 'blue',
   },
   ui: {
@@ -54,7 +56,7 @@ export const TECH_ARCHITECTURE = {
   },
   tooling: {
     title: 'Development',
-    technologies: ['ESLint', 'Prettier', 'Husky', 'Jest'],
+    technologies: ['ESLint', 'Prettier', 'Lefthook', 'Vitest'],
     color: 'purple',
   },
 } as const;

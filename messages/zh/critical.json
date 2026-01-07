@@ -102,7 +102,7 @@
         "line1": "现代化B2B企业级",
         "line2": "Web平台"
       },
-      "subtitle": "基于Next.js 15、React 19、TypeScript 5.8和Tailwind CSS 4构建。具备企业级安全性、国际化和性能优化特性。",
+      "subtitle": "基于Next.js 16、React 19、TypeScript 5.9.3和Tailwind CSS 4构建。具备企业级安全性、国际化和性能优化特性。",
       "cta": {
         "demo": "查看演示",
         "github": "在GitHub上查看"
@@ -145,6 +145,9 @@
         "next-intl": "Next.js 国际化解决方案",
         "eslint": "JavaScript/TypeScript 代码检查工具",
         "prettier": "代码格式化工具",
+        "lefthook": "Git hooks 管理工具",
+        "vitest": "快速单元测试框架",
+        "playwright": "端到端测试框架",
         "husky": "Git hooks 管理工具",
         "jest": "JavaScript 测试框架",
         "testing-library": "React 组件测试工具",
@@ -461,29 +464,29 @@
     "themeSelector": "选择主题"
   },
   "seo": {
-    "title": "[PROJECT_NAME]",
+    "title": "B2B Web Template",
     "description": "基于Next.js 16、React 19和TypeScript的现代化B2B企业级网络平台",
-    "siteName": "[PROJECT_NAME]",
+    "siteName": "B2B Web Template",
     "keywords": "Next.js, React, TypeScript, B2B, 企业级, 网络平台",
     "pages": {
       "home": {
-        "title": "[PROJECT_NAME] - 现代化B2B企业级平台",
+        "title": "B2B Web Template - 现代化B2B企业级平台",
         "description": "使用Next.js 16、React 19、TypeScript构建现代化B2B应用，提供企业级功能。"
       },
       "about": {
-        "title": "关于我们 - [PROJECT_NAME]",
+        "title": "关于我们 - B2B Web Template",
         "description": "了解我们为企业提供前沿B2B网络解决方案的使命。"
       },
       "contact": {
-        "title": "联系我们 - [PROJECT_NAME]",
+        "title": "联系我们 - B2B Web Template",
         "description": "联系我们的团队获取企业解决方案和技术支持。"
       },
       "products": {
-        "title": "产品中心 - [PROJECT_NAME]",
+        "title": "产品中心 - B2B Web Template",
         "description": "探索我们为现代企业提供的企业级产品和解决方案。"
       },
       "blog": {
-        "title": "技术博客 - [PROJECT_NAME]",
+        "title": "技术博客 - B2B Web Template",
         "description": "来自我们开发团队的最新见解、教程和技术更新。"
       }
     }
@@ -602,23 +605,23 @@
   },
   "structured-data": {
     "organization": {
-      "name": "[PROJECT_NAME]",
+      "name": "B2B Web Template",
       "description": "现代化B2B企业级网络平台",
-      "phone": "[PHONE]",
+      "phone": "+1-555-0123",
       "social": {
-        "twitter": "[TWITTER_URL]",
-        "linkedin": "[LINKEDIN_URL]",
-        "github": "[GITHUB_URL]"
+        "twitter": "https://x.com/b2b-web-template",
+        "linkedin": "https://www.linkedin.com/company/b2b-web-template/",
+        "github": "https://github.com/Alx-707/b2b-web-template"
       }
     },
     "website": {
-      "name": "[PROJECT_NAME]",
+      "name": "B2B Web Template",
       "description": "基于Next.js 16的现代化B2B企业级网络平台"
     },
     "article": {
       "defaultTitle": "文章",
       "defaultDescription": "文章描述",
-      "defaultAuthor": "[TEAM_NAME]"
+      "defaultAuthor": "B2B Web Template"
     },
     "product": {
       "defaultName": "产品",

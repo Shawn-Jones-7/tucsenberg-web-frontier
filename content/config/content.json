@@ -9,8 +9,8 @@
   "dateFormat": "YYYY-MM-DD",
   "timeZone": "UTC",
   "seo": {
-    "defaultTitle": "[PROJECT_NAME]",
-    "titleTemplate": "%s | [PROJECT_NAME]",
+    "defaultTitle": "B2B Web Template",
+    "titleTemplate": "%s | B2B Web Template",
     "defaultDescription": "Modern B2B enterprise website template with Next.js 16, React 19, TypeScript, and Tailwind CSS",
     "defaultKeywords": [
       "Next.js",
@@ -20,7 +20,7 @@
       "B2B",
       "Enterprise"
     ],
-    "defaultOgImage": "/images/og-default.jpg"
+    "defaultOgImage": "/images/og-image.jpg"
   },
   "content": {
     "posts": {

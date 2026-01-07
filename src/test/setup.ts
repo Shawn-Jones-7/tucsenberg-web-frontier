@@ -5,8 +5,6 @@
 
 /* eslint-disable max-lines-per-function, max-lines */
 
-// ⚠️ CRITICAL: Mock geist fonts BEFORE any other imports
-// This prevents ES module directory import errors from geist package
 import { afterEach, beforeEach, vi } from 'vitest';
 import '@testing-library/jest-dom/vitest';
 import React from 'react';
@@ -44,24 +42,6 @@ vi.mock('next/font/local', () => ({
     className: 'geist-sans-subset',
     style: { fontFamily: 'Geist Sans Latin' },
   })),
-}));
-
-// Mock geist/font/mono and geist/font/sans to avoid next/font/local directory import issues
-// This is a test-only stub and has no effect on production builds
-vi.mock('geist/font/mono', () => ({
-  GeistMono: {
-    variable: '--font-geist-mono',
-    className: 'geist-mono',
-    style: { fontFamily: 'Geist Mono' },
-  },
-}));
-
-vi.mock('geist/font/sans', () => ({
-  GeistSans: {
-    variable: '--font-geist-sans',
-    className: 'geist-sans',
-    style: { fontFamily: 'Geist Sans' },
-  },
 }));
 
 /**

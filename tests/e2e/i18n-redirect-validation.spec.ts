@@ -1,5 +1,5 @@
 /**
- * Next.js 15.4.7 国际化重定向端到端测试
+ * Next.js 16 国际化重定向端到端测试
  *
  * 验证 Location 响应头修复对实际用户体验的影响
  */
@@ -15,7 +15,7 @@ const rawBaseUrl =
 
 const BASE_URL = rawBaseUrl.replace(/\/$/, '');
 
-test.describe('Next.js 15.4.7 国际化重定向验证', () => {
+test.describe('Next.js 16 国际化重定向验证', () => {
   test.beforeEach(async ({ page }) => {
     // 清除 Cookie（next-intl 使用 NEXT_LOCALE cookie 存储语言偏好）
     await page.context().clearCookies();

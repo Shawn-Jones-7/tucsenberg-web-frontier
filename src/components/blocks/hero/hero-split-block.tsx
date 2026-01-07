@@ -2,6 +2,7 @@ import { ArrowRight, ExternalLink, Github } from 'lucide-react';
 import { getTranslations } from 'next-intl/server';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 export interface HeroSplitBlockMessages extends Record<string, unknown> {
   version?: string;
@@ -155,9 +156,9 @@ function HeroStats({
 
 // Default values
 const DEFAULT_TECHNOLOGIES = [
-  'Next.js 15',
+  'Next.js 16',
   'React 19',
-  'TypeScript 5.8',
+  'TypeScript 5.9',
   'Tailwind CSS 4',
   'shadcn/ui',
   'next-intl',
@@ -171,7 +172,7 @@ const DEFAULT_STATS = [
 ];
 
 const DEFAULT_DEMO_HREF = '#demo';
-const DEFAULT_GITHUB_HREF = '[GITHUB_URL]';
+const DEFAULT_GITHUB_HREF = SITE_CONFIG.social.github;
 
 function HeroSplitBlockBody({
   t,

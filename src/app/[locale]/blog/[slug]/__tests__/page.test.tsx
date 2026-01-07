@@ -127,7 +127,7 @@ vi.mock('react', async () => {
                   <span className='text-sm text-muted-foreground'>
                     {t('author')}{' '}
                     <span className='font-medium text-foreground'>
-                      [TEAM_NAME]
+                      B2B Web Template
                     </span>
                   </span>
                 </div>

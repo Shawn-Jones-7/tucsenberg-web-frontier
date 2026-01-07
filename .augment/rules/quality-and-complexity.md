@@ -191,10 +191,8 @@ Certain file types have relaxed complexity limits to accommodate their specific 
 **Scope** (eslint.config.mjs lines 560-570):
 - `src/components/dev-tools/**/*.{ts,tsx}`
 - `src/app/**/dev-tools/**/*.{ts,tsx}`
-- `src/app/**/react-scan-demo/**/*.{ts,tsx}`
 - `src/app/**/diagnostics/**/*.{ts,tsx}`
 - `src/components/examples/ui-showcase/**/*.{ts,tsx}`
-- `src/lib/react-scan-config.ts`
 - `src/lib/dev-tools-positioning.ts`
 - `src/lib/performance-monitoring-coordinator.ts`
 - `src/constants/dev-tools.ts`
@@ -285,5 +283,4 @@ grep -A 10 "max-lines" eslint.config.mjs | grep -E "(max:|warn|error)"
 # Verify file matches exemption patterns
 pnpm lint:check --debug
 ```
-
 

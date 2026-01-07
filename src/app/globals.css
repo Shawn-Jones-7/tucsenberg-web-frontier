@@ -109,6 +109,10 @@
   --chart-4: oklch(0.828 0.189 84.429);
   --chart-5: oklch(0.769 0.188 70.08);
 
+  /* 文本选择高亮 */
+  --selection-background: oklch(0.488 0.243 264.376 / 30%);
+  --selection-foreground: oklch(0.145 0 0);
+
   /* 侧边栏颜色 */
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
@@ -173,6 +177,10 @@
   --chart-4: oklch(0.627 0.265 303.9);
   --chart-5: oklch(0.645 0.246 16.439);
 
+  /* 文本选择高亮 - 暗黑主题版本 */
+  --selection-background: oklch(0.488 0.243 264.376 / 40%);
+  --selection-foreground: oklch(0.985 0 0);
+
   /* 侧边栏颜色 - 暗黑主题版本 */
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
@@ -191,6 +199,17 @@
   body {
     @apply bg-background text-foreground;
     font-family: var(--font-geist-sans), var(--font-chinese-stack);
+  }
+
+  /* 文本选择高亮样式 */
+  ::selection {
+    background-color: var(--selection-background);
+    color: var(--selection-foreground);
+  }
+
+  ::-moz-selection {
+    background-color: var(--selection-background);
+    color: var(--selection-foreground);
   }
 
   /* 系统字体优化 */

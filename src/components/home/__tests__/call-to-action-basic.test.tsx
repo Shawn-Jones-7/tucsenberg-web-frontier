@@ -10,6 +10,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CallToAction } from '@/components/home/call-to-action';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -185,7 +186,7 @@ describe('CallToAction Component - Basic Tests', () => {
       render(<CallToAction />);
 
       const githubLink = screen.getByRole('link', { name: /primary\.github/i });
-      expect(githubLink).toHaveAttribute('href', '[GITHUB_URL]');
+      expect(githubLink).toHaveAttribute('href', SITE_CONFIG.social.github);
       expect(githubLink).toHaveAttribute('target', '_blank');
       expect(githubLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
@@ -196,7 +197,7 @@ describe('CallToAction Component - Basic Tests', () => {
       const starLink = screen.getByRole('link', {
         name: /buttons\.getStarted/i,
       });
-      expect(starLink).toHaveAttribute('href', '[GITHUB_URL]');
+      expect(starLink).toHaveAttribute('href', SITE_CONFIG.social.github);
       expect(starLink).toHaveAttribute('target', '_blank');
       expect(starLink).toHaveAttribute('rel', 'noopener noreferrer');
     });
@@ -216,7 +217,10 @@ describe('CallToAction Component - Basic Tests', () => {
       const communityLink = screen.getByRole('link', {
         name: /community\.discussions/i,
       });
-      expect(communityLink).toHaveAttribute('href', '[GITHUB_URL]/discussions');
+      expect(communityLink).toHaveAttribute(
+        'href',
+        `${SITE_CONFIG.social.github}/discussions`,
+      );
     });
 
     it('Discussions链接应该有正确的地址', () => {
@@ -227,7 +231,7 @@ describe('CallToAction Component - Basic Tests', () => {
       });
       expect(discussionsLink).toHaveAttribute(
         'href',
-        '[GITHUB_URL]/discussions',
+        `${SITE_CONFIG.social.github}/discussions`,
       );
       expect(discussionsLink).toHaveAttribute('target', '_blank');
     });
@@ -236,7 +240,10 @@ describe('CallToAction Component - Basic Tests', () => {
       render(<CallToAction />);
 
       const issuesLink = screen.getByRole('link', { name: /issues/i });
-      expect(issuesLink).toHaveAttribute('href', '[GITHUB_URL]/issues');
+      expect(issuesLink).toHaveAttribute(
+        'href',
+        `${SITE_CONFIG.social.github}/issues`,
+      );
       expect(issuesLink).toHaveAttribute('target', '_blank');
     });
   });
