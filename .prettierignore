@@ -8,6 +8,9 @@ out/
 dist/
 build/
 
+# Conductor local collaboration artifacts
+.context/
+
 # Generated files
 *.min.js
 *.min.css
