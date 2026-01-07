@@ -31,8 +31,6 @@ export function generateCSP(nonce?: string): string {
       // Allow inline scripts with nonce in production, unsafe-inline in development
       ...(isDevelopment ? ["'unsafe-inline'", "'unsafe-eval'"] : []),
       ...(nonce ? [`'nonce-${nonce}'`] : []),
-      // React Grab (development only)
-      ...(isDevelopment ? ['https://unpkg.com'] : []),
       // Vercel Analytics
       'https://va.vercel-scripts.com',
       // Cloudflare Turnstile

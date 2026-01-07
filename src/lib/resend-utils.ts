@@ -10,15 +10,16 @@ import {
   type EmailTemplateData,
   type ProductInquiryEmailData,
 } from '@/lib/validations';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 /**
  * 邮件配置常量
  * Email configuration constants
  */
 export const EMAIL_CONFIG = {
-  from: '[EMAIL]',
-  replyTo: '[EMAIL]',
-  supportEmail: '[EMAIL]',
+  from: SITE_CONFIG.contact.email,
+  replyTo: SITE_CONFIG.contact.email,
+  supportEmail: SITE_CONFIG.contact.email,
 } as const;
 
 /**
@@ -67,7 +68,7 @@ export class ResendUtils {
    * Generate confirmation email subject
    */
   static generateConfirmationSubject(): string {
-    return 'Thank you for contacting us - [PROJECT_NAME]';
+    return `Thank you for contacting us - ${SITE_CONFIG.name}`;
   }
 
   /**

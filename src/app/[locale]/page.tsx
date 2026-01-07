@@ -1,5 +1,3 @@
-// Auto-deploy verification test: 2025-10-31T12:34:56Z
-
 import type { Metadata } from 'next';
 import { extractHeroMessages } from '@/lib/i18n/extract-hero-messages';
 import { loadCriticalMessages } from '@/lib/load-messages';

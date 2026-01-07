@@ -74,7 +74,9 @@ vi.mock('react', async () => {
                       </div>
                       <div>
                         <p className='font-medium'>{t('panel.email')}</p>
-                        <p className='text-muted-foreground'>[EMAIL]</p>
+                        <p className='text-muted-foreground'>
+                          hello-web-template.com
+                        </p>
                       </div>
                     </div>
                     <div className='flex items-center space-x-3'>

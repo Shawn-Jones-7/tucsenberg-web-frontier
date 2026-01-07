@@ -21,7 +21,7 @@
 - “看起来像模板”但不贴合你的实际优势与证据链
 
 **推荐交付物**：
-- `docs/company-info-brief.md`（由你定稿，或在 `docs/company-info-brief-template.md` 基础上填写）
+- `docs/templates/company-info-brief.md`（由你定稿）
 
 **这一阶段的输出要回答**：
 - 我们是谁、卖什么、卖给谁、凭什么可信、客户为什么选我们（证据是什么）
@@ -178,7 +178,7 @@
    - 否则会出现：About/Products/FAQ/Blog 的叙事口径不一致，越做越乱。
 
 **推荐最小闭环**：
-- 你提供资料 → LLM 生成 `docs/company-info-brief.md` 草稿 → 你审核定稿 → 再进入 Phase -1/0/1/… 输出页面
+- 你提供资料 → LLM 生成 `docs/templates/company-info-brief.md` 草稿 → 你审核定稿 → 再进入 Phase -1/0/1/… 输出页面
 
 ---
 

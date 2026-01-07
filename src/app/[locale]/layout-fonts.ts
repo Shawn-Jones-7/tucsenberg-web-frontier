@@ -16,7 +16,7 @@ export const geistSans = localFont({
 /**
  * Geist Mono 不再全局加载（P2-1 Phase 2）
  * 等宽字体使用系统字体栈：ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace
- * 如需在特定组件中使用，可单独导入：import { GeistMono } from 'geist/font/mono';
+ * 如需在特定组件中使用等宽字体，可添加本地字体文件并通过 next/font/local 配置。
  */
 
 /**

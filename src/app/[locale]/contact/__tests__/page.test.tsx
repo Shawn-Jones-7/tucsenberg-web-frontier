@@ -61,7 +61,9 @@ vi.mock('react', async () => {
                       </div>
                       <div>
                         <p className='font-medium'>{t('panel.email')}</p>
-                        <p className='text-muted-foreground'>[EMAIL]</p>
+                        <p className='text-muted-foreground'>
+                          hello-web-template.com
+                        </p>
                       </div>
                     </div>
 
@@ -229,7 +231,7 @@ describe('ContactPage', () => {
       // 验证联系信息
       expect(screen.getByText('Contact Methods')).toBeInTheDocument();
       expect(screen.getByText('Email')).toBeInTheDocument();
-      expect(screen.getByText('[EMAIL]')).toBeInTheDocument();
+      expect(screen.getByText('hello-web-template.com')).toBeInTheDocument();
       expect(screen.getByText('Phone')).toBeInTheDocument();
       expect(screen.getByText('+1-555-0123')).toBeInTheDocument();
     });

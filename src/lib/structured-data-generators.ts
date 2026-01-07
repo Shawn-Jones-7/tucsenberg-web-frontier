@@ -7,7 +7,15 @@ import type {
   ProductData,
   WebSiteData,
 } from '@/lib/structured-data-types';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { routing } from '@/i18n/routing';
+
+const DEFAULT_BASE_URL =
+  process.env['NEXT_PUBLIC_BASE_URL'] ||
+  process.env['NEXT_PUBLIC_SITE_URL'] ||
+  SITE_CONFIG.baseUrl;
+
+const DEFAULT_LOGO_PATH = '/next.svg';
 
 /**
  * 生成组织结构化数据
@@ -20,36 +28,34 @@ export function generateOrganizationData(
     '@context': 'https://schema.org',
     '@type': 'Organization',
     'name':
-      data.name || t('organization.name', { defaultValue: '[PROJECT_NAME]' }),
+      data.name ||
+      t('organization.name', {
+        defaultValue: SITE_CONFIG.name,
+      }),
     'description':
       data.description ||
       t('organization.description', {
-        defaultValue: 'Modern B2B Enterprise Web Platform',
+        defaultValue: SITE_CONFIG.description,
       }),
-    'url':
-      data.url ||
-      process.env['NEXT_PUBLIC_BASE_URL'] ||
-      process.env['NEXT_PUBLIC_SITE_URL'] ||
-      'https://example.com',
-    'logo':
-      data.logo ||
-      `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://example.com'}/logo.png`,
+    'url': data.url || DEFAULT_BASE_URL,
+    'logo': data.logo || `${DEFAULT_BASE_URL}${DEFAULT_LOGO_PATH}`,
     'contactPoint': {
       '@type': 'ContactPoint',
       'telephone':
-        data.phone || t('organization.phone', { defaultValue: '+1-555-0123' }),
+        data.phone ||
+        t('organization.phone', { defaultValue: SITE_CONFIG.contact.phone }),
       'contactType': 'customer service',
       'availableLanguage': routing.locales,
     },
     'sameAs': [
       t('organization.social.twitter', {
-        defaultValue: '[TWITTER_URL]',
+        defaultValue: SITE_CONFIG.social.twitter,
       }),
       t('organization.social.linkedin', {
-        defaultValue: '[LINKEDIN_URL]',
+        defaultValue: SITE_CONFIG.social.linkedin,
       }),
       t('organization.social.github', {
-        defaultValue: '[GITHUB_URL]',
+        defaultValue: SITE_CONFIG.social.github,
       }),
     ],
     // 移除 ...data 扩展运算符，只使用已验证的属性
@@ -66,22 +72,21 @@ export function generateWebSiteData(
   return {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    'name': data.name || t('website.name', { defaultValue: '[PROJECT_NAME]' }),
+    'name':
+      data.name ||
+      t('website.name', {
+        defaultValue: SITE_CONFIG.name,
+      }),
     'description':
       data.description ||
       t('website.description', {
-        defaultValue: 'Modern B2B Enterprise Web Platform with Next.js 15',
+        defaultValue: SITE_CONFIG.seo.defaultDescription,
       }),
-    'url':
-      data.url ||
-      process.env['NEXT_PUBLIC_BASE_URL'] ||
-      process.env['NEXT_PUBLIC_SITE_URL'] ||
-      'https://example.com',
+    'url': data.url || DEFAULT_BASE_URL,
     'potentialAction': {
       '@type': 'SearchAction',
       'target':
-        data.searchUrl ||
-        `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://example.com'}/search?q={search_term_string}`,
+        data.searchUrl || `${DEFAULT_BASE_URL}/search?q={search_term_string}`,
       'query-input': 'required name=search_term_string',
     },
     'inLanguage': routing.locales,
@@ -106,16 +111,18 @@ export function generateArticleData(
       '@type': 'Person',
       'name':
         data.author ||
-        t('article.defaultAuthor', { defaultValue: '[PROJECT_NAME] Team' }),
+        t('article.defaultAuthor', {
+          defaultValue: `${SITE_CONFIG.name} Team`,
+        }),
     },
     'publisher': {
       '@type': 'Organization',
       'name': t('organization.name', {
-        defaultValue: '[PROJECT_NAME]',
+        defaultValue: SITE_CONFIG.name,
       }),
       'logo': {
         '@type': 'ImageObject',
-        'url': `${process.env['NEXT_PUBLIC_BASE_URL'] || process.env['NEXT_PUBLIC_SITE_URL'] || 'https://example.com'}/logo.png`,
+        'url': `${DEFAULT_BASE_URL}${DEFAULT_LOGO_PATH}`,
       },
     },
     'datePublished': data.publishedTime,
@@ -153,7 +160,7 @@ export function generateProductData(
       'name':
         data.brand ||
         t('organization.name', {
-          defaultValue: '[PROJECT_NAME]',
+          defaultValue: SITE_CONFIG.name,
         }),
     },
     'manufacturer': {
@@ -161,7 +168,7 @@ export function generateProductData(
       'name':
         data.manufacturer ||
         t('organization.name', {
-          defaultValue: '[PROJECT_NAME]',
+          defaultValue: SITE_CONFIG.name,
         }),
     },
     'image': data.image ? [data.image] : undefined,

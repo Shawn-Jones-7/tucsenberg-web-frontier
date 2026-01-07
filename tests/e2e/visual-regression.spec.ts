@@ -31,6 +31,7 @@ import {
 
 // Test configuration
 const LOCALES = ['en', 'zh'] as const;
+const THEME_STORAGE_KEY = 'theme' as const;
 
 const VIEWPORTS = {
   mobile: { width: 375, height: 800 },
@@ -163,13 +164,32 @@ test.describe('Visual Regression - Footer Component @optional', () => {
 test.describe('Visual Regression - Theme Variants', () => {
   test('Header - dark mode - desktop', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.desktop);
+    await page.emulateMedia({ colorScheme: 'dark' });
+    await page.addInitScript(
+      ({
+        storageKey,
+        themeValue,
+      }: {
+        storageKey: string;
+        themeValue: string;
+      }) => window.localStorage.setItem(storageKey, themeValue),
+      { storageKey: THEME_STORAGE_KEY, themeValue: 'dark' },
+    );
     await preparePageForScreenshot(page, 'en', 'header-dark');
 
-    // Toggle to dark mode
-    await page.evaluate(() => {
-      document.documentElement.classList.add('dark');
-    });
-    await page.waitForTimeout(200);
+    // Wait for next-themes to apply dark mode (manual class toggles are flaky)
+    await page.waitForFunction(
+      () => document.documentElement.classList.contains('dark'),
+      undefined,
+      { timeout: 10_000 },
+    );
+    // Ensure Header client islands are loaded before snapshot
+    await page
+      .locator('nav[aria-label="Main navigation"]')
+      .waitFor({ state: 'visible', timeout: 10_000 });
+    await page
+      .locator('[data-testid="language-switcher"]')
+      .waitFor({ state: 'visible', timeout: 10_000 });
 
     const header = page.locator('header').first();
     await expect(header).toHaveScreenshot(

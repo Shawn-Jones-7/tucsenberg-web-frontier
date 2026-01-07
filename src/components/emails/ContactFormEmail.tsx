@@ -5,12 +5,12 @@ import type { EmailTemplateData } from '@/lib/validations';
 import { EmailField } from '@/components/emails/EmailField';
 import { EmailLayout } from '@/components/emails/EmailLayout';
 import { COLORS, FONT_SIZES } from '@/components/emails/theme';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 const ACCENT_COLOR = COLORS.primary;
 const CONTENT_BACKGROUND = COLORS.contentBackground;
 const PREVIEW_PREFIX = 'New contact form submission';
-const FOOTER_TEXT =
-  'This email was sent from the [PROJECT_NAME] website contact form.';
+const FOOTER_TEXT = `This email was sent from the ${SITE_CONFIG.name} website contact form.`;
 
 const valueTextStyle: CSSProperties = {
   margin: '0',

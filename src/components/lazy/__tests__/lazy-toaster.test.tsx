@@ -4,6 +4,10 @@
  */
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  IDLE_CALLBACK_FALLBACK_DELAY,
+  IDLE_CALLBACK_TIMEOUT_LONG,
+} from '@/constants/time';
 import { LazyToaster } from '../lazy-toaster';
 
 // Mock next/dynamic
@@ -68,9 +72,9 @@ describe('LazyToaster', () => {
       // Initially not rendered
       expect(screen.queryByTestId('toaster')).not.toBeInTheDocument();
 
-      // Fire idle callback (2000ms timeout)
+      // Fire idle callback (idle timeout)
       await act(async () => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_TIMEOUT_LONG);
       });
 
       expect(screen.getByTestId('toaster')).toBeInTheDocument();
@@ -78,12 +82,12 @@ describe('LazyToaster', () => {
   });
 
   describe('requestIdleCallback behavior', () => {
-    it('registers requestIdleCallback with 2000ms timeout', () => {
+    it('registers requestIdleCallback with idle timeout', () => {
       render(<LazyToaster />);
 
       expect(mockRequestIdleCallback).toHaveBeenCalledWith(
         expect.any(Function),
-        { timeout: 2000 },
+        { timeout: IDLE_CALLBACK_TIMEOUT_LONG },
       );
     });
 
@@ -106,12 +110,14 @@ describe('LazyToaster', () => {
 
       render(<LazyToaster />);
 
-      // Should use setTimeout with 1000ms
-      expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
+      expect(setTimeoutSpy).toHaveBeenCalledWith(
+        expect.any(Function),
+        IDLE_CALLBACK_FALLBACK_DELAY,
+      );
 
       // Advance timer
       await act(async () => {
-        vi.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_FALLBACK_DELAY);
       });
 
       expect(screen.getByTestId('toaster')).toBeInTheDocument();

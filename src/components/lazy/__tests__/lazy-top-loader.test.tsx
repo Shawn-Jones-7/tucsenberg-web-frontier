@@ -4,6 +4,10 @@
  */
 import { act, render, screen } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  IDLE_CALLBACK_FALLBACK_DELAY,
+  IDLE_CALLBACK_TIMEOUT_LONG,
+} from '@/constants/time';
 import { LazyTopLoader } from '../lazy-top-loader';
 
 // Mock next/dynamic
@@ -93,7 +97,7 @@ describe('LazyTopLoader', () => {
 
       // Fire idle callback
       await act(async () => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_TIMEOUT_LONG);
       });
 
       expect(screen.getByTestId('top-loader')).toBeInTheDocument();
@@ -103,7 +107,7 @@ describe('LazyTopLoader', () => {
       render(<LazyTopLoader />);
 
       await act(async () => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_TIMEOUT_LONG);
       });
 
       const loader = screen.getByTestId('top-loader');
@@ -118,7 +122,7 @@ describe('LazyTopLoader', () => {
       render(<LazyTopLoader nonce='test-nonce-123' />);
 
       await act(async () => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_TIMEOUT_LONG);
       });
 
       const loader = screen.getByTestId('top-loader');
@@ -129,7 +133,7 @@ describe('LazyTopLoader', () => {
       render(<LazyTopLoader />);
 
       await act(async () => {
-        vi.advanceTimersByTime(2000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_TIMEOUT_LONG);
       });
 
       const loader = screen.getByTestId('top-loader');
@@ -139,12 +143,12 @@ describe('LazyTopLoader', () => {
   });
 
   describe('requestIdleCallback behavior', () => {
-    it('registers requestIdleCallback with 2000ms timeout', () => {
+    it('registers requestIdleCallback with idle timeout', () => {
       render(<LazyTopLoader />);
 
       expect(mockRequestIdleCallback).toHaveBeenCalledWith(
         expect.any(Function),
-        { timeout: 2000 },
+        { timeout: IDLE_CALLBACK_TIMEOUT_LONG },
       );
     });
 
@@ -167,10 +171,13 @@ describe('LazyTopLoader', () => {
 
       render(<LazyTopLoader />);
 
-      expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 1000);
+      expect(setTimeoutSpy).toHaveBeenCalledWith(
+        expect.any(Function),
+        IDLE_CALLBACK_FALLBACK_DELAY,
+      );
 
       await act(async () => {
-        vi.advanceTimersByTime(1000);
+        vi.advanceTimersByTime(IDLE_CALLBACK_FALLBACK_DELAY);
       });
 
       expect(screen.getByTestId('top-loader')).toBeInTheDocument();

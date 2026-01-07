@@ -76,7 +76,7 @@ export const env = createEnv({
   client: {
     // Base Configuration
     NEXT_PUBLIC_BASE_URL: z.string().url().default('http://localhost:3000'),
-    NEXT_PUBLIC_APP_NAME: z.string().default('[PROJECT_NAME]'),
+    NEXT_PUBLIC_APP_NAME: z.string().default('B2B Web Template'),
     NEXT_PUBLIC_APP_VERSION: z.string().default('1.0.0'),
 
     // Analytics & Monitoring

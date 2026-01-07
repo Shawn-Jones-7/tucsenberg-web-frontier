@@ -683,10 +683,8 @@ export default [
       // 开发者工具（应用渐进式标准）
       'src/components/dev-tools/**/*.{ts,tsx}',
       'src/app/**/dev-tools/**/*.{ts,tsx}',
-      'src/app/**/react-scan-demo/**/*.{ts,tsx}',
       'src/app/**/diagnostics/**/*.{ts,tsx}',
       'src/components/examples/ui-showcase/**/*.{ts,tsx}',
-      'src/lib/react-scan-config.ts',
       'src/lib/dev-tools-positioning.ts',
       'src/lib/performance-monitoring-coordinator.ts',
       'src/constants/dev-tools.ts',
@@ -723,10 +721,7 @@ export default [
       ],
 
       // 开发工具特定但合理的豁免
-      'no-underscore-dangle': [
-        'error',
-        { allow: ['__REACT_SCAN__', '__DEV__'] },
-      ],
+      'no-underscore-dangle': ['error', { allow: ['__DEV__'] }],
       'security/detect-object-injection': 'warn', // 开发工具动态访问，降级为警告
       'react/no-unescaped-entities': 'off', // 开发工具文案允许未转义实体
       'react-you-might-not-need-an-effect/no-event-handler': 'warn',

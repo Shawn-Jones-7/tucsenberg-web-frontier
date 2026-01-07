@@ -5,6 +5,7 @@
 import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { Logo, LogoCompact, LogoLarge } from '../logo';
 
 // Mock next/image
@@ -74,20 +75,20 @@ describe('Logo', () => {
 
       const image = screen.getByTestId('logo-image');
       expect(image).toBeInTheDocument();
-      expect(image).toHaveAttribute('alt', '[PROJECT_NAME] Logo');
+      expect(image).toHaveAttribute('alt', `${SITE_CONFIG.name} Logo`);
     });
 
     it('renders logo text by default', () => {
       render(<Logo />);
 
-      expect(screen.getByText('[PROJECT_NAME]')).toBeInTheDocument();
+      expect(screen.getByText(SITE_CONFIG.name)).toBeInTheDocument();
     });
 
     it('has default aria-label', () => {
       render(<Logo />);
 
       const link = screen.getByTestId('logo-link');
-      expect(link).toHaveAttribute('aria-label', '[PROJECT_NAME]');
+      expect(link).toHaveAttribute('aria-label', SITE_CONFIG.name);
     });
 
     it('has priority attribute on image', () => {
@@ -102,13 +103,13 @@ describe('Logo', () => {
     it('hides text when showText is false', () => {
       render(<Logo showText={false} />);
 
-      expect(screen.queryByText('[PROJECT_NAME]')).not.toBeInTheDocument();
+      expect(screen.queryByText(SITE_CONFIG.name)).not.toBeInTheDocument();
     });
 
     it('shows text when showText is true', () => {
       render(<Logo showText={true} />);
 
-      expect(screen.getByText('[PROJECT_NAME]')).toBeInTheDocument();
+      expect(screen.getByText(SITE_CONFIG.name)).toBeInTheDocument();
     });
   });
 
@@ -137,21 +138,21 @@ describe('Logo', () => {
     it('applies sm text size class', () => {
       render(<Logo size='sm' />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('text-lg');
     });
 
     it('applies md text size class (default)', () => {
       render(<Logo size='md' />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('text-xl');
     });
 
     it('applies lg text size class', () => {
       render(<Logo size='lg' />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('text-2xl');
     });
   });
@@ -210,21 +211,21 @@ describe('Logo', () => {
     it('text has font-bold class', () => {
       render(<Logo />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('font-bold');
     });
 
     it('text has text-foreground class', () => {
       render(<Logo />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('text-foreground');
     });
 
     it('text uses desktop-only visibility contract', () => {
       render(<Logo />);
 
-      const text = screen.getByText('[PROJECT_NAME]');
+      const text = screen.getByText(SITE_CONFIG.name);
       expect(text).toHaveClass('header-logo-text-desktop-only');
     });
   });
@@ -251,7 +252,7 @@ describe('LogoCompact', () => {
     render(<LogoCompact />);
 
     expect(screen.getByTestId('logo-image')).toBeInTheDocument();
-    expect(screen.queryByText('[PROJECT_NAME]')).not.toBeInTheDocument();
+    expect(screen.queryByText(SITE_CONFIG.name)).not.toBeInTheDocument();
   });
 
   it('uses sm size', () => {
@@ -274,7 +275,7 @@ describe('LogoLarge', () => {
     render(<LogoLarge />);
 
     expect(screen.getByTestId('logo-image')).toBeInTheDocument();
-    expect(screen.getByText('[PROJECT_NAME]')).toBeInTheDocument();
+    expect(screen.getByText(SITE_CONFIG.name)).toBeInTheDocument();
   });
 
   it('uses lg size', () => {
@@ -287,7 +288,7 @@ describe('LogoLarge', () => {
   it('uses lg text size', () => {
     render(<LogoLarge />);
 
-    const text = screen.getByText('[PROJECT_NAME]');
+    const text = screen.getByText(SITE_CONFIG.name);
     expect(text).toHaveClass('text-2xl');
   });
 

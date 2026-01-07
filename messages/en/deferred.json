@@ -44,12 +44,12 @@
     "tryAgain": "Try Again"
   },
   "home": {
-    "title": "[PROJECT_NAME]",
+    "title": "B2B Web Template",
     "subtitle": "Modern B2B Enterprise Web Platform",
     "description": "A cutting-edge web platform built with Next.js 16, React 19, and TypeScript for modern B2B enterprises.",
     "getStarted": "Get Started",
     "learnMore": "Learn More",
-    "welcome": "Welcome to [PROJECT_NAME]",
+    "welcome": "Welcome to B2B Web Template",
     "modernApp": "A modern web application built with Next.js 16 and React 19",
     "features": {
       "title": "Features",
@@ -207,7 +207,7 @@
     "learn": "Learn",
     "examples": "Examples",
     "goToNextjs": "Go to nextjs.org",
-    "copyright": "(c) {year} [PROJECT_NAME]. All rights reserved.",
+    "copyright": "(c) {year} B2B Web Template. All rights reserved.",
     "description": "Modern B2B enterprise web solutions with cutting-edge technology."
   },
   "formatting": {
@@ -302,21 +302,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "Phone Number",
   "organization": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "Modern B2B Enterprise Web Platform",
-    "phone": "[PHONE]",
+    "phone": "+1-555-0123",
     "social": {
-      "twitter": "[TWITTER_URL]",
-      "linkedin": "[LINKEDIN_URL]",
-      "github": "[GITHUB_URL]"
+      "twitter": "https://x.com/b2b-web-template",
+      "linkedin": "https://www.linkedin.com/company/b2b-web-template/",
+      "github": "https://github.com/Alx-707/b2b-web-template"
     }
   },
   "website": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "Modern B2B Enterprise Web Platform with Next.js 16"
   },
   "article": {
-    "defaultAuthor": "[TEAM_NAME]"
+    "defaultAuthor": "B2B Web Template"
   },
   "blog": {
     "pageTitle": "Blog",
@@ -442,7 +442,7 @@
       "turnstileRequired": "Please complete the security verification."
     }
   },
-  "title": "[PROJECT_NAME]",
+  "title": "B2B Web Template",
   "trust": {
     "testimonials": {
       "title": "What Our Clients Say",

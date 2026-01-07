@@ -9,12 +9,6 @@ import {
 } from '@/lib/seo-metadata';
 import { generateFAQSchema } from '@/lib/structured-data';
 import { JsonLdScript } from '@/components/seo';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from '@/components/ui/accordion';
 import { Button } from '@/components/ui/button';
 import {
   generateLocaleStaticParams,
@@ -197,24 +191,25 @@ async function FaqContent({ locale }: { locale: string }) {
                   </h2>
                 )}
 
-                <Accordion
-                  type='single'
-                  collapsible
-                >
+                <div className='flex flex-col divide-y divide-border rounded-lg border bg-card text-card-foreground'>
                   {category.items.map((item) => (
-                    <AccordionItem
+                    <details
                       key={item.id}
-                      value={item.id}
+                      className='group border-b last:border-b-0'
                     >
-                      <AccordionTrigger>{item.question}</AccordionTrigger>
-                      <AccordionContent>
-                        <p className='text-sm leading-relaxed whitespace-pre-line'>
-                          {item.answer.trim()}
-                        </p>
-                      </AccordionContent>
-                    </AccordionItem>
+                      <summary className='flex cursor-pointer list-none items-center justify-between py-4 text-left text-sm font-medium text-muted-foreground transition-colors group-open:text-foreground hover:text-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background focus-visible:outline-none [&::-webkit-details-marker]:hidden'>
+                        {item.question}
+                      </summary>
+                      <div className='overflow-hidden text-sm text-muted-foreground'>
+                        <div className='pt-0 pb-4'>
+                          <p className='text-sm leading-relaxed whitespace-pre-line'>
+                            {item.answer.trim()}
+                          </p>
+                        </div>
+                      </div>
+                    </details>
                   ))}
-                </Accordion>
+                </div>
               </section>
             ))}
           </div>

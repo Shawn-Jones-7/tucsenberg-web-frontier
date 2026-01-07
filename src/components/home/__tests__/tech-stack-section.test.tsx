@@ -298,9 +298,9 @@ describe('TechStackSection', () => {
     it('应该渲染统计信息', () => {
       render(<TechStackSection />);
 
-      // 验证统计数据 - TechTabsBlock has 14 default items and 7 categories
+      // 验证统计数据 - TechTabsBlock has 14 default items and 6 categories
       expect(screen.getByText('14')).toBeInTheDocument(); // DEFAULT_TECH_DATA.length
-      expect(screen.getByText('7')).toBeInTheDocument(); // DEFAULT_CATEGORIES count
+      expect(screen.getByText('6')).toBeInTheDocument(); // DEFAULT_CATEGORIES count
       expect(screen.getByText('100%')).toBeInTheDocument();
       expect(screen.getByText('A+')).toBeInTheDocument();
 

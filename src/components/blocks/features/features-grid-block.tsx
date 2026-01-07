@@ -22,6 +22,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { MAGIC_0_2 } from '@/constants/decimal';
 import { useIntersectionObserver } from '@/hooks/use-intersection-observer';
 
@@ -94,7 +95,7 @@ const DEFAULT_FEATURES: FeatureItem[] = [
     icon: Code,
     titleKey: 'features.typescript.title',
     descriptionKey: 'features.typescript.description',
-    badge: 'TS 5.8',
+    badge: 'TS 5.9.3',
   },
   {
     icon: Rocket,
@@ -119,7 +120,7 @@ const DEFAULT_ARCHITECTURE = {
   frontend: {
     titleKey: 'architecture.frontend.title',
     descriptionKey: 'architecture.frontend.description',
-    technologies: ['Next.js 15', 'React 19', 'TypeScript', 'Tailwind CSS'],
+    technologies: ['Next.js 16', 'React 19', 'TypeScript', 'Tailwind CSS'],
     color: 'blue' as const,
   },
   ui: {
@@ -131,7 +132,7 @@ const DEFAULT_ARCHITECTURE = {
   tooling: {
     titleKey: 'architecture.tooling.title',
     descriptionKey: 'architecture.tooling.description',
-    technologies: ['ESLint', 'Prettier', 'Husky', 'Jest'],
+    technologies: ['ESLint', 'Prettier', 'Lefthook', 'Vitest'],
     color: 'purple' as const,
   },
 };
@@ -142,7 +143,7 @@ const DEFAULT_CTA: CTAConfig = {
   descriptionKey: 'cta.description',
   primaryButtonKey: 'cta.getStarted',
   secondaryButtonKey: 'cta.viewSource',
-  secondaryButtonHref: '[GITHUB_URL]',
+  secondaryButtonHref: SITE_CONFIG.social.github,
 };
 
 // Color mapping for architecture cards

@@ -91,7 +91,7 @@ test.describe('Header layout (bbox regression)', () => {
         await expect(mobileMenuButton).not.toBeVisible({ timeout: 10_000 });
 
         const logoLink = page
-          .getByRole('link', { name: /\[PROJECT_NAME\]/ })
+          .getByRole('link', { name: /B2B Web Template/ })
           .first();
 
         const logoBox = await expectBoundingBox(logoLink, 'Logo link');

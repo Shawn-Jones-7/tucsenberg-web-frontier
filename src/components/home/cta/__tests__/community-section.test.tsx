@@ -1,5 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { CommunitySection } from '../community-section';
 
 describe('CommunitySection', () => {
@@ -30,8 +31,14 @@ describe('CommunitySection', () => {
     });
     const issuesLink = screen.getByRole('link', { name: /Report Issues/i });
 
-    expect(discussionsLink).toHaveAttribute('href', '[GITHUB_URL]/discussions');
-    expect(issuesLink).toHaveAttribute('href', '[GITHUB_URL]/issues');
+    expect(discussionsLink).toHaveAttribute(
+      'href',
+      `${SITE_CONFIG.social.github}/discussions`,
+    );
+    expect(issuesLink).toHaveAttribute(
+      'href',
+      `${SITE_CONFIG.social.github}/issues`,
+    );
   });
 
   it('should have external link attributes for security', () => {

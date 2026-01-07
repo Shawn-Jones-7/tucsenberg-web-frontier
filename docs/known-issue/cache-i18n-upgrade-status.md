@@ -191,47 +191,7 @@ export async function getContactCopy(locale: Locale): Promise<ContactCopyModel> 
 
 ---
 
-### C. 需要对齐规范的文件
-
-#### 1. 测试用 layout：`src/app/[locale]/layout-test.tsx`
-
-- **文件路径**：`src/app/[locale]/layout-test.tsx`
-- **当前实现（节选）**：
-
-```tsx
-export default async function TestLocaleLayout({ children, params }: Props) {
-  const { locale } = await params;
-
-  if (!routing.locales.includes(locale as 'en' | 'zh')) {
-    notFound();
-  }
-
-  // 提供所有消息到客户端（使用无参 getMessages）
-  const messages = await getMessages();
-
-  return (
-    <html lang={locale}>
-      <body>
-        <NextIntlClientProvider messages={messages}>
-          {children}
-        </NextIntlClientProvider>
-      </body>
-    </html>
-  );
-}
-```
-
-- **与正式 layout 的差异**：
-  - 未调用 `setRequestLocale(locale)`；
-  - 使用无参 `getMessages()`，依赖 request 上下文，而非显式 `locale`；
-  - 目前仅作为测试布局存在，未参与实际路由渲染。
-
-- **未来风险**：
-  - 若将来把 `TestLocaleLayout` 接到真实路由上，而又忘记它使用的是“旧风格” API，可能在 Cache Components / PPR / dynamicIO 场景下产生难查的语言问题。
-
----
-
-### D. 消息加载与缓存层
+### C. 消息加载与缓存层
 
 #### 1. `src/lib/load-messages.ts`：`loadCriticalMessages` / `loadDeferredMessages`
 
@@ -274,19 +234,7 @@ export const getTranslationsCached = cache(getTranslations);
 
 ## 三、待办事项（TODO）清单
 
-### 1. 低-中优先级：`layout-test.tsx` 对齐 next-intl 规范
-
-- **必要性**：
-  - 当前不影响运行，因为 `TestLocaleLayout` 未参与实际路由；
-  - 但未来若被挂到真实路由上，可能因无参 `getMessages()` + 无 `setRequestLocale` 导致语言不一致或缓存问题。
-- **工作量**：很小（主要改一个文件）。
-- **建议**：
-  - 若近期不会使用该测试 layout，可作为 TODO 记录；
-  - 若计划用于实验路由，建议在启用前：
-    - 补上 `setRequestLocale(locale as 'en' | 'zh')`；
-    - 将无参 `getMessages()` 替换为显式传 `locale` 的消息加载函数。
-
-### 2. 可选（中长期）：引入 `cacheTag` / `revalidateTag` 细粒度失效
+### 1. 可选（中长期）：引入 `cacheTag` / `revalidateTag` 细粒度失效
 
 - **必要性**：
   - 对当前 B2B 官网并非刚需；

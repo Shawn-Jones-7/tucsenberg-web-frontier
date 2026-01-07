@@ -21,14 +21,14 @@ describe('Layout Structured Data Generation', () => {
         return Promise.resolve({
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
           'url': 'https://example.com',
         });
       } else if (type === 'WebSite') {
         return Promise.resolve({
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
           'url': 'https://example.com',
         });
       }
@@ -85,13 +85,13 @@ describe('Layout Structured Data Generation', () => {
         organizationData: {
           '@context': 'https://schema.org',
           '@type': 'Organization',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
           'url': 'https://example.com',
         },
         websiteData: {
           '@context': 'https://schema.org',
           '@type': 'WebSite',
-          'name': '[PROJECT_NAME]',
+          'name': 'B2B Web Template',
           'url': 'https://example.com',
         },
       });

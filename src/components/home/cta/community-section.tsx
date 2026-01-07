@@ -7,6 +7,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 interface CommunitySectionProps {
   t: (_key: string) => string;
@@ -32,7 +33,7 @@ export function CommunitySection({ t }: CommunitySectionProps) {
               asChild
             >
               <a
-                href='[GITHUB_URL]/discussions'
+                href={`${SITE_CONFIG.social.github}/discussions`}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='flex items-center gap-2'
@@ -46,7 +47,7 @@ export function CommunitySection({ t }: CommunitySectionProps) {
               asChild
             >
               <a
-                href='[GITHUB_URL]/issues'
+                href={`${SITE_CONFIG.social.github}/issues`}
                 target='_blank'
                 rel='noopener noreferrer'
                 className='flex items-center gap-2'

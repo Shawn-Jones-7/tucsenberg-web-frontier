@@ -23,7 +23,7 @@ All endpoints are located under `/api/`. Rate limits use a sliding window (1 min
 | Type | Description |
 |------|-------------|
 | **Turnstile** | Cloudflare bot protection token in request body |
-| **Verify Token** | `hub.verify_token` query param matching `WHATSAPP_VERIFY_TOKEN` |
+| **Verify Token** | `hub.verify_token` query param matching `WHATSAPP_WEBHOOK_VERIFY_TOKEN` |
 | **HMAC Signature** | `x-hub-signature-256` header verified against raw body |
 | **Bearer Token** | `Authorization: Bearer <CACHE_INVALIDATION_SECRET>` header |
 
@@ -60,5 +60,5 @@ Common HTTP status codes:
 
 - Rate limiting: `src/lib/security/distributed-rate-limit.ts`
 - Turnstile utils: `src/app/api/contact/contact-api-utils.ts`
-- WhatsApp service: `src/lib/whatsapp-service/`
+- WhatsApp service: `src/lib/whatsapp/`
 - Cache invalidation: `src/lib/cache/`

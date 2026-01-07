@@ -44,12 +44,12 @@
     "tryAgain": "重试"
   },
   "home": {
-    "title": "[PROJECT_NAME]",
+    "title": "B2B Web Template",
     "subtitle": "现代化B2B企业级Web平台",
     "description": "基于Next.js 16、React 19和TypeScript构建的现代化B2B企业级Web平台。",
     "getStarted": "开始使用",
     "learnMore": "了解更多",
-    "welcome": "欢迎来到 [PROJECT_NAME]",
+    "welcome": "欢迎来到 B2B Web Template",
     "modernApp": "基于 Next.js 16 和 React 19 构建的现代化Web应用",
     "features": {
       "title": "特性",
@@ -207,7 +207,7 @@
     "learn": "学习",
     "examples": "示例",
     "goToNextjs": "访问nextjs.org",
-    "copyright": "(c) {year} [PROJECT_NAME]。保留所有权利。",
+    "copyright": "(c) {year} B2B Web Template。保留所有权利。",
     "description": "现代B2B企业级网络解决方案，采用前沿技术。"
   },
   "formatting": {
@@ -302,21 +302,21 @@
   "emailPlaceholder": "your@email.com",
   "phone": "电话号码",
   "organization": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "现代化B2B企业级网络平台",
-    "phone": "[PHONE]",
+    "phone": "+1-555-0123",
     "social": {
-      "twitter": "[TWITTER_URL]",
-      "linkedin": "[LINKEDIN_URL]",
-      "github": "[GITHUB_URL]"
+      "twitter": "https://x.com/b2b-web-template",
+      "linkedin": "https://www.linkedin.com/company/b2b-web-template/",
+      "github": "https://github.com/Alx-707/b2b-web-template"
     }
   },
   "website": {
-    "name": "[PROJECT_NAME]",
+    "name": "B2B Web Template",
     "description": "基于Next.js 16的现代化B2B企业级网络平台"
   },
   "article": {
-    "defaultAuthor": "[TEAM_NAME]"
+    "defaultAuthor": "B2B Web Template"
   },
   "blog": {
     "pageTitle": "博客",
@@ -442,7 +442,7 @@
       "turnstileRequired": "请完成安全验证。"
     }
   },
-  "title": "[PROJECT_NAME]",
+  "title": "B2B Web Template",
   "trust": {
     "testimonials": {
       "title": "客户评价",

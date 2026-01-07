@@ -8,6 +8,7 @@ import {
   FOOTER_STYLE_TOKENS,
   WHATSAPP_STYLE_TOKENS,
 } from '@/config/footer-style-tokens';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 export { FOOTER_STYLE_TOKENS, WHATSAPP_STYLE_TOKENS };
 
@@ -212,21 +213,21 @@ export const FOOTER_COLUMNS: FooterColumnConfig[] = [
       {
         key: 'twitter',
         label: 'Twitter',
-        href: '[TWITTER_URL]',
+        href: SITE_CONFIG.social.twitter,
         external: true,
         translationKey: 'footer.sections.social.twitter',
       },
       {
         key: 'linkedin',
         label: 'LinkedIn',
-        href: '[LINKEDIN_URL]',
+        href: SITE_CONFIG.social.linkedin,
         external: true,
         translationKey: 'footer.sections.social.linkedin',
       },
       {
         key: 'github',
         label: 'GitHub',
-        href: '[GITHUB_URL]',
+        href: SITE_CONFIG.social.github,
         external: true,
         translationKey: 'footer.sections.social.github',
       },

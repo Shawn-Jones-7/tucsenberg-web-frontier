@@ -689,21 +689,21 @@
 
 ### 当前实现总结
 - 统一 Lead Pipeline：`src/lib/lead-pipeline/process-lead.ts` 作为对外表单/订阅/询价的总编排层，内部并行调用 Resend 与 Airtable，并通过 `Promise.allSettled + withTimeout` 保证“至少一个成功即可返回成功”。  
-- Resend 邮件：`src/lib/resend-core.ts`, `src/lib/resend-utils.ts`, `src/lib/resend-templates.ts`, `src/lib/resend.ts`；表单类邮件由 Lead Pipeline 触发。  
+- Resend 邮件：`src/lib/resend-core.tsx`, `src/lib/resend-utils.ts`, `src/lib/resend.ts`；表单类邮件由 Lead Pipeline 触发。  
 - Airtable CRM：`src/lib/airtable/service.ts`, `src/lib/airtable.ts`, `src/lib/airtable/instance.ts`；动态 import 避免构建期初始化问题。  
 - Turnstile 反机器人：通用校验在 `src/app/api/contact/contact-api-utils.ts#verifyTurnstile`，另有独立校验端点 `src/app/api/verify-turnstile/route.ts`。  
 - Vercel Analytics/Speed Insights：通过 `src/components/monitoring/enterprise-analytics-island.tsx` 动态加载，并受 cookie consent 与 `NEXT_PUBLIC_RUM` 开关控制。  
-- WhatsApp Business API：新链路 `src/lib/whatsapp-core.ts` + `src/lib/whatsapp-service.ts` + `src/app/api/whatsapp/send/route.ts`；旧链路 `src/lib/whatsapp.ts` + `src/app/api/whatsapp/webhook/route.ts`（含 auto‑reply）。  
+- WhatsApp Business API：统一由 `src/lib/whatsapp-service.ts` 对外提供能力（内部 `src/lib/whatsapp-core.ts` + `src/lib/whatsapp/*` Real/Mock client），路由为 `src/app/api/whatsapp/send/route.ts` 与 `src/app/api/whatsapp/webhook/route.ts`。  
 - 未发现 Zustand/Redux 等全局状态库依赖；表单侧主要走 React 19 `useActionState` 模板。
 
 ### 发现的问题
-1. **WhatsApp 集成“双栈并存”且路由引用不一致** (严重程度: 高)  
-   - 现象：发送端点走新 `whatsapp-core`（HTTP/类型化消息），webhook 端点走旧 `whatsapp` package 服务；两套 API/配置/异常语义不同。  
-   - 风险：行为漂移、维护成本翻倍；上线后 webhook‑>回复 与 send 行为不一致；未来修复/扩展容易“只改一边”。  
+1. **（已修复 2026-01-07）WhatsApp 集成“双栈并存”且路由引用不一致** (原严重程度: 高)  
+   - 现象：历史上 send/webhook 曾走不同实现链路，导致行为与配置不一致。  
+   - 当前：send/webhook 已统一通过 `src/lib/whatsapp-service.ts`，不再依赖第三方 whatsapp package。  
 
-2. **`whatsapp-core` 的环境检查导致非生产 server 直接 return** (严重程度: 高)  
-   - 现象：`src/lib/whatsapp-core.ts` 在 `NODE_ENV !== 'production' && typeof window === 'undefined'` 时跳过初始化；开发/预览环境服务可能处于“半初始化”。  
-   - 风险：`/api/whatsapp/send` 在 dev/preview 下潜在运行时崩溃；难以本地回归；预览环境若需演示会失败。  
+2. **（已修复 2026-01-07）非生产初始化风险** (原严重程度: 高)  
+   - 现象：历史上非生产环境存在“跳过初始化”的分支导致 API 不可回归。  
+   - 当前：`src/lib/whatsapp/client-factory.ts` 在 dev/preview/test 下无凭据自动降级为 Mock client；有凭据则使用 Real client，可完整本地回归。  
 
 3. **Turnstile 校验逻辑重复实现** (严重程度: 中)  
    - 现象：通用 util 与独立端点均实现 Cloudflare 校验/hostname/action 校验，但旁路开关与日志语义不一致。  
@@ -726,13 +726,9 @@
    - 风险：新成员按文档开发会走偏；增加沟通成本。
 
 ### 改进方案（稳健长期）
-- **问题1/2：WhatsApp 双栈与非生产初始化风险**  
-  - 方案：收敛到单一 Integration Layer：以 `whatsapp-core` 为唯一业务实现，webhook/send/媒体全部通过同一接口；提供 Real/Mock 两套 client，dev/preview 也可完整跑通。  
-  - 实施要点：  
-    1) 将 `/api/whatsapp/webhook` 迁移为使用 `src/lib/whatsapp-core.ts`/`whatsapp-service.ts`，下线 `src/lib/whatsapp.ts` 的旧 package 链路与 auto‑reply（迁移其逻辑到新 service）。  
-    2) 在 core 层定义 `WhatsAppClient` 接口与 Mock 实现（测试/本地），用 env 注入选择；去除“dev server 直接 return”的初始化分支，改为显式报错或 no‑op mock。  
-    3) 补充 webhook 签名校验与失败重试（按 Meta/WhatsApp 官方语义返回 2xx/4xx），并为发送链路加入 backoff。  
-  - 工作量：大。  
+- **问题1/2：WhatsApp 双栈与非生产初始化风险（已完成 2026-01-07）**  
+  - 结果：send/webhook 统一通过 `src/lib/whatsapp-service.ts`；Real/Mock client 由 `src/lib/whatsapp/client-factory.ts` 自动选择；无凭据时 dev/preview/test 可正常回归（Mock）。  
+  - 仍建议：持续完善 webhook 重试语义与发送端 backoff，并补齐更贴近业务的 auto-reply/路由策略（按需要）。  
 
 - **问题3：Turnstile 校验重复**  
   - 方案：保留 `/api/verify-turnstile` 端点，但内部统一调用 `contact-api-utils.ts#verifyTurnstile`，让规则单源。  
@@ -764,9 +760,9 @@
 
 ### 实施简报（Implementation Brief）
 - **P1：WhatsApp/Turnstile/sanitize 单源实现**
-  - 目标状态：仅保留 `whatsapp-core` Integration Layer；webhook/send 行为一致；Turnstile 与输入清理规则单源。
-  - 变更范围：`src/lib/whatsapp-core.ts`、`src/lib/whatsapp-service.ts`、`src/app/api/whatsapp/*`、`src/app/api/verify-turnstile/route.ts`、输入清理相关 lib/schema。
-  - 验收标准：旧 `src/lib/whatsapp.ts` 链路下线；dev/preview 下 API 可回归；Turnstile 端点复用同一 util。
+  - 目标状态：WhatsApp send/webhook 统一走 `whatsapp-service`；dev/preview/test 无凭据可用 Mock client；Turnstile 与输入清理规则单源。
+  - 变更范围：`src/lib/whatsapp-core.ts`、`src/lib/whatsapp-service.ts`、`src/lib/whatsapp/*`、`src/app/api/whatsapp/*`、`src/app/api/verify-turnstile/route.ts`、输入清理相关 lib/schema。
+  - 验收标准：send/webhook 使用同一 service；dev/preview 可回归；Turnstile 端点复用同一 util。
   - 验证：基线 + WhatsApp/Turnstile 相关 unit tests。
   - **DONE (2025-12-12)**：更新 `src/app/api/whatsapp/webhook/__tests__/route.test.ts`——修正 mock 路径为 `@/lib/whatsapp-service`，添加 `mockVerifyWebhookSignature`，新增 3 个签名校验测试用例（signature fails/missing header/verify call）。`pnpm vitest run src/app/api/whatsapp/webhook` 17 测试全部通过。  
 
@@ -814,9 +810,9 @@
    - 现象：Flat config 中存在多套目录/文件级豁免与自定义标准；质量脚本再二次解析 ESLint JSON。  
    - 风险：新增目录或重构时需要同步维护例外；规则漂移可能被质量门禁“吞掉”。  
 
-6. **Husky 依赖残留** (严重程度: 低)  
-   - 现象：`husky` 在 devDependencies 中存在，但 hooks 已完全由 `lefthook.yml` 接管，仓库无 `.husky/`。  
-   - 风险：依赖噪音与安全面增量。  
+6. **（已修复 2026-01-07）Husky 依赖残留** (原严重程度: 低)  
+   - 现象：历史上 `husky` 在 devDependencies 中存在，但 hooks 已由 `lefthook.yml` 接管。  
+   - 当前：已移除 `husky`，仅保留 Lefthook。  
 
 7. **Vercel CLI 部署与原生集成可能重复** (严重程度: 低‑中)  
    - 现象：`vercel-deploy.yml` 声明为“补充”，但若 Vercel GitHub Integration 仍启用，会在 PR/main 上产生双构建/双预览。  
@@ -845,9 +841,8 @@
   - 实施要点：在 docs/脚本中列出例外文件集与原因，每个迭代消化一类例外并同步测试。  
   - 工作量：中（持续性）。  
 
-- **问题6：Husky 残留**  
-  - 方案：移除 `husky` 依赖与相关说明，Hook 全面由 Lefthook 接管。  
-  - 工作量：小。  
+- **问题6：Husky 残留（已完成 2026-01-07）**  
+  - 结果：已移除 `husky` 依赖，Hook 全面由 Lefthook 接管。  
 
 - **问题7：Vercel 部署重复**  
   - 方案：确保仅保留一条部署链路（优先 Vercel 原生集成），CLI workflow 只做质量兜底与健康验证。  
@@ -859,7 +854,7 @@
 ### 实施优先级
 **P1**：CI workflow 收敛与门禁口径统一（解决重复与冲突）。  
 **P2**：修复本地 CI 漂移；Semgrep 加速/缓存。  
-**P3**：ESLint 例外面治理；清理 Husky；优化 Vercel 部署职责。
+**P3**：ESLint 例外面治理；优化 Vercel 部署职责。
 
 ### 实施简报（Implementation Brief）
 - **P1：主 CI + 质量门禁单源收敛**  
@@ -875,8 +870,8 @@
   - 验证：基线。  
 
 - **P3：工作流长期维护治理**  
-  - 目标状态：ESLint 例外面可追踪并持续收敛；Husky 清理；部署链路职责单一。  
-  - 变更范围：`eslint.config.mjs`、`package.json`（husky）、Vercel workflows 与文档。  
+  - 目标状态：ESLint 例外面可追踪并持续收敛；部署链路职责单一。  
+  - 变更范围：`eslint.config.mjs`、Vercel workflows 与文档。  
   - 验收标准：例外有登记与消化节奏；无双部署/双预览。  
   - 验证：基线。
 

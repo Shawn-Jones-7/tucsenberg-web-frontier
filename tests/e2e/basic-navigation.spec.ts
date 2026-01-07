@@ -15,7 +15,7 @@ test.describe('Basic Navigation', () => {
     await page.waitForLoadState('networkidle');
 
     // Check if the page title is correct
-    await expect(page).toHaveTitle(/\[PROJECT_NAME\]/);
+    await expect(page).toHaveTitle(/B2B Web Template/);
 
     // Check if main navigation is present - use first() to avoid strict mode violation
     const navigation = page.locator('nav').first();

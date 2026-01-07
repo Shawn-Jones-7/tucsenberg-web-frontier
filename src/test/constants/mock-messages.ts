@@ -191,34 +191,34 @@ export const errorBoundaryMessages = {
  * 用于测试 metadata 生成和 SEO 组件
  */
 export const seoMessages = {
-  title: '[PROJECT_NAME]',
+  title: 'B2B Web Template',
   description:
-    'Modern B2B Enterprise Web Platform with Next.js 15, React 19, and TypeScript',
-  siteName: '[PROJECT_NAME]',
+    'Modern B2B Enterprise Web Platform with Next.js 16, React 19, and TypeScript',
+  siteName: 'B2B Web Template',
   keywords: 'Next.js, React, TypeScript, B2B, Enterprise, Web Platform',
   pages: {
     home: {
-      title: '[PROJECT_NAME] - Modern B2B Enterprise Platform',
+      title: 'B2B Web Template - Modern B2B Enterprise Platform',
       description:
-        'Build modern B2B applications with Next.js 15, React 19, TypeScript, and enterprise-grade features.',
+        'Build modern B2B applications with Next.js 16, React 19, TypeScript, and enterprise-grade features.',
     },
     about: {
-      title: 'About Us - [PROJECT_NAME]',
+      title: 'About Us - B2B Web Template',
       description:
         'Learn about our mission to provide cutting-edge B2B enterprise web solutions.',
     },
     contact: {
-      title: 'Contact Us - [PROJECT_NAME]',
+      title: 'Contact Us - B2B Web Template',
       description:
         'Get in touch with our team for enterprise solutions and support.',
     },
     products: {
-      title: 'Products - [PROJECT_NAME]',
+      title: 'Products - B2B Web Template',
       description:
         'Discover our enterprise-grade products and solutions for modern businesses.',
     },
     blog: {
-      title: 'Blog - [PROJECT_NAME]',
+      title: 'Blog - B2B Web Template',
       description:
         'Latest insights, tutorials, and updates from our development team.',
     },

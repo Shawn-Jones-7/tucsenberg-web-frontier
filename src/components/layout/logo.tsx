@@ -9,6 +9,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@/lib/utils';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 import { HOURS_PER_DAY } from '@/constants';
 import { COUNT_120 } from '@/constants/count';
 
@@ -24,7 +25,7 @@ export function Logo({
   className,
   showText = true,
   size = 'md',
-  ariaLabel = '[PROJECT_NAME]',
+  ariaLabel = SITE_CONFIG.name,
   locale,
 }: LogoProps) {
   const getSizeClass = (sizeValue: 'sm' | 'md' | 'lg'): string => {
@@ -65,7 +66,7 @@ export function Logo({
       {/* Logo Image - Using Next.js logo as placeholder */}
       <Image
         src='/next.svg'
-        alt='[PROJECT_NAME] Logo'
+        alt={`${SITE_CONFIG.name} Logo`}
         width={COUNT_120}
         height={HOURS_PER_DAY}
         className={cn(
@@ -83,7 +84,7 @@ export function Logo({
             getTextSizeClass(size),
           )}
         >
-          [PROJECT_NAME]
+          {SITE_CONFIG.name}
         </span>
       )}
     </Link>

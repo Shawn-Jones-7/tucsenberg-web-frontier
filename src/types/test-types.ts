@@ -270,8 +270,8 @@ export interface DynamicImportModule {
 // ============================================================================
 
 /**
- * Jest Mock函数类型
- * 用于类型化Jest模拟函数
+ * Mock 函数类型
+ * 用于类型化 Vitest 风格的 mock（也兼容 Jest 风格结构）
  */
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type MockFunction<T extends (..._args: any[]) => any> = T & {

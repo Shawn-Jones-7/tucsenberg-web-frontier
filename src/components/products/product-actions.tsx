@@ -133,6 +133,7 @@ export function ProductActions({
   downloadPdfLabel,
   className,
 }: ProductActionsProps) {
+  const [mounted, setMounted] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showStickyBar, setShowStickyBar] = useState(false);
   const ctaRef = useRef<HTMLDivElement>(null);
@@ -143,6 +144,8 @@ export function ProductActions({
 
   // Intersection Observer to detect when main CTA is out of view
   useEffect(() => {
+    // eslint-disable-next-line react-you-might-not-need-an-effect/no-initialize-state, react-hooks/set-state-in-effect -- hydration-safe mount flag to avoid SSR useId() mismatches in Radix-based drawer
+    setMounted(true);
     const ctaElement = ctaRef.current;
     if (ctaElement === null) {
       return undefined;
@@ -197,14 +200,16 @@ export function ProductActions({
       />
 
       {/* Inquiry Drawer */}
-      <InquiryDrawer
-        open={drawerOpen}
-        onOpenChange={setDrawerOpen}
-        productSlug={productSlug}
-        productName={productName}
-        {...(productImage !== undefined && { productImage })}
-        {...(productSku !== undefined && { productSku })}
-      />
+      {mounted ? (
+        <InquiryDrawer
+          open={drawerOpen}
+          onOpenChange={setDrawerOpen}
+          productSlug={productSlug}
+          productName={productName}
+          {...(productImage !== undefined && { productImage })}
+          {...(productSku !== undefined && { productSku })}
+        />
+      ) : null}
     </>
   );
 }

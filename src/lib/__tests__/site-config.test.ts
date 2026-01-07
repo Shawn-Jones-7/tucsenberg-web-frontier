@@ -40,7 +40,7 @@ describe('Site Configuration', () => {
       expect(PROJECT_STATS.performance.securityScore).toBe('100%');
       expect(PROJECT_STATS.performance.languages).toBe(TEST_STATS.LANGUAGES);
       expect(PROJECT_STATS.performance.themes).toBe('Multiple');
-      expect(PROJECT_STATS.performance.typescriptVersion).toBe('TS 5.8');
+      expect(PROJECT_STATS.performance.typescriptVersion).toBe('TS 5.9.3');
       expect(PROJECT_STATS.performance.deployment).toBe('Vercel');
     });
 
@@ -93,7 +93,7 @@ describe('Site Configuration', () => {
   describe('TECH_ARCHITECTURE', () => {
     it('should have frontend configuration', () => {
       expect(TECH_ARCHITECTURE.frontend.title).toBe('Frontend');
-      expect(TECH_ARCHITECTURE.frontend.technologies).toContain('Next.js 15');
+      expect(TECH_ARCHITECTURE.frontend.technologies).toContain('Next.js 16');
       expect(TECH_ARCHITECTURE.frontend.technologies).toContain('React 19');
       expect(TECH_ARCHITECTURE.frontend.technologies).toContain('TypeScript');
       expect(TECH_ARCHITECTURE.frontend.color).toBe('blue');

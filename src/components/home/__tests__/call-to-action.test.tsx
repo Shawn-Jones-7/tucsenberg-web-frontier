@@ -13,6 +13,7 @@
 import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { CallToAction } from '@/components/home/call-to-action';
+import { SITE_CONFIG } from '@/config/paths/site-config';
 
 // Mock配置 - 使用vi.hoisted确保Mock在模块导入前设置
 const { mockUseTranslations, mockUseIntersectionObserver } = vi.hoisted(() => ({
@@ -242,7 +243,7 @@ describe('CallToAction Component - Integration Tests', () => {
       render(<CallToAction />);
 
       const githubLink = screen.getByRole('link', { name: /primary\.github/i });
-      expect(githubLink).toHaveAttribute('href', '[GITHUB_URL]');
+      expect(githubLink).toHaveAttribute('href', SITE_CONFIG.social.github);
 
       const demoLink = screen.getByRole('link', { name: /primary\.demo/i });
       expect(demoLink).toHaveAttribute('href', '#demo');
